@@ -33,7 +33,14 @@ Based on the language choice, copy the appropriate template and customize it:
 
 3. Update README.md with the tool name and description
 
-4. Initialize git repository:
+4. Customize STATUS.md:
+   - Replace {{TOOL_NAME}} with the actual tool name
+   - Replace {{DATE}} with current date (YYYY-MM-DD format)
+
+5. Customize CHANGELOG.md:
+   - Replace {{TOOL_NAME}} with the actual tool name
+
+6. Initialize git repository:
    ```bash
    cd "$1"
    git init
@@ -52,7 +59,14 @@ Based on the language choice, copy the appropriate template and customize it:
 
 3. Update README.md with the tool name and description
 
-4. Initialize git repository:
+4. Customize STATUS.md:
+   - Replace {{TOOL_NAME}} with the actual tool name
+   - Replace {{DATE}} with current date (YYYY-MM-DD format)
+
+5. Customize CHANGELOG.md:
+   - Replace {{TOOL_NAME}} with the actual tool name
+
+6. Initialize git repository:
    ```bash
    cd "$1"
    git init
@@ -72,6 +86,8 @@ After creating the tool:
    - Update README.md with tool description
    - Implement core functionality in src/
    - Add comprehensive tests
+   - Update STATUS.md as you progress
+   - Update CHANGELOG.md when releasing versions
    - Run `/security-scan` before first commit
 
 ## Output
@@ -80,4 +96,5 @@ Provide:
 - Path to the new tool directory
 - Language and template used
 - Next steps for development
-- Reminder to update README.md and SPEC.md
+- Reminder to update README.md, SPEC.md, STATUS.md, and CHANGELOG.md
+- Explain that STATUS.md enables session handoffs and progress tracking

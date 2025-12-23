@@ -123,6 +123,32 @@ Update:
 - Usage examples with actual tool name
 - Installation instructions
 
+**Both TypeScript and Rust - STATUS.md:**
+
+Update:
+- Replace `{{TOOL_NAME}}` with actual tool name (kebab-case)
+- Replace `{{DATE}}` with current date in YYYY-MM-DD format
+
+Example customization:
+```bash
+# Get current date
+CURRENT_DATE=$(date +%Y-%m-%d)
+
+# Replace placeholders in STATUS.md
+sed -i "s/{{TOOL_NAME}}/$TOOL_NAME/g" STATUS.md
+sed -i "s/{{DATE}}/$CURRENT_DATE/g" STATUS.md
+```
+
+**Both TypeScript and Rust - CHANGELOG.md:**
+
+Update:
+- Replace `{{TOOL_NAME}}` with actual tool name
+
+Example customization:
+```bash
+sed -i "s/{{TOOL_NAME}}/$TOOL_NAME/g" CHANGELOG.md
+```
+
 ### Step 4: Initialize Git
 
 ```bash
@@ -171,6 +197,8 @@ Provide the user with:
    - Update SPEC.md with formal specification
    - Implement core functionality in `src/`
    - Add comprehensive tests
+   - **Update STATUS.md as you progress** (enables session handoffs)
+   - **Update CHANGELOG.md when releasing** (version history)
    - Run `/security-scan` before committing changes
    - Follow Tuulbelt principles (zero dependencies, single problem)
 
@@ -180,6 +208,13 @@ Provide the user with:
    - Rust: `src/lib.rs` - Library implementation
    - Rust: `src/main.rs` - CLI entry point
    - Rust: `tests/` - Integration tests
+   - Both: `STATUS.md` - Development status and session handoffs
+   - Both: `CHANGELOG.md` - Version history and releases
+
+4. **Session Handoff**:
+   - Explain that STATUS.md enables smooth session handoffs
+   - Encourage updating it at the end of each session
+   - Reference root ROADMAP.md for overall project progress
 
 ## Template Differences
 
@@ -195,8 +230,10 @@ tool-name/
 │   └── basic.ts              # Usage examples
 ├── package.json              # No runtime dependencies
 ├── tsconfig.json             # Strict mode enabled
-├── README.md
-├── SPEC.md
+├── README.md                 # User-facing documentation
+├── SPEC.md                   # Technical specification
+├── STATUS.md                 # Development status & handoffs
+├── CHANGELOG.md              # Version history
 └── .github/
     └── workflows/
         └── test.yml          # CI/CD
@@ -221,8 +258,10 @@ tool-name/
 ├── examples/
 │   └── basic.rs              # Usage examples
 ├── Cargo.toml                # No runtime dependencies
-├── README.md
-├── SPEC.md
+├── README.md                 # User-facing documentation
+├── SPEC.md                   # Technical specification
+├── STATUS.md                 # Development status & handoffs
+├── CHANGELOG.md              # Version history
 └── .github/
     └── workflows/
         └── test.yml          # CI/CD
