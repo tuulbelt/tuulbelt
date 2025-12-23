@@ -1,0 +1,83 @@
+---
+description: Create a new tool repository from template
+argument-hint: "<tool-name> <typescript|rust>"
+---
+
+Create a new tool repository using the appropriate template.
+
+## Arguments
+
+- **Tool Name**: $1 (kebab-case, e.g., "path-normalizer")
+- **Language**: $2 (either "typescript" or "rust")
+
+## Validation
+
+First, validate the arguments:
+
+1. Tool name must be kebab-case (lowercase with hyphens)
+2. Language must be either "typescript" or "rust"
+3. Tool name must not already exist in the current directory
+
+## Scaffolding Process
+
+Based on the language choice, copy the appropriate template and customize it:
+
+### For TypeScript Tools
+
+1. Copy template:
+   ```bash
+   cp -r templates/tool-repo-template "$1"
+   ```
+
+2. Customize package.json with the tool name
+
+3. Update README.md with the tool name and description
+
+4. Initialize git repository:
+   ```bash
+   cd "$1"
+   git init
+   git add .
+   git commit -m "feat: initialize $1 tool from template"
+   ```
+
+### For Rust Tools
+
+1. Copy template:
+   ```bash
+   cp -r templates/rust-tool-template "$1"
+   ```
+
+2. Customize Cargo.toml with the tool name
+
+3. Update README.md with the tool name and description
+
+4. Initialize git repository:
+   ```bash
+   cd "$1"
+   git init
+   git add .
+   git commit -m "feat: initialize $1 tool from template"
+   ```
+
+## Post-Scaffolding
+
+After creating the tool:
+
+1. Verify tests run:
+   - TypeScript: `cd $1 && npm install && npm test`
+   - Rust: `cd $1 && cargo test`
+
+2. Display next steps to the user:
+   - Update README.md with tool description
+   - Implement core functionality in src/
+   - Add comprehensive tests
+   - Run `/security-scan` before first commit
+
+## Output
+
+Provide:
+- Path to the new tool directory
+- Language and template used
+- Next steps for development
+- Reminder to update README.md and SPEC.md
