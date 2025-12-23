@@ -21,7 +21,7 @@ Each tool in Tuulbelt:
 - **[Cross-Platform Path Normalizer](https://github.com/tuulbelt/path-normalizer)** — Windows/Unix path consistency (TBD)
 
 ### Testing & Observability
-- **[Test Flakiness Detector](test-flakiness-detector/)** — Identify unreliable tests 🟢 v0.1.0 | [📖 Docs](test-flakiness-detector/docs/) | [🚀 Live Demo](test-flakiness-detector/demos/)
+- **[Test Flakiness Detector](test-flakiness-detector/)** — Identify unreliable tests 🟢 v0.1.0 | [📖 Docs](test-flakiness-detector/docs/) | [🚀 Examples](test-flakiness-detector/examples/)
 - **[Output Diffing Utility](https://github.com/tuulbelt/output-diffing)** — Semantic diffs for JSON/binary in assertions (TBD)
 - **[Snapshot Comparison](https://github.com/tuulbelt/snapshot-comparison)** — Binary/structured data snapshots (TBD)
 - **[Test Port Conflict Resolver](https://github.com/tuulbelt/test-port-resolver)** — Concurrent test port allocation (TBD)
@@ -92,7 +92,7 @@ npx tsx src/index.ts --test "npm test" --runs 10
 - ⚡ Zero runtime dependencies
 - 🚀 107+ tests with 80%+ coverage
 - 📖 [Full Documentation](test-flakiness-detector/docs/)
-- 🎮 [Interactive Examples](test-flakiness-detector/demos/)
+- 🎮 [Example Outputs](test-flakiness-detector/examples/)
 
 ## Development
 
