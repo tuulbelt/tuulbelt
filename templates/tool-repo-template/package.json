@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "test": "node --import tsx --test test/**/*.test.ts",
-    "test:watch": "node --import tsx --test --watch test/**/*.test.ts"
+    "test": "node --import tsx --test 'test/*.test.ts'",
+    "test:watch": "node --import tsx --test --watch 'test/*.test.ts'"
   },
   "keywords": [
     "tuulbelt"
