@@ -21,7 +21,7 @@ Each tool in Tuulbelt:
 - **[Cross-Platform Path Normalizer](https://github.com/tuulbelt/path-normalizer)** — Windows/Unix path consistency (TBD)
 
 ### Testing & Observability
-- **[Test Flakiness Detector](https://github.com/tuulbelt/test-flakiness-detector)** — Identify unreliable tests (TBD)
+- **[Test Flakiness Detector](test-flakiness-detector/)** — Identify unreliable tests 🟢 v0.1.0 | [📖 Docs](test-flakiness-detector/docs/) | [🚀 Live Demo](test-flakiness-detector/demos/)
 - **[Output Diffing Utility](https://github.com/tuulbelt/output-diffing)** — Semantic diffs for JSON/binary in assertions (TBD)
 - **[Snapshot Comparison](https://github.com/tuulbelt/snapshot-comparison)** — Binary/structured data snapshots (TBD)
 - **[Test Port Conflict Resolver](https://github.com/tuulbelt/test-port-resolver)** — Concurrent test port allocation (TBD)
@@ -75,6 +75,25 @@ cd <tool-name>
 npm test  # or cargo test for Rust tools
 ```
 
+### Try Test Flakiness Detector Now
+
+The first Tuulbelt tool is ready to use:
+
+```bash
+cd test-flakiness-detector
+npm install
+npx tsx src/index.ts --test "npm test" --runs 10
+```
+
+**Features:**
+- 🎯 Framework agnostic - works with any test command
+- 🔍 Detects flaky tests through repeated execution
+- 📊 Comprehensive JSON reports with failure rates
+- ⚡ Zero runtime dependencies
+- 🚀 107+ tests with 80%+ coverage
+- 📖 [Full Documentation](test-flakiness-detector/docs/)
+- 🎮 [Interactive Examples](test-flakiness-detector/demos/)
+
 ## Development
 
 - Read [PRINCIPLES.md](PRINCIPLES.md) for design philosophy
@@ -84,11 +103,13 @@ npm test  # or cargo test for Rust tools
 
 ## Status
 
-🟢 = Implemented
-🟡 = In progress
-🔴 = TBD
+🟢 = Implemented (1/33)
+🟡 = In progress (0/33)
+🔴 = TBD (32/33)
 
-Current: Planning phase. Starting with Tier 1 tools.
+**Current:** Test Flakiness Detector ✅ Complete with 107+ tests, full documentation, and CI/CD
+
+**Progress:** 1 of 33 tools implemented (3%)
 
 ## License
 
