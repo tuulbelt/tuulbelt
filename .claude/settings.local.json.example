@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "comment": "This is an example local settings file. Copy to settings.local.json and customize.",
+  "permissions": {
+    "allow": ["Skill", "Bash", "Read", "Write", "Edit", "Glob", "Grep"]
+  },
+  "hooks": {
+    "comment": "Local hooks override project hooks. Add your personal automation here."
+  }
+}

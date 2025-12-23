@@ -42,3 +42,8 @@ coverage/
 tmp/
 temp/
 *.tmp
+.plan.md
+
+# Claude Code
+.claude/settings.local.json
+.claude/logs/
