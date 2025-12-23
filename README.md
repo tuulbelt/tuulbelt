@@ -107,9 +107,11 @@ npx tsx src/index.ts --test "npm test" --runs 10
 🟡 = In progress (0/33)
 🔴 = TBD (32/33)
 
-**Current:** Test Flakiness Detector ✅ Complete with 107+ tests, full documentation, and CI/CD
+**Recently Completed:** Test Flakiness Detector v0.1.0 (2025-12-23)
 
-**Progress:** 1 of 33 tools implemented (3%)
+**Next Up:** CLI Progress/Status Reporting 🎯
+
+**Progress:** 1 of 33 tools implemented (3%) | Phase 1 Quick Tools: 1/5 (20%)
 
 ## License
 
@@ -117,4 +119,6 @@ All tools are MIT licensed unless otherwise specified.
 
 ## Support
 
-Found a bug? Have an idea? Open an issue in the specific tool's repository.
+Found a bug? Have an idea? Open an issue at https://github.com/tuulbelt/tuulbelt/issues
+
+Use labels to indicate which tool: `test-flakiness-detector`, `cli-progress`, etc.

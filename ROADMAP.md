@@ -36,31 +36,31 @@ See `docs/setup/TUULBELT_TRIAGE.md` for detailed complexity analysis.
 
 ### Quick Tools (5 tools, days each)
 
-#### 🎯 Next Up: Test Flakiness Detector
+#### ✅ Test Flakiness Detector (COMPLETE)
 
 **Priority:** HIGH - Critical for testing infrastructure
 **Language:** TypeScript
 **Complexity:** Quick (2-3 days)
-**Status:** Not started
+**Status:** ✅ Complete v0.1.0 (2025-12-23)
 
 **Description:** Run tests N times, identify unreliable ones. Proven approach.
 
-**Use Case:**
-```bash
-flakiness-detector --runs 10 --test "npm test"
-# Output: JSON list of unreliable tests with failure rates
-```
+**Completed Features:**
+- ✅ Runs test command N times (configurable)
+- ✅ Tracks pass/fail per execution
+- ✅ Calculates failure rate statistics
+- ✅ Outputs structured JSON report
+- ✅ 107+ tests with 80%+ coverage
+- ✅ Full VitePress documentation site
+- ✅ GitHub Pages deployment
+- ✅ Automated demo examples
 
-**Success Criteria:**
-- Runs test command N times
-- Tracks pass/fail per test
-- Calculates failure rate
-- Outputs structured report
-- 80%+ test coverage
+**Location:** `/test-flakiness-detector/`
+**Docs:** https://tuulbelt.github.io/tuulbelt/
 
 ---
 
-#### CLI Progress/Status Reporting
+#### 🎯 Next Up: CLI Progress/Status Reporting
 
 **Priority:** MEDIUM
 **Language:** TypeScript
@@ -231,11 +231,11 @@ diff-structured actual.json expected.json
 ### Milestone 2: First 5 Quick Tools
 
 **Target:** Q1 2026
-**Status:** 🔄 In Progress (0/5 complete)
+**Status:** 🔄 In Progress (1/5 complete - 20%)
 
 **Tools:**
-1. Test Flakiness Detector (Next)
-2. CLI Progress Reporting
+1. ✅ Test Flakiness Detector (Complete v0.1.0)
+2. 🎯 CLI Progress Reporting (Next)
 3. Cross-Platform Path Handling
 4. File-Based Semaphore
 5. Output Diffing Utility
@@ -345,15 +345,17 @@ Priorities may change based on:
 
 ## Current Focus
 
-**Phase:** Phase 1 - Quick Tools
-**Next Tool:** Test Flakiness Detector
+**Phase:** Phase 1 - Quick Tools (1/5 complete - 20%)
+**Next Tool:** CLI Progress/Status Reporting
 **Language:** TypeScript
 **Timeline:** 2-3 days
 
-**After This Tool:**
-- Validate infrastructure with real usage
-- Refine workflows based on experience
+**Recently Completed:**
+- ✅ Test Flakiness Detector v0.1.0 (2025-12-23)
+
+**After Next Tool:**
 - Continue with remaining Quick tools
+- Consider Cross-Platform Path Handling or File-Based Semaphore
 
 ---
 
