@@ -36,6 +36,14 @@ Run these checks **before committing any code**:
 - [ ] **No `unwrap()` in production**: Use `?` operator or proper error handling
 - [ ] **Cargo.toml valid**: Proper edition, dependencies empty
 
+### Documentation (VitePress) Specific
+
+- [ ] **Docs build succeeds**: `npm run docs:build` (no errors)
+- [ ] **Base URL correct**: Match GitHub Pages deployment path
+- [ ] **All referenced pages exist**: No dead links in sidebar/navigation
+- [ ] **Icons theme-compatible**: SVG icons work in both light and dark modes
+- [ ] **Examples tested**: Code snippets actually work
+
 ---
 
 ## Post-Implementation Checklist
@@ -139,6 +147,135 @@ Shell doesn't expand globs in quoted strings.
 
 // ❌ Wrong - glob in quotes
 "test": "node --import tsx --test 'test/*.test.ts'"
+```
+
+---
+
+### VitePress/Documentation Issues
+
+#### Incorrect Base URL Configuration (2025-12-23)
+
+**Symptom:**
+All documentation links return 404 errors; site loads but navigation fails.
+
+**Root Cause:**
+VitePress `base` config doesn't match GitHub Pages deployment path.
+
+**Prevention:**
+```typescript
+// docs/.vitepress/config.ts
+export default defineConfig({
+  // ✅ Correct - matches deployment URL
+  base: '/tuulbelt/',  // For https://tuulbelt.github.io/tuulbelt/
+
+  // ❌ Wrong - mismatched path
+  base: '/test-flakiness-detector/',  // Doesn't match actual URL
+})
+```
+
+**Verification:**
+```bash
+npm run docs:build  # Check build output paths
+# Verify URLs start with correct base path
+```
+
+---
+
+#### Missing Referenced Documentation Pages (2025-12-23)
+
+**Symptom:**
+VitePress build fails with dead link errors.
+
+**Root Cause:**
+Sidebar references pages that don't exist yet.
+
+**Prevention:**
+```typescript
+// ✅ Create ALL pages before adding to sidebar
+sidebar: {
+  '/guide/': [
+    { text: 'Getting Started', link: '/guide/getting-started' }  // Must exist!
+  ]
+}
+```
+
+**Verification:**
+```bash
+# Before committing sidebar changes, verify all files exist
+ls docs/guide/getting-started.md
+ls docs/guide/installation.md
+# etc.
+
+npm run docs:build  # Must succeed with no dead link errors
+```
+
+---
+
+#### Icons Not Working in Dark Mode (2025-12-23)
+
+**Symptom:**
+SVG icons invisible or low contrast in dark theme.
+
+**Root Cause:**
+Icons use `currentColor` but VitePress dark mode needs explicit styling.
+
+**Prevention:**
+```css
+/* docs/.vitepress/theme/custom.css */
+.dark .vp-feature-icon svg {
+  stroke: rgba(255, 255, 255, 0.9);
+}
+
+.vp-feature-icon svg {
+  stroke: currentColor;
+}
+```
+
+```typescript
+// docs/.vitepress/theme/index.ts
+import DefaultTheme from 'vitepress/theme'
+import './custom.css'
+
+export default DefaultTheme
+```
+
+**Verification:**
+- Build docs: `npm run docs:build`
+- Preview: `npm run docs:preview`
+- Toggle dark mode and verify icon visibility
+
+---
+
+#### Broken Logo/Asset References (2025-12-23)
+
+**Symptom:**
+Question mark or broken image icon showing instead of logo.
+
+**Root Cause:**
+Referenced file doesn't exist in `/public` directory.
+
+**Prevention:**
+```markdown
+<!-- ✅ Correct - file exists in docs/public/ -->
+![Logo](/logo.svg)
+
+<!-- ❌ Wrong - file doesn't exist -->
+![Logo](/missing-file.svg)
+
+<!-- ✅ Better - use icon objects for features -->
+features:
+  - icon:
+      src: /icons/target.svg
+    title: Feature
+```
+
+**Verification:**
+```bash
+# Verify all referenced assets exist
+ls docs/public/logo.svg
+ls docs/public/icons/*.svg
+
+npm run docs:build  # Check for warnings about missing files
 ```
 
 ---
@@ -259,6 +396,12 @@ if [ -f "package.json" ]; then
   echo "  ✓ Running tests..."
   npm test || exit 1
 
+  # Check for VitePress docs
+  if [ -d "docs" ] && grep -q '"docs:build"' package.json; then
+    echo "  ✓ Building documentation..."
+    npm run docs:build || exit 1
+  fi
+
   echo "  ✓ Verifying zero dependencies..."
   if grep -q '"dependencies".*{.*[^}]' package.json; then
     echo "  ✗ ERROR: Runtime dependencies found!"
@@ -299,6 +442,22 @@ echo "✅ All quality checks passed!"
 chmod +x scripts/quality-check.sh
 ./scripts/quality-check.sh
 ```
+
+---
+
+## Tool-Specific Usage
+
+This checklist is maintained at the root level and applies to all Tuulbelt tools. When working on a specific tool:
+
+**For TypeScript tools:**
+- Use Universal Checks + TypeScript Specific sections
+- If tool has docs, use Documentation section
+
+**For Rust tools:**
+- Use Universal Checks + Rust Specific sections
+
+**Adding tool-specific checks:**
+If a tool needs unique checks, add them to this file under a new subsection (e.g., "### Test Flakiness Detector Specific") rather than creating per-tool checklists.
 
 ---
 
