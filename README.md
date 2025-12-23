@@ -16,7 +16,7 @@ Each tool in Tuulbelt:
 
 ### CLI/DevTools
 - **[Structured Error Handler](https://github.com/tuulbelt/structured-error-handler)** — Error format + serialization with context preservation (TBD)
-- **[CLI Progress Reporting](https://github.com/tuulbelt/cli-progress-reporting)** — Concurrent-safe progress updates (TBD)
+- **[CLI Progress Reporting](cli-progress-reporting/)** — Concurrent-safe progress updates 🟢 v0.1.0 | [📖 Docs](cli-progress-reporting/) | [🚀 Examples](cli-progress-reporting/examples/)
 - **[Configuration File Merger](https://github.com/tuulbelt/config-file-merger)** — ENV + config + CLI arg merging (TBD)
 - **[Cross-Platform Path Normalizer](https://github.com/tuulbelt/path-normalizer)** — Windows/Unix path consistency (TBD)
 
@@ -103,15 +103,15 @@ npx tsx src/index.ts --test "npm test" --runs 10
 
 ## Status
 
-🟢 = Implemented (1/33)
+🟢 = Implemented (2/33)
 🟡 = In progress (0/33)
-🔴 = TBD (32/33)
+🔴 = TBD (31/33)
 
-**Recently Completed:** Test Flakiness Detector v0.1.0 (2025-12-23)
+**Recently Completed:** CLI Progress Reporting v0.1.0 (2025-12-23)
 
-**Next Up:** CLI Progress/Status Reporting 🎯
+**Next Up:** Cross-Platform Path Handling 🎯
 
-**Progress:** 1 of 33 tools implemented (3%) | Phase 1 Quick Tools: 1/5 (20%)
+**Progress:** 2 of 33 tools implemented (6%) | Phase 1 Quick Tools: 2/5 (40%)
 
 ## License
 
