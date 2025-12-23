@@ -1,0 +1,24 @@
+/* Icon dark mode styling */
+.dark .vp-feature-icon svg {
+  stroke: rgba(255, 255, 255, 0.9);
+}
+
+/* Ensure icons remain visible in light mode */
+.vp-feature-icon svg {
+  stroke: currentColor;
+}
+
+/* Right-align search bar */
+.VPNavBar .content {
+  justify-content: space-between;
+}
+
+.VPNavBar .search {
+  order: 999;
+  margin-left: auto;
+}
+
+/* Adjust search width */
+.VPNavBar .VPLocalSearchBox {
+  margin-left: auto;
+}
