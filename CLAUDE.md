@@ -1,5 +1,38 @@
 # Tuulbelt Meta Repository
 
+## CRITICAL: Claude Code Work Standards
+
+**When working in this repository, you MUST:**
+
+1. **DO NOT HALLUCINATE ISSUES OR SUCCESS**
+   - Never claim something is complete without verifying it exists
+   - Never report test failures or successes without actually running tests
+   - Always verify file contents before making claims about them
+   - If uncertain, check the actual state - don't assume
+
+2. **DO NOT ADD FLUFF**
+   - No unnecessary commentary or verbose explanations
+   - No marketing language or superlatives
+   - Stick to facts: what exists, what works, what doesn't
+   - Code and documentation should be concise and purposeful
+
+3. **BE PRAGMATIC AND SERIOUS ABOUT THE WORK**
+   - This is production infrastructure for 33 tools
+   - Follow Tuulbelt principles strictly (zero deps, single problem, etc.)
+   - Question requirements that violate principles
+   - Focus on what actually works, not what would be cool
+
+4. **DOUBLE CHECK YOUR WORK AND TEST THOROUGHLY**
+   - Run tests before claiming they pass
+   - Verify files exist before referencing them
+   - Test commands before documenting them
+   - Ensure STATUS.md accurately reflects reality
+   - Have the upmost confidence in your work before committing
+
+**Violation of these standards compromises the entire project. When in doubt, verify.**
+
+---
+
 ## Project Overview
 
 Tuulbelt is a meta-repository for curating focused, zero-dependency tools and utilities for modern software development. Each tool solves one specific problem and is maintained as an independent repository.
