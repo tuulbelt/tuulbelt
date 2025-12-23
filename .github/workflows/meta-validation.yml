@@ -1,0 +1,89 @@
+name: Meta Validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-structure:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate required files exist
+        run: |
+          echo "Checking required files..."
+          files=(
+            "README.md"
+            "PRINCIPLES.md"
+            "CONTRIBUTING.md"
+            "ARCHITECTURE.md"
+            "LICENSE"
+            ".gitignore"
+            "docs/claude-code-workflow.md"
+            "docs/testing-standards.md"
+            "docs/tool-template.md"
+            "docs/security-guidelines.md"
+            "templates/tool-repo-template/package.json"
+            "templates/tool-repo-template/tsconfig.json"
+            "templates/tool-repo-template/src/index.ts"
+            "templates/tool-repo-template/test/index.test.ts"
+            "templates/rust-tool-template/Cargo.toml"
+            "templates/rust-tool-template/src/lib.rs"
+          )
+
+          missing=0
+          for file in "${files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "❌ Missing: $file"
+              missing=$((missing + 1))
+            else
+              echo "✓ Found: $file"
+            fi
+          done
+
+          if [ $missing -gt 0 ]; then
+            echo ""
+            echo "❌ $missing required file(s) missing"
+            exit 1
+          fi
+
+          echo ""
+          echo "✓ All required files present"
+
+      - name: Validate TypeScript template
+        run: |
+          cd templates/tool-repo-template
+          npm ci
+          npm test
+
+      - name: Validate Rust template
+        run: |
+          cd templates/rust-tool-template
+          cargo test
+
+      - name: Check for broken links in README
+        run: |
+          echo "Checking internal links in README.md..."
+          # Extract markdown links and check if files exist
+          grep -oP '\[.*?\]\(\K[^)]+(?=\))' README.md | while read -r link; do
+            # Skip external links
+            if [[ "$link" == http* ]]; then
+              continue
+            fi
+            # Skip anchor links
+            if [[ "$link" == \#* ]]; then
+              continue
+            fi
+            # Check if file exists
+            if [ ! -f "$link" ] && [ ! -d "$link" ]; then
+              echo "❌ Broken link: $link"
+              exit 1
+            fi
+            echo "✓ Valid link: $link"
+          done
+          echo "✓ All internal links valid"

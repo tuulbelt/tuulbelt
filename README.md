@@ -1,1 +1,99 @@
-# tuulbelt
+# Tuulbelt
+
+A curated collection of focused, zero-dependency tools and utilities for modern software development.
+
+## Philosophy
+
+Each tool in Tuulbelt:
+- **Solves one problem** — Narrow, well-defined scope
+- **Zero external dependencies** — Uses standard library only
+- **Portable interface** — CLI, files, sockets; not proprietary APIs
+- **Composable** — Works via pipes, environment variables, file I/O
+- **Independently cloneable** — Each tool is a standalone repository
+- **Proven implementation** — No moonshots, no "works 80%" solutions
+
+## Current Tools
+
+### CLI/DevTools
+- **[Structured Error Handler](https://github.com/tuulbelt/structured-error-handler)** — Error format + serialization with context preservation
+- **[CLI Progress Reporting](https://github.com/tuulbelt/cli-progress-reporting)** — Concurrent-safe progress updates (TBD)
+- **[Configuration File Merger](https://github.com/tuulbelt/config-file-merger)** — ENV + config + CLI arg merging (TBD)
+- **[Cross-Platform Path Normalizer](https://github.com/tuulbelt/path-normalizer)** — Windows/Unix path consistency (TBD)
+
+### Testing & Observability
+- **[Test Flakiness Detector](https://github.com/tuulbelt/test-flakiness-detector)** — Identify unreliable tests (TBD)
+- **[Output Diffing Utility](https://github.com/tuulbelt/output-diffing)** — Semantic diffs for JSON/binary in assertions (TBD)
+- **[Snapshot Comparison](https://github.com/tuulbelt/snapshot-comparison)** — Binary/structured data snapshots (TBD)
+- **[Test Port Conflict Resolver](https://github.com/tuulbelt/test-port-resolver)** — Concurrent test port allocation (TBD)
+
+### Frontend
+- **[Component Prop Validator](https://github.com/tuulbelt/component-prop-validator)** — TypeScript runtime validation (TBD)
+- **[Exhaustiveness Checker](https://github.com/tuulbelt/exhaustiveness-checker)** — Union case coverage for TS/JS (TBD)
+
+### Data & Protocol
+- **[Content-Addressable Blob Store](https://github.com/tuulbelt/content-addressable-blob-store)** — SHA-256 hash-based storage (TBD)
+- **[Schema Converter (YAML ↔ JSON)](https://github.com/tuulbelt/schema-converter-yaml-json)** — Format conversion, no deps (TBD)
+- **[Minimalist Pub-Sub Protocol](https://github.com/tuulbelt/pub-sub-protocol)** — Wire format for service messaging (TBD)
+- **[Self-Describing Binary Wire Protocol](https://github.com/tuulbelt/wire-protocol)** — TLV format for RPC (TBD)
+
+### APIs & Integration
+- **[Request/Response Envelope Codec](https://github.com/tuulbelt/envelope-codec)** — Standard RPC response wrapping (TBD)
+- **[API Versioning Helper](https://github.com/tuulbelt/api-versioning)** — Multi-version API logic (TBD)
+- **[JSON Schema Validator](https://github.com/tuulbelt/json-schema-validator)** — Schema compliance checking (TBD)
+- **[Streaming JSON Parser](https://github.com/tuulbelt/streaming-json-parser)** — Memory-efficient JSON parsing (TBD)
+
+### Security & Networking
+- **[Stateless Identity Generator](https://github.com/tuulbelt/identity-generator)** — Ed25519 token generation (TBD)
+- **[Static Site Search Indexer](https://github.com/tuulbelt/static-search-indexer)** — HTML/Markdown → compressed index (TBD)
+- **[Peer Discovery (UDP Multicast)](https://github.com/tuulbelt/peer-discovery)** — Local service discovery (TBD)
+- **[One-File Reverse Proxy](https://github.com/tuulbelt/reverse-proxy)** — Minimal HTTP mapping (TBD)
+
+### Utilities & Infrastructure
+- **[Universal Log Normalizer](https://github.com/tuulbelt/log-normalizer)** — Structured log standardization (TBD)
+- **[File-Based Semaphore](https://github.com/tuulbelt/file-semaphore)** — Cross-platform process locking (TBD)
+- **[Manifest-First Sync Tool](https://github.com/tuulbelt/manifest-sync)** — Directory sync via manifest diffs (TBD)
+- **[Universal Health-Check Probe](https://github.com/tuulbelt/health-check-probe)** — Multi-check abstraction (TBD)
+- **[Secret Injector](https://github.com/tuulbelt/secret-injector)** — Encrypted secret injection (TBD)
+- **[Deterministic Task Runner](https://github.com/tuulbelt/task-runner)** — DAG executor with file-hash skipping (TBD)
+- **[Zero-Overhead Timing](https://github.com/tuulbelt/timing-injector)** — Compile-time optional instrumentation (TBD)
+- **[Deterministic Build Artifact Generator](https://github.com/tuulbelt/deterministic-builds)** — Reproducible builds (TBD)
+
+### Observability
+- **[Structured Trace-to-SVG](https://github.com/tuulbelt/trace-to-svg)** — Event → Flame Graph visualization (TBD)
+- **[Backpressure Proxy](https://github.com/tuulbelt/backpressure-proxy)** — Cascading failure prevention (TBD)
+
+### Interoperability
+- **[FFI Binding Generator](https://github.com/tuulbelt/ffi-binding-generator)** — Rust FFI from C headers (TBD)
+
+## Quick Start
+
+Clone any tool independently:
+
+```bash
+git clone https://github.com/tuulbelt/<tool-name>.git
+cd <tool-name>
+npm test  # or cargo test for Rust tools
+```
+
+## Development
+
+- Read [PRINCIPLES.md](PRINCIPLES.md) for design philosophy
+- Read [ARCHITECTURE.md](ARCHITECTURE.md) for repo structure
+- Read [CONTRIBUTING.md](CONTRIBUTING.md) for contribution workflow
+- See [docs/](docs/) for detailed guides
+
+## Status
+
+🟢 = Implemented
+🟡 = In progress
+🔴 = TBD
+
+Current: Planning phase. Starting with Tier 1 tools.
+
+## License
+
+All tools are MIT licensed unless otherwise specified.
+
+## Support
+
+Found a bug? Have an idea? Open an issue in the specific tool's repository.

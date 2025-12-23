@@ -1,0 +1,30 @@
+[package]
+name = "tuulbelt-tool-name"
+version = "0.1.0"
+edition = "2021"
+description = "One sentence description of what this tool does"
+license = "MIT"
+repository = "https://github.com/tuulbelt/tool-name"
+readme = "README.md"
+keywords = ["tuulbelt", "cli", "utility"]
+categories = ["command-line-utilities"]
+
+[lib]
+name = "tool_name"
+path = "src/lib.rs"
+
+[[bin]]
+name = "tool-name"
+path = "src/main.rs"
+
+[dependencies]
+# Zero runtime dependencies - uses only std library
+
+[dev-dependencies]
+# None - uses built-in test framework
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
