@@ -1,0 +1,194 @@
+name: Update Quality Dashboard
+
+on:
+  workflow_run:
+    workflows: ["Test All Tools"]
+    types:
+      - completed
+    branches:
+      - main
+  schedule:
+    # Run daily at 3 AM UTC (after nightly tests)
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    # Allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  update-dashboard:
+    name: Update Dashboard
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Discover and test tools
+        id: test-tools
+        run: |
+          mkdir -p docs
+
+          # Initialize dashboard
+          cat > docs/TOOL_DASHBOARD.md << 'EOL'
+          # Tuulbelt Tool Quality Dashboard
+
+          **Last Updated:** $(date -u +"%Y-%m-%d %H:%M UTC")
+          **Total Tools:** 0
+          **Status:** Scanning...
+
+          ---
+
+          ## Tool Status
+
+          | Tool | Language | Tests | Build | Status | Version |
+          |------|----------|-------|-------|--------|---------|
+          EOL
+
+          # Find TypeScript tools
+          TS_TOOLS=$(find . -maxdepth 2 -name "package.json" -not -path "*/node_modules/*" -not -path "./.git/*" | \
+            xargs -I {} dirname {} | \
+            grep -E "(test-|.*-tool)" || echo "")
+
+          # Find Rust tools
+          RUST_TOOLS=$(find . -maxdepth 2 -name "Cargo.toml" -not -path "*/target/*" -not -path "./.git/*" | \
+            xargs -I {} dirname {} | \
+            grep -E "(test-|.*-tool)" || echo "")
+
+          TOOL_COUNT=0
+          PASSING_COUNT=0
+          FAILING_COUNT=0
+
+          # Test TypeScript tools
+          if [ -n "$TS_TOOLS" ]; then
+            for tool in $TS_TOOLS; do
+              TOOL_COUNT=$((TOOL_COUNT + 1))
+              TOOL_NAME=$(basename "$tool")
+
+              # Get version from package.json
+              VERSION=$(jq -r '.version' "$tool/package.json" 2>/dev/null || echo "unknown")
+
+              # Run tests
+              cd "$tool"
+              if npm ci > /dev/null 2>&1 && npm test > /dev/null 2>&1 && npm run build > /dev/null 2>&1; then
+                TEST_STATUS="✅ Pass"
+                BUILD_STATUS="✅"
+                STATUS="🟢 Production"
+                PASSING_COUNT=$((PASSING_COUNT + 1))
+              else
+                TEST_STATUS="❌ Fail"
+                BUILD_STATUS="❌"
+                STATUS="🔴 Broken"
+                FAILING_COUNT=$((FAILING_COUNT + 1))
+              fi
+              cd - > /dev/null
+
+              # Count tests
+              TEST_COUNT=$(grep -r "^test(" "$tool/test/" 2>/dev/null | wc -l || echo "0")
+
+              echo "| $TOOL_NAME | TypeScript | $TEST_COUNT | $BUILD_STATUS | $STATUS | $VERSION |" >> docs/TOOL_DASHBOARD.md
+            done
+          fi
+
+          # Test Rust tools
+          if [ -n "$RUST_TOOLS" ]; then
+            for tool in $RUST_TOOLS; do
+              TOOL_COUNT=$((TOOL_COUNT + 1))
+              TOOL_NAME=$(basename "$tool")
+
+              # Get version from Cargo.toml
+              VERSION=$(grep "^version" "$tool/Cargo.toml" | head -1 | sed 's/.*"\(.*\)".*/\1/' || echo "unknown")
+
+              # Run tests
+              cd "$tool"
+              if cargo test > /dev/null 2>&1 && cargo clippy -- -D warnings > /dev/null 2>&1 && cargo build --release > /dev/null 2>&1; then
+                TEST_STATUS="✅ Pass"
+                BUILD_STATUS="✅"
+                STATUS="🟢 Production"
+                PASSING_COUNT=$((PASSING_COUNT + 1))
+              else
+                TEST_STATUS="❌ Fail"
+                BUILD_STATUS="❌"
+                STATUS="🔴 Broken"
+                FAILING_COUNT=$((FAILING_COUNT + 1))
+              fi
+              cd - > /dev/null
+
+              # Count tests
+              TEST_COUNT=$(grep -r "#\[test\]" "$tool/src/" "$tool/tests/" 2>/dev/null | wc -l || echo "0")
+
+              echo "| $TOOL_NAME | Rust | $TEST_COUNT | $BUILD_STATUS | $STATUS | $VERSION |" >> docs/TOOL_DASHBOARD.md
+            done
+          fi
+
+          # Update header with actual counts
+          sed -i "s/\*\*Total Tools:\*\* 0/**Total Tools:** $TOOL_COUNT/" docs/TOOL_DASHBOARD.md
+          sed -i "s/\*\*Status:\*\* Scanning.../\*\*Passing:\*\* $PASSING_COUNT \| \*\*Failing:\*\* $FAILING_COUNT/" docs/TOOL_DASHBOARD.md
+          sed -i "s/\$(date.*)/$(date -u +"%Y-%m-%d %H:%M UTC")/" docs/TOOL_DASHBOARD.md
+
+          # Add footer
+          cat >> docs/TOOL_DASHBOARD.md << 'EOL'
+
+          ---
+
+          ## Status Legend
+
+          - 🟢 **Production** - All tests passing, build successful
+          - 🟡 **In Development** - Work in progress
+          - 🔴 **Broken** - Tests failing or build broken
+          - ⚪ **Not Started** - Planned but not implemented
+
+          ---
+
+          ## Recent Updates
+
+          - Dashboard updated automatically via GitHub Actions
+          - Runs after each test-all-tools workflow completion
+          - Also runs nightly at 3 AM UTC
+
+          ---
+
+          *This dashboard is auto-generated. Do not edit manually.*
+          EOL
+
+          echo "tool-count=$TOOL_COUNT" >> $GITHUB_OUTPUT
+          echo "passing-count=$PASSING_COUNT" >> $GITHUB_OUTPUT
+          echo "failing-count=$FAILING_COUNT" >> $GITHUB_OUTPUT
+
+      - name: Commit dashboard updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add docs/TOOL_DASHBOARD.md
+
+          if git diff --staged --quiet; then
+            echo "No changes to dashboard"
+          else
+            git commit -m "docs: update tool quality dashboard
+
+          Tools: ${{ steps.test-tools.outputs.tool-count }}
+          Passing: ${{ steps.test-tools.outputs.passing-count }}
+          Failing: ${{ steps.test-tools.outputs.failing-count }}
+
+          Auto-generated by update-dashboard workflow"
+            git push
+          fi
+
+      - name: Create summary
+        run: |
+          echo "## Quality Dashboard Updated" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Tools Tested:** ${{ steps.test-tools.outputs.tool-count }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Passing:** ${{ steps.test-tools.outputs.passing-count }} ✅" >> $GITHUB_STEP_SUMMARY
+          echo "**Failing:** ${{ steps.test-tools.outputs.failing-count }} ❌" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Dashboard available at [docs/TOOL_DASHBOARD.md](https://github.com/${{ github.repository }}/blob/main/docs/TOOL_DASHBOARD.md)" >> $GITHUB_STEP_SUMMARY

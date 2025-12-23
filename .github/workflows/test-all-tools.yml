@@ -1,0 +1,198 @@
+name: Test All Tools
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    # Run nightly at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    # Allow manual trigger
+
+jobs:
+  discover-tools:
+    name: Discover Tools
+    runs-on: ubuntu-latest
+    outputs:
+      typescript-tools: ${{ steps.find-tools.outputs.typescript-tools }}
+      rust-tools: ${{ steps.find-tools.outputs.rust-tools }}
+      tool-count: ${{ steps.find-tools.outputs.tool-count }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find all tools
+        id: find-tools
+        run: |
+          # Find TypeScript tools (directories with package.json)
+          TS_TOOLS=$(find . -maxdepth 2 -name "package.json" -not -path "*/node_modules/*" -not -path "./.git/*" | \
+            xargs -I {} dirname {} | \
+            grep -E "(test-|.*-tool)" || echo "")
+
+          # Find Rust tools (directories with Cargo.toml)
+          RUST_TOOLS=$(find . -maxdepth 2 -name "Cargo.toml" -not -path "*/target/*" -not -path "./.git/*" | \
+            xargs -I {} dirname {} | \
+            grep -E "(test-|.*-tool)" || echo "")
+
+          # Convert to JSON arrays for matrix
+          if [ -n "$TS_TOOLS" ]; then
+            TS_JSON=$(echo "$TS_TOOLS" | jq -R -s -c 'split("\n")[:-1]')
+          else
+            TS_JSON="[]"
+          fi
+
+          if [ -n "$RUST_TOOLS" ]; then
+            RUST_JSON=$(echo "$RUST_TOOLS" | jq -R -s -c 'split("\n")[:-1]')
+          else
+            RUST_JSON="[]"
+          fi
+
+          # Count total tools
+          TS_COUNT=$(echo "$TS_JSON" | jq 'length')
+          RUST_COUNT=$(echo "$RUST_JSON" | jq 'length')
+          TOTAL=$((TS_COUNT + RUST_COUNT))
+
+          echo "typescript-tools=$TS_JSON" >> $GITHUB_OUTPUT
+          echo "rust-tools=$RUST_JSON" >> $GITHUB_OUTPUT
+          echo "tool-count=$TOTAL" >> $GITHUB_OUTPUT
+
+          echo "Found $TS_COUNT TypeScript tools and $RUST_COUNT Rust tools"
+
+  test-typescript-tools:
+    name: Test TypeScript Tools
+    needs: discover-tools
+    if: needs.discover-tools.outputs.typescript-tools != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tool: ${{ fromJson(needs.discover-tools.outputs.typescript-tools) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: '${{ matrix.tool }}/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.tool }}
+        run: npm ci
+
+      - name: Run tests
+        working-directory: ${{ matrix.tool }}
+        run: npm test
+
+      - name: Build
+        working-directory: ${{ matrix.tool }}
+        run: npm run build
+
+      - name: Report test results
+        if: always()
+        run: |
+          if [ $? -eq 0 ]; then
+            echo "✅ ${{ matrix.tool }} - Tests passed"
+          else
+            echo "❌ ${{ matrix.tool }} - Tests failed"
+          fi
+
+  test-rust-tools:
+    name: Test Rust Tools
+    needs: discover-tools
+    if: needs.discover-tools.outputs.rust-tools != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tool: ${{ fromJson(needs.discover-tools.outputs.rust-tools) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          components: clippy, rustfmt
+          override: true
+
+      - name: Cache Cargo
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            ${{ matrix.tool }}/target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Run tests
+        working-directory: ${{ matrix.tool }}
+        run: cargo test --verbose
+
+      - name: Run clippy
+        working-directory: ${{ matrix.tool }}
+        run: cargo clippy -- -D warnings
+
+      - name: Check formatting
+        working-directory: ${{ matrix.tool }}
+        run: cargo fmt -- --check
+
+      - name: Build release
+        working-directory: ${{ matrix.tool }}
+        run: cargo build --release
+
+      - name: Report test results
+        if: always()
+        run: |
+          if [ $? -eq 0 ]; then
+            echo "✅ ${{ matrix.tool }} - Tests passed"
+          else
+            echo "❌ ${{ matrix.tool }} - Tests failed"
+          fi
+
+  summary:
+    name: Test Summary
+    needs: [discover-tools, test-typescript-tools, test-rust-tools]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check test results
+        run: |
+          echo "## Test All Tools Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Total Tools:** ${{ needs.discover-tools.outputs.tool-count }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # TypeScript results
+          if [ "${{ needs.test-typescript-tools.result }}" == "success" ]; then
+            echo "✅ TypeScript tools: All passed" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.test-typescript-tools.result }}" == "failure" ]; then
+            echo "❌ TypeScript tools: Some failed" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.test-typescript-tools.result }}" == "skipped" ]; then
+            echo "⏭️ TypeScript tools: None found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Rust results
+          if [ "${{ needs.test-rust-tools.result }}" == "success" ]; then
+            echo "✅ Rust tools: All passed" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.test-rust-tools.result }}" == "failure" ]; then
+            echo "❌ Rust tools: Some failed" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.test-rust-tools.result }}" == "skipped" ]; then
+            echo "⏭️ Rust tools: None found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Fail if any tests failed
+        if: |
+          needs.test-typescript-tools.result == 'failure' ||
+          needs.test-rust-tools.result == 'failure'
+        run: exit 1
