@@ -43,11 +43,16 @@
 .inline-icon svg {
   width: 100%;
   height: 100%;
-  stroke: var(--vp-c-text-1);
+  stroke: #000000; /* Black in light mode */
   fill: none;
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+/* Dark mode: white icons */
+.dark .inline-icon svg {
+  stroke: #ffffff;
 }
 
 /* Status icons */
@@ -106,4 +111,20 @@
 
 .tool-card li .inline-icon {
   flex-shrink: 0;
+}
+
+/* Right-align search bar in navbar */
+.VPNav .VPNavBarSearch {
+  order: 3;
+  margin-left: auto;
+}
+
+.VPNavBar .content-container {
+  display: flex;
+  align-items: center;
+}
+
+.VPNavBar .VPNavBarSearch.search {
+  padding-left: 12px;
+  border-left: 1px solid var(--vp-c-divider);
 }
