@@ -1,5 +1,13 @@
 # Tool Name
 
+[![Tests](https://github.com/tuulbelt/tuulbelt/actions/workflows/test-all-tools.yml/badge.svg)](https://github.com/tuulbelt/tuulbelt/actions/workflows/test-all-tools.yml)
+[![Tool Tests](https://github.com/tuulbelt/tuulbelt/workflows/Test%20All%20Tools/badge.svg?branch=main)](https://github.com/tuulbelt/tuulbelt/actions)
+![Version](https://img.shields.io/badge/version-0.1.0-blue)
+![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)
+![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success)
+![Tests](https://img.shields.io/badge/tests-passing-success)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 One sentence description of what this tool does.
 
 ## Problem
@@ -94,10 +102,38 @@ Exit codes:
 
 Errors are returned in the `error` field of the result object, not thrown.
 
+## Future Enhancements
+
+Potential improvements for future versions:
+
+- Feature idea 1
+- Feature idea 2
+- Feature idea 3
+
 ## Specification
 
 See [SPEC.md](SPEC.md) for detailed specification.
 
+## Demo
+
+See the tool in action:
+
+- **Interactive Demo**: [View on asciinema.org](#) (Coming soon)
+- **Try it Online**: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/tool-name)
+
+> Demos are automatically generated via GitHub Actions. See [`.github/workflows/create-demos.yml`](../.github/workflows/create-demos.yml) for automation details.
+
 ## License
 
 MIT — see [LICENSE](LICENSE)
+
+## Contributing
+
+See [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution guidelines.
+
+## Related Tools
+
+Part of the [Tuulbelt](https://github.com/tuulbelt/tuulbelt) collection:
+- [Test Flakiness Detector](../test-flakiness-detector/) — Detect unreliable tests
+- [CLI Progress Reporting](../cli-progress-reporting/) — Concurrent-safe progress updates
+- More tools coming soon...
