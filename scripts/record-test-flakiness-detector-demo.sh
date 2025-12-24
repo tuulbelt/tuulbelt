@@ -16,7 +16,7 @@ sleep 1
 
 echo \"$ npx tsx src/index.ts --test \\\"echo test\\\" --runs 5\"
 sleep 0.5
-npx tsx src/index.ts --test "echo test" --runs 5
+npx tsx src/index.ts --test \"echo test\" --runs 5
 sleep 2
 
 echo \"\"
