@@ -1,0 +1,49 @@
+name: Create Demo Recordings
+
+on:
+  workflow_dispatch:  # Manual trigger only
+
+jobs:
+  create-demos:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install asciinema
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y asciinema
+
+      - name: Install dependencies
+        run: |
+          cd test-flakiness-detector && npm install
+          cd ../cli-progress-reporting && npm install
+
+      - name: Create Test Flakiness Detector demo
+        env:
+          ASCIINEMA_API_TOKEN: ${{ secrets.ASCIINEMA_API_TOKEN }}
+        run: |
+          cd test-flakiness-detector
+          bash ../scripts/record-flakiness-demo.sh
+
+      - name: Create CLI Progress Reporting demo
+        env:
+          ASCIINEMA_API_TOKEN: ${{ secrets.ASCIINEMA_API_TOKEN }}
+        run: |
+          cd cli-progress-reporting
+          bash ../scripts/record-progress-demo.sh
+
+      - name: Commit demo files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add test-flakiness-detector/demo.cast cli-progress-reporting/demo.cast
+          git add test-flakiness-detector/docs/demo.gif cli-progress-reporting/docs/demo.gif
+          git commit -m "docs: update demo recordings" || echo "No changes to commit"
+          git push
