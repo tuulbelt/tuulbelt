@@ -29,14 +29,27 @@ jobs:
         id: find-tools
         run: |
           # Find TypeScript tools (directories with package.json)
-          TS_TOOLS=$(find . -maxdepth 2 -name "package.json" -not -path "*/node_modules/*" -not -path "./.git/*" | \
+          # Exclude: root, node_modules, .git, docs, templates, scripts, .github, .claude
+          TS_TOOLS=$(find . -maxdepth 2 -name "package.json" \
+            -not -path "./package.json" \
+            -not -path "*/node_modules/*" \
+            -not -path "./.git/*" \
+            -not -path "./docs/*" \
+            -not -path "./templates/*" \
+            -not -path "./scripts/*" \
+            -not -path "./.github/*" \
+            -not -path "./.claude/*" | \
             xargs -I {} dirname {} | \
-            grep -E "(test-|.*-tool)" || echo "")
+            sed 's|^\./||' || echo "")
 
           # Find Rust tools (directories with Cargo.toml)
-          RUST_TOOLS=$(find . -maxdepth 2 -name "Cargo.toml" -not -path "*/target/*" -not -path "./.git/*" | \
+          # Exclude: target, .git
+          RUST_TOOLS=$(find . -maxdepth 2 -name "Cargo.toml" \
+            -not -path "*/target/*" \
+            -not -path "./.git/*" \
+            -not -path "./templates/*" | \
             xargs -I {} dirname {} | \
-            grep -E "(test-|.*-tool)" || echo "")
+            sed 's|^\./||' || echo "")
 
           # Convert to JSON arrays for matrix
           if [ -n "$TS_TOOLS" ]; then
@@ -60,7 +73,9 @@ jobs:
           echo "rust-tools=$RUST_JSON" >> $GITHUB_OUTPUT
           echo "tool-count=$TOTAL" >> $GITHUB_OUTPUT
 
-          echo "Found $TS_COUNT TypeScript tools and $RUST_COUNT Rust tools"
+          echo "Found $TS_COUNT TypeScript tools: $(echo "$TS_JSON" | jq -r '.[]' | tr '\n' ' ')"
+          echo "Found $RUST_COUNT Rust tools: $(echo "$RUST_JSON" | jq -r '.[]' | tr '\n' ' ')"
+          echo "Total: $TOTAL tools"
 
   test-typescript-tools:
     name: Test TypeScript Tools

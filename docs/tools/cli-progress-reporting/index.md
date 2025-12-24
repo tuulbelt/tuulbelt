@@ -68,6 +68,16 @@ File-based state management provides several advantages:
 4. **Recoverable:** State persists across process crashes
 5. **Concurrent-Safe:** Atomic rename operations prevent corruption
 
+## Demo
+
+See the tool in action:
+
+![CLI Progress Demo](/cli-progress-reporting/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](#)**
+
+> Demos are automatically generated via GitHub Actions when demo scripts are updated.
+
 ## Next Steps
 
 - [Getting Started Guide](/tools/cli-progress-reporting/getting-started) - Installation and setup

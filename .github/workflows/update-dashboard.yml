@@ -53,15 +53,28 @@ jobs:
           |------|----------|-------|-------|--------|---------|
           EOL
 
-          # Find TypeScript tools
-          TS_TOOLS=$(find . -maxdepth 2 -name "package.json" -not -path "*/node_modules/*" -not -path "./.git/*" | \
+          # Find TypeScript tools (directories with package.json)
+          # Exclude: root, node_modules, .git, docs, templates, scripts, .github, .claude
+          TS_TOOLS=$(find . -maxdepth 2 -name "package.json" \
+            -not -path "./package.json" \
+            -not -path "*/node_modules/*" \
+            -not -path "./.git/*" \
+            -not -path "./docs/*" \
+            -not -path "./templates/*" \
+            -not -path "./scripts/*" \
+            -not -path "./.github/*" \
+            -not -path "./.claude/*" | \
             xargs -I {} dirname {} | \
-            grep -E "(test-|.*-tool)" || echo "")
+            sed 's|^\./||' || echo "")
 
-          # Find Rust tools
-          RUST_TOOLS=$(find . -maxdepth 2 -name "Cargo.toml" -not -path "*/target/*" -not -path "./.git/*" | \
+          # Find Rust tools (directories with Cargo.toml)
+          # Exclude: target, .git, templates
+          RUST_TOOLS=$(find . -maxdepth 2 -name "Cargo.toml" \
+            -not -path "*/target/*" \
+            -not -path "./.git/*" \
+            -not -path "./templates/*" | \
             xargs -I {} dirname {} | \
-            grep -E "(test-|.*-tool)" || echo "")
+            sed 's|^\./||' || echo "")
 
           TOOL_COUNT=0
           PASSING_COUNT=0

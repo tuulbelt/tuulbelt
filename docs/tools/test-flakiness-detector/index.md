@@ -26,7 +26,17 @@ npm install
 npx tsx src/index.ts --test "npm test" --runs 10
 ```
 
-##Links
+## Demo
+
+See the tool in action:
+
+![Test Flakiness Detector Demo](/test-flakiness-detector/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](#)**
+
+> Demos are automatically generated via GitHub Actions when demo scripts are updated.
+
+## Links
 
 - [Getting Started](/tools/test-flakiness-detector/getting-started)
 - [CLI Usage](/tools/test-flakiness-detector/cli-usage)
