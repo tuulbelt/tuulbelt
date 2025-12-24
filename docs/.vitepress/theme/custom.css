@@ -31,13 +31,13 @@
   stroke: var(--vp-c-brand-2);
 }
 
-/* Dark mode: invert feature icons */
-html.dark .vp-feature-icon img,
-.dark .vp-feature-icon img {
+/* Dark mode: invert feature icons - apply to entire container */
+html.dark .vp-feature-icon,
+.dark .vp-feature-icon {
   filter: invert(1) !important;
 }
 
-html:not(.dark) .vp-feature-icon img {
+html:not(.dark) .vp-feature-icon {
   filter: none !important;
 }
 
