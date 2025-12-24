@@ -75,9 +75,9 @@ cd <tool-name>
 npm test  # or cargo test for Rust tools
 ```
 
-### Try Test Flakiness Detector Now
+### Try Our Tools Now
 
-The first Tuulbelt tool is ready to use:
+**Test Flakiness Detector** — Identify unreliable tests
 
 ```bash
 cd test-flakiness-detector
@@ -93,6 +93,33 @@ npx tsx src/index.ts --test "npm test" --runs 10
 - 🚀 107+ tests with 80%+ coverage
 - 📖 [Full Documentation](test-flakiness-detector/docs/)
 - 🎮 [Example Outputs](test-flakiness-detector/examples/)
+
+---
+
+**CLI Progress Reporting** — Concurrent-safe progress updates
+
+```bash
+cd cli-progress-reporting
+npm install
+
+# Initialize progress tracker
+npx tsx src/index.ts init --total 100 --message "Processing files"
+
+# Update progress
+npx tsx src/index.ts increment --amount 10
+
+# Check current status
+npx tsx src/index.ts get
+```
+
+**Features:**
+- 🔒 Concurrent-safe with file-based atomic writes
+- 🆔 Multiple independent progress trackers
+- 🛠️ CLI and library API
+- 💾 State persistence across processes
+- ⚡ Zero runtime dependencies
+- 🚀 93 tests, dogfooding validated
+- 📖 [Full Documentation](cli-progress-reporting/)
 
 ## Development
 
