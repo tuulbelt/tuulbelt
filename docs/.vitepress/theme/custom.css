@@ -41,14 +41,20 @@
 }
 
 /* Light mode: no filter needed for dark icons */
+:root:not(.dark) .inline-icon,
+:root:not(.dark) img.inline-icon,
 html:not(.dark) .inline-icon,
 html:not(.dark) img.inline-icon {
   filter: none !important;
 }
 
 /* Dark mode: invert colors to make dark icons light */
+:root.dark .inline-icon,
+:root.dark img.inline-icon,
 html.dark .inline-icon,
-html.dark img.inline-icon {
+html.dark img.inline-icon,
+.dark .inline-icon,
+.dark img.inline-icon {
   filter: invert(1) !important;
 }
 
@@ -63,12 +69,15 @@ html.dark img.inline-icon {
   stroke-linejoin: round;
 }
 
+:root:not(.dark) .inline-icon svg,
 html:not(.dark) .inline-icon svg {
   color: var(--vp-c-text-1);
   stroke: var(--vp-c-text-1);
 }
 
-html.dark .inline-icon svg {
+:root.dark .inline-icon svg,
+html.dark .inline-icon svg,
+.dark .inline-icon svg {
   color: var(--vp-c-text-1);
   stroke: var(--vp-c-text-1);
 }
