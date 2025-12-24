@@ -238,12 +238,15 @@ See @CONTRIBUTING.md for full contribution workflow.
 - `/security-scan` - Comprehensive security analysis
 - `/scaffold-tool <name> <lang>` - Create new tool repository
 - `/git-commit <type> <scope> <msg>` - Semantic commit with validation
+- `/handoff` - Create session handoff for next session
+- `/resume-work` - Resume from previous session handoff
 
 ### Specialized Agents
 
 - `test-runner` - Test execution, coverage, debugging
 - `security-reviewer` - Security analysis, vulnerability scanning
 - `scaffold-assistant` - Tool creation, template customization
+- `session-manager` - Session transitions, task planning, complex handoffs
 
 ### Skills
 
@@ -295,6 +298,9 @@ See @CONTRIBUTING.md for full contribution workflow.
 - @docs/QUALITY_CHECKLIST.md - **Pre-commit quality checks**
 - @docs/testing-standards.md - Testing requirements
 - @docs/security-guidelines.md - Security checklist
+- @docs/KNOWN_ISSUES.md - **Tracked bugs and known issues**
+- @.claude/HANDOFF.md - **Session handoff (session → session continuity)**
+- @.claude/NEXT_TASKS.md - **Task backlog and priorities**
 - @.claude/rules/code-style.md - Code examples and patterns
 - @templates/tool-repo-template/ - TypeScript template
 - @templates/rust-tool-template/ - Rust template
