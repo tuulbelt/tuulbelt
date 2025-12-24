@@ -37,7 +37,7 @@ jobs:
 
       - name: Discover and record demos
         env:
-          ASCIINEMA_API_TOKEN: ${{ secrets.ASCIINEMA_API_TOKEN }}
+          ASCIINEMA_INSTALL_ID: ${{ secrets.ASCIINEMA_INSTALL_ID }}
           TARGET_TOOL: ${{ github.event.inputs.tool }}
         run: |
           # Find all tools with demo recording scripts
