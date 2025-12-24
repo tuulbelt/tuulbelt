@@ -9,9 +9,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+### Added - CLI Progress Reporting v0.1.0 (2025-12-24)
+
+**Tool Features:**
+- File-based atomic writes for concurrent-safe progress tracking
+- Multiple independent progress trackers (ID-based isolation)
+- CLI interface with commands: init, increment, set, get, finish, clear
+- Library API for programmatic usage
+- Progress state persistence across process boundaries
+
+**Testing Excellence:**
+- 93 tests across 34 test suites
+- Unit tests (35), CLI integration tests (28), filesystem tests (21), performance tests (9)
+- Comprehensive edge case coverage
+- Dogfooding validation with Test Flakiness Detector (100% pass rate, 0 flaky tests)
+
+**Documentation:**
+- Complete README with usage examples
+- DOGFOODING.md establishing validation practice for all future tools
+- Design patterns to prevent test flakiness
+- CI integration examples
+
+**Impact:**
+- Second Tuulbelt tool complete (2/33, 6%)
+- Establishes dogfooding as standard practice
+- Demonstrates concurrent-safe file operations pattern
+- Progress: Phase 1 Quick Tools 2/5 (40%)
+
+### Added - Documentation Updates (2025-12-24)
 - Session handoff documentation system (STATUS.md, CHANGELOG.md, ROADMAP.md)
 - Tool-level STATUS.md and CHANGELOG.md templates in scaffolding
+- Updated TOOL_DASHBOARD.md with both completed tools
 
 ## [0.2.0] - 2025-12-23
 

@@ -16,7 +16,7 @@ Each tool in Tuulbelt:
 
 ### CLI/DevTools
 - **[Structured Error Handler](https://github.com/tuulbelt/structured-error-handler)** — Error format + serialization with context preservation (TBD)
-- **[CLI Progress Reporting](https://github.com/tuulbelt/cli-progress-reporting)** — Concurrent-safe progress updates (TBD)
+- **[CLI Progress Reporting](cli-progress-reporting/)** — Concurrent-safe progress updates 🟢 v0.1.0 | [📖 Docs](cli-progress-reporting/) | [🚀 Examples](cli-progress-reporting/examples/)
 - **[Configuration File Merger](https://github.com/tuulbelt/config-file-merger)** — ENV + config + CLI arg merging (TBD)
 - **[Cross-Platform Path Normalizer](https://github.com/tuulbelt/path-normalizer)** — Windows/Unix path consistency (TBD)
 
@@ -75,9 +75,9 @@ cd <tool-name>
 npm test  # or cargo test for Rust tools
 ```
 
-### Try Test Flakiness Detector Now
+### Try Our Tools Now
 
-The first Tuulbelt tool is ready to use:
+**Test Flakiness Detector** — Identify unreliable tests
 
 ```bash
 cd test-flakiness-detector
@@ -94,6 +94,33 @@ npx tsx src/index.ts --test "npm test" --runs 10
 - 📖 [Full Documentation](test-flakiness-detector/docs/)
 - 🎮 [Example Outputs](test-flakiness-detector/examples/)
 
+---
+
+**CLI Progress Reporting** — Concurrent-safe progress updates
+
+```bash
+cd cli-progress-reporting
+npm install
+
+# Initialize progress tracker
+npx tsx src/index.ts init --total 100 --message "Processing files"
+
+# Update progress
+npx tsx src/index.ts increment --amount 10
+
+# Check current status
+npx tsx src/index.ts get
+```
+
+**Features:**
+- 🔒 Concurrent-safe with file-based atomic writes
+- 🆔 Multiple independent progress trackers
+- 🛠️ CLI and library API
+- 💾 State persistence across processes
+- ⚡ Zero runtime dependencies
+- 🚀 93 tests, dogfooding validated
+- 📖 [Full Documentation](cli-progress-reporting/)
+
 ## Development
 
 - Read [PRINCIPLES.md](PRINCIPLES.md) for design philosophy
@@ -103,15 +130,15 @@ npx tsx src/index.ts --test "npm test" --runs 10
 
 ## Status
 
-🟢 = Implemented (1/33)
+🟢 = Implemented (2/33)
 🟡 = In progress (0/33)
-🔴 = TBD (32/33)
+🔴 = TBD (31/33)
 
-**Recently Completed:** Test Flakiness Detector v0.1.0 (2025-12-23)
+**Recently Completed:** CLI Progress Reporting v0.1.0 (2025-12-23)
 
-**Next Up:** CLI Progress/Status Reporting 🎯
+**Next Up:** Cross-Platform Path Handling 🎯
 
-**Progress:** 1 of 33 tools implemented (3%) | Phase 1 Quick Tools: 1/5 (20%)
+**Progress:** 2 of 33 tools implemented (6%) | Phase 1 Quick Tools: 2/5 (40%)
 
 ## License
 

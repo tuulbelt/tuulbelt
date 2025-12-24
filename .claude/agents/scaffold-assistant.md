@@ -187,7 +187,33 @@ cargo fmt -- --check
 cargo clippy -- -D warnings
 ```
 
-### Step 6: Report Results
+### Step 6: Create Documentation Structure
+
+**Multi-Tool VitePress Documentation:**
+
+After scaffolding the tool, guide the user to create documentation:
+
+```bash
+mkdir -p docs/tools/$TOOL_NAME
+```
+
+**Required documentation pages in docs/tools/$TOOL_NAME/:**
+
+1. **index.md** - Overview, features, quick start, links
+2. **getting-started.md** - Installation, basic concepts, first example
+3. **cli-usage.md** - Command-line reference (if CLI tool)
+4. **library-usage.md** - API usage (if library)
+5. **examples.md** - Real-world usage patterns
+6. **api-reference.md** - Complete API documentation
+
+**Reference pattern:** Point to `docs/tools/cli-progress-reporting/` as the template.
+
+**Update VitePress configuration:**
+- Add tool sidebar to `docs/.vitepress/config.ts`
+- Add tool card to `docs/index.md` landing page
+- Add tool to `docs/tools/index.md` list
+
+### Step 7: Report Results
 
 Provide the user with:
 
@@ -196,9 +222,12 @@ Provide the user with:
    - Update README.md with detailed description
    - Update SPEC.md with formal specification
    - Implement core functionality in `src/`
-   - Add comprehensive tests
+   - Add comprehensive tests (80%+ coverage)
+   - **Create documentation in docs/tools/$TOOL_NAME/** (see CLI Progress as reference)
+   - **Update VitePress config** (config.ts, index.md, tools/index.md)
    - **Update STATUS.md as you progress** (enables session handoffs)
    - **Update CHANGELOG.md when releasing** (version history)
+   - **Update root README.md and ROADMAP.md** (overall progress)
    - Run `/security-scan` before committing changes
    - Follow Tuulbelt principles (zero dependencies, single problem)
 
@@ -210,8 +239,14 @@ Provide the user with:
    - Rust: `tests/` - Integration tests
    - Both: `STATUS.md` - Development status and session handoffs
    - Both: `CHANGELOG.md` - Version history and releases
+   - **Documentation: `docs/tools/$TOOL_NAME/` - Multi-tool VitePress pages**
 
-4. **Session Handoff**:
+4. **Documentation Reference**:
+   - Point to `docs/tools/cli-progress-reporting/` as the complete pattern
+   - Mention deployment to `https://tuulbelt.github.io/tuulbelt/`
+   - Explain the multi-tool documentation architecture (all tools in one site)
+
+5. **Session Handoff**:
    - Explain that STATUS.md enables smooth session handoffs
    - Encourage updating it at the end of each session
    - Reference root ROADMAP.md for overall project progress

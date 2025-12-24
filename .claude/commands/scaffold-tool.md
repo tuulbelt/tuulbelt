@@ -82,12 +82,34 @@ After creating the tool:
    - TypeScript: `cd $1 && npm install && npm test`
    - Rust: `cd $1 && cargo test`
 
-2. Display next steps to the user:
+2. Create multi-tool documentation structure:
+   ```bash
+   mkdir -p docs/tools/$1
+   ```
+
+   Create these documentation pages in `docs/tools/$1/`:
+   - `index.md` - Overview and features
+   - `getting-started.md` - Installation and quick start
+   - `cli-usage.md` - Command-line reference (if applicable)
+   - `library-usage.md` - API usage (if applicable)
+   - `examples.md` - Real-world usage patterns
+   - `api-reference.md` - Complete API documentation
+
+   See `docs/tools/cli-progress-reporting/` as the reference pattern.
+
+3. Update VitePress configuration:
+   - Add tool to `docs/.vitepress/config.ts` sidebar
+   - Add tool card to `docs/index.md` landing page
+   - Add tool to `docs/tools/index.md` tools list
+
+4. Display next steps to the user:
    - Update README.md with tool description
    - Implement core functionality in src/
-   - Add comprehensive tests
+   - Add comprehensive tests (80%+ coverage)
+   - **Create documentation in docs/tools/$1/**
    - Update STATUS.md as you progress
    - Update CHANGELOG.md when releasing versions
+   - Update root README.md and ROADMAP.md
    - Run `/security-scan` before first commit
 
 ## Output
@@ -96,5 +118,8 @@ Provide:
 - Path to the new tool directory
 - Language and template used
 - Next steps for development
+- **Documentation structure:** Remind to create docs/tools/$1/ pages
+- **VitePress integration:** Update config.ts, index.md, tools/index.md
 - Reminder to update README.md, SPEC.md, STATUS.md, and CHANGELOG.md
 - Explain that STATUS.md enables session handoffs and progress tracking
+- **Reference:** Point to docs/tools/cli-progress-reporting/ as documentation example
