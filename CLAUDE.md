@@ -34,6 +34,13 @@
    - See @docs/QUALITY_CHECKLIST.md for complete checklist
    - Build must succeed, tests must pass 100%, zero runtime dependencies
 
+6. **ALWAYS USE TodoWrite FOR MULTI-STEP TASKS**
+   - Any task with 3+ steps MUST use TodoWrite to track progress
+   - Do NOT mark work as complete until ALL todos are checked
+   - For new tools, use the checklist from @docs/QUALITY_CHECKLIST.md
+   - Update todo status in real-time as work progresses
+   - This prevents missing critical steps (like GitHub Pages integration)
+
 **Violation of these standards compromises the entire project. When in doubt, verify.**
 
 ---

@@ -21,7 +21,8 @@ export default defineConfig({
           items: [
             { text: 'Overview', link: '/tools/' },
             { text: 'Test Flakiness Detector', link: '/tools/test-flakiness-detector/' },
-            { text: 'CLI Progress Reporting', link: '/tools/cli-progress-reporting/' }
+            { text: 'CLI Progress Reporting', link: '/tools/cli-progress-reporting/' },
+            { text: 'Cross-Platform Path Normalizer', link: '/tools/cross-platform-path-normalizer/' }
           ]
         }
       ],
@@ -68,6 +69,19 @@ export default defineConfig({
             { text: 'Examples', link: '/tools/cli-progress-reporting/examples' },
             { text: 'Dogfooding', link: '/tools/cli-progress-reporting/dogfooding' },
             { text: 'API Reference', link: '/tools/cli-progress-reporting/api-reference' }
+          ]
+        }
+      ],
+      '/tools/cross-platform-path-normalizer/': [
+        {
+          text: 'Cross-Platform Path Normalizer',
+          items: [
+            { text: 'Overview', link: '/tools/cross-platform-path-normalizer/' },
+            { text: 'Getting Started', link: '/tools/cross-platform-path-normalizer/getting-started' },
+            { text: 'CLI Usage', link: '/tools/cross-platform-path-normalizer/cli-usage' },
+            { text: 'Library Usage', link: '/tools/cross-platform-path-normalizer/library-usage' },
+            { text: 'Examples', link: '/tools/cross-platform-path-normalizer/examples' },
+            { text: 'API Reference', link: '/tools/cross-platform-path-normalizer/api-reference' }
           ]
         }
       ]

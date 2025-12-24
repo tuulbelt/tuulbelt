@@ -76,6 +76,73 @@ After completing a feature or fix:
 
 ---
 
+## New Tool Completion Checklist
+
+**CRITICAL: When adding a new tool to Tuulbelt, ALL of these must be completed before marking work as done.**
+
+Use TodoWrite to track these items. Do NOT mark the tool as complete until every item is checked.
+
+### Tool Implementation
+
+- [ ] **Tool code complete**: All functionality implemented and tested
+- [ ] **Tests passing**: 80%+ coverage, all tests green
+- [ ] **README complete**: Installation, usage, API docs, examples
+- [ ] **Zero dependencies**: `dependencies` object empty in package.json or Cargo.toml
+- [ ] **Runs /quality-check**: Tool-level quality check passes
+- [ ] **Dogfooding added**: If applicable, tool uses/validates other Tuulbelt tools
+
+### GitHub Pages Documentation
+
+**This is where we failed - don't skip these:**
+
+- [ ] **VitePress config updated**: Added to `docs/.vitepress/config.ts`
+  - Added to `/tools/` sidebar items list
+  - Created dedicated sidebar section for tool (e.g., `/tools/{tool-name}/`)
+- [ ] **Docs directory created**: `docs/tools/{tool-name}/` exists
+- [ ] **Docs pages copied**: At minimum: index.md, getting-started.md, cli-usage.md, library-usage.md, examples.md, api-reference.md
+- [ ] **Internal links fixed**: All links use `/tools/{tool-name}/` paths, not `/guide/` or `/api/`
+- [ ] **Docs build succeeds**: Run `npm run docs:build` from root - must pass with no dead links
+- [ ] **Tools index updated**: `docs/tools/index.md` shows correct count (e.g., "3/33") and includes new tool card
+
+### GitHub Workflows
+
+- [ ] **Deployment workflow updated**: `.github/workflows/deploy-docs.yml` watches `{tool-name}/**/*.md` in paths trigger
+- [ ] **Test workflow updated** (if needed): Any tool-specific CI configuration added
+
+### Root Repository Updates
+
+- [ ] **Root README updated**: Tool added to appropriate category with status badge
+- [ ] **HANDOFF.md updated**: Current session reflects completed work
+- [ ] **NEXT_TASKS.md updated**: Tool moved from "Coming Soon" to "Completed"
+
+### Final Verification
+
+- [ ] **All tests pass**: Run `/test-all` from root
+- [ ] **TypeScript compiles**: Run `npx tsc --noEmit` in all TS tools
+- [ ] **Docs deploy**: Verify `npm run docs:build` succeeds
+- [ ] **Visual check**: Preview docs with `npm run docs:preview` and navigate to new tool
+- [ ] **Git status clean**: No uncommitted changes
+- [ ] **All TodoWrite items completed**: Don't commit until every todo is done
+
+**Example TodoWrite for New Tool:**
+
+```
+1. [x] Implement tool functionality
+2. [x] Write tests (80%+ coverage)
+3. [x] Create tool README
+4. [ ] Add to VitePress config (docs/.vitepress/config.ts)
+5. [ ] Create docs/tools/{tool-name}/ directory
+6. [ ] Copy docs pages and fix links
+7. [ ] Update docs/tools/index.md
+8. [ ] Update deploy-docs.yml workflow
+9. [ ] Update root README.md
+10. [ ] Run npm run docs:build (verify)
+11. [ ] Run /quality-check
+12. [ ] Update HANDOFF.md and NEXT_TASKS.md
+```
+
+---
+
 ## Common Pitfalls Database
 
 ### TypeScript/Node.js Issues
