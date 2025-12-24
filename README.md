@@ -18,7 +18,7 @@ Each tool in Tuulbelt:
 - **[Structured Error Handler](https://github.com/tuulbelt/structured-error-handler)** — Error format + serialization with context preservation (TBD)
 - **[CLI Progress Reporting](cli-progress-reporting/)** — Concurrent-safe progress updates 🟢 v0.1.0 | [📖 Docs](cli-progress-reporting/) | [🚀 Examples](cli-progress-reporting/examples/)
 - **[Configuration File Merger](https://github.com/tuulbelt/config-file-merger)** — ENV + config + CLI arg merging (TBD)
-- **[Cross-Platform Path Normalizer](https://github.com/tuulbelt/path-normalizer)** — Windows/Unix path consistency (TBD)
+- **[Cross-Platform Path Normalizer](cross-platform-path-normalizer/)** — Windows/Unix path consistency 🟢 v0.1.0 | [📖 Docs](cross-platform-path-normalizer/)
 
 ### Testing & Observability
 - **[Test Flakiness Detector](test-flakiness-detector/)** — Identify unreliable tests 🟢 v0.1.0 | [📖 Docs](test-flakiness-detector/docs/) | [🚀 Examples](test-flakiness-detector/examples/)
@@ -130,15 +130,15 @@ npx tsx src/index.ts get
 
 ## Status
 
-🟢 = Implemented (2/33)
+🟢 = Implemented (3/33)
 🟡 = In progress (0/33)
-🔴 = TBD (31/33)
+🔴 = TBD (30/33)
 
-**Recently Completed:** CLI Progress Reporting v0.1.0 (2025-12-23)
+**Recently Completed:** Cross-Platform Path Normalizer v0.1.0 (2025-12-24)
 
-**Next Up:** Cross-Platform Path Handling 🎯
+**Next Up:** File-Based Semaphore or Output Diffing Utility 🎯
 
-**Progress:** 2 of 33 tools implemented (6%) | Phase 1 Quick Tools: 2/5 (40%)
+**Progress:** 3 of 33 tools implemented (9%) | Phase 1 Quick Tools: 3/5 (60%)
 
 ## License
 
