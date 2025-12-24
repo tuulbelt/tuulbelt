@@ -156,11 +156,11 @@ while true; do
     COMPLETE=$(echo "$PROGRESS" | jq -r '.complete')
     if [ "$COMPLETE" = "true" ]; then
       echo
-      echo "✅ Task complete!"
+      echo "Task complete!"
       break
     fi
   else
-    echo "⏳ Waiting for progress to start..."
+    echo "Waiting for progress to start..."
   fi
 
   sleep 1

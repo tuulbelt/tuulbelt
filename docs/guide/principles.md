@@ -128,18 +128,18 @@ Use semantic versioning:
 
 ## Examples of Tools That Fit
 
-✅ "Run tests N times, report flaky ones" (single problem, clear output)
-✅ "Convert YAML to JSON" (single problem, standard I/O)
-✅ "Manage concurrent test port allocation" (single problem, solves real issue)
-✅ "Generate FFI boilerplate from C headers" (single problem, code generation)
+<img src="/icons/check-circle.svg" class="inline-icon" alt=""> "Run tests N times, report flaky ones" (single problem, clear output)
+<img src="/icons/check-circle.svg" class="inline-icon" alt=""> "Convert YAML to JSON" (single problem, standard I/O)
+<img src="/icons/check-circle.svg" class="inline-icon" alt=""> "Manage concurrent test port allocation" (single problem, solves real issue)
+<img src="/icons/check-circle.svg" class="inline-icon" alt=""> "Generate FFI boilerplate from C headers" (single problem, code generation)
 
 ## Examples of Tools That Don't Fit
 
-❌ "Complete testing framework" (too broad)
-❌ "Multi-format data transformer with plugin system" (framework)
-❌ "Universal configuration management" (scope creep)
-❌ "AI-powered development assistant" (vaporware)
-❌ "Framework for building frameworks" (meta-framework)
+<img src="/icons/x-circle.svg" class="inline-icon" alt=""> "Complete testing framework" (too broad)
+<img src="/icons/x-circle.svg" class="inline-icon" alt=""> "Multi-format data transformer with plugin system" (framework)
+<img src="/icons/x-circle.svg" class="inline-icon" alt=""> "Universal configuration management" (scope creep)
+<img src="/icons/x-circle.svg" class="inline-icon" alt=""> "AI-powered development assistant" (vaporware)
+<img src="/icons/x-circle.svg" class="inline-icon" alt=""> "Framework for building frameworks" (meta-framework)
 
 ---
 

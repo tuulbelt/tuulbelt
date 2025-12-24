@@ -142,11 +142,11 @@ npx tsx src/index.ts init --total 100 --message "Test" --path ./progress
 Make sure you're using the same ID for all commands:
 
 ```bash
-# ✅ Correct - same ID
+# Correct - same ID
 npx tsx src/index.ts init --total 100 --id myproject
 npx tsx src/index.ts increment --id myproject
 
-# ❌ Wrong - different IDs
+# Wrong - different IDs
 npx tsx src/index.ts init --total 100 --id project1
 npx tsx src/index.ts increment --id project2  # Won't find project1
 ```

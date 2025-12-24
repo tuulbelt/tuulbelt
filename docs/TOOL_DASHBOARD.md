@@ -10,16 +10,17 @@
 
 | Tool | Language | Tests | Build | Status | Version |
 |------|----------|-------|-------|--------|---------|
-| test-flakiness-detector | TypeScript | 35 | ✅ | 🟢 Production | 0.1.0 |
+| test-flakiness-detector | TypeScript | 107 | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> | Production | 0.1.0 |
+| cli-progress-reporting | TypeScript | 93 | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> | Production | 0.1.0 |
 
 ---
 
 ## Status Legend
 
-- 🟢 **Production** - All tests passing, build successful
-- 🟡 **In Development** - Work in progress
-- 🔴 **Broken** - Tests failing or build broken
-- ⚪ **Not Started** - Planned but not implemented
+- **Production** - All tests passing, build successful
+- **In Development** - Work in progress
+- **Broken** - Tests failing or build broken
+- **Not Started** - Planned but not implemented
 
 ---
 

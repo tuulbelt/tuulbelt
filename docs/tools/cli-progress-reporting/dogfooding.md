@@ -44,9 +44,9 @@ npx tsx test/flakiness-detection.test.ts
 ### Expected Output
 
 ```
-✅ Flakiness detection complete!
+Flakiness detection complete!
 
-📊 Results:
+Results:
 ────────────────────────────────────────────────────────────
 Total runs:        10
 Passed runs:       10
@@ -56,10 +56,10 @@ Execution time:    ~1200s
 Flaky tests found: 0
 ────────────────────────────────────────────────────────────
 
-✨ Perfect! All tests passed consistently across all runs.
-🎯 No flaky tests detected - tests are deterministic and reliable.
+Perfect! All tests passed consistently across all runs.
+No flaky tests detected - tests are deterministic and reliable.
 
-🏆 Dogfooding Success: Test Flakiness Detector validated CLI Progress Reporting
+Dogfooding Success: Test Flakiness Detector validated CLI Progress Reporting
 ```
 
 ## What We Validate
@@ -82,7 +82,7 @@ Flaky tests found: 0
 - **Total runs:** 2 (development validation)
 - **Pass rate:** 100%
 - **Flaky tests:** 0
-- **Confidence:** Production-ready ✅
+- **Confidence:** Production-ready
 
 Full 10-run validation recommended in CI (takes ~20 minutes).
 
@@ -91,10 +91,10 @@ Full 10-run validation recommended in CI (takes ~20 minutes).
 ### 1. Deterministic Test IDs
 
 ```typescript
-// ✅ Good: Deterministic ID generation
+// Good: Deterministic ID generation
 const id = `test-${Date.now()}-${counter++}`;
 
-// ❌ Bad: Random IDs
+// Bad: Random IDs
 const id = `test-${Math.random()}`;  // Non-deterministic!
 ```
 
@@ -107,7 +107,7 @@ test('my test', () => {
 
   // Do test...
 
-  // ✅ Clean up
+  // Clean up
   clear({ id });
 });
 ```
@@ -115,31 +115,31 @@ test('my test', () => {
 ### 3. Unique Test Resources
 
 ```typescript
-// ✅ Good: Unique filename per test
+// Good: Unique filename per test
 const counterFile = join(tmpDir, `counter-${Date.now()}-${testId}.txt`);
 
-// ❌ Bad: Shared filename
+// Bad: Shared filename
 const counterFile = join(tmpDir, 'counter.txt');  // Collision!
 ```
 
 ### 4. No Probabilistic Logic
 
 ```typescript
-// ✅ Good: Deterministic counter pattern
+// Good: Deterministic counter pattern
 const counter = parseInt(readFileSync(counterFile, 'utf-8'));
 const shouldPass = counter % 2 === 0;
 
-// ❌ Bad: Random behavior
+// Bad: Random behavior
 const shouldPass = Math.random() < 0.5;  // Non-deterministic!
 ```
 
 ## Continuous Validation
 
 **When to Run Flakiness Detection:**
-- ✅ Before every release (10+ runs)
-- ✅ After adding new tests (2-5 runs for quick check)
-- ✅ After modifying test infrastructure (10+ runs)
-- ✅ When CI shows intermittent failures (10+ runs)
+- Before every release (10+ runs)
+- After adding new tests (2-5 runs for quick check)
+- After modifying test infrastructure (10+ runs)
+- When CI shows intermittent failures (10+ runs)
 
 **Development Validation:**
 ```bash
