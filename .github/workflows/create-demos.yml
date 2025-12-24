@@ -160,5 +160,10 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "docs: update demo recordings and embed in READMEs [skip ci]"
+
+            # Pull latest changes with rebase to avoid conflicts
+            git pull --rebase origin main
+
+            # Push changes
             git push
           fi
