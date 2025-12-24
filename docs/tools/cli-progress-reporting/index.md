@@ -76,7 +76,7 @@ See the tool in action:
 
 ![CLI Progress Demo](/cli-progress-reporting/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](#)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/52gagWZuQNnLmvMso34oZlSpZ)**
 
 > Demos are automatically generated via GitHub Actions when demo scripts are updated.
 
