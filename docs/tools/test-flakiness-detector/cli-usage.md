@@ -1,7 +1,238 @@
-# cli usage
+# CLI Usage
 
-Documentation for Test Flakiness Detector - cli usage.
+Command-line interface for Test Flakiness Detector.
 
-*This page is under construction. See the [tool README](https://github.com/tuulbelt/tuulbelt/tree/main/test-flakiness-detector) for complete information.*
+## Basic Syntax
 
-[← Back to Test Flakiness Detector](/tools/test-flakiness-detector/)
+```bash
+npx tsx src/index.ts [options]
+```
+
+## Options
+
+### `--test <command>`
+
+**Required.** The test command to execute repeatedly.
+
+```bash
+npx tsx src/index.ts --test "npm test"
+```
+
+### `--runs <number>`
+
+**Optional.** Number of times to run the tests. Default: `10`, Max: `1000`
+
+```bash
+npx tsx src/index.ts --test "npm test" --runs 20
+```
+
+### `--verbose`
+
+**Optional.** Enable verbose output showing each run's result. Default: `false`
+
+```bash
+npx tsx src/index.ts --test "npm test" --verbose
+```
+
+### `--help`
+
+Display help message with all available options.
+
+```bash
+npx tsx src/index.ts --help
+```
+
+## Examples
+
+### Basic Flakiness Detection
+
+```bash
+npx tsx src/index.ts --test "npm test" --runs 10
+```
+
+### With Verbose Output
+
+```bash
+npx tsx src/index.ts --test "npm test" --runs 20 --verbose
+```
+
+### Different Test Frameworks
+
+**Jest:**
+```bash
+npx tsx src/index.ts --test "npm run test:jest" --runs 15
+```
+
+**Pytest:**
+```bash
+npx tsx src/index.ts --test "pytest tests/" --runs 20
+```
+
+**Cargo (Rust):**
+```bash
+npx tsx src/index.ts --test "cargo test" --runs 10
+```
+
+**Go:**
+```bash
+npx tsx src/index.ts --test "go test ./..." --runs 15
+```
+
+**Vitest:**
+```bash
+npx tsx src/index.ts --test "vitest run" --runs 20
+```
+
+## Output Format
+
+The tool outputs JSON to `flakiness-report.json`:
+
+```json
+{
+  "summary": {
+    "totalRuns": 10,
+    "passedRuns": 8,
+    "failedRuns": 2,
+    "isFlaky": true,
+    "failureRate": 20
+  },
+  "runs": [
+    {
+      "runNumber": 1,
+      "success": true,
+      "exitCode": 0,
+      "duration": 1234,
+      "timestamp": "2025-01-01T00:00:00.000Z"
+    },
+    {
+      "runNumber": 2,
+      "success": false,
+      "exitCode": 1,
+      "duration": 1456,
+      "timestamp": "2025-01-01T00:00:01.000Z",
+      "stdout": "...",
+      "stderr": "Error: test failed"
+    }
+    // ... more runs
+  ]
+}
+```
+
+## Exit Codes
+
+- `0` — All tests passed consistently (no flakiness detected)
+- `1` — Flaky tests detected, or all tests failed consistently
+- `2` — Invalid arguments or execution error
+
+## Integration with CI/CD
+
+### GitHub Actions
+
+```yaml
+name: Flakiness Detection
+
+on: [push, pull_request]
+
+jobs:
+  detect-flakiness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run flakiness detection
+        run: |
+          cd test-flakiness-detector
+          npx tsx src/index.ts --test "npm test" --runs 20
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: flakiness-report
+          path: test-flakiness-detector/flakiness-report.json
+```
+
+### GitLab CI
+
+```yaml
+test:flakiness:
+  script:
+    - cd test-flakiness-detector
+    - npm install
+    - npx tsx src/index.ts --test "npm test" --runs 20
+  artifacts:
+    paths:
+      - test-flakiness-detector/flakiness-report.json
+    when: always
+```
+
+### Jenkins
+
+```groovy
+stage('Flakiness Detection') {
+  steps {
+    dir('test-flakiness-detector') {
+      sh 'npm install'
+      sh 'npx tsx src/index.ts --test "npm test" --runs 20'
+      archiveArtifacts artifacts: 'flakiness-report.json'
+    }
+  }
+}
+```
+
+## Tips & Best Practices
+
+### Choosing Run Count
+
+- **Highly flaky tests:** 5-10 runs sufficient
+- **Occasionally flaky:** 20-50 runs recommended
+- **Rarely flaky:** 100+ runs may be needed
+- **Production validation:** 50-100 runs for confidence
+
+### Use Verbose Mode for Debugging
+
+```bash
+npx tsx src/index.ts --test "npm test" --runs 10 --verbose
+```
+
+This shows the output of each individual run, helpful for diagnosing why tests are flaky.
+
+### Analyzing Results
+
+```bash
+# Run detection
+npx tsx src/index.ts --test "npm test" --runs 20
+
+# Check the report
+cat flakiness-report.json | jq '.summary'
+
+# Count flaky runs
+cat flakiness-report.json | jq '.runs | map(select(.success == false)) | length'
+```
+
+### Performance Considerations
+
+For slow test suites, use fewer runs:
+
+```bash
+# For suites that take > 1 minute
+npx tsx src/index.ts --test "npm test" --runs 5
+
+# For fast suites (< 10 seconds)
+npx tsx src/index.ts --test "npm test" --runs 50
+```
+
+## See Also
+
+- [Getting Started](/tools/test-flakiness-detector/getting-started) — Installation and setup
+- [Examples](/tools/test-flakiness-detector/examples) — Real-world usage examples
+- [API Reference](/tools/test-flakiness-detector/api-reference) — Programmatic API
+- [Library Usage](/tools/test-flakiness-detector/library-usage) — TypeScript/JavaScript integration
