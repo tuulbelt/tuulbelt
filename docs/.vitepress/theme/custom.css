@@ -51,8 +51,8 @@
 }
 
 /* Dark mode: white icons */
-.dark .inline-icon svg {
-  stroke: #ffffff;
+html.dark .inline-icon svg {
+  stroke: #ffffff !important;
 }
 
 /* Status icons */
@@ -113,18 +113,31 @@
   flex-shrink: 0;
 }
 
-/* Right-align search bar in navbar */
-.VPNav .VPNavBarSearch {
-  order: 3;
+/* Right-align everything except Tuulbelt title */
+.VPNavBar .content-body {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.VPNavBar .VPNavBarTitle {
+  flex: 0 0 auto;
+}
+
+.VPNavBar .content {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0;
+}
+
+.VPNavBar .VPNavBarMenu {
   margin-left: auto;
 }
 
-.VPNavBar .content-container {
-  display: flex;
-  align-items: center;
-}
-
-.VPNavBar .VPNavBarSearch.search {
+.VPNavBar .VPNavBarSearch {
+  margin-left: 12px;
   padding-left: 12px;
   border-left: 1px solid var(--vp-c-divider);
 }

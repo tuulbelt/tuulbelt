@@ -1,0 +1,93 @@
+name: Create Demo Recordings
+
+on:
+  workflow_dispatch:  # Manual trigger only
+    inputs:
+      tool:
+        description: 'Tool to record demo for (leave empty for all tools)'
+        required: false
+        type: string
+
+jobs:
+  create-demos:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install asciinema
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y asciinema
+
+      - name: Install agg (asciinema GIF generator)
+        run: |
+          cargo install --git https://github.com/asciinema/agg
+
+      - name: Discover and record demos
+        env:
+          ASCIINEMA_API_TOKEN: ${{ secrets.ASCIINEMA_API_TOKEN }}
+          TARGET_TOOL: ${{ github.event.inputs.tool }}
+        run: |
+          # Find all tools with demo recording scripts
+          if [ -n "$TARGET_TOOL" ]; then
+            # Record specific tool
+            TOOLS=("$TARGET_TOOL")
+          else
+            # Auto-discover all tools with recording scripts
+            TOOLS=()
+            for script in scripts/record-*-demo.sh; do
+              if [ -f "$script" ]; then
+                # Extract tool name from script filename
+                tool=$(basename "$script" | sed 's/^record-//' | sed 's/-demo\.sh$//')
+                TOOLS+=("$tool")
+              fi
+            done
+          fi
+
+          echo "Found ${#TOOLS[@]} tool(s) to record:"
+          printf '%s\n' "${TOOLS[@]}"
+
+          # Record demos for each tool
+          for tool in "${TOOLS[@]}"; do
+            echo "================================"
+            echo "Recording demo for: $tool"
+            echo "================================"
+
+            # Install dependencies if package.json exists
+            if [ -f "$tool/package.json" ]; then
+              echo "Installing npm dependencies for $tool..."
+              cd "$tool"
+              npm install
+              cd ..
+            fi
+
+            # Run the recording script
+            if [ -f "scripts/record-${tool}-demo.sh" ]; then
+              cd "$tool"
+              bash "../scripts/record-${tool}-demo.sh"
+              cd ..
+            else
+              echo "Warning: No recording script found for $tool"
+            fi
+          done
+
+      - name: Commit demo files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Add all .cast files and demo.gif files
+          git add "*/demo.cast" "*/docs/demo.gif" "*/demo-url.txt" || true
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "docs: update demo recordings [skip ci]"
+            git push
+          fi

@@ -82,7 +82,26 @@ After creating the tool:
    - TypeScript: `cd $1 && npm install && npm test`
    - Rust: `cd $1 && cargo test`
 
-2. Create multi-tool documentation structure:
+2. Create demo recording script:
+   ```bash
+   # Create demo script in scripts/record-$1-demo.sh
+   # This enables automatic demo recording via GitHub Actions workflow
+   # Pattern: scripts/record-{tool-name}-demo.sh
+   # The workflow auto-discovers and runs all demo scripts
+   ```
+
+   Use existing scripts as template:
+   - `scripts/record-test-flakiness-detector-demo.sh`
+   - `scripts/record-cli-progress-reporting-demo.sh`
+
+   Key elements:
+   - Set clean terminal environment
+   - Record with asciinema (demo.cast file)
+   - Upload to asciinema.org (if token available)
+   - Convert to GIF (if agg available)
+   - Include realistic usage scenario (~20-30 seconds)
+
+3. Create multi-tool documentation structure:
    ```bash
    mkdir -p docs/tools/$1
    ```
@@ -103,14 +122,16 @@ After creating the tool:
    - Add tool to `docs/tools/index.md` tools list
 
 4. Display next steps to the user:
-   - Update README.md with tool description
+   - Update README.md with tool description (include ## Demo section)
    - Implement core functionality in src/
    - Add comprehensive tests (80%+ coverage)
    - **Create documentation in docs/tools/$1/**
+   - **Create demo recording script in scripts/record-$1-demo.sh**
    - Update STATUS.md as you progress
    - Update CHANGELOG.md when releasing versions
    - Update root README.md and ROADMAP.md
    - Run `/security-scan` before first commit
+   - **Demo will auto-appear in workflows** (no config needed)
 
 ## Output
 
