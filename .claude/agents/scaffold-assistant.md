@@ -213,17 +213,78 @@ mkdir -p docs/tools/$TOOL_NAME
 - Add tool card to `docs/index.md` landing page
 - Add tool to `docs/tools/index.md` list
 
-### Step 7: Report Results
+### Step 7: Create Demo Recording Script
+
+**Create automated demo recording:**
+
+```bash
+# Create demo script at scripts/record-$TOOL_NAME-demo.sh
+```
+
+**Demo Script Template:**
+
+```bash
+#!/bin/bash
+# Record $TOOL_NAME demo
+set -e
+
+DEMO_FILE="demo.cast"
+
+# Clean terminal environment
+export PS1="\$ "
+export TERM=xterm-256color
+
+# Record the demo
+asciinema rec "$DEMO_FILE" --overwrite --command "bash -c '
+echo \"# $TOOL_NAME Demo\"
+sleep 1
+
+# Add realistic usage commands here
+# Show 2-3 key features
+# Keep total time ~20-30 seconds
+
+sleep 2
+'"
+
+# Upload to asciinema.org if token is provided
+if [ -n "$ASCIINEMA_API_TOKEN" ]; then
+  asciinema upload "$DEMO_FILE"
+  # Store URL
+fi
+
+# Convert to GIF
+if command -v agg &> /dev/null; then
+  mkdir -p docs
+  agg "$DEMO_FILE" docs/demo.gif --theme monokai --font-size 16
+fi
+```
+
+**Make script executable:**
+```bash
+chmod +x scripts/record-$TOOL_NAME-demo.sh
+```
+
+**The workflow will automatically:**
+- Discover this script (pattern: `scripts/record-*-demo.sh`)
+- Run it when "Create Demo Recordings" workflow is triggered
+- Upload to asciinema.org
+- Generate GIF
+- Commit results
+
+**No additional configuration needed!**
+
+### Step 8: Report Results
 
 Provide the user with:
 
 1. **Success confirmation** with path to new tool
 2. **Next steps**:
-   - Update README.md with detailed description
+   - Update README.md with detailed description (include ## Demo section)
    - Update SPEC.md with formal specification
    - Implement core functionality in `src/`
    - Add comprehensive tests (80%+ coverage)
    - **Create documentation in docs/tools/$TOOL_NAME/** (see CLI Progress as reference)
+   - **Create demo recording script in scripts/record-$TOOL_NAME-demo.sh** (auto-discovered)
    - **Update VitePress config** (config.ts, index.md, tools/index.md)
    - **Update STATUS.md as you progress** (enables session handoffs)
    - **Update CHANGELOG.md when releasing** (version history)
@@ -239,6 +300,7 @@ Provide the user with:
    - Rust: `tests/` - Integration tests
    - Both: `STATUS.md` - Development status and session handoffs
    - Both: `CHANGELOG.md` - Version history and releases
+   - **Demo: `scripts/record-$TOOL_NAME-demo.sh` - Automated demo recording**
    - **Documentation: `docs/tools/$TOOL_NAME/` - Multi-tool VitePress pages**
 
 4. **Documentation Reference**:
