@@ -31,6 +31,16 @@
   stroke: var(--vp-c-brand-2);
 }
 
+/* Dark mode: invert feature icons */
+html.dark .vp-feature-icon img,
+.dark .vp-feature-icon img {
+  filter: invert(1) !important;
+}
+
+html:not(.dark) .vp-feature-icon img {
+  filter: none !important;
+}
+
 /* Inline icons in text */
 .inline-icon {
   display: inline-block;
