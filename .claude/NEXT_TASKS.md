@@ -92,10 +92,12 @@ See `docs/KNOWN_ISSUES.md` for tracked issues.
 - ✅ **Dogfooding documentation** - Root README.md updated
 - ✅ **Dogfooding documentation** - VitePress docs for test-flakiness-detector and cross-platform-path-normalizer
 - ✅ **Bidirectional validation network** documented across all tools
+- ✅ **Dogfooding patterns added to QUALITY_CHECKLIST.md** - Dynamic import pattern documented
+- ✅ **Dogfooding guidance added to scaffold templates** - Both TypeScript and Rust templates
+- ✅ **detectFlakiness async/await documentation** - All docs show correct async pattern
+- ✅ **Fuzzy test descriptions** - Removed test counts from all READMEs
 
 ### Pending
-- [ ] Add dogfooding patterns to QUALITY_CHECKLIST.md
-- [ ] Add dogfooding guidance to scaffold templates
 - [ ] Add "Contributing" guide page to VitePress (currently just links to CONTRIBUTING.md)
 - [ ] Consider adding troubleshooting sections to tool docs
 - [ ] Add more visual examples (screenshots, diagrams)
