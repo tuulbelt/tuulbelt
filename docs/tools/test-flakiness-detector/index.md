@@ -32,7 +32,7 @@ See the tool in action:
 
 ![Test Flakiness Detector Demo](/test-flakiness-detector/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](#)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/WgUQsHvqswlUFvfJekVH07jXi)**
 
 > Demos are automatically generated via GitHub Actions when demo scripts are updated.
 
