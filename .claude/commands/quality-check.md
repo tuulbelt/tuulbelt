@@ -68,6 +68,28 @@ echo "Checking for runtime dependencies..."
 grep -A10 '^\[dependencies\]' Cargo.toml
 ```
 
+### Documentation Checks (If at Root Level)
+
+If you're at the root of the Tuulbelt repo (contains `docs/.vitepress/`), also run:
+
+```bash
+# 1. Verify VitePress documentation builds without errors
+cd /path/to/tuulbelt/root
+npm run docs:build 2>&1
+
+# 2. Check for dead links in output
+# VitePress will report dead links during build
+
+# 3. Verify all tools are in VitePress config
+grep -r "Cross-Platform Path Normalizer\|Test Flakiness Detector\|CLI Progress Reporting" docs/.vitepress/config.ts
+```
+
+**CRITICAL for new tools:**
+- Tool MUST appear in `docs/.vitepress/config.ts` sidebar
+- Tool docs MUST exist in `docs/tools/{tool-name}/`
+- VitePress build MUST succeed with no dead links
+- Tool MUST be listed in `docs/tools/index.md`
+
 ## Validation Criteria
 
 ### MUST PASS (Blocking)
@@ -76,6 +98,8 @@ grep -A10 '^\[dependencies\]' Cargo.toml
 - [ ] All tests pass (exit code 0)
 - [ ] No TypeScript/Clippy errors or warnings
 - [ ] Zero runtime dependencies in `dependencies` section
+- [ ] **Documentation builds** (if at root: `npm run docs:build` succeeds)
+- [ ] **No dead links** in VitePress output
 
 ### MUST REVIEW (Warnings)
 
@@ -83,6 +107,8 @@ grep -A10 '^\[dependencies\]' Cargo.toml
 - [ ] No temporary test files or artifacts
 - [ ] No debug code (`console.log`, `println!`, etc.)
 - [ ] Code follows Tuulbelt principles (@PRINCIPLES.md)
+- [ ] **New tools added to VitePress config** (if adding a tool)
+- [ ] **New tools listed in docs/tools/index.md** (if adding a tool)
 
 ## Common Pitfalls to Check
 
