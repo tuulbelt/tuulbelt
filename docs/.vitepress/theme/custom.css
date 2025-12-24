@@ -38,20 +38,34 @@
   height: 1em;
   vertical-align: -0.125em;
   margin-right: 0.25em;
+  /* Black in light mode */
+  filter: invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%);
 }
 
+/* Dark mode: white icons */
+.dark .inline-icon,
+html.dark .inline-icon,
+[data-theme="dark"] .inline-icon {
+  /* White in dark mode */
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%) !important;
+}
+
+/* For inline SVG elements (if any exist) */
 .inline-icon svg {
   width: 100%;
   height: 100%;
-  stroke: #000000; /* Black in light mode */
+  stroke: currentColor;
   fill: none;
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
+  color: #000000; /* Black in light mode */
 }
 
-/* Dark mode: white icons */
-html.dark .inline-icon svg {
+.dark .inline-icon svg,
+html.dark .inline-icon svg,
+[data-theme="dark"] .inline-icon svg {
+  color: #ffffff !important;
   stroke: #ffffff !important;
 }
 
@@ -113,31 +127,21 @@ html.dark .inline-icon svg {
   flex-shrink: 0;
 }
 
-/* Right-align everything except Tuulbelt title */
-.VPNavBar .content-body {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
+/* Navbar layout: Tuulbelt left, everything else (nav + search) right */
+.VPNavBar .container {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
 }
 
-.VPNavBar .VPNavBarTitle {
-  flex: 0 0 auto;
+.VPNavBar .title {
+  flex: 0 0 auto !important;
 }
 
 .VPNavBar .content {
-  display: flex;
-  flex: 1;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 0;
-}
-
-.VPNavBar .VPNavBarMenu {
-  margin-left: auto;
-}
-
-.VPNavBar .VPNavBarSearch {
-  margin-left: 12px;
-  padding-left: 12px;
-  border-left: 1px solid var(--vp-c-divider);
+  flex: 1 !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
 }
