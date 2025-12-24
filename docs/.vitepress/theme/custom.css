@@ -41,13 +41,15 @@
 }
 
 /* Light mode: no filter needed for dark icons */
-:root:not(.dark) .inline-icon {
-  filter: none;
+:root:not(.dark) .inline-icon,
+:root:not(.dark) img.inline-icon {
+  filter: none !important;
 }
 
 /* Dark mode: invert colors to make dark icons light */
-:root.dark .inline-icon {
-  filter: invert(1);
+:root.dark .inline-icon,
+:root.dark img.inline-icon {
+  filter: invert(1) !important;
 }
 
 /* For inline SVG elements (if any exist) */
