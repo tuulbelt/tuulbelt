@@ -33,11 +33,21 @@ echo "Demo recording saved to $DEMO_FILE"
 # Upload to asciinema.org if install ID is provided
 if [ -n "$ASCIINEMA_INSTALL_ID" ]; then
   echo "Uploading to asciinema.org..."
-  UPLOAD_URL=$(asciinema upload "$DEMO_FILE" 2>&1 | grep -oP 'https://asciinema.org/a/\K[a-zA-Z0-9]+' || echo "")
+
+  # Set up install ID in asciinema config
+  mkdir -p ~/.config/asciinema
+  echo "$ASCIINEMA_INSTALL_ID" > ~/.config/asciinema/install-id
+
+  # Upload the recording
+  UPLOAD_OUTPUT=$(asciinema upload "$DEMO_FILE" 2>&1)
+  UPLOAD_URL=$(echo "$UPLOAD_OUTPUT" | grep -oP 'https://asciinema.org/a/\K[a-zA-Z0-9]+' || echo "")
 
   if [ -n "$UPLOAD_URL" ]; then
     echo "Demo uploaded: https://asciinema.org/a/$UPLOAD_URL"
     echo "https://asciinema.org/a/$UPLOAD_URL" > demo-url.txt
+  else
+    echo "Upload failed or URL not found in output:"
+    echo "$UPLOAD_OUTPUT"
   fi
 fi
 
