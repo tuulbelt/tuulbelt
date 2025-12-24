@@ -123,16 +123,16 @@ jobs:
             # Update README Demo section
             # Replace placeholder with embedded GIF and real asciinema link
             if grep -q "## Demo" "$tool_dir/README.md"; then
-              # Create updated demo section
-              cat > /tmp/demo-section.md << EOF
-## Demo
-
-![Demo](docs/demo.gif)
-
-**[▶ View interactive recording on asciinema.org]($ASCIINEMA_URL)**
-
-> Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/$tool_dir)
-EOF
+              # Create updated demo section using printf (avoids heredoc issues)
+              {
+                echo "## Demo"
+                echo ""
+                echo "![Demo](docs/demo.gif)"
+                echo ""
+                echo "**[▶ View interactive recording on asciinema.org]($ASCIINEMA_URL)**"
+                echo ""
+                echo "> Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/$tool_dir)"
+              } > /tmp/demo-section.md
 
               # Replace Demo section in README (from ## Demo to next ##)
               awk '/^## Demo$/{p=1} p{if(/^## / && !/^## Demo$/){p=0}} !p' "$tool_dir/README.md" > /tmp/readme-without-demo.md
