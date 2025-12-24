@@ -120,7 +120,12 @@ See [SPEC.md](SPEC.md) for detailed specification.
 
 **[▶ View interactive recording on asciinema.org](#)**
 
-> Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/tool-name)
+<p style="display: flex; align-items: center; gap: 0.5rem;">
+  <strong>Try it online:</strong>
+  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/tool-name">
+    <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz">
+  </a>
+</p>
 
 > Demos are automatically generated and embedded via GitHub Actions when demo scripts are updated.
 

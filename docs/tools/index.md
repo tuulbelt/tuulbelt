@@ -67,10 +67,15 @@ See the [full roadmap](https://github.com/tuulbelt/tuulbelt/blob/main/ROADMAP.md
 Each Tuulbelt tool must meet these requirements:
 
 <img src="/icons/check-circle.svg" class="inline-icon" alt=""> **Single Problem** — Solves one specific problem
+
 <img src="/icons/check-circle.svg" class="inline-icon" alt=""> **Zero Dependencies** — Uses standard library only
+
 <img src="/icons/check-circle.svg" class="inline-icon" alt=""> **Portable Interface** — CLI, files, sockets
+
 <img src="/icons/check-circle.svg" class="inline-icon" alt=""> **Composable** — Works via pipes and file I/O
+
 <img src="/icons/check-circle.svg" class="inline-icon" alt=""> **Independently Cloneable** — Standalone repository
+
 <img src="/icons/check-circle.svg" class="inline-icon" alt=""> **Proven Implementation** — Production-tested and reliable
 
 [Read Full Principles →](/guide/principles)
