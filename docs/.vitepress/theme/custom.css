@@ -38,16 +38,16 @@
   height: 1em;
   vertical-align: -0.125em;
   margin-right: 0.25em;
-  /* Black in light mode */
-  filter: invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%);
 }
 
-/* Dark mode: white icons */
-.dark .inline-icon,
-html.dark .inline-icon,
-[data-theme="dark"] .inline-icon {
-  /* White in dark mode */
-  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%) !important;
+/* Light mode: dark/black icons using currentColor */
+:root .inline-icon {
+  filter: brightness(0%) saturate(100%);
+}
+
+/* Dark mode: light/white icons */
+html.dark .inline-icon {
+  filter: brightness(0%) saturate(100%) invert(100%);
 }
 
 /* For inline SVG elements (if any exist) */
@@ -59,14 +59,16 @@ html.dark .inline-icon,
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
-  color: #000000; /* Black in light mode */
 }
 
-.dark .inline-icon svg,
-html.dark .inline-icon svg,
-[data-theme="dark"] .inline-icon svg {
-  color: #ffffff !important;
-  stroke: #ffffff !important;
+:root .inline-icon svg {
+  color: var(--vp-c-text-1);
+  stroke: var(--vp-c-text-1);
+}
+
+html.dark .inline-icon svg {
+  color: var(--vp-c-text-1);
+  stroke: var(--vp-c-text-1);
 }
 
 /* Status icons */

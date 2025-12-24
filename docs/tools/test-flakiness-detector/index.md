@@ -44,4 +44,3 @@ See the tool in action:
 - [Examples](/tools/test-flakiness-detector/examples)
 - [API Reference](/tools/test-flakiness-detector/api-reference)
 
-*Full documentation coming soon. See the [tool README](https://github.com/tuulbelt/tuulbelt/tree/main/test-flakiness-detector) for complete information.*
