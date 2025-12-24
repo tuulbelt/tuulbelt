@@ -2,13 +2,13 @@
 
 Tuulbelt provides a curated collection of focused, zero-dependency tools for modern software development.
 
-## Completed Tools (2/33)
+## Completed Tools (3/33)
 
 ### Test Flakiness Detector
 
 **Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
 **Language:** TypeScript
-**Tests:** 107 tests across 4 categories
+**Tests:** 148 tests, dogfooding validated
 
 Detect unreliable tests by running them multiple times and tracking failure rates.
 
@@ -17,6 +17,7 @@ Detect unreliable tests by running them multiple times and tracking failure rate
 - Comprehensive JSON reports with failure rates
 - CLI and library API
 - Zero runtime dependencies
+- Real-time progress tracking (uses CLI Progress Reporting)
 
 [View Documentation →](/tools/test-flakiness-detector/)
 
@@ -26,7 +27,7 @@ Detect unreliable tests by running them multiple times and tracking failure rate
 
 **Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
 **Language:** TypeScript
-**Tests:** 93 tests, dogfooding validated
+**Tests:** 125 tests, dogfooding validated
 
 Concurrent-safe progress tracking with file-based atomic writes.
 
@@ -35,17 +36,37 @@ Concurrent-safe progress tracking with file-based atomic writes.
 - Multiple independent progress trackers
 - CLI and library API
 - State persistence across processes
+- Validates test suite reliability (validated by Test Flakiness Detector)
 
 [View Documentation →](/tools/cli-progress-reporting/)
 
 ---
 
+### Cross-Platform Path Normalizer
+
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
+**Language:** TypeScript
+**Tests:** 145 tests, dogfooding validated
+
+Convert Windows/Unix paths with zero dependencies. Handle UNC paths, mixed separators, and drive letters seamlessly.
+
+**Features:**
+- Bidirectional conversion (Windows ↔ Unix)
+- UNC path support (\\server\share ↔ //server/share)
+- Mixed separator handling
+- Auto-format detection
+- CLI and library API
+- Zero runtime dependencies
+
+[View Documentation →](/tools/cross-platform-path-normalizer/)
+
+---
+
 ## Coming Soon
 
-### Phase 1: Quick Tools (3 remaining)
+### Phase 1: Quick Tools (2 remaining)
 
-- <img src="/icons/target.svg" class="inline-icon" alt=""> **Cross-Platform Path Handling** (Next)
-- <img src="/icons/circle.svg" class="inline-icon" alt=""> File-Based Semaphore
+- <img src="/icons/target.svg" class="inline-icon" alt=""> **File-Based Semaphore** (Next)
 - <img src="/icons/circle.svg" class="inline-icon" alt=""> Output Diffing Utility
 
 ### All Planned Tools
