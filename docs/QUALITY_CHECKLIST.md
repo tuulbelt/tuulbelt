@@ -71,6 +71,8 @@ After completing a feature or fix:
 - [ ] **No frameworks**: Tool is a utility, not a framework
 - [ ] **Portable interface**: CLI, files, env vars, or sockets—not proprietary APIs
 - [ ] **Works standalone**: Can be cloned and used independently
+- [ ] **Dogfooding opportunities considered**: Can this tool use or validate other Tuulbelt tools?
+- [ ] **Dogfooding documented**: If tool uses other tools, document in README and VitePress docs
 
 ---
 
@@ -344,6 +346,71 @@ const counterFile = join(tmpDir, `counter-${Date.now()}-${testId}.txt`);
 // Shared filename
 const counterFile = join(tmpDir, 'counter.txt');  // Collision!
 ```
+
+---
+
+### Best Practices
+
+#### Dogfooding Pattern: Dynamic Imports with Graceful Fallback (2025-12-24)
+
+**Pattern:**
+Tools can use other Tuulbelt tools while maintaining standalone independence.
+
+**Use Case:**
+test-flakiness-detector integrates cli-progress-reporting for progress tracking, but works fine without it.
+
+**Implementation:**
+```typescript
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+/**
+ * Try to load optional Tuulbelt tool (monorepo context)
+ * Returns null if not available (standalone context)
+ */
+async function loadOptionalTool(): Promise<any | null> {
+  try {
+    // Check if sibling directory exists
+    const toolPath = join(process.cwd(), '..', 'tool-name', 'src', 'index.ts');
+    if (!existsSync(toolPath)) {
+      return null; // Not in monorepo, that's fine
+    }
+
+    // Dynamic import
+    const module = await import(`file://${toolPath}`);
+    return module;
+  } catch {
+    return null; // Import failed, that's fine - tool is optional
+  }
+}
+
+// Use optional tool with graceful fallback
+export async function myFunction() {
+  const optionalTool = await loadOptionalTool();
+
+  if (optionalTool) {
+    // Enhanced functionality when available
+    optionalTool.doSomething();
+  }
+
+  // Core functionality works regardless
+  return coreLogic();
+}
+```
+
+**Checklist:**
+- [ ] Function is `async` if using dynamic imports
+- [ ] Check file exists before importing (`existsSync`)
+- [ ] Wrap import in try-catch
+- [ ] Return `null` on failure (graceful fallback)
+- [ ] Core functionality works without optional tool
+- [ ] Document in README that tool uses other Tuulbelt tools when in monorepo
+- [ ] Add `test:dogfood` script if tool validates other tools
+
+**Benefits:**
+- **Monorepo**: Tools enhance each other
+- **Standalone**: Tools work independently
+- **Zero Impact**: No runtime dependencies, no breaking changes
 
 ---
 

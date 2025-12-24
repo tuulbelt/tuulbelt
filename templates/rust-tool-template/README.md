@@ -102,6 +102,19 @@ cargo test              # Run all tests
 cargo test -- --nocapture  # Show output
 ```
 
+### Dogfooding (Optional)
+
+If this tool can use or validate other Tuulbelt tools, consider adding:
+
+**Validating Other Tools:**
+- Add dogfooding validation test if appropriate
+- Document validation in README
+- Use Test Flakiness Detector to validate test suite reliability
+
+Example: Cross-Platform Path Normalizer is validated by Test Flakiness Detector (145 tests × 10 runs = 1,450 executions).
+
+Note: Rust tools typically don't import TypeScript tools dynamically, but can be validated by them via CLI.
+
 ## Error Handling
 
 Exit codes:

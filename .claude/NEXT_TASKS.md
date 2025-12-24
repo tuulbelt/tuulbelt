@@ -8,35 +8,35 @@ This document tracks pending work across the Tuulbelt project. Tasks are organiz
 
 ## 🚀 New Tools (Priority Order)
 
-### Phase 1: Quick Tools (3 remaining)
+### Phase 1: Quick Tools (2 remaining)
 
-1. **Cross-Platform Path Normalizer** ⭐ **NEXT**
-   - **Status**: Not started
-   - **Language**: TBD (likely TypeScript - leverages Node.js path APIs)
-   - **Complexity**: Low-Medium
-   - **Value**: High (common pain point)
-   - **Workload**: I/O-bound path manipulation
-   - **Recommendation**: TypeScript for DX and Node.js path module integration
-
-2. **File-Based Semaphore**
+1. **File-Based Semaphore** ⭐ **NEXT**
    - **Status**: Not started
    - **Language**: TBD (TypeScript or Rust)
    - **Complexity**: Medium
    - **Value**: High (process coordination)
    - **Workload**: File system locking
    - **Recommendation**: Consider Rust for atomic operations and performance
+   - **Dogfooding Opportunity**: Could be used by test-flakiness-detector for concurrent test isolation
 
-3. **Output Diffing Utility**
+2. **Output Diffing Utility**
    - **Status**: Not started
    - **Language**: TBD (likely Rust)
    - **Complexity**: Medium-High
    - **Value**: High (testing/validation)
    - **Workload**: CPU-bound comparison algorithms
    - **Recommendation**: Rust for performance on large diffs
+   - **Dogfooding Opportunity**: Could be validated by test-flakiness-detector
+
+### Completed (Phase 1: 3/5 = 60%)
+
+✅ **Test Flakiness Detector** (v0.1.0)
+✅ **CLI Progress Reporting** (v0.1.0)
+✅ **Cross-Platform Path Normalizer** (v0.1.0)
 
 ### Future Phases
 
-See `README.md` for complete roadmap (31 remaining tools).
+See `README.md` for complete roadmap (30 remaining tools).
 
 ---
 
@@ -44,13 +44,23 @@ See `README.md` for complete roadmap (31 remaining tools).
 
 ### Test Flakiness Detector
 
-- [ ] No pending maintenance
 - ✅ v0.1.0 stable
+- ✅ Dogfooding: Integrates cli-progress-reporting for progress tracking
+- ✅ Dogfooding: Validates cli-progress-reporting and cross-platform-path-normalizer test suites
+- 148 tests passing
 
 ### CLI Progress Reporting
 
-- [ ] No pending maintenance
 - ✅ v0.1.0 stable
+- ✅ Dogfooding: Validated by test-flakiness-detector (125 tests × 20 runs = 2,500 executions)
+- ✅ Dogfooding: Used by test-flakiness-detector for real-time progress
+- 125 tests passing
+
+### Cross-Platform Path Normalizer
+
+- ✅ v0.1.0 stable
+- ✅ Dogfooding: Validated by test-flakiness-detector (145 tests × 10 runs = 1,450 executions)
+- 145 tests passing
 
 ---
 
@@ -74,9 +84,18 @@ See `docs/KNOWN_ISSUES.md` for tracked issues.
 
 ### Completed
 - ✅ Test Flakiness Detector - Full VitePress docs
-- ✅ CLI Progress Reporting - Full VitePress docs
+- ✅ CLI Progress Reporting - Full README (no VitePress yet)
+- ✅ Cross-Platform Path Normalizer - Full VitePress docs
 - ✅ README consistency across tools
 - ✅ Footer standardization
+- ✅ **Dogfooding documentation** - All 3 tool READMEs updated
+- ✅ **Dogfooding documentation** - Root README.md updated
+- ✅ **Dogfooding documentation** - VitePress docs for test-flakiness-detector and cross-platform-path-normalizer
+- ✅ **Bidirectional validation network** documented across all tools
+- ✅ **Dogfooding patterns added to QUALITY_CHECKLIST.md** - Dynamic import pattern documented
+- ✅ **Dogfooding guidance added to scaffold templates** - Both TypeScript and Rust templates
+- ✅ **detectFlakiness async/await documentation** - All docs show correct async pattern
+- ✅ **Fuzzy test descriptions** - Removed test counts from all READMEs
 
 ### Pending
 - [ ] Add "Contributing" guide page to VitePress (currently just links to CONTRIBUTING.md)

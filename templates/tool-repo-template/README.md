@@ -94,6 +94,21 @@ npm test              # Run all tests
 npm test -- --watch   # Watch mode
 ```
 
+### Dogfooding (Optional)
+
+If this tool can use or validate other Tuulbelt tools, consider adding:
+
+**Using Other Tools:**
+- Use dynamic imports with graceful fallback (see `@docs/QUALITY_CHECKLIST.md` for pattern)
+- Tool must work standalone (when cloned independently)
+- Document monorepo enhancements in README
+
+**Validating Other Tools:**
+- Add `test:dogfood` script if using Test Flakiness Detector
+- Document validation in README and VitePress docs
+
+Example: Test Flakiness Detector uses CLI Progress Reporting for progress tracking, and validates other tool test suites.
+
 ## Error Handling
 
 Exit codes:
