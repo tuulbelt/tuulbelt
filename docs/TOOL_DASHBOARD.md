@@ -1,8 +1,8 @@
 # Tuulbelt Tool Quality Dashboard
 
-**Last Updated:** 2025-12-24 06:55 UTC
-**Total Tools:** 1
-**Passing:** 1 | **Failing:** 0
+**Last Updated:** 2025-12-24 12:23 UTC
+**Total Tools:** 2
+**Passing:** 2 | **Failing:** 0
 
 ---
 
@@ -11,6 +11,7 @@
 | Tool | Language | Tests | Build | Status | Version |
 |------|----------|-------|-------|--------|---------|
 | test-flakiness-detector | TypeScript | 35 | ✅ | 🟢 Production | 0.1.0 |
+| cli-progress-reporting | TypeScript | 0 | ✅ | 🟢 Production | 0.1.0 |
 
 ---
 
