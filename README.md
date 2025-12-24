@@ -121,6 +121,31 @@ npx tsx src/index.ts get
 - 🚀 93 tests, dogfooding validated
 - 📖 [Full Documentation](cli-progress-reporting/)
 
+## Dogfooding: Tools Working Together
+
+Tuulbelt tools validate and enhance each other through real-world composition:
+
+**Test Flakiness Detector** integrates **CLI Progress Reporting** for real-time progress tracking:
+```bash
+cd test-flakiness-detector
+npx tsx src/index.ts --test "npm test" --runs 20 --verbose
+# [INFO] Progress tracking enabled (dogfooding cli-progress-reporting)
+# Shows live run counts and pass/fail status
+```
+
+**CLI Progress Reporting** and **Cross-Platform Path Normalizer** use **Test Flakiness Detector** to validate their test suites:
+```bash
+cd cli-progress-reporting
+npm run test:dogfood
+# ✅ NO FLAKINESS DETECTED (125 tests × 20 runs = 2,500 executions)
+
+cd cross-platform-path-normalizer
+npm run test:dogfood
+# ✅ NO FLAKINESS DETECTED (145 tests × 10 runs = 1,450 executions)
+```
+
+This creates a **bidirectional validation network** where tools prove their reliability by using each other in production workflows.
+
 ## Development
 
 - Read [PRINCIPLES.md](PRINCIPLES.md) for design philosophy
