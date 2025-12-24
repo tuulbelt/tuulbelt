@@ -51,20 +51,20 @@ Applied to modern development:
 
 ## What Doesn't Belong
 
-❌ **Frameworks** (anything that tries to be your whole app)
-❌ **Heavy abstractions** (frameworks disguised as utilities)
-❌ **Language-specific hacks** (unless the problem is language-specific)
-❌ **Vaporware** (things that work 80% of the time)
-❌ **Opinionated workflows** (unless they're optional)
+<img src="/icons/x-circle.svg" class="inline-icon" alt=""> **Frameworks** (anything that tries to be your whole app)
+<img src="/icons/x-circle.svg" class="inline-icon" alt=""> **Heavy abstractions** (frameworks disguised as utilities)
+<img src="/icons/x-circle.svg" class="inline-icon" alt=""> **Language-specific hacks** (unless the problem is language-specific)
+<img src="/icons/x-circle.svg" class="inline-icon" alt=""> **Vaporware** (things that work 80% of the time)
+<img src="/icons/x-circle.svg" class="inline-icon" alt=""> **Opinionated workflows** (unless they're optional)
 
 ## Quality Standards
 
 Every Tuulbelt tool must meet:
-- ✅ 80%+ test coverage (aim for 90%+)
-- ✅ Comprehensive edge case testing
-- ✅ Dogfooding validation (tested with other Tuulbelt tools)
-- ✅ Production-ready documentation
-- ✅ Zero runtime dependencies verified
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> 80%+ test coverage (aim for 90%+)
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Comprehensive edge case testing
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Dogfooding validation (tested with other Tuulbelt tools)
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production-ready documentation
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Zero runtime dependencies verified
 
 ## Tool Selection
 

@@ -6,17 +6,17 @@ Detect unreliable tests by running them multiple times and tracking failure rate
 
 Test Flakiness Detector helps identify non-deterministic tests by running your test suite multiple times and analyzing the results.
 
-**Status:** ✅ Production Ready (v0.1.0)
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
 **Language:** TypeScript
 **Tests:** 107 tests across 4 categories
 
 ## Features
 
-- 🎯 Framework agnostic - works with any test command
-- 🔍 Detects flaky tests through repeated execution
-- 📊 Comprehensive JSON reports with failure rates
-- ⚡ Zero runtime dependencies
-- 🚀 107+ tests with 80%+ coverage
+- <img src="/icons/target.svg" class="inline-icon" alt=""> Framework agnostic - works with any test command
+- <img src="/icons/search.svg" class="inline-icon" alt=""> Detects flaky tests through repeated execution
+- <img src="/icons/bar-chart.svg" class="inline-icon" alt=""> Comprehensive JSON reports with failure rates
+- <img src="/icons/zap.svg" class="inline-icon" alt=""> Zero runtime dependencies
+- <img src="/icons/rocket.svg" class="inline-icon" alt=""> 107+ tests with 80%+ coverage
 
 ## Quick Start
 

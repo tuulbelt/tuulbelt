@@ -117,11 +117,11 @@ Using CommonJS `require()` in ES module context.
 
 **Prevention:**
 ```typescript
-// ✅ Correct (ES modules)
+// Correct (ES modules)
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-// ❌ Wrong (CommonJS in ES module)
+// Wrong (CommonJS in ES module)
 const { readFileSync } = require('fs');
 ```
 
@@ -142,10 +142,10 @@ Shell doesn't expand globs in quoted strings.
 
 **Prevention:**
 ```json
-// ✅ Correct - explicit file list
+// Correct - explicit file list
 "test": "node --import tsx --test test/index.test.ts test/integration.test.ts"
 
-// ❌ Wrong - glob in quotes
+// Wrong - glob in quotes
 "test": "node --import tsx --test 'test/*.test.ts'"
 ```
 
@@ -165,10 +165,10 @@ VitePress `base` config doesn't match GitHub Pages deployment path.
 ```typescript
 // docs/.vitepress/config.ts
 export default defineConfig({
-  // ✅ Correct - matches deployment URL
+  // Correct - matches deployment URL
   base: '/tuulbelt/',  // For https://tuulbelt.github.io/tuulbelt/
 
-  // ❌ Wrong - mismatched path
+  // Wrong - mismatched path
   base: '/test-flakiness-detector/',  // Doesn't match actual URL
 })
 ```
@@ -191,7 +191,7 @@ Sidebar references pages that don't exist yet.
 
 **Prevention:**
 ```typescript
-// ✅ Create ALL pages before adding to sidebar
+// Create ALL pages before adding to sidebar
 sidebar: {
   '/guide/': [
     { text: 'Getting Started', link: '/guide/getting-started' }  // Must exist!
@@ -256,13 +256,13 @@ Referenced file doesn't exist in `/public` directory.
 
 **Prevention:**
 ```markdown
-<!-- ✅ Correct - file exists in docs/public/ -->
+<!-- Correct - file exists in docs/public/ -->
 ![Logo](/logo.svg)
 
-<!-- ❌ Wrong - file doesn't exist -->
+<!-- Wrong - file doesn't exist -->
 ![Logo](/missing-file.svg)
 
-<!-- ✅ Better - use icon objects for features -->
+<!-- Better - use icon objects for features -->
 features:
   - icon:
       src: /icons/target.svg
@@ -292,11 +292,11 @@ Manually editing `Cargo.lock` instead of using cargo commands.
 
 **Prevention:**
 ```bash
-# ✅ Correct
+# Correct
 cargo add package-name
 cargo update
 
-# ❌ Wrong
+# Wrong
 vim Cargo.lock  # Never manually edit
 ```
 
@@ -314,12 +314,12 @@ Using `Math.random()`, `process.hrtime()`, or non-deterministic patterns.
 
 **Prevention:**
 ```typescript
-// ✅ Deterministic counter pattern
+// Deterministic counter pattern
 const counterFile = `/tmp/counter-${Date.now()}.txt`;
 writeFileSync(counterFile, '0');
 // Use counter % 2 for predictable pass/fail
 
-// ❌ Probabilistic
+// Probabilistic
 if (Math.random() < 0.5) fail();  // Non-deterministic!
 ```
 
@@ -338,10 +338,10 @@ Multiple tests sharing same counter/state filenames.
 
 **Prevention:**
 ```typescript
-// ✅ Unique filenames with timestamp
+// Unique filenames with timestamp
 const counterFile = join(tmpDir, `counter-${Date.now()}-${testId}.txt`);
 
-// ❌ Shared filename
+// Shared filename
 const counterFile = join(tmpDir, 'counter.txt');  // Collision!
 ```
 
@@ -434,7 +434,7 @@ if [ -n "$(git status --porcelain)" ]; then
 fi
 
 echo ""
-echo "✅ All quality checks passed!"
+echo "All quality checks passed!"
 ```
 
 **Usage:**

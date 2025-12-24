@@ -6,7 +6,7 @@ Tuulbelt provides a curated collection of focused, zero-dependency tools for mod
 
 ### Test Flakiness Detector
 
-**Status:** ✅ Production Ready (v0.1.0)
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
 **Language:** TypeScript
 **Tests:** 107 tests across 4 categories
 
@@ -24,7 +24,7 @@ Detect unreliable tests by running them multiple times and tracking failure rate
 
 ### CLI Progress Reporting
 
-**Status:** ✅ Production Ready (v0.1.0)
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
 **Language:** TypeScript
 **Tests:** 93 tests, dogfooding validated
 
@@ -44,9 +44,9 @@ Concurrent-safe progress tracking with file-based atomic writes.
 
 ### Phase 1: Quick Tools (3 remaining)
 
-- 🎯 **Cross-Platform Path Handling** (Next)
-- ⚪ File-Based Semaphore
-- ⚪ Output Diffing Utility
+- <img src="/icons/target.svg" class="inline-icon" alt=""> **Cross-Platform Path Handling** (Next)
+- <img src="/icons/circle.svg" class="inline-icon" alt=""> File-Based Semaphore
+- <img src="/icons/circle.svg" class="inline-icon" alt=""> Output Diffing Utility
 
 ### All Planned Tools
 
@@ -66,11 +66,11 @@ See the [full roadmap](https://github.com/tuulbelt/tuulbelt/blob/main/ROADMAP.md
 
 Each Tuulbelt tool must meet these requirements:
 
-✅ **Single Problem** — Solves one specific problem
-✅ **Zero Dependencies** — Uses standard library only
-✅ **Portable Interface** — CLI, files, sockets
-✅ **Composable** — Works via pipes and file I/O
-✅ **Independently Cloneable** — Standalone repository
-✅ **Proven Implementation** — Production-tested and reliable
+<img src="/icons/check-circle.svg" class="inline-icon" alt=""> **Single Problem** — Solves one specific problem
+<img src="/icons/check-circle.svg" class="inline-icon" alt=""> **Zero Dependencies** — Uses standard library only
+<img src="/icons/check-circle.svg" class="inline-icon" alt=""> **Portable Interface** — CLI, files, sockets
+<img src="/icons/check-circle.svg" class="inline-icon" alt=""> **Composable** — Works via pipes and file I/O
+<img src="/icons/check-circle.svg" class="inline-icon" alt=""> **Independently Cloneable** — Standalone repository
+<img src="/icons/check-circle.svg" class="inline-icon" alt=""> **Proven Implementation** — Production-tested and reliable
 
 [Read Full Principles →](/guide/principles)

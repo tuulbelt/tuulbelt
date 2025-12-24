@@ -17,27 +17,33 @@ hero:
       link: https://github.com/tuulbelt/tuulbelt
 
 features:
-  - icon: 🎯
+  - icon:
+      src: /icons/target.svg
     title: Single Problem Per Tool
     details: Each tool solves one specific problem and solves it well. No framework bloat, no feature creep.
 
-  - icon: ⚡
+  - icon:
+      src: /icons/zap.svg
     title: Zero External Dependencies
     details: Tools use only standard library features. No dependency management, no supply chain vulnerabilities.
 
-  - icon: 🔌
+  - icon:
+      src: /icons/plug.svg
     title: Portable Interface
     details: CLI, files, sockets—not proprietary APIs. Works across languages, shells, and systems.
 
-  - icon: 🔗
+  - icon:
+      src: /icons/link.svg
     title: Composable
     details: Tools chain together via pipes, environment variables, and file I/O. Unix philosophy applied.
 
-  - icon: 📦
+  - icon:
+      src: /icons/package.svg
     title: Independently Cloneable
     details: Each tool is a standalone repository. Clone what you need, nothing more.
 
-  - icon: ✅
+  - icon:
+      src: /icons/check-circle.svg
     title: Proven Implementation
     details: No moonshots, no "works 80%" solutions. Every tool is production-tested and reliable.
 ---
@@ -52,10 +58,10 @@ features:
 
 Identify unreliable tests by running them multiple times and tracking failure rates.
 
-- 🎯 Framework agnostic
-- 📊 Comprehensive JSON reports
-- 🚀 107+ tests, production-ready
-- 📖 Full documentation with examples
+- <img src="/icons/target.svg" class="inline-icon" alt=""> Framework agnostic
+- <img src="/icons/bar-chart.svg" class="inline-icon" alt=""> Comprehensive JSON reports
+- <img src="/icons/rocket.svg" class="inline-icon" alt=""> 107+ tests, production-ready
+- <img src="/icons/book.svg" class="inline-icon" alt=""> Full documentation with examples
 
 [Get Started →](/tools/test-flakiness-detector/getting-started)
 
@@ -67,10 +73,10 @@ Identify unreliable tests by running them multiple times and tracking failure ra
 
 Concurrent-safe progress tracking with file-based atomic writes.
 
-- 🔒 Concurrent-safe operations
-- 🆔 Multiple independent trackers
-- 💾 State persistence
-- 🧪 Dogfooding validated
+- <img src="/icons/lock.svg" class="inline-icon" alt=""> Concurrent-safe operations
+- <img src="/icons/hash.svg" class="inline-icon" alt=""> Multiple independent trackers
+- <img src="/icons/database.svg" class="inline-icon" alt=""> State persistence
+- <img src="/icons/beaker.svg" class="inline-icon" alt=""> Dogfooding validated
 
 [Get Started →](/tools/cli-progress-reporting/getting-started)
 
@@ -80,11 +86,11 @@ Concurrent-safe progress tracking with file-based atomic writes.
 
 **Phase 1: Quick Tools** — 2 of 5 complete (40%)
 
-- ✅ Test Flakiness Detector
-- ✅ CLI Progress Reporting
-- 🎯 Cross-Platform Path Handling (next)
-- ⚪ File-Based Semaphore
-- ⚪ Output Diffing Utility
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Test Flakiness Detector
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> CLI Progress Reporting
+- <img src="/icons/target.svg" class="inline-icon" alt=""> Cross-Platform Path Handling (next)
+- <img src="/icons/circle.svg" class="inline-icon" alt=""> File-Based Semaphore
+- <img src="/icons/circle.svg" class="inline-icon" alt=""> Output Diffing Utility
 
 **Overall Progress:** 2 of 33 tools (6%)
 

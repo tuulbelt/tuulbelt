@@ -476,7 +476,7 @@ rm -rf /tmp/old-data/*
 
 **Log output:**
 ```
-⚠️  WARNING: Potentially dangerous command detected!
+WARNING: Potentially dangerous command detected!
 Command: rm -rf /tmp/old-data/*
 
 This command matches a dangerous pattern: rm -rf

@@ -7,8 +7,6 @@ export default defineConfig({
   srcExclude: ['**/setup/**', '**/claude-code-*.md', '**/tool-template.md'],
 
   themeConfig: {
-    logo: '/logo.svg',
-
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Tools', link: '/tools/' },

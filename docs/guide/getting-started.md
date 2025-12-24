@@ -39,11 +39,11 @@ npx tsx src/index.ts get
 
 | Tool | Status | Description |
 |------|--------|-------------|
-| [Test Flakiness Detector](/tools/test-flakiness-detector/) | ✅ v0.1.0 | Detect unreliable tests |
-| [CLI Progress Reporting](/tools/cli-progress-reporting/) | ✅ v0.1.0 | Concurrent-safe progress tracking |
-| Cross-Platform Path Handling | 🎯 Next | Normalize paths across OS |
-| File-Based Semaphore | ⚪ Planned | Process synchronization |
-| Output Diffing Utility | ⚪ Planned | Semantic diff for test output |
+| [Test Flakiness Detector](/tools/test-flakiness-detector/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | Detect unreliable tests |
+| [CLI Progress Reporting](/tools/cli-progress-reporting/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | Concurrent-safe progress tracking |
+| Cross-Platform Path Handling | <img src="/icons/target.svg" class="inline-icon" alt=""> Next | Normalize paths across OS |
+| File-Based Semaphore | <img src="/icons/circle.svg" class="inline-icon" alt=""> Planned | Process synchronization |
+| Output Diffing Utility | <img src="/icons/circle.svg" class="inline-icon" alt=""> Planned | Semantic diff for test output |
 
 **Progress:** 2 of 33 tools (6%)
 
@@ -148,7 +148,7 @@ execSync('npx tsx ../test-flakiness-detector/src/index.ts --test "npm test"');
 
 ### Can I use these in production?
 
-Yes! All ✅ production-ready tools are battle-tested with 80%+ test coverage and dogfooding validation.
+Yes! All production-ready tools are battle-tested with 80%+ test coverage and dogfooding validation.
 
 ### Which programming languages are supported?
 

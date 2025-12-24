@@ -6,28 +6,28 @@ Concurrent-safe progress tracking with file-based atomic writes.
 
 CLI Progress Reporting provides a simple, reliable way to track progress across multiple concurrent processes. It uses file-based atomic writes to ensure data consistency, making it perfect for parallel workflows, shell scripts, and CI/CD pipelines.
 
-**Status:** ✅ Production Ready (v0.1.0)
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
 **Language:** TypeScript
 **Repository:** [tuulbelt/tuulbelt/cli-progress-reporting](https://github.com/tuulbelt/tuulbelt/tree/main/cli-progress-reporting)
 
 ## Features
 
-### 🔒 Concurrent-Safe Operations
+### <img src="/icons/lock.svg" class="inline-icon" alt=""> Concurrent-Safe Operations
 File-based atomic writes prevent race conditions when multiple processes update progress simultaneously.
 
-### 🆔 Multiple Independent Trackers
+### <img src="/icons/hash.svg" class="inline-icon" alt=""> Multiple Independent Trackers
 Track multiple operations in parallel using unique IDs. Each tracker maintains its own isolated state.
 
-### 🛠️ CLI and Library API
+### <img src="/icons/tool.svg" class="inline-icon" alt=""> CLI and Library API
 Use from command line for shell scripts or import as a library for TypeScript/JavaScript applications.
 
-### 💾 State Persistence
+### <img src="/icons/database.svg" class="inline-icon" alt=""> State Persistence
 Progress state persists across process boundaries. Pick up where you left off after crashes or restarts.
 
-### ⚡ Zero Runtime Dependencies
+### <img src="/icons/zap.svg" class="inline-icon" alt=""> Zero Runtime Dependencies
 Uses only Node.js built-ins. No `npm install` required in production.
 
-### 🧪 Dogfooding Validated
+### <img src="/icons/beaker.svg" class="inline-icon" alt=""> Dogfooding Validated
 Validated using Test Flakiness Detector (100% pass rate, 0 flaky tests). All 93 tests are deterministic and reliable.
 
 ## Quick Start
