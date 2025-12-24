@@ -16,7 +16,7 @@ sleep 1
 
 echo \"$ npx tsx src/index.ts init --total 100 --message \\\"Processing files\\\"\"
 sleep 0.5
-npx tsx src/index.ts init --total 100 --message "Processing files"
+npx tsx src/index.ts init --total 100 --message \"Processing files\"
 sleep 1
 
 echo \"\"
@@ -31,7 +31,7 @@ sleep 1
 echo \"\"
 echo \"$ npx tsx src/index.ts finish --message \\\"Complete!\\\"\"
 sleep 0.5
-npx tsx src/index.ts finish --message "Complete!"
+npx tsx src/index.ts finish --message \"Complete!\"
 sleep 2
 '"
 
