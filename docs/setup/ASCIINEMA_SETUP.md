@@ -12,7 +12,7 @@ You need an asciinema.org account and API token.
 2. Sign up for a free account
 3. Verify your email
 
-## Step 2: Get API Token
+## Step 2: Get Install ID
 
 1. Install asciinema locally:
    ```bash
@@ -26,17 +26,19 @@ You need an asciinema.org account and API token.
    pip install asciinema
    ```
 
-2. Authenticate asciinema (this creates a local token):
+2. Authenticate asciinema (this creates a local install ID):
    ```bash
    asciinema auth
    ```
 
-3. Get your API token:
+3. Get your Install ID:
    ```bash
    cat ~/.config/asciinema/install-id
    ```
 
-   Copy this token - you'll need it for GitHub secrets.
+   Copy this ID - you'll need it for GitHub secrets.
+
+   **Alternative:** Go to https://asciinema.org/user/edit and copy the Installation ID shown there.
 
 ## Step 3: Add GitHub Secret
 
@@ -44,9 +46,11 @@ You need an asciinema.org account and API token.
 2. Navigate to **Settings** → **Secrets and variables** → **Actions**
 3. Click **New repository secret**
 4. Set:
-   - **Name:** `ASCIINEMA_API_TOKEN`
-   - **Value:** [paste your token from step 2]
+   - **Name:** `ASCIINEMA_INSTALL_ID`
+   - **Value:** [paste your install ID from step 2]
 5. Click **Add secret**
+
+**Note:** Asciinema changed from `ASCIINEMA_API_TOKEN` to `ASCIINEMA_INSTALL_ID` in recent versions.
 
 ## Step 4: Verify Setup
 

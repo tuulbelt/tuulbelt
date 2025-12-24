@@ -30,14 +30,14 @@ sleep 3
 
 echo "Demo recording saved to $DEMO_FILE"
 
-# Upload to asciinema.org if token is provided
-if [ -n "$ASCIINEMA_API_TOKEN" ]; then
+# Upload to asciinema.org if install ID is provided
+if [ -n "$ASCIINEMA_INSTALL_ID" ]; then
   echo "Uploading to asciinema.org..."
   UPLOAD_URL=$(asciinema upload "$DEMO_FILE" 2>&1 | grep -oP 'https://asciinema.org/a/\K[a-zA-Z0-9]+' || echo "")
 
   if [ -n "$UPLOAD_URL" ]; then
     echo "Demo uploaded: https://asciinema.org/a/$UPLOAD_URL"
-    echo "$UPLOAD_URL" > demo-url.txt
+    echo "https://asciinema.org/a/$UPLOAD_URL" > demo-url.txt
   fi
 fi
 

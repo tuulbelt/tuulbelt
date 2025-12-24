@@ -246,10 +246,10 @@ sleep 1
 sleep 2
 '"
 
-# Upload to asciinema.org if token is provided
-if [ -n "$ASCIINEMA_API_TOKEN" ]; then
+# Upload to asciinema.org if install ID is provided
+if [ -n "$ASCIINEMA_INSTALL_ID" ]; then
   asciinema upload "$DEMO_FILE"
-  # Store URL
+  # Store URL in demo-url.txt
 fi
 
 # Convert to GIF
