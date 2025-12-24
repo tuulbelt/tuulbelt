@@ -117,20 +117,26 @@ test('handles empty input', () => {
 });
 ```
 
-Run tests in CI — add `.github/workflows/test.yml`:
+**CI/CD Automatic Testing:**
 
-```yaml
-name: Test
-on: [push, pull_request]
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-      - run: npm test
+Your tool will be **automatically discovered and tested** by CI workflows - no configuration needed!
+
+**How it works:**
+- **TypeScript tools:** Discovered by finding `package.json` files (excluding root, docs, templates, .github, .claude, scripts)
+- **Rust tools:** Discovered by finding `Cargo.toml` files (excluding templates)
+- **Workflows:** `test-all-tools.yml` and `update-dashboard.yml` auto-discover all tools
+- **When:** On push to main, pull requests, and nightly at 2 AM UTC
+- **What gets tested:**
+  - TypeScript: `npm ci`, `npm test`, `npm run build`
+  - Rust: `cargo test`, `cargo clippy -- -D warnings`, `cargo fmt --check`, `cargo build --release`
+
+**Just create your tool directory with `package.json` or `Cargo.toml` and CI will find it!**
+
+Example discovery output:
+```
+Found 2 TypeScript tools: cli-progress-reporting test-flakiness-detector
+Found 0 Rust tools:
+Total: 2 tools
 ```
 
 ### Step 6: Documentation

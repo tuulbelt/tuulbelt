@@ -112,6 +112,15 @@ After creating the tool:
    - **GIF is served on GitHub Pages** at `/toolname/demo.gif`
    - No manual README editing needed!
 
+   **CI/CD Auto-Discovery:**
+   All tools are automatically discovered and tested by CI workflows:
+   - **TypeScript tools:** Any directory with `package.json` (excluding root, docs, templates, .github, .claude, scripts)
+   - **Rust tools:** Any directory with `Cargo.toml` (excluding templates)
+   - No workflow configuration needed - just create the tool directory!
+   - Workflows auto-run on push to main and pull requests
+   - Tests run via `npm test` or `cargo test`
+   - Both `test-all-tools.yml` and `update-dashboard.yml` discover tools automatically
+
 3. Create multi-tool documentation structure:
    ```bash
    mkdir -p docs/tools/$1

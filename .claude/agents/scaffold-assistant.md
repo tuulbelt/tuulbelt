@@ -297,6 +297,22 @@ chmod +x scripts/record-$TOOL_NAME-demo.sh
 
 **No manual README editing needed!** The workflow handles everything.
 
+**CI/CD Auto-Discovery:**
+
+All tools are automatically discovered and tested - no workflow configuration needed!
+
+- **TypeScript tools:** Discovered by finding `package.json` files
+  - Excludes: root package.json, docs/, templates/, .github/, .claude/, scripts/
+- **Rust tools:** Discovered by finding `Cargo.toml` files
+  - Excludes: templates/
+- **Workflows:** `test-all-tools.yml` and `update-dashboard.yml`
+- **When they run:** On push to main, pull requests, and nightly
+- **What they test:**
+  - TypeScript: `npm ci`, `npm test`, `npm run build`
+  - Rust: `cargo test`, `cargo clippy`, `cargo fmt`, `cargo build --release`
+
+**Just create the tool directory and CI will find it automatically!**
+
 ### Step 8: Report Results
 
 Provide the user with:
