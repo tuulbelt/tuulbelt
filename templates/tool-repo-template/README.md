@@ -116,12 +116,13 @@ See [SPEC.md](SPEC.md) for detailed specification.
 
 ## Demo
 
-See the tool in action:
+![Demo](docs/demo.gif)
 
-- **Interactive Demo**: [View on asciinema.org](#) (Coming soon)
-- **Try it Online**: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/tool-name)
+**[▶ View interactive recording on asciinema.org](#)**
 
-> Demos are automatically generated via GitHub Actions. See [`.github/workflows/create-demos.yml`](../.github/workflows/create-demos.yml) for automation details.
+> Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/tool-name)
+
+> Demos are automatically generated and embedded via GitHub Actions when demo scripts are updated.
 
 ## License
 

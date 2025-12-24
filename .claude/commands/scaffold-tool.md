@@ -101,6 +101,17 @@ After creating the tool:
    - Convert to GIF (if agg available)
    - Include realistic usage scenario (~20-30 seconds)
 
+   **Automatic Embedding:**
+   When the workflow runs (on push to main when demo scripts change):
+   - Generates `$1/demo.cast` (asciinema recording)
+   - Generates `$1/docs/demo.gif` (animated GIF)
+   - Generates `$1/demo-url.txt` (asciinema.org link)
+   - **Automatically updates `$1/README.md` Demo section** with:
+     - Embedded GIF: `![Demo](docs/demo.gif)`
+     - Live asciinema.org link
+   - **GIF is served on GitHub Pages** at `/toolname/demo.gif`
+   - No manual README editing needed!
+
 3. Create multi-tool documentation structure:
    ```bash
    mkdir -p docs/tools/$1

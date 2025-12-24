@@ -266,12 +266,36 @@ chmod +x scripts/record-$TOOL_NAME-demo.sh
 
 **The workflow will automatically:**
 - Discover this script (pattern: `scripts/record-*-demo.sh`)
-- Run it when "Create Demo Recordings" workflow is triggered
-- Upload to asciinema.org
-- Generate GIF
-- Commit results
+- Run when demo scripts are pushed to main branch
+- Execute the recording script
+- Generate `demo.cast` (asciinema recording)
+- Generate `docs/demo.gif` (animated GIF, ~500-800KB)
+- Upload to asciinema.org and save URL to `demo-url.txt`
+- **Automatically embed GIF in `README.md` Demo section**
+- **Automatically update asciinema.org link in README**
+- Commit all changes back to repository
 
-**No additional configuration needed!**
+**What gets embedded in README:**
+```markdown
+## Demo
+
+![Demo](docs/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/xxxxx)**
+
+> Try it online: [![Open in StackBlitz](...)](...)
+```
+
+**What gets embedded in VitePress docs** (`docs/tools/$TOOL_NAME/index.md`):
+```markdown
+## Demo
+
+![Tool Demo](/toolname/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/xxxxx)**
+```
+
+**No manual README editing needed!** The workflow handles everything.
 
 ### Step 8: Report Results
 

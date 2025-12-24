@@ -1,7 +1,13 @@
 name: Create Demo Recordings
 
 on:
-  workflow_dispatch:  # Manual trigger only
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/record-*-demo.sh'
+      - '.github/workflows/create-demos.yml'
+  workflow_dispatch:  # Manual trigger
     inputs:
       tool:
         description: 'Tool to record demo for (leave empty for all tools)'
@@ -77,17 +83,80 @@ jobs:
             fi
           done
 
+      - name: Copy demos to VitePress public directory
+        run: |
+          # Copy demo GIFs to VitePress public directory for GitHub Pages
+          for tool_dir in */; do
+            tool_dir=${tool_dir%/}
+
+            if [ -f "$tool_dir/docs/demo.gif" ]; then
+              mkdir -p "docs/public/$tool_dir"
+              cp "$tool_dir/docs/demo.gif" "docs/public/$tool_dir/demo.gif"
+              echo "✓ Copied demo to docs/public/$tool_dir/demo.gif"
+            fi
+          done
+
+      - name: Update READMEs with demo embeds
+        run: |
+          # Update each tool's README with embedded GIF and asciinema link
+          for tool_dir in */; do
+            tool_dir=${tool_dir%/}  # Remove trailing slash
+
+            # Skip if not a tool directory
+            if [ ! -f "$tool_dir/README.md" ]; then
+              continue
+            fi
+
+            # Skip if no demo files
+            if [ ! -f "$tool_dir/docs/demo.gif" ]; then
+              continue
+            fi
+
+            echo "Updating README for $tool_dir..."
+
+            # Get asciinema URL if available
+            ASCIINEMA_URL="#"
+            if [ -f "$tool_dir/demo-url.txt" ]; then
+              ASCIINEMA_URL=$(cat "$tool_dir/demo-url.txt" | tr -d '\n')
+            fi
+
+            # Update README Demo section
+            # Replace placeholder with embedded GIF and real asciinema link
+            if grep -q "## Demo" "$tool_dir/README.md"; then
+              # Create updated demo section
+              cat > /tmp/demo-section.md << EOF
+## Demo
+
+![Demo](docs/demo.gif)
+
+**[▶ View interactive recording on asciinema.org]($ASCIINEMA_URL)**
+
+> Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/$tool_dir)
+EOF
+
+              # Replace Demo section in README (from ## Demo to next ##)
+              awk '/^## Demo$/{p=1} p{if(/^## / && !/^## Demo$/){p=0}} !p' "$tool_dir/README.md" > /tmp/readme-without-demo.md
+
+              # Find where to insert (before ## License)
+              awk '/^## License$/{print "";system("cat /tmp/demo-section.md");print ""} {print}' /tmp/readme-without-demo.md > "$tool_dir/README.md.new"
+
+              mv "$tool_dir/README.md.new" "$tool_dir/README.md"
+
+              echo "✓ Updated README for $tool_dir"
+            fi
+          done
+
       - name: Commit demo files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Add all .cast files and demo.gif files
-          git add "*/demo.cast" "*/docs/demo.gif" "*/demo-url.txt" || true
+          # Add all demo-related files including updated READMEs and VitePress public directory
+          git add "*/demo.cast" "*/docs/demo.gif" "*/demo-url.txt" "*/README.md" "docs/public/*/demo.gif" || true
 
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "docs: update demo recordings [skip ci]"
+            git commit -m "docs: update demo recordings and embed in READMEs [skip ci]"
             git push
           fi
