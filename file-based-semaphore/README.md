@@ -256,43 +256,19 @@ The test suite is deterministic and reliable! 🎉
 - **Race window**: Small window between stale detection and acquisition
 - **Clock skew**: Stale detection relies on system time; ensure synchronized clocks
 
-## Demo
-
-![Demo](docs/demo.gif)
-
-**[▶ View interactive recording on asciinema.org](#)**
-
-### Try it Yourself
-
-```bash
-# Build and run
-cargo build --release
-./target/release/file-semaphore try /tmp/demo.lock --tag "demo-session"
-./target/release/file-semaphore status /tmp/demo.lock --json
-./target/release/file-semaphore release /tmp/demo.lock
-```
-
-### Run Examples
-
-```bash
-# Basic usage
-cargo run --example basic
-
-# Concurrent access demo
-cargo run --example concurrent
-
-# Stale lock recovery
-cargo run --example stale_recovery
-```
-
-> **Note:** StackBlitz is not available for Rust projects. Clone the repository and run locally with `cargo build --release`.
-
-> Demo recordings are automatically generated via GitHub Actions.
-
 ## Related Tools
 
 - [Test Flakiness Detector](../test-flakiness-detector/) - Validates this tool's test suite reliability
 - [CLI Progress Reporting](../cli-progress-reporting/) - Could use this tool for exclusive log access
+
+
+## Demo
+
+![Demo](docs/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/FAcEITfypww6OehOiErwrimcZ)**
+
+> Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/file-based-semaphore)
 
 ## License
 
