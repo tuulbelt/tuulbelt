@@ -12,6 +12,11 @@ on:
   workflow_dispatch:
     # Allow manual trigger
 
+# Cancel in-progress runs when new commits are pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
