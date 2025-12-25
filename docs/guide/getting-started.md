@@ -35,17 +35,32 @@ npx tsx src/index.ts increment --amount 10
 npx tsx src/index.ts get
 ```
 
+### Try Cross-Platform Path Normalizer
+
+```bash
+cd cross-platform-path-normalizer
+npm install  # Dev dependencies only
+
+# Convert Windows path to Unix format
+npx tsx src/index.ts --format unix "C:\Users\file.txt"
+# Output: /c/Users/file.txt
+
+# Auto-detect format
+npx tsx src/index.ts "/home/user/file.txt"
+# Output: /home/user/file.txt (unix)
+```
+
 ## Available Tools
 
 | Tool | Status | Description |
 |------|--------|-------------|
 | [Test Flakiness Detector](/tools/test-flakiness-detector/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | Detect unreliable tests |
 | [CLI Progress Reporting](/tools/cli-progress-reporting/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | Concurrent-safe progress tracking |
-| Cross-Platform Path Handling | <img src="/icons/target.svg" class="inline-icon" alt=""> Next | Normalize paths across OS |
-| File-Based Semaphore | <img src="/icons/circle.svg" class="inline-icon" alt=""> Planned | Process synchronization |
+| [Cross-Platform Path Normalizer](/tools/cross-platform-path-normalizer/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | Convert Windows/Unix paths |
+| File-Based Semaphore | <img src="/icons/target.svg" class="inline-icon" alt=""> Next | Process synchronization |
 | Output Diffing Utility | <img src="/icons/circle.svg" class="inline-icon" alt=""> Planned | Semantic diff for test output |
 
-**Progress:** 2 of 33 tools (6%)
+**Progress:** 3 of 33 tools (9%)
 
 ## Installation Models
 
@@ -133,6 +148,7 @@ execSync('npx tsx ../test-flakiness-detector/src/index.ts --test "npm test"');
 ### Explore Tools
 - [Test Flakiness Detector](/tools/test-flakiness-detector/) - Comprehensive docs
 - [CLI Progress Reporting](/tools/cli-progress-reporting/) - Full API reference
+- [Cross-Platform Path Normalizer](/tools/cross-platform-path-normalizer/) - Path conversion guide
 
 ### Contribute
 - [Contributing Guide](/guide/contributing) - How to build new tools

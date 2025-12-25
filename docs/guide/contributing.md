@@ -36,18 +36,14 @@ Output: JSON list of unreliable tests
 
 Get feedback before building.
 
-### Step 2: Set Up Tool Repository
+### Step 2: Set Up Tool Directory
 
-Use the template in `templates/tool-repo-template/` as your starting point.
+**Important:** All tools are developed in the [tuulbelt/tuulbelt](https://github.com/tuulbelt/tuulbelt) monorepo, not separate repositories.
 
-Create a new repo under https://github.com/tuulbelt:
-- Repo name: `<category>-<tool-name>` (e.g., `testing-flakiness-detector`)
-- Visibility: Public
-- Initialize with: README, LICENSE (MIT)
-
-Clone locally:
+Create a new tool directory:
 ```bash
-git clone https://github.com/tuulbelt/<tool-name>.git
+cd tuulbelt
+mkdir <tool-name>
 cd <tool-name>
 ```
 
@@ -117,21 +113,18 @@ test('handles empty input', () => {
 });
 ```
 
-Run tests in CI — add `.github/workflows/test.yml`:
+**CI/CD Automatic Testing:**
 
-```yaml
-name: Test
-on: [push, pull_request]
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-      - run: npm test
-```
+Your tool will be **automatically discovered and tested** by CI workflows - no configuration needed!
+
+- **TypeScript tools:** Discovered by finding `package.json` files
+- **Rust tools:** Discovered by finding `Cargo.toml` files
+- **When:** On push to main, pull requests, and nightly at 2 AM UTC
+- **What gets tested:**
+  - TypeScript: `npm ci`, `npm test`, `npm run build`
+  - Rust: `cargo test`, `cargo clippy`, `cargo fmt --check`, `cargo build --release`
+
+Just create your tool directory with `package.json` or `Cargo.toml` and CI will find it!
 
 ### Step 6: Documentation
 
@@ -180,23 +173,193 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-### Step 9: Update Meta Repo
+### Step 9: GitHub Pages Documentation
+
+**CRITICAL:** Add your tool to the VitePress documentation site. This is mandatory and often missed!
+
+#### 9.1 Update VitePress Configuration
+
+Edit `docs/.vitepress/config.ts`:
+
+```typescript
+sidebar: {
+  '/tools/': [
+    {
+      text: 'Available Tools',
+      items: [
+        { text: 'Overview', link: '/tools/' },
+        { text: 'Your Tool Name', link: '/tools/your-tool-name/' }  // Add here
+      ]
+    }
+  ],
+  '/tools/your-tool-name/': [  // Add entire section
+    {
+      text: 'Your Tool Name',
+      items: [
+        { text: 'Overview', link: '/tools/your-tool-name/' },
+        { text: 'Getting Started', link: '/tools/your-tool-name/getting-started' },
+        { text: 'CLI Usage', link: '/tools/your-tool-name/cli-usage' },
+        { text: 'Library Usage', link: '/tools/your-tool-name/library-usage' },
+        { text: 'Examples', link: '/tools/your-tool-name/examples' },
+        { text: 'API Reference', link: '/tools/your-tool-name/api-reference' }
+      ]
+    }
+  ]
+}
+```
+
+#### 9.2 Create Documentation Directory
+
+```bash
+mkdir -p docs/tools/your-tool-name
+```
+
+#### 9.3 Create Documentation Pages
+
+Copy and customize these pages from an existing tool (e.g., test-flakiness-detector):
+- `index.md` - Overview page (use standard template, NOT home layout)
+- `getting-started.md` - Installation and setup
+- `cli-usage.md` - Command-line examples
+- `library-usage.md` - TypeScript/Rust API examples
+- `examples.md` - Real-world use cases
+- `api-reference.md` - Complete API documentation
+
+**Template Structure for `index.md`:**
+```markdown
+# Tool Name
+
+One-sentence tagline.
+
+## Overview
+
+Paragraph description.
+
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
+
+**Language:** TypeScript
+
+**Repository:** [link]
+
+## Features
+
+### <img src="/icons/icon.svg" class="inline-icon" alt=""> Feature Name
+
+Description.
+
+## Quick Start
+
+Code examples.
+
+## Use Cases
+
+Bullet points.
+
+## Why Tool Name?
+
+Explanation.
+
+## Demo
+
+Demo GIF and link.
+
+## Next Steps
+
+Documentation links.
+
+## License
+
+MIT License - see repository for details.
+```
+
+#### 9.4 Update Tools Index
+
+Edit `docs/tools/index.md` to add your tool card and update the count (e.g., "4/33").
+
+#### 9.5 Update GitHub Workflow
+
+Edit `.github/workflows/deploy-docs.yml` to add your tool's docs to the paths trigger:
+
+```yaml
+paths:
+  - 'docs/**'
+  - 'your-tool-name/**/*.md'  # Add this line
+```
+
+#### 9.6 Verify Documentation Build
+
+**MANDATORY before committing:**
+
+```bash
+cd /path/to/tuulbelt/root
+npm run docs:build
+```
+
+This MUST succeed with zero dead links. Fix any broken links before proceeding.
+
+### Step 10: Update Meta Repo
 
 Once your tool is ready for initial release:
 
-1. Update meta `README.md` — change `(TBD)` to `(✓ v0.1.0)` and link to repo
+1. Update root `README.md` — change `(TBD)` to `(✓ v0.1.0)` and link to tool
 2. Add a one-line entry to the appropriate category
+3. Update `docs/index.md` - Add tool card to Available Tools section
+4. Update `docs/guide/getting-started.md` - Add Quick Start example and table entry
 
 Example:
 ```markdown
-- **[Test Flakiness Detector](https://github.com/tuulbelt/test-flakiness-detector)** — Identify unreliable tests ✓ v0.1.0
+- **[Test Flakiness Detector](https://github.com/tuulbelt/tuulbelt/tree/main/test-flakiness-detector)** — Identify unreliable tests ✓ v0.1.0
 ```
 
-### Step 10: Maintenance
+### Step 11: Pre-Commit Quality Checks
+
+**MANDATORY before every commit:**
+
+Run the quality check command:
+```bash
+/quality-check
+```
+
+This validates:
+- Build succeeds
+- All tests pass
+- TypeScript/Clippy checks pass
+- Zero runtime dependencies
+- **Documentation builds without errors**
+
+See [Quality Checklist](/guide/quality-checklist) for complete requirements.
+
+### Step 12: Use TodoWrite for Task Tracking
+
+For any multi-step task (3+ steps), use TodoWrite to track progress:
+
+```typescript
+// Example: Creating a new tool
+TodoWrite([
+  { content: "Implement core functionality", status: "completed" },
+  { content: "Write tests (80%+ coverage)", status: "completed" },
+  { content: "Create README", status: "in_progress" },
+  { content: "Add to VitePress config", status: "pending" },
+  { content: "Create docs pages", status: "pending" },
+  { content: "Update workflows", status: "pending" },
+  { content: "Run npm run docs:build", status: "pending" }
+]);
+```
+
+This prevents missing critical steps like GitHub Pages integration.
+
+### Step 13: Consider Dogfooding
+
+Can your tool:
+- **Use other Tuulbelt tools?** (e.g., test-flakiness-detector uses cli-progress-reporting)
+- **Validate other tools?** (e.g., cross-platform-path-normalizer validated by test-flakiness-detector)
+
+Document dogfooding relationships in README and VitePress docs.
+
+### Step 14: Maintenance
 
 - Respond to issues within a week
 - Keep README updated with new features
-- Run tests before every merge
+- Run `/quality-check` before every merge
 - Consider backwards compatibility; avoid breaking changes in patch versions
 
 ---

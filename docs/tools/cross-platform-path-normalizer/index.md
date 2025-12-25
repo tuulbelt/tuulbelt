@@ -1,149 +1,82 @@
----
-layout: home
+# Cross-Platform Path Normalizer
 
-hero:
-  name: Cross-Platform Path Normalizer
-  text: Consistent Path Formats
-  tagline: Convert Windows/Unix paths with zero dependencies. Handle UNC paths, mixed separators, and drive letters seamlessly.
-  actions:
-    - theme: brand
-      text: Get Started
-      link: /guide/getting-started
-    - theme: alt
-      text: View on GitHub
-      link: https://github.com/tuulbelt/tuulbelt/tree/main/cross-platform-path-normalizer
+Convert Windows/Unix paths with zero dependencies. Handle UNC paths, mixed separators, and drive letters seamlessly.
 
-features:
-  - icon:
-      src: /icons/convert.svg
-    title: Bidirectional Conversion
-    details: Convert Windows paths to Unix format and vice versa. Auto-detect format or force specific output.
+## Overview
 
-  - icon:
-      src: /icons/network.svg
-    title: UNC Path Support
-    details: Handle network paths correctly. Convert `\\server\share` ↔ `//server/share` with proper double-slash preservation.
+Cross-Platform Path Normalizer provides bidirectional path conversion between Windows and Unix formats. It automatically detects path formats, handles edge cases like UNC paths and mixed separators, and works entirely with zero runtime dependencies.
 
-  - icon:
-      src: /icons/merge.svg
-    title: Mixed Separator Handling
-    details: Normalize paths with both forward and backslashes. Clean up paths like `C:/Users\Documents/file.txt`.
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
 
-  - icon:
-      src: /icons/zap.svg
-    title: Zero Dependencies
-    details: Uses only Node.js built-in modules. No npm dependencies to manage, update, or worry about security issues.
+**Language:** TypeScript
 
-  - icon:
-      src: /icons/tool.svg
-    title: CLI & Library
-    details: Use as a command-line tool for quick conversions or integrate as a library in your Node.js projects.
+**Repository:** [tuulbelt/tuulbelt/cross-platform-path-normalizer](https://github.com/tuulbelt/tuulbelt/tree/main/cross-platform-path-normalizer)
 
-  - icon:
-      src: /icons/shield.svg
-    title: Type Safe
-    details: Written in TypeScript with strict mode. Full type definitions and Result pattern for error handling.
+## Features
 
-  - icon:
-      src: /icons/rocket.svg
-    title: Production Ready
-    details: 51 comprehensive tests covering all functions and edge cases. 100% test pass rate.
+### <img src="/icons/link.svg" class="inline-icon" alt=""> Bidirectional Conversion
 
-  - icon:
-      src: /icons/book.svg
-    title: Well Documented
-    details: Complete API documentation, edge case handling, and technical specifications.
+Convert Windows paths to Unix format and vice versa. Auto-detect source format or force specific output. Handles drive letters (`C:` ↔ `/c`) and path separators (`\` ↔ `/`).
 
-  - icon:
-      src: /icons/fast.svg
-    title: High Performance
-    details: Pure string manipulation. < 1ms per path conversion. No I/O operations, all in-memory processing.
----
+### <img src="/icons/layers.svg" class="inline-icon" alt=""> UNC Path Support
 
-## Quick Example
+Handle network paths correctly. Convert `\\server\share` ↔ `//server/share` with proper double-slash preservation for network file systems.
 
-Convert paths in just one line:
+### <img src="/icons/sparkles.svg" class="inline-icon" alt=""> Mixed Separator Handling
 
-```typescript
+Normalize paths with both forward and backslashes. Clean up messy paths like `C:/Users\Documents/file.txt` automatically.
+
+### <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Type Safe
+
+Written in TypeScript with strict mode enabled. Full type definitions and Result pattern for error handling with detailed error messages.
+
+### <img src="/icons/tool.svg" class="inline-icon" alt=""> CLI & Library
+
+Use as a command-line tool for quick conversions or integrate as a library in your Node.js/TypeScript projects.
+
+### <img src="/icons/zap.svg" class="inline-icon" alt=""> Zero Runtime Dependencies
+
+Uses only Node.js built-ins. No `npm install` required in production.
+
+## Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/tuulbelt/tuulbelt.git
+cd tuulbelt/cross-platform-path-normalizer
+
+# Install dev dependencies (for TypeScript)
+npm install
+
+# Convert a path
+npx tsx src/index.ts --format unix "C:\Users\file.txt"
+# Output: /c/Users/file.txt
+
+# Library usage
 import { normalizePath } from './src/index.js';
-
-// Auto-detect and normalize
-const result = normalizePath('C:\\Users\\file.txt');
-// { success: true, path: 'C:\Users\file.txt', format: 'windows' }
-
-// Force Unix format
-const unix = normalizePath('C:\\Users\\file.txt', { format: 'unix' });
+const result = normalizePath('C:\\Users\\file.txt', { format: 'unix' });
 // { success: true, path: '/c/Users/file.txt', format: 'unix' }
 ```
 
-Or use the CLI:
+## Use Cases
 
-```bash
-npx tsx src/index.ts --format unix "C:\\Users\\file.txt"
-```
+- **Cross-Platform Testing:** Normalize test fixture paths across Windows/Linux/macOS
+- **Build Scripts:** Handle paths consistently in npm scripts and CI/CD pipelines
+- **Path Validation:** Convert user input paths to canonical format
+- **Documentation Examples:** Show paths in consistent format regardless of platform
+- **Git Workflows:** Normalize paths before committing or comparing diffs
 
 ## Why Cross-Platform Path Normalizer?
 
-**The Problem:** Building cross-platform tools means dealing with different path formats:
-- Windows uses backslashes (`\`) and drive letters (`C:`)
-- Unix uses forward slashes (`/`) and absolute paths (`/home/user`)
-- Mixed separators break scripts and tests
-- Existing solutions require heavy dependencies
+Building cross-platform tools requires handling different path conventions:
 
-**The Solution:** Zero-dependency path normalization with intelligent format detection and comprehensive edge case handling.
+1. **Incompatible Formats:** Windows uses `\` and drive letters, Unix uses `/`
+2. **Mixed Input:** Users provide paths in inconsistent formats
+3. **Heavy Dependencies:** Existing solutions pull in large dependency trees
+4. **Edge Cases:** UNC paths, relative paths, and mixed separators need special handling
+5. **Type Safety:** Runtime validation needed to catch path errors early
 
-## Installation
-
-```bash
-git clone https://github.com/tuulbelt/cross-platform-path-normalizer.git
-cd cross-platform-path-normalizer
-npm install
-```
-
-No runtime dependencies. Just Node.js 18+.
-
-## Key Features
-
-### Auto-Detection
-
-Automatically detects whether a path is Windows or Unix format:
-
-```typescript
-detectPathFormat('C:\\Users\\file.txt');     // 'windows'
-detectPathFormat('/home/user/file.txt');     // 'unix'
-```
-
-### Direct Conversion
-
-Convert paths directly without options:
-
-```typescript
-normalizeToUnix('C:\\Program Files\\app');    // '/c/Program Files/app'
-normalizeToWindows('/c/Users/Documents');     // 'C:\Users\Documents'
-```
-
-### Edge Case Handling
-
-- Mixed separators: `C:/Users\Documents/file.txt`
-- Redundant slashes: `C:\\\Users\\\file.txt`
-- UNC paths: `\\server\share` ↔ `//server/share`
-- Drive letters: `C:` ↔ `/c` (case normalization)
-- Relative paths: `../../parent`
-- Special characters and spaces
-
-## Next Steps
-
-::: tip Getting Started
-[Learn how to use the tool in 5 minutes →](/guide/getting-started)
-:::
-
-::: tip Examples
-[See real-world usage examples →](/tools/cross-platform-path-normalizer/examples)
-:::
-
-::: tip API Reference
-[Complete API documentation →](/tools/cross-platform-path-normalizer/api-reference)
-:::
+This tool provides zero-dependency path normalization with comprehensive edge case handling.
 
 ## Dogfooding: Test Reliability Validation
 
@@ -153,22 +86,16 @@ We use **[Test Flakiness Detector](/tools/test-flakiness-detector/)** (another T
 npm run test:dogfood
 ```
 
-This runs the entire test suite 10 times (1,450 total test executions) to detect any non-deterministic behavior:
+This runs the entire test suite 10 times (1,450 total test executions) to detect any non-deterministic behavior. Zero flaky tests detected across all runs, proving test suite reliability.
 
-```
-🔬 Dogfooding: Using Test Flakiness Detector to validate Cross-Platform Path Normalizer tests
+## Next Steps
 
-✅ NO FLAKINESS DETECTED
-All 10 test runs passed consistently.
+- [Getting Started Guide](/tools/cross-platform-path-normalizer/getting-started) - Installation and setup
+- [CLI Usage](/tools/cross-platform-path-normalizer/cli-usage) - Command-line interface
+- [Library Usage](/tools/cross-platform-path-normalizer/library-usage) - TypeScript/JavaScript API
+- [Examples](/tools/cross-platform-path-normalizer/examples) - Real-world usage patterns
+- [API Reference](/tools/cross-platform-path-normalizer/api-reference) - Complete API documentation
 
-Completion time: ~6.6 minutes for 145 tests × 10 runs = 1,450 executions
-```
+## License
 
-This demonstrates:
-- **Tool Composition** — Tuulbelt tools validate each other in real-world use
-- **Test Quality** — Zero flaky tests detected across 1,450 executions
-- **Production Ready** — All tests are deterministic and reliable
-
-## Part of Tuulbelt
-
-This tool is part of [Tuulbelt](https://github.com/tuulbelt/tuulbelt) - a collection of focused, zero-dependency tools for modern software development.
+MIT License - see repository for details.

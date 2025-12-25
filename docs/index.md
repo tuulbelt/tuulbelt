@@ -60,7 +60,7 @@ Identify unreliable tests by running them multiple times and tracking failure ra
 
 - <img src="/icons/target.svg" class="inline-icon" alt=""> Framework agnostic
 - <img src="/icons/bar-chart.svg" class="inline-icon" alt=""> Comprehensive JSON reports
-- <img src="/icons/rocket.svg" class="inline-icon" alt=""> 107+ tests, production-ready
+- <img src="/icons/rocket.svg" class="inline-icon" alt=""> 148 tests, production-ready
 - <img src="/icons/book.svg" class="inline-icon" alt=""> Full documentation with examples
 
 [Get Started →](/tools/test-flakiness-detector/getting-started)
@@ -82,17 +82,34 @@ Concurrent-safe progress tracking with file-based atomic writes.
 
 </div>
 
+### Utilities & Infrastructure
+
+<div class="tool-card">
+
+#### [Cross-Platform Path Normalizer](/tools/cross-platform-path-normalizer/)
+
+Convert Windows/Unix paths with zero dependencies. Handle UNC paths, mixed separators, and drive letters seamlessly.
+
+- <img src="/icons/link.svg" class="inline-icon" alt=""> Bidirectional conversion
+- <img src="/icons/layers.svg" class="inline-icon" alt=""> UNC path support
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Type safe
+- <img src="/icons/beaker.svg" class="inline-icon" alt=""> Dogfooding validated
+
+[Get Started →](/tools/cross-platform-path-normalizer/getting-started)
+
+</div>
+
 ## Progress
 
-**Phase 1: Quick Tools** — 2 of 5 complete (40%)
+**Phase 1: Quick Tools** — 3 of 5 complete (60%)
 
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Test Flakiness Detector
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> CLI Progress Reporting
-- <img src="/icons/target.svg" class="inline-icon" alt=""> Cross-Platform Path Handling (next)
-- <img src="/icons/circle.svg" class="inline-icon" alt=""> File-Based Semaphore
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Cross-Platform Path Normalizer
+- <img src="/icons/target.svg" class="inline-icon" alt=""> File-Based Semaphore (next)
 - <img src="/icons/circle.svg" class="inline-icon" alt=""> Output Diffing Utility
 
-**Overall Progress:** 2 of 33 tools (6%)
+**Overall Progress:** 3 of 33 tools (9%)
 
 ## Quick Start
 
@@ -110,6 +127,11 @@ npx tsx src/index.ts --test "npm test" --runs 10
 cd ../cli-progress-reporting
 npm install
 npx tsx src/index.ts init --total 100 --message "Processing files"
+
+# Try Cross-Platform Path Normalizer
+cd ../cross-platform-path-normalizer
+npm install
+npx tsx src/index.ts --format unix "C:\Users\file.txt"
 ```
 
 ## Philosophy
