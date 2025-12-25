@@ -115,7 +115,7 @@ This validates that all 46 tests are deterministic across multiple runs.
 
 ![File-Based Semaphore Demo](/file-based-semaphore/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](#)**
+<!-- asciinema link will be added when uploaded -->
 
 ### Try it Locally
 
