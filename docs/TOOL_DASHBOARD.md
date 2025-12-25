@@ -1,8 +1,8 @@
 # Tuulbelt Tool Quality Dashboard
 
-**Last Updated:** 2025-12-25 16:36 UTC
-**Total Tools:** 3
-**Passing:** 3 | **Failing:** 0
+**Last Updated:** 2025-12-25 17:26 UTC
+**Total Tools:** 4
+**Passing:** 4 | **Failing:** 0
 
 ---
 
@@ -13,6 +13,7 @@
 | test-flakiness-detector | TypeScript | 35 | ✅ | 🟢 Production | 0.1.0 |
 | cli-progress-reporting | TypeScript | 9 | ✅ | 🟢 Production | 0.1.0 |
 | cross-platform-path-normalizer | TypeScript | 14 | ✅ | 🟢 Production | 0.1.0 |
+| file-based-semaphore | Rust | 27 | ✅ | 🟢 Production | 0.1.0 |
 
 ---
 
