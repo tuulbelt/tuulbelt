@@ -174,7 +174,7 @@ https://github.com/tuulbelt/file-based-semaphore
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.0 | 2024-12-25 | Initial specification |
+| 1.0 | 2025-12-25 | Initial specification |
 
 ## License
 

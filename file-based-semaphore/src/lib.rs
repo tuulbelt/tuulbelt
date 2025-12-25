@@ -770,4 +770,196 @@ mod tests {
 
         cleanup(&path);
     }
+
+    // ============================================================
+    // Additional edge case tests
+    // ============================================================
+
+    #[test]
+    fn test_empty_tag() {
+        let path = temp_lock_path("empty-tag");
+        cleanup(&path);
+
+        let sem = Semaphore::with_defaults(&path).unwrap();
+        let info = LockInfo::with_tag("");
+
+        {
+            let _guard = sem.try_acquire_with_info(info).unwrap();
+            let read_info = sem.lock_info().unwrap();
+            assert_eq!(read_info.tag, Some("".to_string()));
+        }
+
+        cleanup(&path);
+    }
+
+    #[test]
+    fn test_very_long_tag() {
+        let path = temp_lock_path("long-tag");
+        cleanup(&path);
+
+        let sem = Semaphore::with_defaults(&path).unwrap();
+        let long_tag = "x".repeat(10000); // 10KB tag
+        let info = LockInfo::with_tag(&long_tag);
+
+        {
+            let _guard = sem.try_acquire_with_info(info).unwrap();
+            let read_info = sem.lock_info().unwrap();
+            assert_eq!(read_info.tag, Some(long_tag));
+        }
+
+        cleanup(&path);
+    }
+
+    #[test]
+    fn test_special_chars_in_tag() {
+        let path = temp_lock_path("special-chars");
+        cleanup(&path);
+
+        let sem = Semaphore::with_defaults(&path).unwrap();
+        // Test various special characters (but not newlines which break format)
+        let special_tag = "tag=with=equals&special<chars>\"quotes\"";
+        let info = LockInfo::with_tag(special_tag);
+
+        {
+            let _guard = sem.try_acquire_with_info(info).unwrap();
+            let read_info = sem.lock_info().unwrap();
+            assert_eq!(read_info.tag, Some(special_tag.to_string()));
+        }
+
+        cleanup(&path);
+    }
+
+    #[test]
+    fn test_unicode_tag() {
+        let path = temp_lock_path("unicode-tag");
+        cleanup(&path);
+
+        let sem = Semaphore::with_defaults(&path).unwrap();
+        let unicode_tag = "日本語タグ🔒emoji✨";
+        let info = LockInfo::with_tag(unicode_tag);
+
+        {
+            let _guard = sem.try_acquire_with_info(info).unwrap();
+            let read_info = sem.lock_info().unwrap();
+            assert_eq!(read_info.tag, Some(unicode_tag.to_string()));
+        }
+
+        cleanup(&path);
+    }
+
+    #[test]
+    fn test_path_method() {
+        let path = temp_lock_path("path-method");
+        cleanup(&path);
+
+        let sem = Semaphore::with_defaults(&path).unwrap();
+        assert_eq!(sem.path(), path.as_path());
+
+        cleanup(&path);
+    }
+
+    #[test]
+    fn test_lock_info_without_tag() {
+        let path = temp_lock_path("no-tag");
+        cleanup(&path);
+
+        let sem = Semaphore::with_defaults(&path).unwrap();
+
+        {
+            let _guard = sem.try_acquire().unwrap();
+            let read_info = sem.lock_info().unwrap();
+            assert!(read_info.tag.is_none());
+        }
+
+        cleanup(&path);
+    }
+
+    #[test]
+    fn test_lock_info_parse_extra_fields() {
+        // Test forward compatibility - unknown fields should be ignored
+        let content = "pid=12345\ntimestamp=1234567890\ntag=test\nunknown_field=value\n";
+        let info = LockInfo::parse(content).unwrap();
+        assert_eq!(info.pid, 12345);
+        assert_eq!(info.timestamp, 1234567890);
+        assert_eq!(info.tag, Some("test".to_string()));
+    }
+
+    #[test]
+    fn test_lock_info_parse_empty_lines() {
+        let content = "\npid=12345\n\ntimestamp=1234567890\n\n";
+        let info = LockInfo::parse(content).unwrap();
+        assert_eq!(info.pid, 12345);
+        assert_eq!(info.timestamp, 1234567890);
+    }
+
+    #[test]
+    fn test_lock_info_parse_whitespace() {
+        let content = "  pid=12345  \n  timestamp=1234567890  \n";
+        let info = LockInfo::parse(content).unwrap();
+        assert_eq!(info.pid, 12345);
+        assert_eq!(info.timestamp, 1234567890);
+    }
+
+    #[test]
+    fn test_invalid_parent_directory() {
+        let result = Semaphore::with_defaults("/nonexistent/dir/file.lock");
+        assert!(result.is_err());
+        match result.unwrap_err() {
+            SemaphoreError::InvalidPath(_) => {}
+            e => panic!("Expected InvalidPath, got {:?}", e),
+        }
+    }
+
+    #[test]
+    fn test_lock_info_default() {
+        let info = LockInfo::default();
+        assert_eq!(info.pid, process::id());
+        assert!(info.timestamp > 0);
+        assert!(info.tag.is_none());
+    }
+
+    #[test]
+    fn test_is_stale_not_stale() {
+        let info = LockInfo::new();
+        // Just created, should not be stale with 1 hour timeout
+        assert!(!info.is_stale(Duration::from_secs(3600)));
+    }
+
+    #[test]
+    fn test_semaphore_result_type() {
+        // Test that SemaphoreResult type alias works
+        fn returns_result() -> SemaphoreResult<()> {
+            Ok(())
+        }
+        assert!(returns_result().is_ok());
+    }
+
+    #[test]
+    fn test_error_source() {
+        use std::error::Error;
+
+        let io_err = io::Error::new(io::ErrorKind::NotFound, "test");
+        let sem_err = SemaphoreError::IoError(io_err);
+        assert!(sem_err.source().is_some());
+
+        let already_locked = SemaphoreError::AlreadyLocked {
+            holder_pid: None,
+            locked_since: None,
+        };
+        assert!(already_locked.source().is_none());
+    }
+
+    #[test]
+    fn test_acquire_timeout_method() {
+        let path = temp_lock_path("acquire-timeout-method");
+        cleanup(&path);
+
+        let sem = Semaphore::with_defaults(&path).unwrap();
+
+        // Should acquire immediately since lock is free
+        let result = sem.acquire_timeout(Duration::from_millis(100));
+        assert!(result.is_ok());
+
+        cleanup(&path);
+    }
 }

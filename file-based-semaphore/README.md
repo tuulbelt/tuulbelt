@@ -1,5 +1,12 @@
 # File-Based Semaphore
 
+[![Tests](https://github.com/tuulbelt/tuulbelt/actions/workflows/test-all-tools.yml/badge.svg)](https://github.com/tuulbelt/tuulbelt/actions/workflows/test-all-tools.yml)
+![Version](https://img.shields.io/badge/version-0.1.0-blue)
+![Rust](https://img.shields.io/badge/rust-1.70%2B-orange)
+![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success)
+![Tests](https://img.shields.io/badge/tests-46%20passing-success)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Cross-platform file-based semaphore for process coordination.
 
 ## Problem
@@ -201,12 +208,26 @@ cargo test -- --nocapture  # Show output
 
 ### Dogfooding
 
-This tool can be validated by the Test Flakiness Detector:
+We validate this tool's test reliability using **Test Flakiness Detector** (another Tuulbelt tool):
 
 ```bash
-cd ../test-flakiness-detector
-npx tsx src/index.ts --test "cd ../file-based-semaphore && cargo test" --runs 10
+# Run the dogfood script
+./scripts/dogfood.sh
+
+# Or with custom run count
+./scripts/dogfood.sh 20
 ```
+
+This runs all 46 tests 10 times (460 total executions) to detect any non-deterministic behavior.
+
+**Expected output:**
+```
+✅ NO FLAKINESS DETECTED
+All 10 test runs passed consistently.
+The test suite is deterministic and reliable! 🎉
+```
+
+> **Note:** Rust tools can be validated via CLI by Test Flakiness Detector even though they can't import TypeScript libraries directly. This cross-language validation demonstrates that Tuulbelt tools compose well together.
 
 ## Design Decisions
 
@@ -235,10 +256,37 @@ npx tsx src/index.ts --test "cd ../file-based-semaphore && cargo test" --runs 10
 - **Race window**: Small window between stale detection and acquisition
 - **Clock skew**: Stale detection relies on system time; ensure synchronized clocks
 
+## Demo
+
+### Terminal Demo
+
+```bash
+# Try it yourself!
+cargo build --release
+./target/release/file-semaphore try /tmp/demo.lock --tag "demo-session"
+./target/release/file-semaphore status /tmp/demo.lock --json
+./target/release/file-semaphore release /tmp/demo.lock
+```
+
+### Run Examples
+
+```bash
+# Basic usage
+cargo run --example basic
+
+# Concurrent access demo
+cargo run --example concurrent
+
+# Stale lock recovery
+cargo run --example stale_recovery
+```
+
+> **Note:** StackBlitz is not available for Rust projects. Clone the repository and run locally with `cargo build --release`.
+
 ## Related Tools
 
-- [Test Flakiness Detector](../test-flakiness-detector/) - Can validate this tool's test suite
-- [CLI Progress Reporting](../cli-progress-reporting/) - Could use this for exclusive log access
+- [Test Flakiness Detector](../test-flakiness-detector/) - Validates this tool's test suite reliability
+- [CLI Progress Reporting](../cli-progress-reporting/) - Could use this tool for exclusive log access
 
 ## License
 

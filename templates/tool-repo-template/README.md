@@ -94,20 +94,66 @@ npm test              # Run all tests
 npm test -- --watch   # Watch mode
 ```
 
-### Dogfooding (Optional)
+### Dogfooding
 
-If this tool can use or validate other Tuulbelt tools, consider adding:
+Tuulbelt tools validate and enhance each other via dogfooding.
 
-**Using Other Tools:**
-- Use dynamic imports with graceful fallback (see `@docs/QUALITY_CHECKLIST.md` for pattern)
-- Tool must work standalone (when cloned independently)
+**Validate This Tool's Tests:**
+
+Run the flakiness detection test to validate test reliability:
+
+```bash
+npx tsx test/flakiness-detection.test.ts
+```
+
+Or add to package.json:
+
+```json
+{
+  "scripts": {
+    "test:dogfood": "npx tsx test/flakiness-detection.test.ts"
+  }
+}
+```
+
+**Using Other TypeScript Tools (Dynamic Import):**
+
+```typescript
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+async function loadOptionalTool(): Promise<any | null> {
+  try {
+    const toolPath = join(process.cwd(), '..', 'tool-name', 'src', 'index.ts');
+    if (!existsSync(toolPath)) return null;
+    return await import(`file://${toolPath}`);
+  } catch {
+    return null; // Graceful fallback when standalone
+  }
+}
+```
+
+**Using Rust CLI Tools:**
+
+```typescript
+import { execSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+// Check if Rust tool is available (pre-built)
+const rustToolPath = join(process.cwd(), '..', 'rust-tool', 'target', 'release', 'rust-tool');
+if (existsSync(rustToolPath)) {
+  const result = execSync(`${rustToolPath} --arg value`, { encoding: 'utf-8' });
+  // Use result...
+}
+```
+
+**Key Principles:**
+- Tools must work standalone (graceful fallback when dependencies unavailable)
 - Document monorepo enhancements in README
+- Use CLI for cross-language integration
 
-**Validating Other Tools:**
-- Add `test:dogfood` script if using Test Flakiness Detector
-- Document validation in README and VitePress docs
-
-Example: Test Flakiness Detector uses CLI Progress Reporting for progress tracking, and validates other tool test suites.
+See [QUALITY_CHECKLIST.md](../docs/QUALITY_CHECKLIST.md) for dogfooding patterns.
 
 ## Error Handling
 
