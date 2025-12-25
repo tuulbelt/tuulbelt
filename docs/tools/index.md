@@ -8,7 +8,7 @@ Tuulbelt provides a curated collection of focused, zero-dependency tools for mod
 
 **Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
 **Language:** TypeScript
-**Tests:** 148 tests, dogfooding validated
+**Tests:** 111 tests, dogfooding validated
 
 Detect unreliable tests by running them multiple times and tracking failure rates.
 
@@ -27,7 +27,7 @@ Detect unreliable tests by running them multiple times and tracking failure rate
 
 **Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
 **Language:** TypeScript
-**Tests:** 125 tests, dogfooding validated
+**Tests:** 111 tests, dogfooding validated
 
 Concurrent-safe progress tracking with file-based atomic writes.
 
@@ -46,7 +46,7 @@ Concurrent-safe progress tracking with file-based atomic writes.
 
 **Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
 **Language:** TypeScript
-**Tests:** 145 tests, dogfooding validated
+**Tests:** 128 tests, dogfooding validated
 
 Convert Windows/Unix paths with zero dependencies. Handle UNC paths, mixed separators, and drive letters seamlessly.
 

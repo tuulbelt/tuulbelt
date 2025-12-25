@@ -126,11 +126,11 @@ npx tsx src/index.ts --test "npm test" --runs 20 --verbose
 ```bash
 cd cli-progress-reporting
 npm run test:dogfood
-# ✅ NO FLAKINESS DETECTED (125 tests × 20 runs = 2,500 executions)
+# ✅ NO FLAKINESS DETECTED (111 tests × 20 runs = 2,220 executions)
 
 cd cross-platform-path-normalizer
 npm run test:dogfood
-# ✅ NO FLAKINESS DETECTED (145 tests × 10 runs = 1,450 executions)
+# ✅ NO FLAKINESS DETECTED (128 tests × 10 runs = 1,280 executions)
 ```
 
 This creates a **bidirectional validation network** where tools prove their reliability by using each other in production workflows.
