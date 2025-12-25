@@ -88,6 +88,27 @@ npm run test:dogfood
 
 This runs the entire test suite 10 times (1,280 total test executions) to detect any non-deterministic behavior. Zero flaky tests detected across all runs, proving test suite reliability.
 
+## Demo
+
+See the tool in action:
+
+![Cross-Platform Path Normalizer Demo](/cross-platform-path-normalizer/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](#)**
+
+<div style="margin: 20px 0;">
+  <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
+    <strong>Try it online:</strong>
+  </span>
+  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/cross-platform-path-normalizer" style="display: inline-block; vertical-align: middle;">
+    <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
+  </a>
+</div>
+
+Run the tool directly in your browser with zero setup. Try converting Windows and Unix paths, test edge cases, and explore the full API.
+
+> Demos are automatically generated via GitHub Actions when demo scripts are updated.
+
 ## Next Steps
 
 - [Getting Started Guide](/tools/cross-platform-path-normalizer/getting-started) - Installation and setup
