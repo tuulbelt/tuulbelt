@@ -604,9 +604,11 @@ fn test_cli_multiple_options() {
     let output = run_cli(&[
         "try",
         &path,
-        "--tag", "multi-test",
-        "--stale", "1800",
-        "--quiet"
+        "--tag",
+        "multi-test",
+        "--stale",
+        "1800",
+        "--quiet",
     ]);
 
     let stdout = String::from_utf8_lossy(&output.stdout);
@@ -628,10 +630,13 @@ fn test_cli_acquire_all_options() {
     let output = run_cli(&[
         "acquire",
         &path,
-        "--timeout", "5",
-        "--tag", "full-test",
-        "--stale", "60",
-        "-q"
+        "--timeout",
+        "5",
+        "--tag",
+        "full-test",
+        "--stale",
+        "60",
+        "-q",
     ]);
 
     assert!(output.status.success());
