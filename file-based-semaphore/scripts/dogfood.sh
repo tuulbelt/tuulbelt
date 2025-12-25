@@ -3,7 +3,7 @@
 # Dogfooding: Use Test Flakiness Detector to validate file-based-semaphore tests
 #
 # This script runs the test-flakiness-detector tool against this tool's test suite
-# to verify all 46 tests are deterministic and non-flaky.
+# to verify all 85 tests are deterministic and non-flaky.
 #
 # Usage:
 #   ./scripts/dogfood.sh [runs]

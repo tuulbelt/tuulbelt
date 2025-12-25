@@ -218,7 +218,7 @@ We validate this tool's test reliability using **Test Flakiness Detector** (anot
 ./scripts/dogfood.sh 20
 ```
 
-This runs all 46 tests 10 times (460 total executions) to detect any non-deterministic behavior.
+This runs all 85 tests 10 times (850 total executions) to detect any non-deterministic behavior.
 
 **Expected output:**
 ```

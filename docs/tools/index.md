@@ -66,7 +66,7 @@ Convert Windows/Unix paths with zero dependencies. Handle UNC paths, mixed separ
 
 **Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
 **Language:** Rust
-**Tests:** 46 tests
+**Tests:** 85 tests
 
 Cross-platform file-based semaphore for process coordination. Lock resources reliably across processes with zero dependencies.
 
