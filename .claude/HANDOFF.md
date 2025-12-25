@@ -17,6 +17,14 @@
    - Achieved documentation consistency across all 3 tools
    - **PR merged to main** ✅
 
+2. **MANDATORY WORKFLOW Added to CLAUDE.md** ⭐
+   - Added checkpoint-based enforcement system to prevent after-the-fact fixes
+   - Enforces TodoWrite usage, verification pauses, and zero hallucination
+   - Specifies WHEN to check (before task, during sections, before commit)
+   - Includes documentation consistency checklist (line counts, structure, both locations)
+   - **This workflow is read every prompt and enforces quality standards**
+   - Commit: `63a35aa` - docs: add mandatory workflow checkpoints to enforce quality standards
+
 ### Current Status
 
 **Ready to start next tool implementation:**
@@ -152,13 +160,14 @@ Based on @PRINCIPLES.md and @.claude/NEXT_TASKS.md:
 
 ## Notes for Next Session
 
+- **⭐ NEW: MANDATORY WORKFLOW in CLAUDE.md** - Follow checkpoint-based enforcement system
 - **Tool #4: File-Based Semaphore** - Rust implementation recommended
 - **Language Distribution**: Balance needed - 3 TypeScript, 0 Rust (add first Rust tool)
 - **Template**: Use `templates/rust-tool-template/` as starting point
 - **Dogfooding**: Consider integration with test-flakiness-detector for concurrent test isolation
 - **Quality Standard**: 80%+ test coverage, zero runtime deps, clippy zero warnings
 - **Documentation Pattern**: README + SPEC.md + examples + demo.cast + VitePress docs
-- **Use TodoWrite**: Track progress through implementation steps above
+- **FIRST STEP**: Create TodoWrite checklist from QUALITY_CHECKLIST.md before ANY coding
 
 ---
 
