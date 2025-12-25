@@ -1,6 +1,6 @@
 # Next Tasks
 
-**Last Updated:** 2025-12-24
+**Last Updated:** 2025-12-25
 
 This document tracks pending work across the Tuulbelt project. Tasks are organized by type and priority.
 
@@ -96,6 +96,11 @@ See `docs/KNOWN_ISSUES.md` for tracked issues.
 - ✅ **Dogfooding guidance added to scaffold templates** - Both TypeScript and Rust templates
 - ✅ **detectFlakiness async/await documentation** - All docs show correct async pattern
 - ✅ **Fuzzy test descriptions** - Removed test counts from all READMEs
+- ✅ **GitHub Pages formatting fixes** - Fixed cross-platform-path-normalizer library-usage.md (50→376 lines) and examples.md (43→484 lines)
+- ✅ **Demo section standardization** - All 3 GitHub Pages tool index files have Demo sections with StackBlitz buttons
+- ✅ **Local VitePress Demo sections** - Added to test-flakiness-detector and cross-platform-path-normalizer local docs
+- ✅ **Asciinema placeholders** - Added placeholder link for cross-platform-path-normalizer (GitHub Actions will populate)
+- ✅ **Documentation consistency achieved** - All tools have matching structure, quality, and Demo sections
 
 ### Pending
 - [ ] Add "Contributing" guide page to VitePress (currently just links to CONTRIBUTING.md)

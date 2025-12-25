@@ -1,58 +1,57 @@
 # Session Handoff
 
-**Last Updated:** 2025-12-24
-**Session:** Dogfooding Implementation - Tool Composition
-**Status:** ✅ Ready for Next Session
+**Last Updated:** 2025-12-25
+**Session:** Ready for Next Tool Implementation
+**Status:** ✅ Ready to Start New Tool
 
 ---
 
-## Current Session Summary
+## Previous Session Summary
 
-### What Was Accomplished
+### What Was Accomplished (Documentation PR - Merged ✅)
 
-1. **Dogfooding Implementation - Bidirectional Tool Composition**
-   - Integrated cli-progress-reporting into test-flakiness-detector for real-time progress tracking
-   - Added flakiness validation for cross-platform-path-normalizer test suite
-   - Made detectFlakiness() async to support dynamic imports with graceful fallback
-   - Updated all 110 test calls to await (5 test files modified)
-   - All 148 tests passing in test-flakiness-detector
-   - All 145 tests passing in cross-platform-path-normalizer
+1. **GitHub Pages Documentation Formatting Fixes**
+   - Fixed cross-platform-path-normalizer library-usage.md (50→376 lines) and examples.md (43→484 lines)
+   - Added Demo sections with StackBlitz buttons to all 3 GitHub Pages tool index files
+   - Added asciinema placeholder for cross-platform-path-normalizer
+   - Achieved documentation consistency across all 3 tools
+   - **PR merged to main** ✅
 
-2. **Dogfooding Pattern Established**
-   - Dynamic import with graceful fallback for monorepo vs standalone
-   - Progress tracking activates only for ≥5 runs (performance optimization)
-   - File-based existence checks before imports
-   - Zero impact on standalone tool functionality
-   - Created test:dogfood scripts for validation
+2. **MANDATORY WORKFLOW Added to CLAUDE.md** ⭐
+   - Added checkpoint-based enforcement system to prevent after-the-fact fixes
+   - Enforces TodoWrite usage, verification pauses, and zero hallucination
+   - Specifies WHEN to check (before task, during sections, before commit)
+   - Includes documentation consistency checklist (line counts, structure, both locations)
+   - **This workflow is read every prompt and enforces quality standards**
+   - Commit: `63a35aa` - docs: add mandatory workflow checkpoints to enforce quality standards
 
-3. **Comprehensive Documentation Updates**
-   - Updated all 3 tool READMEs with dogfooding sections
-   - Added dogfooding section to root README.md
-   - Updated VitePress docs for test-flakiness-detector and cross-platform-path-normalizer
-   - Documented bidirectional validation network
-   - Highlighted tool composition as key Tuulbelt feature
-   - **Added dogfooding patterns to QUALITY_CHECKLIST.md**
-   - **Updated both scaffold templates (TypeScript and Rust) with dogfooding guidance**
-   - **Fixed all detectFlakiness documentation to show async/await pattern**
-   - **Removed test counts from fuzzy test descriptions**
+### Current Status
 
-4. **All Work Committed and Pushed**
-   - Commit 1: `6a6bd26` - docs(dogfooding): document bidirectional tool composition network
-   - Commit 2: `972e3f6` - docs: update detectFlakiness to show async/await pattern
-   - Branch: `claude/resume-work-GYFG5`
-   - Status: Clean, all tests passing (148 + 125 + 145 = 418 tests)
+**Ready to start next tool implementation:**
+- All 3 existing tools complete and documented
+- Documentation PR merged
+- Clean main branch
+- Ready for new tool development
 
-### What's Pending/Incomplete
+### Next Tool Selection Criteria
 
-**None** - All dogfooding documentation work is complete and ready for PR.
+Based on @PRINCIPLES.md and @.claude/NEXT_TASKS.md:
 
-### Key Decisions Made
+**Candidates (Phase 1: Quick Tools):**
+1. **File-Based Semaphore** - Process coordination with file locking
+2. **Output Diffing Utility** - Semantic diffs for testing
 
-1. **Dogfooding Pattern**: Dynamic imports with graceful fallback (monorepo optional, standalone works)
-2. **Progress Threshold**: Only enable progress tracking for ≥5 runs (performance)
-3. **Async Conversion**: Made detectFlakiness() async to support dynamic imports
-4. **Bidirectional Validation**: Tools validate each other (network effect)
-5. **Documentation Placement**: Added dogfooding sections to all major docs (README, VitePress, tool docs)
+**Recommendation: File-Based Semaphore**
+- **Why**: Complements existing tools (test isolation, concurrent safety)
+- **Language**: Rust (balance distribution - currently 3 TypeScript, 0 Rust)
+- **Complexity**: Medium
+- **Dogfooding**: Could be used by test-flakiness-detector for concurrent test isolation
+- **Value**: High - solves real problem in concurrent workflows
+
+**Alternative: Output Diffing Utility**
+- Language: Rust (performance-critical)
+- Complexity: Medium-High
+- Use case: Testing and validation
 
 ### Context for Next Session
 
@@ -62,17 +61,18 @@
 - All tools: Dogfooding validated (bidirectional composition network)
 - Workflows functioning and auto-discovering tools
 - VitePress documentation site deployed to GitHub Pages
+- **Documentation consistency achieved across all 3 tools**
 
-**Dogfooding Network:**
-- test-flakiness-detector → uses cli-progress-reporting (progress tracking)
-- cli-progress-reporting → validated by test-flakiness-detector (125 tests × 20 runs)
-- cross-platform-path-normalizer → validated by test-flakiness-detector (145 tests × 10 runs)
-- 3 bidirectional relationships across 3 tools
+**Documentation Structure:**
+- GitHub Pages: `docs/tools/{tool-name}/` (main user-facing docs)
+- Local VitePress: `{tool-name}/docs/` (test-flakiness-detector, cross-platform-path-normalizer)
+- Tool READMEs: All have Demo sections with StackBlitz buttons
+- Formatting quality: All tools have comprehensive library-usage and examples docs
 
 **Branch Status:**
-- Current branch: `claude/resume-work-GYFG5`
-- Status: Clean, all tests passing, ready for PR
-- Commits: 2 documentation commits (dogfooding + async/await fixes)
+- Main branch: Clean, documentation PR merged ✅
+- All tests passing across all 3 tools (148 + 125 + 145 = 418 tests)
+- Ready to create new feature branch for next tool
 
 **Quality Standards:**
 - MUST run `/quality-check` before every commit
@@ -85,29 +85,59 @@
 
 ## Next Immediate Tasks
 
-**Priority 1: Create PR for Dogfooding Work**
+**Priority 1: Implement File-Based Semaphore (Tool #4)** ⭐
 
-This session is complete! Create a PR with:
-- Title: "docs(dogfooding): document bidirectional tool composition network"
-- Description: Include summary from this handoff
-- Commits: 2 commits (6a6bd26, 972e3f6)
-- All tests passing ✅
+**Step 1: Project Setup**
+- [ ] Create new tool directory: `file-based-semaphore/`
+- [ ] Language: **Rust** (balance distribution)
+- [ ] Initialize Cargo project: `cargo init --lib`
+- [ ] Copy from `templates/rust-tool-template/`
 
-**Priority 2: Next Tool Implementation**
+**Step 2: Core Implementation**
+- [ ] Implement file-based locking with atomic operations
+- [ ] Support acquire/release/try_acquire operations
+- [ ] Handle stale locks (timeout/cleanup)
+- [ ] Add both CLI and library interfaces
+- [ ] Zero runtime dependencies (use std::fs only)
 
-1. **Tool Selection**
-   - File-Based Semaphore OR Output Diffing Utility
-   - Consider Rust to balance language distribution (currently 3 TypeScript, 0 Rust)
+**Step 3: Testing**
+- [ ] Write unit tests for core lock logic
+- [ ] Integration tests for concurrent access
+- [ ] Edge case tests (stale locks, permission errors)
+- [ ] Run `cargo test` - target 80%+ coverage
+- [ ] Use test-flakiness-detector to validate test suite
 
-2. **Consider Dogfooding**
-   - Can the new tool use existing tools? (cli-progress, test-flakiness-detector, path-normalizer)
-   - Can existing tools use the new tool?
-   - Document opportunities in planning phase
+**Step 4: Documentation**
+- [ ] Write comprehensive README
+- [ ] Create examples/ directory with usage patterns
+- [ ] Add SPEC.md for lock protocol specification
+- [ ] Create demo.cast for asciinema recording
+- [ ] Add to root README.md and docs/tools/
 
-**Priority 3: Known Issues (Deferred)**
+**Step 5: Dogfooding**
+- [ ] Consider: Can test-flakiness-detector use this for concurrent test isolation?
+- [ ] Document dogfooding opportunities in README
+- [ ] Add test:dogfood script if applicable
 
-1. Fix VitePress card icon theming (see KNOWN_ISSUES.md)
-2. Fix StackBlitz badge alignment (see KNOWN_ISSUES.md)
+**Step 6: Quality Checks**
+- [ ] Run `/quality-check` (build, tests, clippy, zero deps)
+- [ ] Run `cargo clippy -- -D warnings` (zero warnings)
+- [ ] Run `cargo fmt` (format code)
+- [ ] Verify zero runtime dependencies
+- [ ] Update STATUS.md if exists
+
+**Step 7: Commit and PR**
+- [ ] Commit with semantic message: `feat(file-based-semaphore): implement core locking mechanism`
+- [ ] Create PR to main
+- [ ] Update HANDOFF.md and NEXT_TASKS.md
+
+**Alternative: Output Diffing Utility** (if File-Based Semaphore not suitable)
+- Also Rust, also medium-high complexity
+- Focus on semantic diff algorithms
+
+**Deferred: Known Issues**
+- Fix VitePress card icon theming (see KNOWN_ISSUES.md)
+- Fix StackBlitz badge alignment (see KNOWN_ISSUES.md)
 
 ---
 
@@ -130,13 +160,14 @@ This session is complete! Create a PR with:
 
 ## Notes for Next Session
 
-- **Dogfooding Pattern Established**: Use dynamic imports with graceful fallback for tool composition
-- **Tool Count**: 3 TypeScript tools completed, consider Rust for next to balance distribution
-- **Dogfooding Network**: 3 bidirectional relationships across 3 tools (see session summary)
-- **Documentation Pattern**: Always add dogfooding sections to README and VitePress docs
-- **Test Validation**: Use test:dogfood scripts to validate test suite reliability
-- **Progress Threshold**: Only enable progress tracking for operations ≥5 iterations
-- **Template Updates Pending**: Consider adding dogfooding guidance to scaffold templates
+- **⭐ NEW: MANDATORY WORKFLOW in CLAUDE.md** - Follow checkpoint-based enforcement system
+- **Tool #4: File-Based Semaphore** - Rust implementation recommended
+- **Language Distribution**: Balance needed - 3 TypeScript, 0 Rust (add first Rust tool)
+- **Template**: Use `templates/rust-tool-template/` as starting point
+- **Dogfooding**: Consider integration with test-flakiness-detector for concurrent test isolation
+- **Quality Standard**: 80%+ test coverage, zero runtime deps, clippy zero warnings
+- **Documentation Pattern**: README + SPEC.md + examples + demo.cast + VitePress docs
+- **FIRST STEP**: Create TodoWrite checklist from QUALITY_CHECKLIST.md before ANY coding
 
 ---
 
