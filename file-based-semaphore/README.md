@@ -260,7 +260,7 @@ The test suite is deterministic and reliable! 🎉
 
 ![Demo](docs/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/U5FYrsB0R0lbKBDsGtBkdPnYR)**
+**[▶ View interactive recording on asciinema.org](#)**
 
 ### Try it Yourself
 
