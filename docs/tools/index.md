@@ -2,7 +2,7 @@
 
 Tuulbelt provides a curated collection of focused, zero-dependency tools for modern software development.
 
-## Completed Tools (3/33)
+## Completed Tools (4/33)
 
 ### Test Flakiness Detector
 
@@ -62,12 +62,31 @@ Convert Windows/Unix paths with zero dependencies. Handle UNC paths, mixed separ
 
 ---
 
+### File-Based Semaphore
+
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
+**Language:** Rust
+**Tests:** 31 tests
+
+Cross-platform file-based semaphore for process coordination. Lock resources reliably across processes with zero dependencies.
+
+**Features:**
+- Atomic locking with O_CREAT | O_EXCL
+- Stale lock detection with configurable timeout
+- RAII-style guards for automatic release
+- Both CLI and library interfaces
+- Cross-platform (Linux, macOS, Windows)
+- Zero runtime dependencies
+
+[View Documentation →](/tools/file-based-semaphore/)
+
+---
+
 ## Coming Soon
 
-### Phase 1: Quick Tools (2 remaining)
+### Phase 1: Quick Tools (1 remaining)
 
-- <img src="/icons/target.svg" class="inline-icon" alt=""> **File-Based Semaphore** (Next)
-- <img src="/icons/circle.svg" class="inline-icon" alt=""> Output Diffing Utility
+- <img src="/icons/target.svg" class="inline-icon" alt=""> **Output Diffing Utility** (Next)
 
 ### All Planned Tools
 

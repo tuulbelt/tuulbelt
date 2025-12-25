@@ -1,172 +1,132 @@
 # Session Handoff
 
 **Last Updated:** 2025-12-25
-**Session:** Ready for Next Tool Implementation
-**Status:** ✅ Ready to Start New Tool
+**Session:** File-Based Semaphore Implementation Complete
+**Status:** ✅ Tool #4 Complete - Ready for Next Tool
 
 ---
 
-## Previous Session Summary
+## Current Session Summary
 
-### What Was Accomplished (Documentation PR - Merged ✅)
+### What Was Accomplished
 
-1. **GitHub Pages Documentation Formatting Fixes**
-   - Fixed cross-platform-path-normalizer library-usage.md (50→376 lines) and examples.md (43→484 lines)
-   - Added Demo sections with StackBlitz buttons to all 3 GitHub Pages tool index files
-   - Added asciinema placeholder for cross-platform-path-normalizer
-   - Achieved documentation consistency across all 3 tools
-   - **PR merged to main** ✅
+1. **File-Based Semaphore v0.1.0 (Tool #4)** ✅
+   - **First Rust tool in Tuulbelt!**
+   - Implemented cross-platform file-based semaphore for process coordination
+   - Core features:
+     - Atomic locking with `O_CREAT | O_EXCL`
+     - Blocking and non-blocking acquisition
+     - Stale lock detection with configurable timeout
+     - RAII-style guards for automatic release
+     - Both CLI and library interfaces
+   - Zero runtime dependencies (std only)
+   - 31 tests passing (16 unit + 11 integration + 4 doctests)
+   - Zero clippy warnings
 
-2. **MANDATORY WORKFLOW Added to CLAUDE.md** ⭐
-   - Added checkpoint-based enforcement system to prevent after-the-fact fixes
-   - Enforces TodoWrite usage, verification pauses, and zero hallucination
-   - Specifies WHEN to check (before task, during sections, before commit)
-   - Includes documentation consistency checklist (line counts, structure, both locations)
-   - **This workflow is read every prompt and enforces quality standards**
-   - Commit: `63a35aa` - docs: add mandatory workflow checkpoints to enforce quality standards
+2. **Documentation Complete**
+   - Comprehensive README.md with API reference
+   - SPEC.md with lock file format specification
+   - VitePress docs (7 pages in docs/tools/file-based-semaphore/)
+   - Two examples (basic.rs and concurrent.rs)
+   - Updated root README.md (4/33 tools, 12% progress)
+   - Updated docs/tools/index.md
+
+3. **Quality Verified**
+   - `cargo test` - all 31 tests pass
+   - `cargo clippy -- -D warnings` - zero warnings
+   - `cargo fmt` - formatted
+   - `npm run docs:build` - builds without errors
+   - Zero runtime dependencies verified
+
+### Technical Details
+
+**Implementation:**
+- `file-based-semaphore/src/lib.rs` - Core library (Semaphore, SemaphoreGuard, SemaphoreConfig, LockInfo, SemaphoreError)
+- `file-based-semaphore/src/main.rs` - CLI interface (try, acquire, release, status, wait commands)
+- `file-based-semaphore/tests/integration.rs` - 11 integration tests
+- `file-based-semaphore/examples/` - basic.rs and concurrent.rs
+
+**Lock File Format (SPEC.md):**
+```
+pid=<process-id>
+timestamp=<unix-epoch-seconds>
+tag=<optional-identifier>
+```
+
+**Challenges Resolved:**
+- Lifetime issues with SemaphoreGuard in CLI (solved by direct file creation for CLI)
+- Doctest failures due to lifetime constraints (solved with `no_run` and explicit scopes)
 
 ### Current Status
 
-**Ready to start next tool implementation:**
-- All 3 existing tools complete and documented
-- Documentation PR merged
-- Clean main branch
-- Ready for new tool development
+**4 of 33 tools completed (12% progress)**
 
-### Next Tool Selection Criteria
+| Tool | Language | Version | Tests | Status |
+|------|----------|---------|-------|--------|
+| Test Flakiness Detector | TypeScript | v0.1.0 | 148 | ✅ |
+| CLI Progress Reporting | TypeScript | v0.1.0 | 125 | ✅ |
+| Cross-Platform Path Normalizer | TypeScript | v0.1.0 | 145 | ✅ |
+| **File-Based Semaphore** | **Rust** | **v0.1.0** | **31** | ✅ |
 
-Based on @PRINCIPLES.md and @.claude/NEXT_TASKS.md:
-
-**Candidates (Phase 1: Quick Tools):**
-1. **File-Based Semaphore** - Process coordination with file locking
-2. **Output Diffing Utility** - Semantic diffs for testing
-
-**Recommendation: File-Based Semaphore**
-- **Why**: Complements existing tools (test isolation, concurrent safety)
-- **Language**: Rust (balance distribution - currently 3 TypeScript, 0 Rust)
-- **Complexity**: Medium
-- **Dogfooding**: Could be used by test-flakiness-detector for concurrent test isolation
-- **Value**: High - solves real problem in concurrent workflows
-
-**Alternative: Output Diffing Utility**
-- Language: Rust (performance-critical)
-- Complexity: Medium-High
-- Use case: Testing and validation
-
-### Context for Next Session
-
-**Project State:**
-- 3 of 33 tools completed (9% progress)
-- All tools: TypeScript, v0.1.0, production-ready, 80%+ coverage
-- All tools: Dogfooding validated (bidirectional composition network)
-- Workflows functioning and auto-discovering tools
-- VitePress documentation site deployed to GitHub Pages
-- **Documentation consistency achieved across all 3 tools**
-
-**Documentation Structure:**
-- GitHub Pages: `docs/tools/{tool-name}/` (main user-facing docs)
-- Local VitePress: `{tool-name}/docs/` (test-flakiness-detector, cross-platform-path-normalizer)
-- Tool READMEs: All have Demo sections with StackBlitz buttons
-- Formatting quality: All tools have comprehensive library-usage and examples docs
-
-**Branch Status:**
-- Main branch: Clean, documentation PR merged ✅
-- All tests passing across all 3 tools (148 + 125 + 145 = 418 tests)
-- Ready to create new feature branch for next tool
-
-**Quality Standards:**
-- MUST run `/quality-check` before every commit
-- MUST follow template structure exactly
-- MUST maintain 80%+ test coverage
-- MUST have zero runtime dependencies
-- NEW: Consider dogfooding opportunities for new tools
+**Language Distribution:** 3 TypeScript, 1 Rust
 
 ---
 
 ## Next Immediate Tasks
 
-**Priority 1: Implement File-Based Semaphore (Tool #4)** ⭐
+**Priority 1: Output Diffing Utility (Tool #5)** ⭐
 
-**Step 1: Project Setup**
-- [ ] Create new tool directory: `file-based-semaphore/`
-- [ ] Language: **Rust** (balance distribution)
-- [ ] Initialize Cargo project: `cargo init --lib`
-- [ ] Copy from `templates/rust-tool-template/`
+Last remaining Phase 1 Quick Tool.
 
-**Step 2: Core Implementation**
-- [ ] Implement file-based locking with atomic operations
-- [ ] Support acquire/release/try_acquire operations
-- [ ] Handle stale locks (timeout/cleanup)
-- [ ] Add both CLI and library interfaces
-- [ ] Zero runtime dependencies (use std::fs only)
+**Recommended Approach:**
+- Language: Rust (performance-critical for large diffs)
+- Focus: Semantic diffs for JSON, binary, structured data
+- Use case: Test assertions, snapshot testing
+- Dogfooding: Could be validated by test-flakiness-detector
 
-**Step 3: Testing**
-- [ ] Write unit tests for core lock logic
-- [ ] Integration tests for concurrent access
-- [ ] Edge case tests (stale locks, permission errors)
-- [ ] Run `cargo test` - target 80%+ coverage
-- [ ] Use test-flakiness-detector to validate test suite
+**Step 1: Research & Design**
+- [ ] Study semantic diff algorithms
+- [ ] Define supported formats (JSON, text, binary)
+- [ ] Design CLI interface and output format
 
-**Step 4: Documentation**
-- [ ] Write comprehensive README
-- [ ] Create examples/ directory with usage patterns
-- [ ] Add SPEC.md for lock protocol specification
-- [ ] Create demo.cast for asciinema recording
-- [ ] Add to root README.md and docs/tools/
+**Step 2: Implementation**
+- [ ] Scaffold from `templates/rust-tool-template/`
+- [ ] Implement diff algorithms
+- [ ] Add CLI and library interfaces
 
-**Step 5: Dogfooding**
-- [ ] Consider: Can test-flakiness-detector use this for concurrent test isolation?
-- [ ] Document dogfooding opportunities in README
-- [ ] Add test:dogfood script if applicable
+**Step 3: Quality & Documentation**
+- [ ] 80%+ test coverage
+- [ ] Zero clippy warnings
+- [ ] VitePress documentation
+- [ ] Update root README (5/33, 15%)
 
-**Step 6: Quality Checks**
-- [ ] Run `/quality-check` (build, tests, clippy, zero deps)
-- [ ] Run `cargo clippy -- -D warnings` (zero warnings)
-- [ ] Run `cargo fmt` (format code)
-- [ ] Verify zero runtime dependencies
-- [ ] Update STATUS.md if exists
-
-**Step 7: Commit and PR**
-- [ ] Commit with semantic message: `feat(file-based-semaphore): implement core locking mechanism`
-- [ ] Create PR to main
-- [ ] Update HANDOFF.md and NEXT_TASKS.md
-
-**Alternative: Output Diffing Utility** (if File-Based Semaphore not suitable)
-- Also Rust, also medium-high complexity
-- Focus on semantic diff algorithms
-
-**Deferred: Known Issues**
-- Fix VitePress card icon theming (see KNOWN_ISSUES.md)
-- Fix StackBlitz badge alignment (see KNOWN_ISSUES.md)
+**Alternative: Choose from Phase 2 tools** if Output Diffing is too complex
 
 ---
 
 ## Important References
 
 - **Principles**: `PRINCIPLES.md` - What belongs in Tuulbelt
-- **Work Standards**: `CLAUDE.md` - Quality requirements
+- **Work Standards**: `CLAUDE.md` - Quality requirements (MANDATORY WORKFLOW section)
 - **Quality Checklist**: `docs/QUALITY_CHECKLIST.md` - Pre-commit checks
 - **Known Issues**: `docs/KNOWN_ISSUES.md` - Tracked bugs
-- **Template**: `templates/tool-repo-template/` - Skeleton for new tools
+- **Template**: `templates/rust-tool-template/` - Skeleton for Rust tools
 - **Next Tasks**: `.claude/NEXT_TASKS.md` - Task backlog
 
 ---
 
 ## Blockers / Issues
 
-**None currently.** All tests passing, documentation complete, dogfooding network established.
+**None currently.** All tests passing, documentation complete.
 
 ---
 
 ## Notes for Next Session
 
-- **⭐ NEW: MANDATORY WORKFLOW in CLAUDE.md** - Follow checkpoint-based enforcement system
-- **Tool #4: File-Based Semaphore** - Rust implementation recommended
-- **Language Distribution**: Balance needed - 3 TypeScript, 0 Rust (add first Rust tool)
-- **Template**: Use `templates/rust-tool-template/` as starting point
-- **Dogfooding**: Consider integration with test-flakiness-detector for concurrent test isolation
+- **MANDATORY WORKFLOW in CLAUDE.md** - Follow checkpoint-based enforcement system
+- **Tool #5: Output Diffing Utility** - Complete Phase 1 Quick Tools
+- **Language**: Rust recommended for diff performance
 - **Quality Standard**: 80%+ test coverage, zero runtime deps, clippy zero warnings
-- **Documentation Pattern**: README + SPEC.md + examples + demo.cast + VitePress docs
 - **FIRST STEP**: Create TodoWrite checklist from QUALITY_CHECKLIST.md before ANY coding
 
 ---
@@ -180,10 +140,7 @@ cat .claude/HANDOFF.md
 # 2. Check task backlog
 cat .claude/NEXT_TASKS.md
 
-# 3. Review known issues
-cat docs/KNOWN_ISSUES.md
-
-# 4. Start new tool or resume work
+# 3. Start new tool
 # Use: /resume-work
 ```
 

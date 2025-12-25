@@ -8,31 +8,22 @@ This document tracks pending work across the Tuulbelt project. Tasks are organiz
 
 ## 🚀 New Tools (Priority Order)
 
-### Phase 1: Quick Tools (2 remaining)
+### Phase 1: Quick Tools (1 remaining)
 
-1. **File-Based Semaphore** ⭐ **NEXT**
+1. **Output Diffing Utility** ⭐ **NEXT**
    - **Status**: Not started
-   - **Language**: TBD (TypeScript or Rust)
-   - **Complexity**: Medium
-   - **Value**: High (process coordination)
-   - **Workload**: File system locking
-   - **Recommendation**: Consider Rust for atomic operations and performance
-   - **Dogfooding Opportunity**: Could be used by test-flakiness-detector for concurrent test isolation
-
-2. **Output Diffing Utility**
-   - **Status**: Not started
-   - **Language**: TBD (likely Rust)
+   - **Language**: Rust (recommended for performance)
    - **Complexity**: Medium-High
    - **Value**: High (testing/validation)
    - **Workload**: CPU-bound comparison algorithms
-   - **Recommendation**: Rust for performance on large diffs
    - **Dogfooding Opportunity**: Could be validated by test-flakiness-detector
 
-### Completed (Phase 1: 3/5 = 60%)
+### Completed (Phase 1: 4/5 = 80%)
 
-✅ **Test Flakiness Detector** (v0.1.0)
-✅ **CLI Progress Reporting** (v0.1.0)
-✅ **Cross-Platform Path Normalizer** (v0.1.0)
+✅ **Test Flakiness Detector** (v0.1.0) - TypeScript
+✅ **CLI Progress Reporting** (v0.1.0) - TypeScript
+✅ **Cross-Platform Path Normalizer** (v0.1.0) - TypeScript
+✅ **File-Based Semaphore** (v0.1.0) - Rust 🆕
 
 ### Future Phases
 
@@ -61,6 +52,13 @@ See `README.md` for complete roadmap (30 remaining tools).
 - ✅ v0.1.0 stable
 - ✅ Dogfooding: Validated by test-flakiness-detector (145 tests × 10 runs = 1,450 executions)
 - 145 tests passing
+
+### File-Based Semaphore 🆕
+
+- ✅ v0.1.0 stable (First Rust tool!)
+- ✅ Dogfooding: Can be validated by test-flakiness-detector
+- 31 tests passing (16 unit + 11 integration + 4 doctests)
+- Zero clippy warnings
 
 ---
 
@@ -101,6 +99,7 @@ See `docs/KNOWN_ISSUES.md` for tracked issues.
 - ✅ **Local VitePress Demo sections** - Added to test-flakiness-detector and cross-platform-path-normalizer local docs
 - ✅ **Asciinema placeholders** - Added placeholder link for cross-platform-path-normalizer (GitHub Actions will populate)
 - ✅ **Documentation consistency achieved** - All tools have matching structure, quality, and Demo sections
+- ✅ **File-Based Semaphore docs** - README, SPEC.md, 7 VitePress pages, 2 examples 🆕
 
 ### Pending
 - [ ] Add "Contributing" guide page to VitePress (currently just links to CONTRIBUTING.md)
@@ -143,6 +142,8 @@ See `docs/KNOWN_ISSUES.md` for tracked issues.
 ### Coverage Goals
 - ✅ Test Flakiness Detector: 80%+ coverage ✅
 - ✅ CLI Progress Reporting: 80%+ coverage ✅
+- ✅ Cross-Platform Path Normalizer: 80%+ coverage ✅
+- ✅ File-Based Semaphore: 80%+ coverage ✅ 🆕
 - Target: All tools maintain 80%+ coverage
 
 ---
@@ -213,5 +214,5 @@ Priority: Cross-Platform Path Normalizer
 
 ---
 
-**Last Review:** 2025-12-24
+**Last Review:** 2025-12-25
 **Next Review:** When starting next session
