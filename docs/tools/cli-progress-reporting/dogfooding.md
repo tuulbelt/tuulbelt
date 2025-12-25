@@ -4,7 +4,7 @@ Using Tuulbelt tools to validate Tuulbelt tools.
 
 ## What is Dogfooding?
 
-**Dogfooding** means using our own tools to validate our tools. For CLI Progress Reporting, we use **Test Flakiness Detector** to ensure all 93 tests are deterministic and reliable.
+**Dogfooding** means using our own tools to validate our tools. For CLI Progress Reporting, we use **Test Flakiness Detector** to ensure all 111 tests are deterministic and reliable.
 
 ## Why It Matters
 
@@ -64,11 +64,10 @@ Dogfooding Success: Test Flakiness Detector validated CLI Progress Reporting
 
 ## What We Validate
 
-**93 tests across 34 suites:**
+**111 tests across 34 suites:**
 - Unit tests (35 tests) - Core functionality
 - CLI integration tests (28 tests) - Command-line interface
 - Filesystem tests (21 tests) - Edge cases and error handling
-- Performance tests (9 tests) - Large-scale operations
 
 **Each test must:**
 - Pass or fail consistently across all 10 runs
@@ -179,7 +178,7 @@ This creates a network of validated, production-ready tools.
 ## Conclusion
 
 Dogfooding proves that:
-1. **Test Flakiness Detector works** - Successfully ran 93 tests 10+ times
+1. **Test Flakiness Detector works** - Successfully ran 111 tests 10+ times
 2. **CLI Progress tests are reliable** - 100% consistent results
 3. **Tuulbelt tools integrate well** - Clean APIs, no surprises
 4. **Real-world usage validated** - Not just toy examples

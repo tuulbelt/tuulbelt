@@ -80,13 +80,13 @@ This tool provides zero-dependency path normalization with comprehensive edge ca
 
 ## Dogfooding: Test Reliability Validation
 
-We use **[Test Flakiness Detector](/tools/test-flakiness-detector/)** (another Tuulbelt tool) to validate that all 145 tests are deterministic and reliable:
+We use **[Test Flakiness Detector](/tools/test-flakiness-detector/)** (another Tuulbelt tool) to validate that all 128 tests are deterministic and reliable:
 
 ```bash
 npm run test:dogfood
 ```
 
-This runs the entire test suite 10 times (1,450 total test executions) to detect any non-deterministic behavior. Zero flaky tests detected across all runs, proving test suite reliability.
+This runs the entire test suite 10 times (1,280 total test executions) to detect any non-deterministic behavior. Zero flaky tests detected across all runs, proving test suite reliability.
 
 ## Next Steps
 
