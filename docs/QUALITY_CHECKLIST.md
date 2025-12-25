@@ -106,7 +106,11 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
 
 ### GitHub Workflows
 
-- [ ] **Deployment workflow updated**: `.github/workflows/deploy-docs.yml` watches `{tool-name}/**/*.md` in paths trigger
+- [ ] **Demo recording script created**: `scripts/record-{tool-name}-demo.sh` exists (workflow auto-generates demos)
+- [ ] **Demo uploaded**: Run recording script locally and verify `demo.cast` and `docs/demo.gif` exist
+
+> **Note:** `deploy-docs.yml` auto-discovers tool directories via `*/docs/**` and `*/README.md` patterns.
+> No manual workflow update needed for new tools.
 - [ ] **Test workflow updated** (if needed): Any tool-specific CI configuration added
 
 ### Root Repository Updates
