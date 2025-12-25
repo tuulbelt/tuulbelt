@@ -109,7 +109,7 @@ We use **[Test Flakiness Detector](/tools/test-flakiness-detector/)** to validat
 npx tsx src/index.ts --test "cd ../file-based-semaphore && cargo test" --runs 10
 ```
 
-This validates that all 46 tests are deterministic across multiple runs.
+This validates that all 85 tests are deterministic across multiple runs.
 
 ## Demo
 

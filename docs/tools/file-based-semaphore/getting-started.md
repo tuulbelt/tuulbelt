@@ -52,7 +52,7 @@ file-based-semaphore = { git = "https://github.com/tuulbelt/tuulbelt.git", path 
 
 ```bash
 cargo test
-# 46 tests should pass
+# 85 tests should pass
 
 cargo clippy -- -D warnings
 # Zero warnings required
