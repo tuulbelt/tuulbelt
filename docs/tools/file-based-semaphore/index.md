@@ -109,7 +109,7 @@ We use **[Test Flakiness Detector](/tools/test-flakiness-detector/)** to validat
 npx tsx src/index.ts --test "cd ../file-based-semaphore && cargo test" --runs 10
 ```
 
-This validates that all 31 tests are deterministic across multiple runs.
+This validates that all 46 tests are deterministic across multiple runs.
 
 ## Demo
 
@@ -118,6 +118,22 @@ See the tool in action:
 ![File-Based Semaphore Demo](/file-based-semaphore/demo.gif)
 
 **[▶ View interactive recording on asciinema.org](#)**
+
+### Try it Locally
+
+```bash
+# Clone and build
+git clone https://github.com/tuulbelt/tuulbelt.git
+cd tuulbelt/file-based-semaphore
+cargo build --release
+
+# Run examples
+cargo run --example basic
+cargo run --example concurrent
+cargo run --example stale_recovery
+```
+
+> **Note:** StackBlitz is not available for Rust projects. Clone the repository to try it locally.
 
 > Demos are automatically generated via GitHub Actions when demo scripts are updated.
 

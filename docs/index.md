@@ -50,17 +50,16 @@ features:
 
 ## Available Tools
 
-### Testing & Observability
+### Featured Tools
 
 <div class="tool-card">
 
-#### [Test Flakiness Detector](/tools/test-flakiness-detector/)
+#### <img src="/icons/sparkles.svg" class="inline-icon" alt=""> TypeScript: [Test Flakiness Detector](/tools/test-flakiness-detector/)
 
 Identify unreliable tests by running them multiple times and tracking failure rates.
 
-- <img src="/icons/target.svg" class="inline-icon" alt=""> Framework agnostic
-- <img src="/icons/bar-chart.svg" class="inline-icon" alt=""> Comprehensive JSON reports
-- <img src="/icons/search.svg" class="inline-icon" alt=""> Repeated execution analysis
+- <img src="/icons/target.svg" class="inline-icon" alt=""> Framework agnostic - works with any test command
+- <img src="/icons/bar-chart.svg" class="inline-icon" alt=""> Comprehensive JSON reports with failure statistics
 - <img src="/icons/zap.svg" class="inline-icon" alt=""> Zero runtime dependencies
 
 [Get Started →](/tools/test-flakiness-detector/getting-started)
@@ -69,31 +68,43 @@ Identify unreliable tests by running them multiple times and tracking failure ra
 
 <div class="tool-card">
 
+#### <img src="/icons/tool.svg" class="inline-icon" alt=""> Rust: [File-Based Semaphore](/tools/file-based-semaphore/)
+
+Cross-platform file-based semaphore for process coordination with stale lock detection.
+
+- <img src="/icons/lock.svg" class="inline-icon" alt=""> Atomic locking with O_CREAT | O_EXCL
+- <img src="/icons/clock.svg" class="inline-icon" alt=""> Stale lock detection and recovery
+- <img src="/icons/zap.svg" class="inline-icon" alt=""> Zero runtime dependencies
+
+[Get Started →](/tools/file-based-semaphore/getting-started)
+
+</div>
+
+[**View All 4 Tools →**](/tools/)
+
+### More Tools
+
+<div class="tool-card">
+
 #### [CLI Progress Reporting](/tools/cli-progress-reporting/)
 
 Concurrent-safe progress tracking with file-based atomic writes.
 
 - <img src="/icons/lock.svg" class="inline-icon" alt=""> Concurrent-safe operations
-- <img src="/icons/hash.svg" class="inline-icon" alt=""> Multiple independent trackers
-- <img src="/icons/database.svg" class="inline-icon" alt=""> State persistence
-- <img src="/icons/beaker.svg" class="inline-icon" alt=""> Dogfooding validated
+- <img src="/icons/database.svg" class="inline-icon" alt=""> State persistence across processes
 
 [Get Started →](/tools/cli-progress-reporting/getting-started)
 
 </div>
 
-### Utilities & Infrastructure
-
 <div class="tool-card">
 
 #### [Cross-Platform Path Normalizer](/tools/cross-platform-path-normalizer/)
 
-Convert Windows/Unix paths with zero dependencies. Handle UNC paths, mixed separators, and drive letters seamlessly.
+Convert Windows/Unix paths with zero dependencies.
 
-- <img src="/icons/link.svg" class="inline-icon" alt=""> Bidirectional conversion
-- <img src="/icons/layers.svg" class="inline-icon" alt=""> UNC path support
-- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Type safe
-- <img src="/icons/beaker.svg" class="inline-icon" alt=""> Dogfooding validated
+- <img src="/icons/link.svg" class="inline-icon" alt=""> Bidirectional Windows ↔ Unix conversion
+- <img src="/icons/layers.svg" class="inline-icon" alt=""> UNC path and mixed separator support
 
 [Get Started →](/tools/cross-platform-path-normalizer/getting-started)
 
@@ -101,17 +112,19 @@ Convert Windows/Unix paths with zero dependencies. Handle UNC paths, mixed separ
 
 ## Progress
 
-**Phase 1: Quick Tools** — 3 of 5 complete (60%)
+**Phase 1: Quick Tools** — 4 of 5 complete (80%)
 
-- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Test Flakiness Detector
-- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> CLI Progress Reporting
-- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Cross-Platform Path Normalizer
-- <img src="/icons/target.svg" class="inline-icon" alt=""> File-Based Semaphore (next)
-- <img src="/icons/circle.svg" class="inline-icon" alt=""> Output Diffing Utility
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Test Flakiness Detector (TypeScript)
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> CLI Progress Reporting (TypeScript)
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Cross-Platform Path Normalizer (TypeScript)
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> File-Based Semaphore (Rust) ✨ NEW
+- <img src="/icons/target.svg" class="inline-icon" alt=""> Output Diffing Utility (next)
 
-**Overall Progress:** 3 of 33 tools (9%)
+**Overall Progress:** 4 of 33 tools (12%)
 
 ## Quick Start
+
+### TypeScript Tools
 
 ```bash
 # Clone the repository
@@ -122,17 +135,26 @@ cd tuulbelt
 cd test-flakiness-detector
 npm install
 npx tsx src/index.ts --test "npm test" --runs 10
-
-# Try CLI Progress Reporting
-cd ../cli-progress-reporting
-npm install
-npx tsx src/index.ts init --total 100 --message "Processing files"
-
-# Try Cross-Platform Path Normalizer
-cd ../cross-platform-path-normalizer
-npm install
-npx tsx src/index.ts --format unix "C:\Users\file.txt"
 ```
+
+### Rust Tools
+
+```bash
+# Try File-Based Semaphore
+cd file-based-semaphore
+cargo build --release
+
+# Acquire a lock
+./target/release/file-semaphore try /tmp/my.lock
+
+# Check status
+./target/release/file-semaphore status /tmp/my.lock
+
+# Release
+./target/release/file-semaphore release /tmp/my.lock
+```
+
+> See each tool's documentation for full usage guides and API references.
 
 ## Philosophy
 

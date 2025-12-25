@@ -2,6 +2,21 @@
 
 Real-world usage patterns for File-Based Semaphore.
 
+## Running the Examples
+
+The repository includes three runnable examples:
+
+```bash
+# Basic usage - acquire, check status, release
+cargo run --example basic
+
+# Concurrent access - 5 threads competing for a lock
+cargo run --example concurrent
+
+# Stale lock recovery - detect and recover from crashed processes
+cargo run --example stale_recovery
+```
+
 ## Shell Script Examples
 
 ### Deployment Guard
