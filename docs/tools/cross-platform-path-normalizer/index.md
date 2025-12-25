@@ -90,7 +90,11 @@ This runs the entire test suite 10 times (1,280 total test executions) to detect
 
 ## Demo
 
-See the tool in action with real-time path conversion examples.
+See the tool in action:
+
+![Cross-Platform Path Normalizer Demo](/cross-platform-path-normalizer/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](#)**
 
 <div style="margin: 20px 0;">
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
@@ -102,6 +106,8 @@ See the tool in action with real-time path conversion examples.
 </div>
 
 Run the tool directly in your browser with zero setup. Try converting Windows and Unix paths, test edge cases, and explore the full API.
+
+> Demos are automatically generated via GitHub Actions when demo scripts are updated.
 
 ## Next Steps
 
