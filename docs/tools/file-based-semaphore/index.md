@@ -113,6 +113,10 @@ This validates that all 46 tests are deterministic across multiple runs.
 
 ## Demo
 
+![File-Based Semaphore Demo](/file-based-semaphore/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](#)**
+
 ### Try it Locally
 
 ```bash
@@ -125,15 +129,14 @@ cargo build --release
 cargo run --example basic
 cargo run --example concurrent
 cargo run --example stale_recovery
+
+# Run full demo script
+./scripts/demo.sh
 ```
 
 > **Note:** StackBlitz is not available for Rust projects. Clone the repository to try it locally.
 
-Run the demo script to see all features:
-
-```bash
-./scripts/demo.sh
-```
+> Demo recordings are automatically generated via GitHub Actions.
 
 ## Next Steps
 
