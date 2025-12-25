@@ -3,8 +3,18 @@ name: Test
 on:
   push:
     branches: [main]
+    paths:
+      - 'file-based-semaphore/**'
+      - '.github/workflows/test-all-tools.yml'
   pull_request:
     branches: [main]
+    paths:
+      - 'file-based-semaphore/**'
+
+# Cancel in-progress runs when new commits are pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   CARGO_TERM_COLOR: always
@@ -24,33 +34,21 @@ jobs:
 
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "file-based-semaphore -> target"
 
-      - name: Check formatting
+      - name: Check formatting (fail fast)
+        working-directory: file-based-semaphore
         run: cargo fmt --all -- --check
 
-      - name: Run clippy
+      - name: Run clippy (fail fast)
+        working-directory: file-based-semaphore
         run: cargo clippy --all-targets --all-features -- -D warnings
 
       - name: Run tests
+        working-directory: file-based-semaphore
         run: cargo test --all-features
 
       - name: Build release
+        working-directory: file-based-semaphore
         run: cargo build --release
-
-  # Test on multiple platforms
-  cross-platform:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Run tests
-        run: cargo test

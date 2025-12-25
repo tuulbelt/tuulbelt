@@ -13,6 +13,11 @@ on:
   workflow_dispatch:
     # Allow manual trigger
 
+# Cancel in-progress runs when new commits are pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   discover-tools:
     name: Discover Tools
@@ -101,6 +106,10 @@ jobs:
         working-directory: ${{ matrix.tool }}
         run: npm ci
 
+      - name: Check TypeScript (fail fast)
+        working-directory: ${{ matrix.tool }}
+        run: npx tsc --noEmit
+
       - name: Run tests
         working-directory: ${{ matrix.tool }}
         run: npm test
@@ -108,15 +117,6 @@ jobs:
       - name: Build
         working-directory: ${{ matrix.tool }}
         run: npm run build
-
-      - name: Report test results
-        if: always()
-        run: |
-          if [ $? -eq 0 ]; then
-            echo "✅ ${{ matrix.tool }} - Tests passed"
-          else
-            echo "❌ ${{ matrix.tool }} - Tests failed"
-          fi
 
   test-rust-tools:
     name: Test Rust Tools
@@ -132,48 +132,31 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          profile: minimal
           components: clippy, rustfmt
-          override: true
 
       - name: Cache Cargo
-        uses: actions/cache@v3
+        uses: Swatinem/rust-cache@v2
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            ${{ matrix.tool }}/target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          workspaces: "${{ matrix.tool }} -> target"
+          shared-key: "rust-${{ runner.os }}"
+
+      - name: Check formatting (fail fast)
+        working-directory: ${{ matrix.tool }}
+        run: cargo fmt -- --check
+
+      - name: Run clippy (fail fast)
+        working-directory: ${{ matrix.tool }}
+        run: cargo clippy -- -D warnings
 
       - name: Run tests
         working-directory: ${{ matrix.tool }}
         run: cargo test --verbose
 
-      - name: Run clippy
-        working-directory: ${{ matrix.tool }}
-        run: cargo clippy -- -D warnings
-
-      - name: Check formatting
-        working-directory: ${{ matrix.tool }}
-        run: cargo fmt -- --check
-
       - name: Build release
         working-directory: ${{ matrix.tool }}
         run: cargo build --release
-
-      - name: Report test results
-        if: always()
-        run: |
-          if [ $? -eq 0 ]; then
-            echo "✅ ${{ matrix.tool }} - Tests passed"
-          else
-            echo "❌ ${{ matrix.tool }} - Tests failed"
-          fi
 
   summary:
     name: Test Summary

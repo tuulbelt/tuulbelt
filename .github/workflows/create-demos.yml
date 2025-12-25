@@ -14,6 +14,11 @@ on:
         required: false
         type: string
 
+# Cancel in-progress runs when new commits are pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   create-demos:
     runs-on: ubuntu-latest
@@ -28,6 +33,21 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Setup Rust (for building Rust tools and agg)
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo and agg binary
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-agg-v1.4.3
+          restore-keys: |
+            ${{ runner.os }}-cargo-agg-
+
       - name: Install asciinema
         run: |
           sudo apt-get update
@@ -35,7 +55,12 @@ jobs:
 
       - name: Install agg (asciinema GIF generator)
         run: |
-          cargo install --git https://github.com/asciinema/agg
+          # Only install if not already cached
+          if ! command -v agg &> /dev/null; then
+            cargo install --git https://github.com/asciinema/agg
+          else
+            echo "agg already installed (cached)"
+          fi
 
       - name: Discover and record demos
         env:
@@ -67,11 +92,16 @@ jobs:
             echo "Recording demo for: $tool"
             echo "================================"
 
-            # Install dependencies if package.json exists
+            # Install dependencies based on tool type
             if [ -f "$tool/package.json" ]; then
               echo "Installing npm dependencies for $tool..."
               cd "$tool"
               npm install
+              cd ..
+            elif [ -f "$tool/Cargo.toml" ]; then
+              echo "Building Rust release for $tool..."
+              cd "$tool"
+              cargo build --release
               cd ..
             fi
 
