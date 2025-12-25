@@ -20,47 +20,68 @@ concurrency:
 
 permissions:
   contents: write
+  actions: read
 
 jobs:
   update-dashboard:
     name: Update Dashboard
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    # Run if test-all-tools completed (success or failure) OR if manually/scheduled
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion != 'cancelled'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           ref: main
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Download test results (from triggering workflow)
+        if: github.event_name == 'workflow_run'
+        uses: actions/download-artifact@v4
         with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
+          name: test-results
+          path: .
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+        continue-on-error: true
 
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: clippy
+      - name: Download test results (from latest workflow run)
+        if: github.event_name != 'workflow_run'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Find the most recent successful test-all-tools run
+          RUN_ID=$(gh run list --workflow="Test All Tools" --status=success --limit=1 --json databaseId --jq '.[0].databaseId')
 
-      - name: Cache Cargo
-        uses: Swatinem/rust-cache@v2
-        with:
-          shared-key: "dashboard-rust-${{ runner.os }}"
+          if [ -n "$RUN_ID" ]; then
+            echo "Downloading artifact from run $RUN_ID"
+            gh run download "$RUN_ID" --name test-results --dir . || echo "No artifact found"
+          else
+            echo "No successful test run found"
+          fi
 
-      - name: Discover and test tools
-        id: test-tools
+      - name: Generate dashboard from results
+        id: generate
         run: |
           mkdir -p docs
 
-          # Initialize dashboard
-          cat > docs/TOOL_DASHBOARD.md << 'EOL'
+          # Check if we have test results
+          if [ -f "test-results.json" ]; then
+            echo "Using test results from artifact"
+
+            # Parse the JSON and generate dashboard
+            TIMESTAMP=$(jq -r '.timestamp' test-results.json)
+            TOOL_COUNT=$(jq '.results | length' test-results.json)
+            PASSING=$(jq '[.results[] | select(.status == "success")] | length' test-results.json)
+            FAILING=$(jq '[.results[] | select(.status != "success")] | length' test-results.json)
+
+            # Generate dashboard header
+            cat > docs/TOOL_DASHBOARD.md << EOF
           # Tuulbelt Tool Quality Dashboard
 
           **Last Updated:** $(date -u +"%Y-%m-%d %H:%M UTC")
-          **Total Tools:** 0
-          **Status:** Scanning...
+          **Test Results From:** ${TIMESTAMP}
+          **Total Tools:** ${TOOL_COUNT}
+          **Passing:** ${PASSING} | **Failing:** ${FAILING}
 
           ---
 
@@ -68,104 +89,41 @@ jobs:
 
           | Tool | Language | Tests | Build | Status | Version |
           |------|----------|-------|-------|--------|---------|
-          EOL
+          EOF
 
-          # Find TypeScript tools (directories with package.json)
-          # Exclude: root, node_modules, .git, docs, templates, scripts, .github, .claude
-          TS_TOOLS=$(find . -maxdepth 2 -name "package.json" \
-            -not -path "./package.json" \
-            -not -path "*/node_modules/*" \
-            -not -path "./.git/*" \
-            -not -path "./docs/*" \
-            -not -path "./templates/*" \
-            -not -path "./scripts/*" \
-            -not -path "./.github/*" \
-            -not -path "./.claude/*" | \
-            xargs -I {} dirname {} | \
-            sed 's|^\./||' || echo "")
+            # Generate table rows from JSON
+            jq -r '.results[] |
+              (if .status == "success" then "🟢 Production" else "🔴 Broken" end) as $status |
+              (if .build == "success" then "✅" else "❌" end) as $build |
+              "| \(.tool) | \(.language) | \(.testCount) | \($build) | \($status) | \(.version) |"
+            ' test-results.json >> docs/TOOL_DASHBOARD.md
 
-          # Find Rust tools (directories with Cargo.toml)
-          # Exclude: target, .git, templates
-          RUST_TOOLS=$(find . -maxdepth 2 -name "Cargo.toml" \
-            -not -path "*/target/*" \
-            -not -path "./.git/*" \
-            -not -path "./templates/*" | \
-            xargs -I {} dirname {} | \
-            sed 's|^\./||' || echo "")
+          else
+            echo "No test results found, generating placeholder dashboard"
+            TOOL_COUNT=0
+            PASSING=0
+            FAILING=0
 
-          TOOL_COUNT=0
-          PASSING_COUNT=0
-          FAILING_COUNT=0
+            cat > docs/TOOL_DASHBOARD.md << EOF
+          # Tuulbelt Tool Quality Dashboard
 
-          # Test TypeScript tools
-          if [ -n "$TS_TOOLS" ]; then
-            for tool in $TS_TOOLS; do
-              TOOL_COUNT=$((TOOL_COUNT + 1))
-              TOOL_NAME=$(basename "$tool")
+          **Last Updated:** $(date -u +"%Y-%m-%d %H:%M UTC")
+          **Status:** ⚠️ No test results available
 
-              # Get version from package.json
-              VERSION=$(jq -r '.version' "$tool/package.json" 2>/dev/null || echo "unknown")
+          Run the "Test All Tools" workflow to generate test results.
 
-              # Run tests
-              cd "$tool"
-              if npm ci > /dev/null 2>&1 && npm test > /dev/null 2>&1 && npm run build > /dev/null 2>&1; then
-                TEST_STATUS="✅ Pass"
-                BUILD_STATUS="✅"
-                STATUS="🟢 Production"
-                PASSING_COUNT=$((PASSING_COUNT + 1))
-              else
-                TEST_STATUS="❌ Fail"
-                BUILD_STATUS="❌"
-                STATUS="🔴 Broken"
-                FAILING_COUNT=$((FAILING_COUNT + 1))
-              fi
-              cd - > /dev/null
+          ---
 
-              # Count tests
-              TEST_COUNT=$(grep -r "^test(" "$tool/test/" 2>/dev/null | wc -l || echo "0")
+          ## Tool Status
 
-              echo "| $TOOL_NAME | TypeScript | $TEST_COUNT | $BUILD_STATUS | $STATUS | $VERSION |" >> docs/TOOL_DASHBOARD.md
-            done
+          | Tool | Language | Tests | Build | Status | Version |
+          |------|----------|-------|-------|--------|---------|
+          | *No data* | - | - | - | - | - |
+          EOF
           fi
-
-          # Test Rust tools
-          if [ -n "$RUST_TOOLS" ]; then
-            for tool in $RUST_TOOLS; do
-              TOOL_COUNT=$((TOOL_COUNT + 1))
-              TOOL_NAME=$(basename "$tool")
-
-              # Get version from Cargo.toml
-              VERSION=$(grep "^version" "$tool/Cargo.toml" | head -1 | sed 's/.*"\(.*\)".*/\1/' || echo "unknown")
-
-              # Run tests
-              cd "$tool"
-              if cargo test > /dev/null 2>&1 && cargo clippy -- -D warnings > /dev/null 2>&1 && cargo build --release > /dev/null 2>&1; then
-                TEST_STATUS="✅ Pass"
-                BUILD_STATUS="✅"
-                STATUS="🟢 Production"
-                PASSING_COUNT=$((PASSING_COUNT + 1))
-              else
-                TEST_STATUS="❌ Fail"
-                BUILD_STATUS="❌"
-                STATUS="🔴 Broken"
-                FAILING_COUNT=$((FAILING_COUNT + 1))
-              fi
-              cd - > /dev/null
-
-              # Count tests
-              TEST_COUNT=$(grep -r "#\[test\]" "$tool/src/" "$tool/tests/" 2>/dev/null | wc -l || echo "0")
-
-              echo "| $TOOL_NAME | Rust | $TEST_COUNT | $BUILD_STATUS | $STATUS | $VERSION |" >> docs/TOOL_DASHBOARD.md
-            done
-          fi
-
-          # Update header with actual counts
-          sed -i "s/\*\*Total Tools:\*\* 0/**Total Tools:** $TOOL_COUNT/" docs/TOOL_DASHBOARD.md
-          sed -i "s/\*\*Status:\*\* Scanning.../\*\*Passing:\*\* $PASSING_COUNT \| \*\*Failing:\*\* $FAILING_COUNT/" docs/TOOL_DASHBOARD.md
-          sed -i "s/\$(date.*)/$(date -u +"%Y-%m-%d %H:%M UTC")/" docs/TOOL_DASHBOARD.md
 
           # Add footer
-          cat >> docs/TOOL_DASHBOARD.md << 'EOL'
+          cat >> docs/TOOL_DASHBOARD.md << 'EOF'
 
           ---
 
@@ -178,20 +136,20 @@ jobs:
 
           ---
 
-          ## Recent Updates
+          ## How This Works
 
-          - Dashboard updated automatically via GitHub Actions
-          - Runs after each test-all-tools workflow completion
-          - Also runs nightly at 3 AM UTC
+          1. **Test All Tools** workflow runs tests and uploads results as artifact
+          2. **Update Dashboard** workflow downloads results and generates this page
+          3. No tests are re-run - dashboard is generated from cached results
 
           ---
 
           *This dashboard is auto-generated. Do not edit manually.*
-          EOL
+          EOF
 
           echo "tool-count=$TOOL_COUNT" >> $GITHUB_OUTPUT
-          echo "passing-count=$PASSING_COUNT" >> $GITHUB_OUTPUT
-          echo "failing-count=$FAILING_COUNT" >> $GITHUB_OUTPUT
+          echo "passing-count=$PASSING" >> $GITHUB_OUTPUT
+          echo "failing-count=$FAILING" >> $GITHUB_OUTPUT
 
       - name: Commit dashboard updates
         run: |
@@ -205,11 +163,11 @@ jobs:
           else
             git commit -m "docs: update tool quality dashboard
 
-          Tools: ${{ steps.test-tools.outputs.tool-count }}
-          Passing: ${{ steps.test-tools.outputs.passing-count }}
-          Failing: ${{ steps.test-tools.outputs.failing-count }}
+          Tools: ${{ steps.generate.outputs.tool-count }}
+          Passing: ${{ steps.generate.outputs.passing-count }}
+          Failing: ${{ steps.generate.outputs.failing-count }}
 
-          Auto-generated by update-dashboard workflow"
+          Auto-generated by update-dashboard workflow (from test-all-tools artifact)"
             git push
           fi
 
@@ -217,8 +175,10 @@ jobs:
         run: |
           echo "## Quality Dashboard Updated" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Tools Tested:** ${{ steps.test-tools.outputs.tool-count }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Passing:** ${{ steps.test-tools.outputs.passing-count }} ✅" >> $GITHUB_STEP_SUMMARY
-          echo "**Failing:** ${{ steps.test-tools.outputs.failing-count }} ❌" >> $GITHUB_STEP_SUMMARY
+          echo "**Tools:** ${{ steps.generate.outputs.tool-count }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Passing:** ${{ steps.generate.outputs.passing-count }} ✅" >> $GITHUB_STEP_SUMMARY
+          echo "**Failing:** ${{ steps.generate.outputs.failing-count }} ❌" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Dashboard available at [docs/TOOL_DASHBOARD.md](https://github.com/${{ github.repository }}/blob/main/docs/TOOL_DASHBOARD.md)" >> $GITHUB_STEP_SUMMARY
+          echo "📊 Generated from test-all-tools artifact (no re-testing)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Dashboard: [docs/TOOL_DASHBOARD.md](https://github.com/${{ github.repository }}/blob/main/docs/TOOL_DASHBOARD.md)" >> $GITHUB_STEP_SUMMARY
