@@ -18,7 +18,7 @@ Each tool in Tuulbelt:
 - **[Structured Error Handler](https://github.com/tuulbelt/structured-error-handler)** — Error format + serialization with context preservation (TBD)
 - **[CLI Progress Reporting](cli-progress-reporting/)** — Concurrent-safe progress updates 🟢 v0.1.0 | [📖 Docs](cli-progress-reporting/) | [🚀 Examples](cli-progress-reporting/examples/)
 - **[Configuration File Merger](https://github.com/tuulbelt/config-file-merger)** — ENV + config + CLI arg merging (TBD)
-- **[Cross-Platform Path Normalizer](cross-platform-path-normalizer/)** — Windows/Unix path consistency 🟢 v0.1.0 | [📖 Docs](cross-platform-path-normalizer/)
+- **[Cross-Platform Path Normalizer](cross-platform-path-normalizer/)** — Windows/Unix path consistency 🟢 v0.1.0 | [📖 Docs](cross-platform-path-normalizer/) | [🚀 Examples](cross-platform-path-normalizer/examples/)
 
 ### Testing & Observability
 - **[Test Flakiness Detector](test-flakiness-detector/)** — Identify unreliable tests 🟢 v0.1.0 | [📖 Docs](test-flakiness-detector/docs/) | [🚀 Examples](test-flakiness-detector/examples/)
@@ -75,51 +75,40 @@ cd <tool-name>
 npm test  # or cargo test for Rust tools
 ```
 
-### Try Our Tools Now
+## Quick Examples
 
-**Test Flakiness Detector** — Identify unreliable tests
+### Test Flakiness Detector
 
 ```bash
-cd test-flakiness-detector
-npm install
+cd test-flakiness-detector && npm install
 npx tsx src/index.ts --test "npm test" --runs 10
 ```
 
-**Features:**
-- 🎯 Framework agnostic - works with any test command
-- 🔍 Detects flaky tests through repeated execution
-- 📊 Comprehensive JSON reports with failure rates
-- ⚡ Zero runtime dependencies
-- 🚀 107+ tests with 80%+ coverage
-- 📖 [Full Documentation](test-flakiness-detector/docs/)
-- 🎮 [Example Outputs](test-flakiness-detector/examples/)
+[📖 Docs](test-flakiness-detector/docs/) | [🚀 Examples](test-flakiness-detector/examples/)
 
 ---
 
-**CLI Progress Reporting** — Concurrent-safe progress updates
+### CLI Progress Reporting
 
 ```bash
-cd cli-progress-reporting
-npm install
-
-# Initialize progress tracker
+cd cli-progress-reporting && npm install
 npx tsx src/index.ts init --total 100 --message "Processing files"
-
-# Update progress
-npx tsx src/index.ts increment --amount 10
-
-# Check current status
-npx tsx src/index.ts get
 ```
 
-**Features:**
-- 🔒 Concurrent-safe with file-based atomic writes
-- 🆔 Multiple independent progress trackers
-- 🛠️ CLI and library API
-- 💾 State persistence across processes
-- ⚡ Zero runtime dependencies
-- 🚀 93 tests, dogfooding validated
-- 📖 [Full Documentation](cli-progress-reporting/)
+[📖 Docs](cli-progress-reporting/) | [🚀 Examples](cli-progress-reporting/examples/)
+
+---
+
+### Cross-Platform Path Normalizer
+
+```bash
+cd cross-platform-path-normalizer && npm install
+npx tsx src/index.ts --format unix "C:\Users\file.txt"
+```
+
+[📖 Docs](cross-platform-path-normalizer/) | [🚀 Examples](cross-platform-path-normalizer/examples/)
+
+_[See all 33 tools →](#current-tools)_
 
 ## Dogfooding: Tools Working Together
 

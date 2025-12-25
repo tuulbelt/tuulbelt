@@ -60,8 +60,8 @@ Identify unreliable tests by running them multiple times and tracking failure ra
 
 - <img src="/icons/target.svg" class="inline-icon" alt=""> Framework agnostic
 - <img src="/icons/bar-chart.svg" class="inline-icon" alt=""> Comprehensive JSON reports
-- <img src="/icons/rocket.svg" class="inline-icon" alt=""> 148 tests, production-ready
-- <img src="/icons/book.svg" class="inline-icon" alt=""> Full documentation with examples
+- <img src="/icons/search.svg" class="inline-icon" alt=""> Repeated execution analysis
+- <img src="/icons/zap.svg" class="inline-icon" alt=""> Zero runtime dependencies
 
 [Get Started →](/tools/test-flakiness-detector/getting-started)
 
