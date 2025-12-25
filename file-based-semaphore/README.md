@@ -211,10 +211,11 @@ cargo test -- --nocapture  # Show output
 We validate this tool's test reliability using **Test Flakiness Detector** (another Tuulbelt tool):
 
 ```bash
-# From the tuulbelt root directory
-cd test-flakiness-detector
-npm install
-npx tsx src/index.ts --test "cd ../file-based-semaphore && cargo test" --runs 10
+# Run the dogfood script
+./scripts/dogfood.sh
+
+# Or with custom run count
+./scripts/dogfood.sh 20
 ```
 
 This runs all 46 tests 10 times (460 total executions) to detect any non-deterministic behavior.
@@ -222,7 +223,8 @@ This runs all 46 tests 10 times (460 total executions) to detect any non-determi
 **Expected output:**
 ```
 ✅ NO FLAKINESS DETECTED
-All 46 tests passed consistently across 10 runs.
+All 10 test runs passed consistently.
+The test suite is deterministic and reliable! 🎉
 ```
 
 > **Note:** Rust tools can be validated via CLI by Test Flakiness Detector even though they can't import TypeScript libraries directly. This cross-language validation demonstrates that Tuulbelt tools compose well together.
