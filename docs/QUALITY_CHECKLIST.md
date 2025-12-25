@@ -481,6 +481,98 @@ export async function myFunction() {
 
 ---
 
+#### Dogfooding Pattern: CLI-Based Cross-Language Validation (2025-12-25)
+
+**Pattern:**
+Tools can validate each other across languages (TypeScript ↔ Rust) via CLI.
+
+**Use Case:**
+- TypeScript test-flakiness-detector validates Rust file-based-semaphore tests
+- Rust CLI tools can be called from TypeScript tools
+
+**Implementation (TypeScript → Rust via Shell Script):**
+
+For Rust tools, add `scripts/dogfood.sh`:
+
+```bash
+#!/bin/bash
+# Validate Rust tests using TypeScript test-flakiness-detector
+
+RUNS="${1:-10}"
+DETECTOR_DIR="$TOOL_DIR/../test-flakiness-detector"
+
+# Exit gracefully if not in monorepo
+if [ ! -d "$DETECTOR_DIR" ]; then
+    echo "Not in monorepo context, skipping dogfooding"
+    exit 0
+fi
+
+cd "$DETECTOR_DIR"
+npx tsx src/index.ts \
+    --test "cd '$TOOL_DIR' && cargo test 2>&1" \
+    --runs "$RUNS"
+```
+
+**Implementation (TypeScript → Rust CLI):**
+
+For TypeScript tools needing Rust CLI:
+
+```typescript
+import { execSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+function useRustTool(args: string): string | null {
+  const binaryPath = join(process.cwd(), '..', 'rust-tool', 'target', 'release', 'rust-tool');
+
+  if (!existsSync(binaryPath)) {
+    return null; // Not available, graceful fallback
+  }
+
+  try {
+    return execSync(`${binaryPath} ${args}`, { encoding: 'utf-8' });
+  } catch {
+    return null;
+  }
+}
+```
+
+**Implementation (Rust → TypeScript via Shell):**
+
+For Rust tools needing TypeScript functionality:
+
+```rust
+use std::process::Command;
+
+fn use_typescript_tool(args: &[&str]) -> Option<String> {
+    let output = Command::new("npx")
+        .args(["tsx", "../ts-tool/src/index.ts"])
+        .args(args)
+        .output()
+        .ok()?;
+
+    if output.status.success() {
+        Some(String::from_utf8_lossy(&output.stdout).to_string())
+    } else {
+        None // Graceful fallback
+    }
+}
+```
+
+**Checklist:**
+- [ ] Exit gracefully when not in monorepo (exit 0, return null)
+- [ ] Check binary/script exists before executing
+- [ ] Wrap execution in try-catch or error handling
+- [ ] Document in README that dogfooding requires monorepo context
+- [ ] Add `scripts/dogfood.sh` for Rust tools
+- [ ] Add `test/flakiness-detection.test.ts` for TypeScript tools
+
+**Template Files:**
+- Rust: `templates/rust-tool-template/scripts/dogfood.sh`
+- TypeScript: `templates/tool-repo-template/test/flakiness-detection.test.ts`
+
+---
+
 ## Adding New Checks
 
 When you discover a new issue, add it here using this template:

@@ -102,18 +102,44 @@ cargo test              # Run all tests
 cargo test -- --nocapture  # Show output
 ```
 
-### Dogfooding (Optional)
+### Dogfooding
 
-If this tool can use or validate other Tuulbelt tools, consider adding:
+Tuulbelt tools validate each other via CLI-based dogfooding.
 
-**Validating Other Tools:**
-- Add dogfooding validation test if appropriate
-- Document validation in README
-- Use Test Flakiness Detector to validate test suite reliability
+**Validate This Tool's Tests:**
 
-Example: Cross-Platform Path Normalizer is validated by Test Flakiness Detector (145 tests × 10 runs = 1,450 executions).
+Run the dogfood script to use Test Flakiness Detector against this tool:
 
-Note: Rust tools typically don't import TypeScript tools dynamically, but can be validated by them via CLI.
+```bash
+./scripts/dogfood.sh        # Default: 10 runs
+./scripts/dogfood.sh 20     # Custom: 20 runs
+```
+
+This validates that all tests are deterministic and non-flaky.
+
+**How It Works:**
+- TypeScript tools (test-flakiness-detector) validate Rust tools via CLI
+- The script runs `cargo test` multiple times and checks for inconsistent results
+- Works only in monorepo context (exits gracefully when standalone)
+
+**Using Rust CLI in TypeScript Tools (Reverse Dogfooding):**
+
+If a TypeScript tool needs to use this Rust tool's CLI:
+
+```typescript
+import { execSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+// Check if Rust tool is available
+const rustToolPath = join(process.cwd(), '..', 'tool-name', 'target', 'release', 'tool-name');
+if (existsSync(rustToolPath)) {
+  const result = execSync(`${rustToolPath} --arg value`, { encoding: 'utf-8' });
+  // Use result...
+}
+```
+
+See [QUALITY_CHECKLIST.md](../docs/QUALITY_CHECKLIST.md) for dogfooding patterns.
 
 ## Error Handling
 
