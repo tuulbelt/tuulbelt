@@ -258,10 +258,14 @@ The test suite is deterministic and reliable! 🎉
 
 ## Demo
 
-### Terminal Demo
+![Demo](docs/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](#)**
+
+### Try it Yourself
 
 ```bash
-# Try it yourself!
+# Build and run
 cargo build --release
 ./target/release/file-semaphore try /tmp/demo.lock --tag "demo-session"
 ./target/release/file-semaphore status /tmp/demo.lock --json
@@ -282,6 +286,8 @@ cargo run --example stale_recovery
 ```
 
 > **Note:** StackBlitz is not available for Rust projects. Clone the repository and run locally with `cargo build --release`.
+
+> Demo recordings are automatically generated via GitHub Actions.
 
 ## Related Tools
 
