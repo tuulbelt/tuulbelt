@@ -5,11 +5,13 @@ on:
     branches:
       - main
     paths:
+      # VitePress docs
       - 'docs/**'
-      - 'test-flakiness-detector/**/*.md'
-      - 'cli-progress-reporting/**/*.md'
-      - 'cross-platform-path-normalizer/**/*.md'
-      - 'file-based-semaphore/**/*.md'
+      # Any tool's docs folder (auto-discovers new tools)
+      - '*/docs/**'
+      - '*/README.md'
+      - '*/SPEC.md'
+      # Workflow itself
       - '.github/workflows/deploy-docs.yml'
   workflow_dispatch:
 
