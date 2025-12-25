@@ -22,7 +22,8 @@ export default defineConfig({
             { text: 'Overview', link: '/tools/' },
             { text: 'Test Flakiness Detector', link: '/tools/test-flakiness-detector/' },
             { text: 'CLI Progress Reporting', link: '/tools/cli-progress-reporting/' },
-            { text: 'Cross-Platform Path Normalizer', link: '/tools/cross-platform-path-normalizer/' }
+            { text: 'Cross-Platform Path Normalizer', link: '/tools/cross-platform-path-normalizer/' },
+            { text: 'File-Based Semaphore', link: '/tools/file-based-semaphore/' }
           ]
         }
       ],
@@ -82,6 +83,20 @@ export default defineConfig({
             { text: 'Library Usage', link: '/tools/cross-platform-path-normalizer/library-usage' },
             { text: 'Examples', link: '/tools/cross-platform-path-normalizer/examples' },
             { text: 'API Reference', link: '/tools/cross-platform-path-normalizer/api-reference' }
+          ]
+        }
+      ],
+      '/tools/file-based-semaphore/': [
+        {
+          text: 'File-Based Semaphore',
+          items: [
+            { text: 'Overview', link: '/tools/file-based-semaphore/' },
+            { text: 'Getting Started', link: '/tools/file-based-semaphore/getting-started' },
+            { text: 'CLI Usage', link: '/tools/file-based-semaphore/cli-usage' },
+            { text: 'Library Usage', link: '/tools/file-based-semaphore/library-usage' },
+            { text: 'Examples', link: '/tools/file-based-semaphore/examples' },
+            { text: 'Protocol Spec', link: '/tools/file-based-semaphore/protocol-spec' },
+            { text: 'API Reference', link: '/tools/file-based-semaphore/api-reference' }
           ]
         }
       ]

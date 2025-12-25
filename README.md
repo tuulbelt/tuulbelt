@@ -50,7 +50,7 @@ Each tool in Tuulbelt:
 
 ### Utilities & Infrastructure
 - **[Universal Log Normalizer](https://github.com/tuulbelt/log-normalizer)** — Structured log standardization (TBD)
-- **[File-Based Semaphore](https://github.com/tuulbelt/file-semaphore)** — Cross-platform process locking (TBD)
+- **[File-Based Semaphore](file-based-semaphore/)** — Cross-platform process locking 🟢 v0.1.0 | [📖 Docs](file-based-semaphore/) | [🚀 Examples](file-based-semaphore/examples/)
 - **[Manifest-First Sync Tool](https://github.com/tuulbelt/manifest-sync)** — Directory sync via manifest diffs (TBD)
 - **[Universal Health-Check Probe](https://github.com/tuulbelt/health-check-probe)** — Multi-check abstraction (TBD)
 - **[Secret Injector](https://github.com/tuulbelt/secret-injector)** — Encrypted secret injection (TBD)
@@ -144,15 +144,15 @@ This creates a **bidirectional validation network** where tools prove their reli
 
 ## Status
 
-🟢 = Implemented (3/33)
+🟢 = Implemented (4/33)
 🟡 = In progress (0/33)
-🔴 = TBD (30/33)
+🔴 = TBD (29/33)
 
-**Recently Completed:** Cross-Platform Path Normalizer v0.1.0 (2025-12-24)
+**Recently Completed:** File-Based Semaphore v0.1.0 (2025-12-25)
 
-**Next Up:** File-Based Semaphore or Output Diffing Utility 🎯
+**Next Up:** Output Diffing Utility 🎯
 
-**Progress:** 3 of 33 tools implemented (9%) | Phase 1 Quick Tools: 3/5 (60%)
+**Progress:** 4 of 33 tools implemented (12%) | Phase 1 Quick Tools: 4/5 (80%)
 
 ## License
 
