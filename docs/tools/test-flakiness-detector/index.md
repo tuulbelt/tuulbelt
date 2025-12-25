@@ -72,6 +72,17 @@ See the tool in action:
 
 **[▶ View interactive recording on asciinema.org](https://asciinema.org/a/WgUQsHvqswlUFvfJekVH07jXi)**
 
+<div style="margin: 20px 0;">
+  <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
+    <strong>Try it online:</strong>
+  </span>
+  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/test-flakiness-detector" style="display: inline-block; vertical-align: middle;">
+    <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
+  </a>
+</div>
+
+Run the detector directly in your browser with zero setup. Test different commands, adjust run counts, and explore flakiness detection patterns.
+
 > Demos are automatically generated via GitHub Actions when demo scripts are updated.
 
 ## Next Steps
