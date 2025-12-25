@@ -9,6 +9,7 @@ on:
       - 'test-flakiness-detector/**/*.md'
       - 'cli-progress-reporting/**/*.md'
       - 'cross-platform-path-normalizer/**/*.md'
+      - 'file-based-semaphore/**/*.md'
       - '.github/workflows/deploy-docs.yml'
   workflow_dispatch:
 
