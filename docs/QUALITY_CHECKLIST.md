@@ -89,7 +89,26 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
 - [ ] **README complete**: Installation, usage, API docs, examples
 - [ ] **Zero dependencies**: `dependencies` object empty in package.json or Cargo.toml
 - [ ] **Runs /quality-check**: Tool-level quality check passes
-- [ ] **Dogfooding added**: If applicable, tool uses/validates other Tuulbelt tools
+
+### Dogfooding Strategy
+
+**CRITICAL: Only implement compositions that provide REAL value, not checkboxes.**
+
+- [ ] **DOGFOODING_STRATEGY.md created**: Document high-value compositions (2-4 maximum)
+- [ ] **High-value scripts implemented**: Focus on meaningful compositions:
+  - **Test Flakiness Detector** (almost always valuable) - Validates test determinism
+  - **Output Diffing Utility** (if outputs matter) - Proves consistent behavior
+  - **Tool-specific compositions** (domain-relevant only) - Real utility, not forced
+- [ ] **README dogfooding section**: Documents all composition scripts with examples
+- [ ] **GH Pages dogfooding section**: Mirrors README documentation
+- [ ] **Graceful fallback tested**: Tool works standalone when dependencies unavailable
+- [ ] **Scripts executable**: All `scripts/dogfood-*.sh` have execute permissions
+
+**Guidelines:**
+- Don't dogfood just to dogfood - focus on REAL utility
+- Typical high-value: dogfood-flaky.sh (test validation), dogfood-diff.sh (output consistency)
+- Optional: Tool-specific compositions (only if genuinely useful)
+- See existing tools for patterns: Test Flakiness Detector, CLI Progress, Path Normalizer, Semaphore, Output Diffing
 
 ### GitHub Pages Documentation
 
