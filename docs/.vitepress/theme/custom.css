@@ -9,36 +9,23 @@
   stroke-width: 0;
 }
 
-/* Feature icons */
-.vp-feature-icon {
+/* Feature icons - VitePress uses .VPImage class for feature card icons */
+.VPFeature .VPImage {
   width: 48px;
   height: 48px;
-  margin-bottom: 1rem;
 }
 
-.vp-feature-icon svg {
-  width: 100%;
-  height: 100%;
-  stroke: var(--vp-c-brand-1);
-  fill: none;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-/* Dark mode icon adjustments */
-.dark .vp-feature-icon svg {
-  stroke: var(--vp-c-brand-2);
-}
-
-/* Dark mode: invert feature icons - apply to entire container */
-html.dark .vp-feature-icon,
-.dark .vp-feature-icon {
-  filter: invert(1) !important;
-}
-
-html:not(.dark) .vp-feature-icon {
+/* Light mode: no filter needed */
+:root:not(.dark) .VPFeature .VPImage,
+html:not(.dark) .VPFeature .VPImage {
   filter: none !important;
+}
+
+/* Dark mode: invert colors to make dark icons visible on dark background */
+:root.dark .VPFeature .VPImage,
+html.dark .VPFeature .VPImage,
+.dark .VPFeature .VPImage {
+  filter: invert(1) !important;
 }
 
 /* Inline icons in text */
