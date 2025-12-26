@@ -23,7 +23,8 @@ export default defineConfig({
             { text: 'Test Flakiness Detector', link: '/tools/test-flakiness-detector/' },
             { text: 'CLI Progress Reporting', link: '/tools/cli-progress-reporting/' },
             { text: 'Cross-Platform Path Normalizer', link: '/tools/cross-platform-path-normalizer/' },
-            { text: 'File-Based Semaphore', link: '/tools/file-based-semaphore/' }
+            { text: 'File-Based Semaphore', link: '/tools/file-based-semaphore/' },
+            { text: 'Output Diffing Utility', link: '/tools/output-diffing-utility/' }
           ]
         }
       ],
@@ -97,6 +98,20 @@ export default defineConfig({
             { text: 'Examples', link: '/tools/file-based-semaphore/examples' },
             { text: 'Protocol Spec', link: '/tools/file-based-semaphore/protocol-spec' },
             { text: 'API Reference', link: '/tools/file-based-semaphore/api-reference' }
+          ]
+        }
+      ],
+      '/tools/output-diffing-utility/': [
+        {
+          text: 'Output Diffing Utility',
+          items: [
+            { text: 'Overview', link: '/tools/output-diffing-utility/' },
+            { text: 'Getting Started', link: '/tools/output-diffing-utility/getting-started' },
+            { text: 'CLI Usage', link: '/tools/output-diffing-utility/cli-usage' },
+            { text: 'Library Usage', link: '/tools/output-diffing-utility/library-usage' },
+            { text: 'Examples', link: '/tools/output-diffing-utility/examples' },
+            { text: 'Output Formats', link: '/tools/output-diffing-utility/output-formats' },
+            { text: 'API Reference', link: '/tools/output-diffing-utility/api-reference' }
           ]
         }
       ]

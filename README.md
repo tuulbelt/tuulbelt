@@ -22,7 +22,7 @@ Each tool in Tuulbelt:
 
 ### Testing & Observability
 - **[Test Flakiness Detector](test-flakiness-detector/)** — Identify unreliable tests 🟢 v0.1.0 | [📖 Docs](test-flakiness-detector/docs/) | [🚀 Examples](test-flakiness-detector/examples/)
-- **[Output Diffing Utility](https://github.com/tuulbelt/output-diffing)** — Semantic diffs for JSON/binary in assertions (TBD)
+- **[Output Diffing Utility](output-diffing-utility/)** — Semantic diff for JSON, text, binary files 🟢 v0.1.0 | [📖 Docs](/tools/output-diffing-utility/) | [🚀 Examples](output-diffing-utility/examples/)
 - **[Snapshot Comparison](https://github.com/tuulbelt/snapshot-comparison)** — Binary/structured data snapshots (TBD)
 - **[Test Port Conflict Resolver](https://github.com/tuulbelt/test-port-resolver)** — Concurrent test port allocation (TBD)
 
@@ -144,15 +144,15 @@ This creates a **bidirectional validation network** where tools prove their reli
 
 ## Status
 
-🟢 = Implemented (4/33)
+🟢 = Implemented (5/33)
 🟡 = In progress (0/33)
-🔴 = TBD (29/33)
+🔴 = TBD (28/33)
 
-**Recently Completed:** File-Based Semaphore v0.1.0 (2025-12-25)
+**Recently Completed:** Output Diffing Utility v0.1.0 (2025-12-26)
 
-**Next Up:** Output Diffing Utility 🎯
+**Next Up:** Structured Error Handler 🎯
 
-**Progress:** 4 of 33 tools implemented (12%) | Phase 1 Quick Tools: 4/5 (80%)
+**Progress:** 5 of 33 tools implemented (15%) | Phase 1 Quick Tools: 5/5 (100% ✅)
 
 ## License
 
