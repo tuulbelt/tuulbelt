@@ -10,7 +10,7 @@ export PS1="\$ "
 export TERM=xterm-256color
 
 # Record the demo
-asciinema rec "$DEMO_FILE" --overwrite --command "bash -c '
+asciinema rec "$DEMO_FILE" --overwrite --title "Test Flakiness Detector - Tuulbelt" --command "bash -c '
 echo \"# Test Flakiness Detector Demo\"
 sleep 1
 

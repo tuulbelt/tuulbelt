@@ -19,7 +19,7 @@ LOCK_FILE="/tmp/demo.lock"
 rm -f "$LOCK_FILE"
 
 # Record the demo
-asciinema rec "$DEMO_FILE" --overwrite --command "bash -c '
+asciinema rec "$DEMO_FILE" --overwrite --title "File-Based Semaphore - Tuulbelt" --command "bash -c '
 echo \"# File-Based Semaphore Demo\"
 sleep 1
 
