@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - Demo and Documentation (2025-12-26)
+
+**Demo Color Implementation:**
+- Fixed output-diffing-utility demo script to use `--color always` (was missing value argument)
+- Updated README color examples to show correct syntax (`--color always` and `--color auto`)
+- Verified ANSI color codes work for text, JSON, and binary diffs
+
+**VitePress Demo Links:**
+- Updated all 5 tool VitePress docs with correct asciinema URLs
+- Fixed create-demos.yml workflow sed pattern to match ANY asciinema URL (not just `#` placeholder)
+- Pattern now: `s|asciinema\.org/a/[^)]*|asciinema.org/a/$NEW_URL|` (prevents silent failures)
+
+**Workflow Improvements:**
+- Demo links will now update correctly on future regenerations
+- No more stale placeholder URLs in documentation
+
 ### Added - Phase 1 Complete! 🎉 (2025-12-26)
 
 **Milestone:** All 5 Phase 1 Quick Tools implemented (15% of 33 total)
