@@ -78,15 +78,26 @@ Building cross-platform tools requires handling different path conventions:
 
 This tool provides zero-dependency path normalization with comprehensive edge case handling.
 
-## Dogfooding: Test Reliability Validation
+## Dogfooding: Tool Composition
 
-We use **[Test Flakiness Detector](/tools/test-flakiness-detector/)** (another Tuulbelt tool) to validate that all 128 tests are deterministic and reliable:
+This tool demonstrates composability by being VALIDATED BY other Tuulbelt tools:
 
+**[Test Flakiness Detector](/tools/test-flakiness-detector/)** - Validate test reliability:
 ```bash
-npm run test:dogfood
+./scripts/dogfood-flaky.sh 10
+# ✅ NO FLAKINESS DETECTED
+# 145 tests × 10 runs = 1,450 executions
 ```
 
-This runs the entire test suite 10 times (1,280 total test executions) to detect any non-deterministic behavior. Zero flaky tests detected across all runs, proving test suite reliability.
+**[Output Diffing Utility](/tools/output-diffing-utility/)** - Prove identical outputs:
+```bash
+./scripts/dogfood-diff.sh
+# Compares outputs to ensure no random data
+```
+
+**Used By:** Output Diffing Utility, File-Based Semaphore, Test Flakiness Detector
+
+See `DOGFOODING_STRATEGY.md` in the repository for implementation details.
 
 ## Demo
 

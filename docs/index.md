@@ -80,7 +80,7 @@ Cross-platform file-based semaphore for process coordination with stale lock det
 
 </div>
 
-[**View All 4 Tools →**](/tools/)
+[**View All 5 Tools →**](/tools/)
 
 ### More Tools
 
@@ -110,17 +110,31 @@ Convert Windows/Unix paths with zero dependencies.
 
 </div>
 
+<div class="tool-card">
+
+#### [Output Diffing Utility](/tools/output-diffing-utility/)
+
+Semantic diff for JSON, text, and binary files with zero dependencies.
+
+- <img src="/icons/code.svg" class="inline-icon" alt=""> Smart file type detection
+- <img src="/icons/file-diff.svg" class="inline-icon" alt=""> Multiple output formats (unified, JSON, summary)
+- <img src="/icons/layers.svg" class="inline-icon" alt=""> Structural JSON comparison
+
+[Get Started →](/tools/output-diffing-utility/getting-started)
+
+</div>
+
 ## Progress
 
-**Phase 1: Quick Tools** — 4 of 5 complete (80%)
+**Phase 1: Quick Tools** — 5 of 5 complete (100%) ✨
 
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Test Flakiness Detector (TypeScript)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> CLI Progress Reporting (TypeScript)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Cross-Platform Path Normalizer (TypeScript)
-- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> File-Based Semaphore (Rust) ✨ NEW
-- <img src="/icons/target.svg" class="inline-icon" alt=""> Output Diffing Utility (next)
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> File-Based Semaphore (Rust)
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Output Diffing Utility (Rust) ✨ NEW
 
-**Overall Progress:** 4 of 33 tools (12%)
+**Overall Progress:** 5 of 33 tools (15%)
 
 ## Quick Start
 

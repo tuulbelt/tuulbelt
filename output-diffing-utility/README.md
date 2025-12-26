@@ -105,14 +105,50 @@ See `DIFF_ALGORITHMS_RESEARCH.md` for detailed algorithm analysis.
 
 ## Composability with Tuulbelt Tools
 
-This tool integrates with other Tuulbelt tools (when in monorepo):
+This tool demonstrates the power of composability by working seamlessly with other Tuulbelt tools. When in the monorepo, you can chain tools together via CLI interfaces:
 
-- **cli-progress-reporting** - Shows progress for large files
-- **cross-platform-path-normalizer** - Accepts paths in any format
-- **file-based-semaphore** - Protects diff cache from concurrent access
-- **test-flakiness-detector** - Validates test suite reliability
+### Individual Tool Compositions
 
-See `DOGFOODING_STRATEGY.md` for integration patterns.
+**CLI Progress Reporting** - Track progress for large file diffs:
+```bash
+./scripts/dogfood-progress.sh
+# Shows: TypeScript (progress) ↔ Rust (diff) composition
+```
+
+**Cross-Platform Path Normalizer** - Handle Windows/Unix/mixed path formats:
+```bash
+./scripts/dogfood-paths.sh
+# Shows: Path normalization → Rust diff pipeline
+```
+
+**File-Based Semaphore** - Protect concurrent diff cache access:
+```bash
+./scripts/dogfood-semaphore.sh
+# Shows: Rust (semaphore) → Rust (diff) composition
+```
+
+**Test Flakiness Detector** - Validate test reliability:
+```bash
+./scripts/dogfood-flaky.sh
+# Validates all 99 tests are deterministic
+```
+
+### Complete Multi-Tool Pipeline
+
+Run all 5 Phase 1 tools together in a single workflow:
+
+```bash
+./scripts/dogfood-pipeline.sh
+```
+
+This pipeline demonstrates:
+- Cross-language composition (TypeScript ↔ Rust)
+- Tools communicating via CLI interfaces only
+- No runtime dependencies between tools
+- Real-world use case (API version comparison)
+- Graceful degradation if tools missing
+
+See `DOGFOODING_STRATEGY.md` for implementation details.
 
 ## Development
 
@@ -130,9 +166,40 @@ cargo fmt
 cargo build --release
 ```
 
+### Dogfooding
+
+We dogfood this tool by composing it with other Tuulbelt tools:
+
+```bash
+# Validate test reliability (Test Flakiness Detector)
+./scripts/dogfood-flaky.sh 20
+
+# Show progress tracking (CLI Progress Reporting)
+./scripts/dogfood-progress.sh
+
+# Handle cross-platform paths (Path Normalizer)
+./scripts/dogfood-paths.sh
+
+# Protect concurrent access (File-Based Semaphore)
+./scripts/dogfood-semaphore.sh
+
+# Run complete multi-tool pipeline (all 5 tools)
+./scripts/dogfood-pipeline.sh
+```
+
+These scripts demonstrate real-world tool composition and validate that all 99 tests are deterministic.
+
 ## Examples
 
 See `examples/` directory for real-world usage patterns.
+
+## Demo
+
+![Demo](docs/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/output-diff-demo)**
+
+> Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/output-diffing-utility)
 
 ## License
 

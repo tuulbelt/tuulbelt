@@ -2,7 +2,7 @@
 
 Tuulbelt provides a curated collection of focused, zero-dependency tools for modern software development.
 
-## Completed Tools (4/33)
+## Completed Tools (5/33)
 
 ### Test Flakiness Detector
 
@@ -82,11 +82,31 @@ Cross-platform file-based semaphore for process coordination. Lock resources rel
 
 ---
 
+### Output Diffing Utility
+
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
+**Language:** Rust
+**Tests:** 99 tests
+
+Semantic diff for JSON, text, and binary files. Compare structured data, configuration files, or binary blobs with smart file type detection.
+
+**Features:**
+- Smart file type detection (JSON, text, binary)
+- Multiple output formats (unified, JSON, summary)
+- Structural JSON comparison with path-based change reporting
+- File size safety limits (configurable)
+- Both CLI and library interfaces
+- Zero runtime dependencies
+
+[View Documentation →](/tools/output-diffing-utility/)
+
+---
+
 ## Coming Soon
 
-### Phase 1: Quick Tools (1 remaining)
+### Phase 1: Quick Tools — Complete! ✨
 
-- <img src="/icons/target.svg" class="inline-icon" alt=""> **Output Diffing Utility** (Next)
+All 5 Phase 1 tools have been implemented.
 
 ### All Planned Tools
 
