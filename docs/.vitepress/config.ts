@@ -24,7 +24,8 @@ export default defineConfig({
             { text: 'CLI Progress Reporting', link: '/tools/cli-progress-reporting/' },
             { text: 'Cross-Platform Path Normalizer', link: '/tools/cross-platform-path-normalizer/' },
             { text: 'File-Based Semaphore', link: '/tools/file-based-semaphore/' },
-            { text: 'Output Diffing Utility', link: '/tools/output-diffing-utility/' }
+            { text: 'Output Diffing Utility', link: '/tools/output-diffing-utility/' },
+            { text: 'Structured Error Handler', link: '/tools/structured-error-handler/' }
           ]
         }
       ],
@@ -112,6 +113,19 @@ export default defineConfig({
             { text: 'Examples', link: '/tools/output-diffing-utility/examples' },
             { text: 'Output Formats', link: '/tools/output-diffing-utility/output-formats' },
             { text: 'API Reference', link: '/tools/output-diffing-utility/api-reference' }
+          ]
+        }
+      ],
+      '/tools/structured-error-handler/': [
+        {
+          text: 'Structured Error Handler',
+          items: [
+            { text: 'Overview', link: '/tools/structured-error-handler/' },
+            { text: 'Getting Started', link: '/tools/structured-error-handler/getting-started' },
+            { text: 'CLI Usage', link: '/tools/structured-error-handler/cli-usage' },
+            { text: 'Library Usage', link: '/tools/structured-error-handler/library-usage' },
+            { text: 'Examples', link: '/tools/structured-error-handler/examples' },
+            { text: 'API Reference', link: '/tools/structured-error-handler/api-reference' }
           ]
         }
       ]

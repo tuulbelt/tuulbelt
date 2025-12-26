@@ -18,6 +18,7 @@ on:
       - 'cross-platform-path-normalizer/src/**'
       - 'file-based-semaphore/src/**'
       - 'output-diffing-utility/src/**'
+      - 'structured-error-handler/src/**'
 
   workflow_dispatch:  # Manual trigger
     inputs:

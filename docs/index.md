@@ -80,7 +80,7 @@ Cross-platform file-based semaphore for process coordination with stale lock det
 
 </div>
 
-[**View All 5 Tools →**](/tools/)
+[**View All 6 Tools →**](/tools/)
 
 ### More Tools
 
@@ -124,17 +124,35 @@ Semantic diff for JSON, text, and binary files with zero dependencies.
 
 </div>
 
+<div class="tool-card">
+
+#### [Structured Error Handler](/tools/structured-error-handler/)
+
+Structured error format with context preservation and serialization.
+
+- <img src="/icons/layers.svg" class="inline-icon" alt=""> Context chain preservation through call stacks
+- <img src="/icons/code.svg" class="inline-icon" alt=""> Full JSON serialization/deserialization
+- <img src="/icons/search.svg" class="inline-icon" alt=""> Error codes and categories for routing
+
+[Get Started →](/tools/structured-error-handler/getting-started)
+
+</div>
+
 ## Progress
 
-**Phase 1: Quick Tools** — 5 of 5 complete (100%) ✨
+**Phase 1: Quick Tools** — 5 of 5 complete (100%) ✅
 
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Test Flakiness Detector (TypeScript)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> CLI Progress Reporting (TypeScript)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Cross-Platform Path Normalizer (TypeScript)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> File-Based Semaphore (Rust)
-- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Output Diffing Utility (Rust) ✨ NEW
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Output Diffing Utility (Rust)
 
-**Overall Progress:** 5 of 33 tools (15%)
+**Phase 2: Started** — 1 of 28
+
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Structured Error Handler (TypeScript) ✨ NEW
+
+**Overall Progress:** 6 of 33 tools (18%)
 
 ## Quick Start
 
