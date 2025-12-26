@@ -105,14 +105,50 @@ Review changes in generated files, build outputs, or compiled artifacts.
 
 ## Dogfooding
 
-We use **[Test Flakiness Detector](/tools/test-flakiness-detector/)** to validate test reliability:
+This tool demonstrates the power of composability by working seamlessly with other Tuulbelt tools. When in the monorepo, you can chain tools together via CLI interfaces:
 
+### Individual Tool Compositions
+
+**[CLI Progress Reporting](/tools/cli-progress-reporting/)** - Track progress for large file diffs:
 ```bash
-# From test-flakiness-detector directory
-npx tsx src/index.ts --test "cd ../output-diffing-utility && cargo test" --runs 10
+./scripts/dogfood-progress.sh
+# Shows: TypeScript (progress) ↔ Rust (diff) composition
 ```
 
-This validates that all 99 tests are deterministic across multiple runs.
+**[Cross-Platform Path Normalizer](/tools/cross-platform-path-normalizer/)** - Handle Windows/Unix/mixed path formats:
+```bash
+./scripts/dogfood-paths.sh
+# Shows: Path normalization → Rust diff pipeline
+```
+
+**[File-Based Semaphore](/tools/file-based-semaphore/)** - Protect concurrent diff cache access:
+```bash
+./scripts/dogfood-semaphore.sh
+# Shows: Rust (semaphore) → Rust (diff) composition
+```
+
+**[Test Flakiness Detector](/tools/test-flakiness-detector/)** - Validate test reliability:
+```bash
+./scripts/dogfood.sh
+# Validates all 99 tests are deterministic
+```
+
+### Complete Multi-Tool Pipeline
+
+Run all 5 Phase 1 tools together in a single workflow:
+
+```bash
+./scripts/dogfood-pipeline.sh
+```
+
+This pipeline demonstrates:
+- Cross-language composition (TypeScript ↔ Rust)
+- Tools communicating via CLI interfaces only
+- No runtime dependencies between tools
+- Real-world use case (API version comparison)
+- Graceful degradation if tools missing
+
+See `DOGFOODING_STRATEGY.md` in the repository for implementation details.
 
 ## Demo
 
