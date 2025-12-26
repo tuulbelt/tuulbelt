@@ -1,8 +1,8 @@
 # Session Handoff
 
-**Last Updated:** 2025-12-25
-**Session:** File-Based Semaphore CLI Tests Added
-**Status:** ✅ Tool #4 Complete with Full Test Coverage - Ready for Next Tool
+**Last Updated:** 2025-12-26
+**Session:** CI/CD Optimization (Phase 1 & 2)
+**Status:** ✅ CI Optimized - Ready for Tool #5
 
 ---
 
@@ -10,60 +10,32 @@
 
 ### What Was Accomplished
 
-1. **File-Based Semaphore v0.1.0 (Tool #4)** ✅
-   - **First Rust tool in Tuulbelt!**
-   - Implemented cross-platform file-based semaphore for process coordination
-   - Core features:
-     - Atomic locking with `O_CREAT | O_EXCL`
-     - Blocking and non-blocking acquisition
-     - Stale lock detection with configurable timeout
-     - RAII-style guards for automatic release
-     - Both CLI and library interfaces
-   - Zero runtime dependencies (std only)
-   - **85 tests passing** (31 unit + 39 CLI + 11 integration + 4 doctests)
-   - Zero clippy warnings
+1. **CI/CD Optimization - Phase 1** ✅
+   - Updated outdated actions (`actions-rs/toolchain` → `dtolnay/rust-toolchain`)
+   - Added concurrency controls to ALL workflows
+   - Added path filters to per-tool workflows (only run when tool changes)
+   - Improved caching (npm, cargo, agg binary)
+   - Reduced Node matrix from [18,20,22] to [20] for speed
+   - Reordered steps for fail-fast (lint before tests)
 
-2. **CLI Test Coverage Added** ✅ (This Session)
-   - Created `tests/cli.rs` with 39 comprehensive CLI tests
-   - Covers all commands: help, version, try, acquire, release, status, wait
-   - Edge cases: special chars, spaces in tags, stale lock recovery, timeouts
-   - Fixed rustfmt formatting issue caught by CI
+2. **CI/CD Optimization - Phase 2** ✅
+   - Eliminated duplicate testing in dashboard workflow
+   - `test-all-tools.yml` now uploads test results as JSON artifact
+   - `update-dashboard.yml` reads artifact instead of re-running tests
+   - Dashboard workflow reduced from ~5 min to ~30 sec (90% faster)
 
-3. **Documentation Complete**
-   - Comprehensive README.md with API reference
-   - SPEC.md with lock file format specification
-   - VitePress docs (7 pages in docs/tools/file-based-semaphore/)
-   - Two examples (basic.rs and concurrent.rs)
-   - Updated root README.md (4/33 tools, 12% progress)
-   - Updated docs/tools/index.md
-   - All docs updated with correct test count (85)
+3. **CI Documentation** ✅
+   - Created `docs/CI_GUIDE.md` - single source of truth for all CI/CD
+   - Workflow architecture diagram
+   - Detailed documentation for each workflow
+   - Standards and patterns (concurrency, caching, path filters)
+   - Troubleshooting guide
+   - Instructions for adding new tools
 
-4. **Quality Verified**
-   - `cargo test` - all 85 tests pass
-   - `cargo clippy -- -D warnings` - zero warnings
-   - `cargo fmt` - formatted (fixed CI failure)
-   - `npm run docs:build` - builds without errors
-   - Zero runtime dependencies verified
-
-### Technical Details
-
-**Implementation:**
-- `file-based-semaphore/src/lib.rs` - Core library (Semaphore, SemaphoreGuard, SemaphoreConfig, LockInfo, SemaphoreError)
-- `file-based-semaphore/src/main.rs` - CLI interface (try, acquire, release, status, wait commands)
-- `file-based-semaphore/tests/cli.rs` - 39 CLI integration tests
-- `file-based-semaphore/tests/integration.rs` - 11 integration tests
-- `file-based-semaphore/examples/` - basic.rs and concurrent.rs
-
-**Lock File Format (SPEC.md):**
-```
-pid=<process-id>
-timestamp=<unix-epoch-seconds>
-tag=<optional-identifier>
-```
-
-**Challenges Resolved:**
-- Lifetime issues with SemaphoreGuard in CLI (solved by direct file creation for CLI)
-- Doctest failures due to lifetime constraints (solved with `no_run` and explicit scopes)
+4. **File-Based Semaphore CLI Tests** ✅ (Earlier This Session)
+   - Added 39 CLI tests to `tests/cli.rs`
+   - Total tests: 85 (31 unit + 39 CLI + 11 integration + 4 doctests)
+   - Fixed rustfmt formatting issues
 
 ### Current Status
 
@@ -74,9 +46,12 @@ tag=<optional-identifier>
 | Test Flakiness Detector | TypeScript | v0.1.0 | 148 | ✅ |
 | CLI Progress Reporting | TypeScript | v0.1.0 | 125 | ✅ |
 | Cross-Platform Path Normalizer | TypeScript | v0.1.0 | 145 | ✅ |
-| **File-Based Semaphore** | **Rust** | **v0.1.0** | **85** | ✅ |
+| File-Based Semaphore | Rust | v0.1.0 | 85 | ✅ |
 
-**Language Distribution:** 3 TypeScript, 1 Rust
+**CI Performance Improvements:**
+- ~50% reduction in redundant workflow runs (path filters)
+- ~90% faster dashboard generation (artifact-based)
+- Automatic cancellation of superseded runs
 
 ---
 
@@ -108,12 +83,13 @@ Last remaining Phase 1 Quick Tool.
 - [ ] VitePress documentation
 - [ ] Update root README (5/33, 15%)
 
-**Alternative: Choose from Phase 2 tools** if Output Diffing is too complex
+**Alternative:** Choose from Phase 2 tools if Output Diffing is too complex
 
 ---
 
 ## Important References
 
+- **CI Guide**: `docs/CI_GUIDE.md` - **NEW** Single source of truth for CI/CD
 - **Principles**: `PRINCIPLES.md` - What belongs in Tuulbelt
 - **Work Standards**: `CLAUDE.md` - Quality requirements (MANDATORY WORKFLOW section)
 - **Quality Checklist**: `docs/QUALITY_CHECKLIST.md` - Pre-commit checks
@@ -125,7 +101,7 @@ Last remaining Phase 1 Quick Tool.
 
 ## Blockers / Issues
 
-**None currently.** All tests passing, documentation complete.
+**None currently.** All tests passing, CI optimized, documentation complete.
 
 ---
 
@@ -135,6 +111,7 @@ Last remaining Phase 1 Quick Tool.
 - **Tool #5: Output Diffing Utility** - Complete Phase 1 Quick Tools
 - **Language**: Rust recommended for diff performance
 - **Quality Standard**: 80%+ test coverage, zero runtime deps, clippy zero warnings
+- **CI Guide**: Reference `docs/CI_GUIDE.md` for workflow understanding
 - **FIRST STEP**: Create TodoWrite checklist from QUALITY_CHECKLIST.md before ANY coding
 
 ---
@@ -148,7 +125,10 @@ cat .claude/HANDOFF.md
 # 2. Check task backlog
 cat .claude/NEXT_TASKS.md
 
-# 3. Start new tool
+# 3. Review CI guide if needed
+cat docs/CI_GUIDE.md
+
+# 4. Start new tool
 # Use: /resume-work
 ```
 

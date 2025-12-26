@@ -125,6 +125,9 @@ See `docs/KNOWN_ISSUES.md` for tracked issues.
 - ✅ Auto-discovery workflows functioning
 - ✅ Demo generation automated
 - ✅ GitHub Pages deployment working
+- ✅ **CI Optimization Phase 1** - Path filters, concurrency controls, modern actions, caching 🆕
+- ✅ **CI Optimization Phase 2** - Artifact-based dashboard (no re-testing) 🆕
+- ✅ **docs/CI_GUIDE.md** - Comprehensive CI documentation as single source of truth 🆕
 - [ ] Consider adding performance benchmarks to CI
 
 ### Workflows
@@ -216,5 +219,5 @@ Priority: Cross-Platform Path Normalizer
 
 ---
 
-**Last Review:** 2025-12-25
+**Last Review:** 2025-12-26
 **Next Review:** When starting next session
