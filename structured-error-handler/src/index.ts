@@ -3,9 +3,6 @@
  *
  * Structured error format with context preservation and serialization.
  * Enables rich error information to flow through call stacks without losing context.
- *
- * @module structured-error-handler
- * @version 0.1.0
  */
 
 // =============================================================================
