@@ -102,14 +102,24 @@ File-based semaphores solve these by using simple lock files that:
 
 ## Dogfooding
 
-We use **[Test Flakiness Detector](/tools/test-flakiness-detector/)** to validate test reliability:
+This tool demonstrates composability by being VALIDATED BY other Tuulbelt tools:
 
+**[Test Flakiness Detector](/tools/test-flakiness-detector/)** - Validate concurrent safety:
 ```bash
-# From test-flakiness-detector directory
-npx tsx src/index.ts --test "cd ../file-based-semaphore && cargo test" --runs 10
+./scripts/dogfood-flaky.sh 10
+# ✅ NO FLAKINESS DETECTED
+# 85 tests × 10 runs = 850 executions
 ```
 
-This validates that all 85 tests are deterministic across multiple runs.
+**[Output Diffing Utility](/tools/output-diffing-utility/)** - Prove deterministic outputs:
+```bash
+./scripts/dogfood-diff.sh
+# Test outputs should be identical
+```
+
+Cross-language composition: Rust tools validated by TypeScript tools via CLI.
+
+See `DOGFOODING_STRATEGY.md` in the repository for details.
 
 ## Demo
 

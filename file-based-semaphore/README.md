@@ -208,26 +208,26 @@ cargo test -- --nocapture  # Show output
 
 ### Dogfooding
 
-We validate this tool's test reliability using **Test Flakiness Detector** (another Tuulbelt tool):
+This tool demonstrates composability by being VALIDATED BY other Tuulbelt tools:
 
+**Test Flakiness Detector** - Validate concurrent safety:
 ```bash
-# Run the dogfood script
-./scripts/dogfood.sh
-
-# Or with custom run count
-./scripts/dogfood.sh 20
+./scripts/dogfood-flaky.sh 10
+# ✅ NO FLAKINESS DETECTED
+# 85 tests × 10 runs = 850 executions
 ```
 
-This runs all 85 tests 10 times (850 total executions) to detect any non-deterministic behavior.
-
-**Expected output:**
-```
-✅ NO FLAKINESS DETECTED
-All 10 test runs passed consistently.
-The test suite is deterministic and reliable! 🎉
+**Output Diffing Utility** - Prove deterministic outputs:
+```bash
+./scripts/dogfood-diff.sh
+# Test outputs should be identical
 ```
 
-> **Note:** Rust tools can be validated via CLI by Test Flakiness Detector even though they can't import TypeScript libraries directly. This cross-language validation demonstrates that Tuulbelt tools compose well together.
+This demonstrates cross-language composition - Rust tools validated by TypeScript tools via CLI interfaces.
+
+**Used By:** Output Diffing Utility (cache locking demo)
+
+See `DOGFOODING_STRATEGY.md` for implementation details.
 
 ## Design Decisions
 
