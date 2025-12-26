@@ -119,7 +119,7 @@ This tool demonstrates composability by being VALIDATED BY other Tuulbelt tools:
 
 Cross-language composition: Rust tools validated by TypeScript tools via CLI.
 
-See `DOGFOODING_STRATEGY.md` in the repository for details.
+See [`DOGFOODING_STRATEGY.md`](https://github.com/tuulbelt/tuulbelt/blob/main/file-based-semaphore/DOGFOODING_STRATEGY.md) in the repository for details.
 
 ## Demo
 
@@ -144,7 +144,14 @@ cargo run --example stale_recovery
 ./scripts/demo.sh
 ```
 
-> **Note:** StackBlitz is not available for Rust projects. Clone the repository to try it locally.
+<div>
+  <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
+    <strong>Try it online:</strong>
+  </span>
+  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/file-based-semaphore" style="display: inline-block; vertical-align: middle;">
+    <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
+  </a>
+</div>
 
 > Demo recordings are automatically generated via GitHub Actions.
 

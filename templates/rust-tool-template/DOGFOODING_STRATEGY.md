@@ -43,6 +43,8 @@ This document outlines how this tool leverages other Tuulbelt tools to demonstra
 - [ ] Create composition scripts (`scripts/dogfood-*.sh`)
 - [ ] Update README with dogfooding section
 - [ ] Update GH Pages docs (if applicable)
+  - Use GitHub links: `[DOGFOODING_STRATEGY.md](https://github.com/tuulbelt/tuulbelt/blob/main/[tool-name]/DOGFOODING_STRATEGY.md)`
+  - Not relative paths: `See DOGFOODING_STRATEGY.md in the repository`
 - [ ] Test graceful fallback when tools not available
 - [ ] Document in this file
 

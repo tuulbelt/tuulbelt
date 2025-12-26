@@ -148,7 +148,7 @@ This pipeline demonstrates:
 - Real-world use case (API version comparison)
 - Graceful degradation if tools missing
 
-See `DOGFOODING_STRATEGY.md` in the repository for implementation details.
+See [`DOGFOODING_STRATEGY.md`](https://github.com/tuulbelt/tuulbelt/blob/main/output-diffing-utility/DOGFOODING_STRATEGY.md) in the repository for implementation details.
 
 ## Demo
 
@@ -178,7 +178,14 @@ cargo run --release --format json old.json new.json
 cargo run --release --format summary old.json new.json
 ```
 
-> **Note:** StackBlitz is not available for Rust projects. Clone the repository to try it locally.
+<div>
+  <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
+    <strong>Try it online:</strong>
+  </span>
+  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/output-diffing-utility" style="display: inline-block; vertical-align: middle;">
+    <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
+  </a>
+</div>
 
 > Demo recordings are automatically generated via GitHub Actions.
 

@@ -97,7 +97,7 @@ This tool demonstrates composability by being VALIDATED BY other Tuulbelt tools:
 
 **Used By:** Output Diffing Utility, File-Based Semaphore, Test Flakiness Detector
 
-See `DOGFOODING_STRATEGY.md` in the repository for implementation details.
+See [`DOGFOODING_STRATEGY.md`](https://github.com/tuulbelt/tuulbelt/blob/main/cross-platform-path-normalizer/DOGFOODING_STRATEGY.md) in the repository for implementation details.
 
 ## Demo
 
