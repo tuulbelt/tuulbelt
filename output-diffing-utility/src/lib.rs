@@ -77,6 +77,66 @@ pub enum FileType {
     Binary,
 }
 
+/// Detect file type from content and optionally extension
+///
+/// # Arguments
+///
+/// * `content` - File content as bytes
+/// * `extension` - Optional file extension (e.g., "txt", "json")
+///
+/// # Returns
+///
+/// Returns the detected `FileType`.
+///
+/// # Detection Logic
+///
+/// 1. If extension is ".json", return FileType::Json
+/// 2. If content is valid UTF-8 and contains mostly printable characters, return FileType::Text
+/// 3. Otherwise, return FileType::Binary
+///
+/// # Example
+///
+/// ```rust
+/// use output_diffing_utility::detect_file_type;
+///
+/// let text_content = b"hello world";
+/// let file_type = detect_file_type(text_content, Some("txt"));
+/// // Returns FileType::Text
+/// ```
+pub fn detect_file_type(content: &[u8], extension: Option<&str>) -> FileType {
+    // Check extension first
+    if let Some(ext) = extension {
+        match ext.to_lowercase().as_str() {
+            "json" => return FileType::Json,
+            "txt" | "md" | "log" | "rs" | "ts" | "js" | "py" | "c" | "h" | "cpp" | "hpp" => {
+                return FileType::Text
+            }
+            _ => {} // Continue to content-based detection
+        }
+    }
+
+    // Check if content is valid UTF-8
+    if let Ok(text) = std::str::from_utf8(content) {
+        // Check if mostly printable (allow newlines, tabs, whitespace, Unicode)
+        let printable_count = text
+            .chars()
+            .filter(|c| {
+                !c.is_control() || *c == '\n' || *c == '\r' || *c == '\t'
+            })
+            .count();
+
+        let total_chars = text.chars().count();
+
+        // If >95% printable characters, consider it text
+        if total_chars > 0 && (printable_count * 100 / total_chars) >= 95 {
+            return FileType::Text;
+        }
+    }
+
+    // Default to binary
+    FileType::Binary
+}
+
 /// Error types for diff operations
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum DiffError {
@@ -859,5 +919,79 @@ mod tests {
         // Positions 4-5: e, f (additions)
         assert_eq!(result.modifications(), 1);
         assert_eq!(result.additions(), 2);
+    }
+
+    // File type detection tests
+    #[test]
+    fn test_detect_file_type_text_from_extension() {
+        assert_eq!(detect_file_type(b"hello", Some("txt")), FileType::Text);
+        assert_eq!(detect_file_type(b"hello", Some("md")), FileType::Text);
+        assert_eq!(detect_file_type(b"hello", Some("rs")), FileType::Text);
+        assert_eq!(detect_file_type(b"hello", Some("py")), FileType::Text);
+    }
+
+    #[test]
+    fn test_detect_file_type_json_from_extension() {
+        assert_eq!(detect_file_type(b"{}", Some("json")), FileType::Json);
+        assert_eq!(detect_file_type(b"[]", Some("JSON")), FileType::Json); // Case insensitive
+    }
+
+    #[test]
+    fn test_detect_file_type_text_from_content() {
+        assert_eq!(
+            detect_file_type(b"hello world\nhow are you?", None),
+            FileType::Text
+        );
+        assert_eq!(
+            detect_file_type(b"Line 1\nLine 2\nLine 3", None),
+            FileType::Text
+        );
+    }
+
+    #[test]
+    fn test_detect_file_type_binary_from_content() {
+        // Binary data (null bytes)
+        assert_eq!(detect_file_type(b"\x00\x01\x02\x03", None), FileType::Binary);
+
+        // Mixed binary/text (mostly binary)
+        assert_eq!(
+            detect_file_type(b"abc\x00\x01\x02\x03\x04\x05\x06", None),
+            FileType::Binary
+        );
+    }
+
+    #[test]
+    fn test_detect_file_type_unicode_text() {
+        // UTF-8 encoded text should be detected as text
+        assert_eq!(detect_file_type("café résumé".as_bytes(), None), FileType::Text);
+    }
+
+    #[test]
+    fn test_detect_file_type_empty_file() {
+        // Empty content with no extension - default to binary
+        assert_eq!(detect_file_type(b"", None), FileType::Binary);
+
+        // Empty with text extension - use extension
+        assert_eq!(detect_file_type(b"", Some("txt")), FileType::Text);
+    }
+
+    #[test]
+    fn test_detect_file_type_mixed_content() {
+        // Mostly printable (>95%)
+        let content = b"hello world\nthis is text\x01"; // 1 non-printable in 29 chars
+        assert_eq!(detect_file_type(content, None), FileType::Text);
+    }
+
+    #[test]
+    fn test_detect_file_type_unknown_extension() {
+        // Unknown extension falls back to content detection
+        assert_eq!(
+            detect_file_type(b"hello world", Some("xyz")),
+            FileType::Text
+        );
+        assert_eq!(
+            detect_file_type(b"\x00\x01\x02", Some("xyz")),
+            FileType::Binary
+        );
     }
 }
