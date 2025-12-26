@@ -1,6 +1,6 @@
 # Next Tasks
 
-**Last Updated:** 2025-12-25
+**Last Updated:** 2025-12-26
 
 This document tracks pending work across the Tuulbelt project. Tasks are organized by type and priority.
 
@@ -38,26 +38,40 @@ See `README.md` for complete roadmap (28 remaining tools).
 
 - ✅ v0.1.0 stable
 - ✅ Dogfooding: Integrates cli-progress-reporting for progress tracking
-- ✅ Dogfooding: Validates cli-progress-reporting and cross-platform-path-normalizer test suites
+- ✅ Dogfooding: 4 composition scripts implemented
+  - dogfood-diff.sh: Find ROOT CAUSE of flaky tests via output comparison
+  - dogfood-paths.sh: Validate Path Normalizer (145 tests × 10 runs)
+  - dogfood-progress.sh: Bidirectional validation (125 tests × 20 runs)
+  - dogfood-pipeline.sh: Validate all 5 Phase 1 tools (602 tests × 10 runs)
+- ✅ DOGFOODING_STRATEGY.md: Complete strategy document
 - 148 tests passing
 
 ### CLI Progress Reporting
 
 - ✅ v0.1.0 stable
-- ✅ Dogfooding: Validated by test-flakiness-detector (125 tests × 20 runs = 2,500 executions)
-- ✅ Dogfooding: Used by test-flakiness-detector for real-time progress
+- ✅ Dogfooding: Bidirectional validation with test-flakiness-detector
+- ✅ Dogfooding: 2 composition scripts implemented
+  - dogfood-flaky.sh: Validate concurrent safety (125 tests × 20 runs)
+  - dogfood-diff.sh: Prove deterministic outputs
+- ✅ DOGFOODING_STRATEGY.md: Complete strategy document
 - 125 tests passing
 
 ### Cross-Platform Path Normalizer
 
 - ✅ v0.1.0 stable
-- ✅ Dogfooding: Validated by test-flakiness-detector (145 tests × 10 runs = 1,450 executions)
+- ✅ Dogfooding: 2 composition scripts implemented
+  - dogfood-flaky.sh: Validate determinism (145 tests × 10 runs)
+  - dogfood-diff.sh: Prove identical outputs
+- ✅ DOGFOODING_STRATEGY.md: Complete strategy document
 - 145 tests passing
 
 ### File-Based Semaphore
 
 - ✅ v0.1.0 stable (First Rust tool!)
-- ✅ Dogfooding: Can be validated by test-flakiness-detector
+- ✅ Dogfooding: 2 composition scripts implemented
+  - dogfood-flaky.sh: Validate concurrent safety (85 tests × 10 runs)
+  - dogfood-diff.sh: Prove deterministic outputs
+- ✅ DOGFOODING_STRATEGY.md: Complete strategy document
 - ✅ Full CLI test coverage added
 - 85 tests passing (31 unit + 39 CLI + 11 integration + 4 doctests)
 - Zero clippy warnings
@@ -65,7 +79,9 @@ See `README.md` for complete roadmap (28 remaining tools).
 ### Output Diffing Utility 🆕
 
 - ✅ v0.1.0 stable (Second Rust tool!)
-- ✅ Dogfooding: Can be validated by test-flakiness-detector
+- ✅ Dogfooding: 1 composition script implemented
+  - dogfood-flaky.sh: Validate determinism (99 tests × 10 runs)
+- ✅ DOGFOODING_STRATEGY.md: Complete strategy document
 - 99 tests passing (76 lib + 18 CLI + 5 doc)
 - Zero clippy warnings
 - Complete documentation (7 VitePress pages + SPEC.md)
@@ -118,6 +134,12 @@ See `docs/KNOWN_ISSUES.md` for tracked issues.
 - ✅ **Template performance patterns** - Added to both Rust and TypeScript templates 🆕
 - ✅ **Template SPEC.md guidance** - When/how to create specifications 🆕
 - ✅ **Template advanced examples** - examples/advanced.rs and examples/advanced.ts 🆕
+- ✅ **Systematic dogfooding implementation** - All 4 remaining Phase 1 tools 🆕
+  - Created DOGFOODING_STRATEGY.md for all tools
+  - Implemented 10 composition scripts (4+2+2+2)
+  - Updated all tool documentation (README + GH Pages)
+  - Created templates for future tools (TypeScript + Rust)
+  - Updated QUALITY_CHECKLIST.md with dogfooding requirements
 
 ### Pending
 - [ ] Add "Contributing" guide page to VitePress (currently just links to CONTRIBUTING.md)
@@ -246,9 +268,14 @@ Priority: Cross-Platform Path Normalizer
 
 **Phase 1 Complete!** All 5 Quick Tools implemented (15% of 33 total).
 
-**Recent Accomplishment:**
+**Recent Accomplishments:**
 - Output Diffing Utility: 2,874 lines Rust code, 99 tests, complete documentation
 - Demo workflow: 75-80% CI time savings with smart detection
 - Quality infrastructure: Templates and checklist updated for systematic integration
+- **Systematic dogfooding**: 10 composition scripts across all Phase 1 tools
+  - DOGFOODING_STRATEGY.md created for all 4 remaining tools
+  - Focus on REAL utility (not checkbox completion)
+  - Templates updated for future tools
+  - QUALITY_CHECKLIST.md enhanced with dogfooding guidance
 
 **Ready for Phase 2!**
