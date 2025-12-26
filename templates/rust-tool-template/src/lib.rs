@@ -70,6 +70,13 @@ impl Error for ProcessError {}
 /// let result = process("hello", &config).unwrap();
 /// assert_eq!(result, "HELLO");
 /// ```
+///
+/// # Performance Notes
+///
+/// - Pre-allocate collections when final size is known: `Vec::with_capacity(n)`
+/// - For large inputs, consider streaming or chunked processing
+/// - Use iterators instead of collecting intermediate results
+/// - Profile with `cargo flamegraph` or `cargo bench` if performance-critical
 pub fn process(input: &str, config: &Config) -> Result<String, ProcessError> {
     if config.verbose {
         eprintln!("[DEBUG] Processing input: {}", input);

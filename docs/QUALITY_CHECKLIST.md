@@ -106,11 +106,15 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
 
 ### GitHub Workflows
 
-- [ ] **Demo recording script created**: `scripts/record-{tool-name}-demo.sh` exists (workflow auto-generates demos)
-- [ ] **Demo uploaded**: Run recording script locally and verify `demo.cast` and `docs/demo.gif` exist
+- [ ] **Demo recording script created**: `scripts/record-{tool-name}-demo.sh` exists with `--title` flag
+- [ ] **Demo workflow path filter added**: Add tool path to `.github/workflows/create-demos.yml` under `paths:` section
+  - Example: `- '{tool-name}/**'`
+  - This enables smart detection to only record demo when tool changes
+- [ ] **Demo script tested locally**: Run recording script and verify `demo.cast` and `docs/demo.gif` exist
 
-> **Note:** `deploy-docs.yml` auto-discovers tool directories via `*/docs/**` and `*/README.md` patterns.
-> No manual workflow update needed for new tools.
+> **Note:** `deploy-docs.yml` auto-discovers tool directories via `*/docs/**` and `*/README.md` patterns (no manual update).
+> **Important:** `create-demos.yml` requires manual path filter addition for efficient demo recording.
+
 - [ ] **Test workflow updated** (if needed): Any tool-specific CI configuration added
 
 ### Root Repository Updates
@@ -134,15 +138,16 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
 1. [x] Implement tool functionality
 2. [x] Write tests (80%+ coverage)
 3. [x] Create tool README
-4. [ ] Add to VitePress config (docs/.vitepress/config.ts)
-5. [ ] Create docs/tools/{tool-name}/ directory
-6. [ ] Copy docs pages and fix links
-7. [ ] Update docs/tools/index.md
-8. [ ] Update deploy-docs.yml workflow
-9. [ ] Update root README.md
-10. [ ] Run npm run docs:build (verify)
-11. [ ] Run /quality-check
-12. [ ] Update HANDOFF.md and NEXT_TASKS.md
+4. [ ] Create demo recording script (scripts/record-{tool-name}-demo.sh)
+5. [ ] Add path filter to create-demos.yml workflow
+6. [ ] Add to VitePress config (docs/.vitepress/config.ts)
+7. [ ] Create docs/tools/{tool-name}/ directory
+8. [ ] Copy docs pages and fix links
+9. [ ] Update docs/tools/index.md
+10. [ ] Update root README.md
+11. [ ] Run npm run docs:build (verify)
+12. [ ] Run /quality-check
+13. [ ] Update HANDOFF.md and NEXT_TASKS.md
 ```
 
 ---

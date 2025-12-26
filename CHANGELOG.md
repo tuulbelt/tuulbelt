@@ -9,6 +9,112 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Phase 1 Complete! 🎉 (2025-12-26)
+
+**Milestone:** All 5 Phase 1 Quick Tools implemented (15% of 33 total)
+
+### Added - Output Diffing Utility v0.1.0 (2025-12-26)
+
+**Tool Features:**
+- Semantic diff for text, JSON, and binary files (Rust)
+- Text diff using LCS algorithm with configurable context
+- JSON structural diff with field-level comparison
+- Binary hex dump comparison
+- Multiple output formats (unified, context, side-by-side, JSON)
+- File size safety limit (100MB default, --max-size override)
+- Optimized performance (vector pre-allocation in 3 locations)
+
+**Testing Excellence:**
+- 99 tests passing (76 lib + 18 CLI + 5 doc)
+- Zero clippy warnings, zero runtime dependencies
+- Comprehensive edge case coverage
+
+**Documentation:**
+- Complete SPEC.md defining LCS algorithm and diff formats
+- Full VitePress documentation (7 pages + SPEC)
+- Two working examples (basic CLI + library integration)
+
+**Impact:**
+- Second Rust tool in Tuulbelt
+- Demonstrates SPEC.md pattern for algorithm documentation
+- Establishes performance optimization patterns
+- 5/5 Phase 1 tools complete ✅
+
+### Added - Infrastructure Improvements (2025-12-26)
+
+**Demo Workflow Optimization:**
+- Smart detection for demo recording (75-80% CI time savings)
+- Path filters for all 5 tools in `create-demos.yml`
+- --title flags added to all recording scripts
+- Only records demos when tool implementation or script changes
+
+**Template Enhancements:**
+- Performance patterns added to both templates (Rust + TypeScript)
+- SPEC.md guidance (when to create, what to include, examples)
+- Advanced examples: `examples/advanced.rs` and `examples/advanced.ts`
+- Rust patterns: Vec::with_capacity, resource limits, streaming
+- TypeScript patterns: Array pre-sizing, generators, async concurrency
+
+**Documentation:**
+- Updated CI_GUIDE.md with demo workflow documentation
+- Updated QUALITY_CHECKLIST.md with demo requirements
+- Updated template READMEs with CI/CD integration instructions
+
+**Impact:**
+- Future tools inherit optimization patterns
+- Systematic CI efficiency improvements
+- Knowledge capture from 5 completed tools
+
+### Added - File-Based Semaphore v0.1.0 (2025-12-25)
+
+**Tool Features:**
+- Cross-platform process locking via filesystem (Rust)
+- First Rust tool in Tuulbelt
+- CLI commands: acquire, release, check, info, list
+- Stale lock detection and automatic cleanup
+- Timeout support for lock acquisition
+- Lock metadata (PID, hostname, timestamp)
+
+**Testing Excellence:**
+- 85 tests passing (31 unit + 39 CLI + 11 integration + 4 doctests)
+- Zero clippy warnings, zero runtime dependencies
+- Comprehensive CLI test coverage
+
+**Documentation:**
+- Complete SPEC.md defining lock file protocol and semantics
+- Full VitePress documentation (7 pages)
+- Two working examples (basic + advanced patterns)
+
+**Impact:**
+- First Rust tool in Tuulbelt
+- Establishes SPEC.md pattern for protocol documentation
+- Demonstrates comprehensive CLI testing approach
+- 4/5 Phase 1 tools complete
+
+### Added - Cross-Platform Path Normalizer v0.1.0 (2025-12-24)
+
+**Tool Features:**
+- Windows/Unix path conversion and normalization
+- Multiple output formats (unix, windows, posix, native)
+- CLI and library API
+- Absolute/relative path handling
+- Extension and component extraction
+
+**Testing Excellence:**
+- 145 tests across all edge cases
+- Dogfooding validation (10 runs, 1,450 executions, 0 flaky)
+- Comprehensive Windows/Unix path coverage
+
+**Documentation:**
+- Full VitePress documentation with examples
+- StackBlitz integration for online demos
+- Fuzzy test descriptions (removed hard-coded counts)
+
+**Impact:**
+- Third Tuulbelt tool complete (3/33, 9%)
+- All tools now use fuzzy test descriptions
+- 3/5 Phase 1 tools complete
+
 ### Added - CLI Progress Reporting v0.1.0 (2025-12-24)
 
 **Tool Features:**

@@ -5,8 +5,19 @@ on:
     branches:
       - main
     paths:
-      - 'scripts/record-*-demo.sh'
+      # Workflow itself
       - '.github/workflows/create-demos.yml'
+
+      # Recording scripts (triggers demo for specific tool)
+      - 'scripts/record-*-demo.sh'
+
+      # Tool implementation changes (triggers demo regeneration)
+      - 'test-flakiness-detector/**'
+      - 'cli-progress-reporting/**'
+      - 'cross-platform-path-normalizer/**'
+      - 'file-based-semaphore/**'
+      - 'output-diffing-utility/**'
+
   workflow_dispatch:  # Manual trigger
     inputs:
       tool:
@@ -27,6 +38,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Need previous commit to detect changes
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -67,17 +80,60 @@ jobs:
           ASCIINEMA_INSTALL_ID: ${{ secrets.ASCIINEMA_INSTALL_ID }}
           TARGET_TOOL: ${{ github.event.inputs.tool }}
         run: |
-          # Find all tools with demo recording scripts
+          # Smart detection: only record demos for tools that need it
           if [ -n "$TARGET_TOOL" ]; then
-            # Record specific tool
+            # Manual trigger: record specific tool
             TOOLS=("$TARGET_TOOL")
+            echo "Manual trigger: recording demo for $TARGET_TOOL"
           else
-            # Auto-discover all tools with recording scripts
+            # Auto-detect tools that need demo recording
             TOOLS=()
+
+            # Get changed files in this push
+            CHANGED_FILES=""
+            if git rev-parse HEAD^ >/dev/null 2>&1; then
+              CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+            fi
+
+            # Check each tool with a recording script
             for script in scripts/record-*-demo.sh; do
-              if [ -f "$script" ]; then
-                # Extract tool name from script filename
-                tool=$(basename "$script" | sed 's/^record-//' | sed 's/-demo\.sh$//')
+              if [ ! -f "$script" ]; then
+                continue
+              fi
+
+              # Extract tool name from script filename
+              tool=$(basename "$script" | sed 's/^record-//' | sed 's/-demo\.sh$//')
+
+              # Check if tool directory exists
+              if [ ! -d "$tool" ]; then
+                continue
+              fi
+
+              SHOULD_RECORD=false
+
+              # Reason 1: Demo files are missing
+              if [ ! -f "$tool/demo.cast" ] || [ ! -f "$tool/demo-url.txt" ] || [ ! -f "$tool/docs/demo.gif" ]; then
+                echo "  → $tool: Demo files missing (will record)"
+                SHOULD_RECORD=true
+              fi
+
+              # Reason 2: Tool implementation changed
+              if [ -n "$CHANGED_FILES" ]; then
+                if echo "$CHANGED_FILES" | grep -q "^$tool/"; then
+                  echo "  → $tool: Implementation changed (will record)"
+                  SHOULD_RECORD=true
+                fi
+              fi
+
+              # Reason 3: Recording script changed
+              if [ -n "$CHANGED_FILES" ]; then
+                if echo "$CHANGED_FILES" | grep -q "^scripts/record-${tool}-demo\.sh$"; then
+                  echo "  → $tool: Recording script changed (will record)"
+                  SHOULD_RECORD=true
+                fi
+              fi
+
+              if [ "$SHOULD_RECORD" = true ]; then
                 TOOLS+=("$tool")
               fi
             done
@@ -114,6 +170,42 @@ jobs:
               echo "Warning: No recording script found for $tool"
             fi
           done
+
+      - name: Make recordings public (optional)
+        if: false  # Set to true to enable auto-publishing recordings
+        env:
+          ASCIINEMA_API_TOKEN: ${{ secrets.ASCIINEMA_API_TOKEN }}
+        run: |
+          # NOTE: Asciinema uploads are "unlisted" by default (accessible via link, not searchable)
+          # For our use case this is sufficient since we embed links in documentation.
+          #
+          # To make recordings fully public/searchable on asciinema.org, uncomment this step:
+          # 1. Generate API token at https://asciinema.org/user/edit
+          # 2. Add ASCIINEMA_API_TOKEN to GitHub repository secrets
+          # 3. Set "if: false" to "if: true" above
+          #
+          # The code below will make all uploaded recordings public:
+
+          if [ -n "$ASCIINEMA_API_TOKEN" ]; then
+            for tool_dir in */; do
+              tool=${tool_dir%/}
+
+              if [ -f "$tool/demo-url.txt" ]; then
+                URL=$(cat "$tool/demo-url.txt")
+                RECORDING_ID=$(echo "$URL" | grep -oP 'https://asciinema.org/a/\K[a-zA-Z0-9]+')
+
+                if [ -n "$RECORDING_ID" ]; then
+                  echo "Making recording public for $tool (ID: $RECORDING_ID)..."
+                  curl -s -X PATCH "https://asciinema.org/api/asciicasts/$RECORDING_ID" \
+                    -H "Authorization: Bearer $ASCIINEMA_API_TOKEN" \
+                    -H "Content-Type: application/json" \
+                    -d '{"public": true}' || echo "Failed to make public"
+                fi
+              fi
+            done
+          else
+            echo "ASCIINEMA_API_TOKEN not set - skipping"
+          fi
 
       - name: Copy demos to VitePress public directory
         run: |

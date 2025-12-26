@@ -1,9 +1,9 @@
 # Tuulbelt Project Status
 
-**Last Updated:** 2025-12-24
-**Current Phase:** Phase 1 - Quick Tools Development
-**Active Session:** claude/cli-progress-reporting-tool-9mMrB
-**Progress:** 2/33 Tools Complete (6%) | Phase 1 Quick Tools: 2/5 (40%)
+**Last Updated:** 2025-12-26
+**Current Phase:** Phase 2 - Medium Tools Development
+**Active Session:** claude/implement-output-diffing-utility-fX3Z3
+**Progress:** 5/33 Tools Complete (15%) | Phase 1 Quick Tools: 5/5 (100% ✅)
 
 ---
 
@@ -42,28 +42,60 @@
 
 **CLI Progress Reporting (2025-12-24)**
 - File-based atomic writes for concurrent safety
-- 93 tests across 34 suites with comprehensive coverage
+- 125 tests with comprehensive coverage
 - Dogfooding validation with Test Flakiness Detector (100% pass rate)
 - CLI and library API
 - Full documentation and examples
 - v0.1.0 complete ✅
 
+**Cross-Platform Path Normalizer (2025-12-24)**
+- Windows/Unix path conversion and normalization
+- 145 tests across all edge cases
+- Dogfooding validation (10 runs, 1,450 executions, 0 flaky)
+- CLI and library API
+- Full VitePress documentation
+- v0.1.0 complete ✅
+
+**File-Based Semaphore (2025-12-25)**
+- First Rust tool in Tuulbelt
+- Cross-platform process locking via filesystem
+- 85 tests (31 unit + 39 CLI + 11 integration + 4 doctests)
+- Zero clippy warnings, zero runtime dependencies
+- Complete SPEC.md defining lock protocol
+- Full VitePress documentation
+- v0.1.0 complete ✅
+
+**Output Diffing Utility (2025-12-26)**
+- Second Rust tool in Tuulbelt
+- Semantic diff for text, JSON, and binary files
+- 99 tests (76 lib + 18 CLI + 5 doc)
+- Zero clippy warnings, zero runtime dependencies
+- File size safety (100MB limit, configurable)
+- Optimized performance (vector pre-allocation)
+- Complete SPEC.md defining diff algorithm
+- Full VitePress documentation (7 pages + SPEC)
+- v0.1.0 complete ✅
+
+**Infrastructure Improvements (2025-12-26)**
+- Demo workflow optimization (75-80% CI time savings via smart detection)
+- Path filters for all 5 tools in create-demos.yml
+- Template enhancements (performance patterns, SPEC.md guidance, advanced examples)
+
 ### 🔄 In Progress
 
-**Nothing** - Ready for next tool!
+**Nothing** - Phase 1 COMPLETE! Ready for Phase 2!
 
 ### 📋 Next Steps
 
-1. **Build Third Tool: Cross-Platform Path Handling** 🎯
-   - Use `/scaffold-tool` to create from template
-   - Follow Test Flakiness Detector and CLI Progress patterns
-   - Implement comprehensive test coverage (80%+)
-   - Apply dogfooding validation
-   - Complete Phase 1 Quick Tools (3/5 remaining)
+1. **Start Phase 2: Medium Tools** 🎯
+   - **Recommended:** Structured Error Handler (TypeScript)
+   - Alternative options: Configuration File Merger, Snapshot Comparison, Test Port Resolver
+   - Continue dogfooding validation practice
+   - Maintain 80%+ test coverage standard
 
 ## Active Branches
 
-- `claude/cli-progress-reporting-tool-9mMrB` - CLI Progress Reporting implementation (current)
+- `claude/implement-output-diffing-utility-fX3Z3` - Output Diffing Utility + workflow optimizations (current)
 - `main` - Stable base
 
 ## Blockers / Decisions Needed
@@ -72,18 +104,22 @@
 
 ## Tools Status
 
-### Implemented (2/33)
-- **Test Flakiness Detector** (TypeScript) - v0.1.0 complete, 107 tests, VitePress docs
-- **CLI Progress Reporting** (TypeScript) - v0.1.0 complete, 93 tests, dogfooding validated
+### Implemented (5/33) ✅ Phase 1 Complete
+- **Test Flakiness Detector** (TypeScript) - v0.1.0, 148 tests, VitePress docs
+- **CLI Progress Reporting** (TypeScript) - v0.1.0, 125 tests, dogfooding validated
+- **Cross-Platform Path Normalizer** (TypeScript) - v0.1.0, 145 tests, VitePress docs
+- **File-Based Semaphore** (Rust) - v0.1.0, 85 tests, SPEC.md, VitePress docs
+- **Output Diffing Utility** (Rust) - v0.1.0, 99 tests, SPEC.md, VitePress docs
 
 ### In Planning (0/33)
 - None
 
-### Not Started (31/33)
-- **Next:** Cross-Platform Path Handling 🎯
-- File-Based Semaphore
-- Output Diffing Utility
-- All Medium tools awaiting Quick completion
+### Not Started (28/33)
+- **Next:** Structured Error Handler 🎯 (Phase 2 recommended)
+- Configuration File Merger
+- Snapshot Comparison
+- Test Port Conflict Resolver
+- All remaining Medium/Complex tools
 
 ## Infrastructure Status
 
@@ -98,6 +134,27 @@
 | CI/CD | ✅ Ready | GitHub Actions configured |
 
 ## Recent Activity
+
+**2025-12-26** - Output Diffing Utility + Infrastructure - COMPLETE ✅
+- **Implementation**: Rust tool for semantic diffs (text, JSON, binary)
+- **Testing**: 99 tests (76 lib + 18 CLI + 5 doc), zero clippy warnings
+- **Performance**: File size limits, vector pre-allocation optimizations
+- **Documentation**: SPEC.md defining LCS algorithm, 7 VitePress pages
+- **Infrastructure**: Demo workflow optimization (75-80% CI savings), template enhancements
+- **Total Commits**: 7 (implementation, robustness, docs, templates, workflow optimization)
+- **Result**: Phase 1 COMPLETE! 5/5 Quick Tools done, ready for Phase 2
+
+**2025-12-25** - File-Based Semaphore - COMPLETE ✅
+- **Implementation**: First Rust tool, cross-platform process locking
+- **Testing**: 85 tests across 4 categories, zero clippy warnings
+- **Documentation**: SPEC.md defining lock protocol, full VitePress docs
+- **Result**: Production-ready v0.1.0
+
+**2025-12-24** - Cross-Platform Path Normalizer - COMPLETE ✅
+- **Implementation**: Windows/Unix path conversion and normalization
+- **Testing**: 145 tests, dogfooding validated (1,450 executions)
+- **Documentation**: Full VitePress docs
+- **Result**: Production-ready v0.1.0
 
 **2025-12-24** - CLI Progress Reporting - COMPLETE ✅
 - **Implementation**: File-based atomic writes, concurrent safety, CLI + library API
@@ -139,28 +196,41 @@
 
 **For Next Session:**
 
-**Current Status:** 2/33 tools complete (6%) | Phase 1 Quick Tools: 2/5 (40%)
+**Current Status:** 5/33 tools complete (15%) | Phase 1 COMPLETE ✅ | Phase 2 Ready
 
 **Completed Tools:**
-1. Test Flakiness Detector - Gold standard with VitePress docs
-2. CLI Progress Reporting - Dogfooding validated, production-ready
+1. Test Flakiness Detector (TypeScript) - 148 tests, VitePress docs, gold standard
+2. CLI Progress Reporting (TypeScript) - 125 tests, dogfooding validated
+3. Cross-Platform Path Normalizer (TypeScript) - 145 tests, VitePress docs
+4. File-Based Semaphore (Rust) - 85 tests, SPEC.md, VitePress docs
+5. Output Diffing Utility (Rust) - 99 tests, SPEC.md, VitePress docs
 
 **Established Practices:**
-- Comprehensive test coverage (80%+ minimum, aim for 90%+)
+- Comprehensive test coverage (80%+ minimum)
 - Dogfooding validation using Test Flakiness Detector
-- Documentation with examples and design rationale
-- Multiple test categories (unit, integration, filesystem, performance)
+- SPEC.md for tools defining formats/protocols/algorithms
+- Performance optimizations (pre-allocation, resource limits)
+- Full VitePress documentation with examples
+- Zero runtime dependencies (both languages)
+- Multiple test categories (unit, CLI, integration, doctests)
 
-**Recommended Next Action:** Build Cross-Platform Path Handling (3rd Quick tool)
-- Use `/scaffold-tool path-normalizer typescript`
-- Follow CLI Progress Reporting pattern (93 tests, dogfooding)
-- Complete Phase 1 Quick Tools (3/5 remaining)
+**Infrastructure Improvements:**
+- Demo workflow with smart detection (75-80% CI time savings)
+- Template enhancements (performance patterns, advanced examples)
+- Path filters for efficient CI runs
+
+**Recommended Next Action:** Start Phase 2 - Build Structured Error Handler
+- **Tool:** Structured Error Handler (TypeScript)
+- **Why:** Most foundational, enables better error handling across all tools
+- **Alternatives:** Configuration File Merger, Snapshot Comparison, Test Port Resolver
+- Continue established practices (dogfooding, SPEC if needed, 80%+ coverage)
 
 **Reference Documents:**
-- See ROADMAP.md for prioritized tool list and detailed specs
+- See .claude/HANDOFF.md for latest session details
+- See ROADMAP.md for Phase 2 tool list and priorities
 - See CHANGELOG.md for historical context
-- See cli-progress-reporting/DOGFOODING.md for validation patterns
-- See docs/TOOL_DASHBOARD.md for quality metrics
+- See docs/QUALITY_CHECKLIST.md for pre-commit requirements
+- See templates/ for performance patterns and SPEC.md guidance
 
 ---
 

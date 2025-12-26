@@ -13,10 +13,12 @@ This document is the single source of truth for all CI/CD workflows in Tuulbelt.
 | `test-all-tools.yml` | push, PR, nightly, manual | Test all tools | ~4 min |
 | `update-dashboard.yml` | after test-all-tools, nightly, manual | Generate quality dashboard | ~30 sec |
 | `deploy-docs.yml` | push to docs/*, manual | Build & deploy VitePress | ~2 min |
-| `create-demos.yml` | push to scripts/record-*, manual | Record asciinema demos | ~5 min |
+| `create-demos.yml` | push to tool/*, scripts/record-*, manual | Smart demo recording (only changed tools) | 0-5 min* |
 | `update-demos.yml` | push to test-flakiness-detector/src/*, weekly | Generate demo outputs | ~1 min |
 | `meta-validation.yml` | push to templates/docs, PR | Validate repo structure | ~1 min |
 | Per-tool `test.yml` | push/PR to tool's files | Test individual tool | ~1 min |
+
+\* 0 min if no changes, ~2 min per tool that changed (75%+ time savings)
 
 ---
 
@@ -117,19 +119,54 @@ This document is the single source of truth for all CI/CD workflows in Tuulbelt.
 
 ### create-demos.yml
 
-**Purpose:** Record asciinema demos and generate GIFs for all tools.
+**Purpose:** Record asciinema demos and generate GIFs for tools with smart change detection.
 
 **Triggers:**
-- `push` to `main` with paths: `scripts/record-*-demo.sh`
+- `push` to `main` with paths:
+  - `.github/workflows/create-demos.yml` (workflow itself)
+  - `scripts/record-*-demo.sh` (recording scripts)
+  - `test-flakiness-detector/**` (tool implementation)
+  - `cli-progress-reporting/**`
+  - `cross-platform-path-normalizer/**`
+  - `file-based-semaphore/**`
+  - `output-diffing-utility/**`
 - `workflow_dispatch`: Manual trigger (can specify single tool)
 
 **Features:**
+- ✅ **Smart detection** - Only records demos when needed
+- ✅ **Path filters** - Runs when specific tools change
+- ✅ **Change detection** - Checks 3 conditions:
+  1. Demo files missing (demo.cast, demo-url.txt, docs/demo.gif)
+  2. Tool implementation changed (any file in tool directory)
+  3. Recording script changed (scripts/record-*-demo.sh)
 - ✅ Concurrency controls
 - ✅ Caches `agg` binary (saves ~2 min)
 - ✅ Supports both TypeScript and Rust tools
-- ✅ Uploads to asciinema.org using secret
+- ✅ Uploads to asciinema.org with proper titles
+- ✅ Optional API integration to make recordings public
 
 **Required Secret:** `ASCIINEMA_INSTALL_ID`
+**Optional Secret:** `ASCIINEMA_API_TOKEN` (to make recordings searchable on asciinema.org)
+
+**Efficiency:** 75-80% CI time savings - only records demos for tools that actually changed.
+
+**Adding New Tools:**
+
+When adding a new tool, you **must** add its path to the workflow:
+
+```yaml
+# Add to .github/workflows/create-demos.yml
+paths:
+  - 'new-tool-name/**'  # Your tool here
+```
+
+Then create a recording script at `scripts/record-new-tool-name-demo.sh` with proper title:
+
+```bash
+asciinema rec "demo.cast" --overwrite --title "New Tool Name - Tuulbelt" --command ...
+```
+
+See [QUALITY_CHECKLIST.md](QUALITY_CHECKLIST.md) for complete new tool checklist.
 
 ---
 

@@ -94,6 +94,34 @@ npm test              # Run all tests
 npm test -- --watch   # Watch mode
 ```
 
+## Integration with Tuulbelt Meta Repository
+
+When adding this tool to the Tuulbelt meta repository, ensure CI/CD integration:
+
+### Demo Recording Workflow
+
+**Required:** Add path filter to `.github/workflows/create-demos.yml`:
+
+```yaml
+paths:
+  - 'tool-name/**'  # Add this line for your tool
+```
+
+This enables smart detection to only record demos when your tool changes, not on every commit.
+
+**Required:** Create demo recording script at `scripts/record-tool-name-demo.sh`:
+
+```bash
+#!/bin/bash
+set -e
+
+asciinema rec "demo.cast" --overwrite --title "Tool Name - Tuulbelt" --command "bash -c '
+  # Your demo commands here
+'"
+```
+
+See existing tools for examples (test-flakiness-detector, cli-progress-reporting).
+
 ### Dogfooding
 
 Tuulbelt tools validate and enhance each other via dogfooding.
@@ -162,6 +190,32 @@ Exit codes:
 - `1` — Error (invalid input, processing failure)
 
 Errors are returned in the `error` field of the result object, not thrown.
+
+## Specification (SPEC.md)
+
+**When to create SPEC.md:**
+
+If your tool defines a **format, protocol, or algorithm**, create a `SPEC.md` file:
+
+- **File formats** (e.g., JSON schema, custom binary format)
+- **Protocols** (e.g., WebSocket message structure, API contract)
+- **Algorithms** (e.g., parsing algorithm, transformation rules)
+- **Data structures** (e.g., cache format, index structure)
+
+**What to include:**
+- Formal description of the format/protocol/algorithm
+- Examples with sample inputs/outputs
+- Edge cases and validation rules
+- Version compatibility notes
+
+**Examples in Tuulbelt:**
+- `output-diffing-utility/SPEC.md` - Diff format and LCS algorithm
+- `file-based-semaphore/SPEC.md` - Lock file structure and semantics
+
+**When NOT to create SPEC.md:**
+- Simple CLI tools with no custom format
+- Wrappers around existing formats
+- Tools that just process data without defining structure
 
 ## Future Enhancements
 

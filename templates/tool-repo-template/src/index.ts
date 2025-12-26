@@ -36,6 +36,12 @@ export interface Result {
  * const result = process('hello', { verbose: true });
  * console.log(result.data); // 'HELLO'
  * ```
+ *
+ * @performance
+ * - Pre-size arrays/Sets/Maps when final size is known: `new Array(size)`, `new Set(items)`
+ * - Use streaming for large inputs instead of loading all into memory
+ * - Prefer iterators over creating intermediate arrays
+ * - Profile with Node's built-in profiler: `node --prof`
  */
 export function process(input: string, config: Config = {}): Result {
   if (typeof input !== 'string') {

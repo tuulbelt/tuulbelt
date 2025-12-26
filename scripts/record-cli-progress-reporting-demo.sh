@@ -10,7 +10,7 @@ export PS1="\$ "
 export TERM=xterm-256color
 
 # Record the demo
-asciinema rec "$DEMO_FILE" --overwrite --command "bash -c '
+asciinema rec "$DEMO_FILE" --overwrite --title "CLI Progress Reporting - Tuulbelt" --command "bash -c '
 echo \"# CLI Progress Reporting Demo\"
 sleep 1
 

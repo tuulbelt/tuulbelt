@@ -102,6 +102,34 @@ cargo test              # Run all tests
 cargo test -- --nocapture  # Show output
 ```
 
+## Integration with Tuulbelt Meta Repository
+
+When adding this tool to the Tuulbelt meta repository, ensure CI/CD integration:
+
+### Demo Recording Workflow
+
+**Required:** Add path filter to `.github/workflows/create-demos.yml`:
+
+```yaml
+paths:
+  - 'tool-name/**'  # Add this line for your tool
+```
+
+This enables smart detection to only record demos when your tool changes, not on every commit.
+
+**Required:** Create demo recording script at `scripts/record-tool-name-demo.sh`:
+
+```bash
+#!/bin/bash
+set -e
+
+asciinema rec "demo.cast" --overwrite --title "Tool Name - Tuulbelt" --command "bash -c '
+  # Your demo commands here
+'"
+```
+
+See existing tools for examples (file-based-semaphore, output-diffing-utility).
+
 ### Dogfooding
 
 Tuulbelt tools validate each other via CLI-based dogfooding.
@@ -148,6 +176,32 @@ Exit codes:
 - `1` - Error (invalid input, processing failure)
 
 All errors implement `std::error::Error` and can be displayed with `{}`.
+
+## Specification (SPEC.md)
+
+**When to create SPEC.md:**
+
+If your tool defines a **format, protocol, or algorithm**, create a `SPEC.md` file:
+
+- **File formats** (e.g., binary wire format, serialization scheme)
+- **Protocols** (e.g., RPC message structure, handshake sequence)
+- **Algorithms** (e.g., diff algorithm, compression scheme)
+- **Data structures** (e.g., index format, manifest structure)
+
+**What to include:**
+- Formal description of the format/protocol/algorithm
+- Examples with hex dumps or diagrams
+- Edge cases and constraints
+- Version compatibility notes
+
+**Examples in Tuulbelt:**
+- `output-diffing-utility/SPEC.md` - Diff format and LCS algorithm
+- `file-based-semaphore/SPEC.md` - Lock file structure and semantics
+
+**When NOT to create SPEC.md:**
+- Simple CLI tools with no custom format
+- Wrappers around existing formats
+- Tools that just process data without defining structure
 
 ## License
 
