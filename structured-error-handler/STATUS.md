@@ -52,7 +52,7 @@
 - **81 tests** covering core, serialization, edge cases, validation, and CLI
 - **6 VitePress pages** for documentation
 - **2 examples** (basic.ts, advanced.ts)
-- **1 dogfooding script** (dogfood-flaky.sh)
+- **2 dogfooding scripts** (dogfood-flaky.sh, dogfood-diff.sh)
 
 ## Dependencies
 

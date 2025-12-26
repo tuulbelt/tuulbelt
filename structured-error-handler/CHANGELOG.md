@@ -52,9 +52,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 2 example files (basic.ts, advanced.ts)
 
 - **Test suite**
-  - 68 tests covering core, serialization, and CLI
+  - 81 tests covering core, serialization, edge cases, validation, and CLI
   - 80%+ code coverage
-  - Dogfooding script for flakiness detection
+  - 2 dogfooding scripts (flakiness detection, serialization verification)
 
 ### Implementation Notes
 
