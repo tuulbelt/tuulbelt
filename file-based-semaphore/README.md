@@ -264,11 +264,12 @@ The test suite is deterministic and reliable! 🎉
 
 
 
+
 ## Demo
 
 ![Demo](docs/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/TcQzmCQR4F4v2izMaCPz9tH9p)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/4DTmRRLmvRI7wUjmpYeQFULL6)**
 
 > Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/file-based-semaphore)
 
