@@ -1,9 +1,9 @@
 # Tuulbelt Tool Quality Dashboard
 
-**Last Updated:** 2025-12-26 19:34 UTC
-**Test Results From:** 2025-12-26T19:34:26Z
-**Total Tools:** 5
-**Passing:** 5 | **Failing:** 0
+**Last Updated:** 2025-12-26 22:31 UTC
+**Test Results From:** 2025-12-26T22:31:13Z
+**Total Tools:** 6
+**Passing:** 6 | **Failing:** 0
 
 ---
 
@@ -15,6 +15,7 @@
 | cross-platform-path-normalizer | TypeScript | 14 | ✅ | 🟢 Production | 0.1.0 |
 | file-based-semaphore | Rust | 81 | ✅ | 🟢 Production | 0.1.0 |
 | output-diffing-utility | Rust | 94 | ✅ | 🟢 Production | 0.1.0 |
+| structured-error-handler | TypeScript | 0 | ✅ | 🟢 Production | 0.1.0 |
 | test-flakiness-detector | TypeScript | 35 | ✅ | 🟢 Production | 0.1.0 |
 
 ---
