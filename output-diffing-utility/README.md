@@ -94,6 +94,44 @@ if result.has_changes() {
 }
 ```
 
+## API
+
+### `diff_text(old: &str, new: &str, config: &DiffConfig) -> DiffResult`
+
+Compare two text strings line-by-line using the LCS algorithm.
+
+**Returns:** `DiffResult` with line-by-line changes.
+
+### `diff_json(old: &str, new: &str, config: &DiffConfig) -> Result<JsonDiffResult, JsonError>`
+
+Compare two JSON strings structurally (field paths, not lines).
+
+**Returns:** `Result<JsonDiffResult, JsonError>` with structural changes.
+
+### `diff_binary(data1: &[u8], data2: &[u8], config: &DiffConfig) -> BinaryDiffResult`
+
+Compare two byte arrays byte-by-byte.
+
+**Returns:** `BinaryDiffResult` with byte-level comparison.
+
+### `DiffConfig`
+
+```rust
+DiffConfig {
+    context_lines: 3,              // Lines of context around changes
+    format: OutputFormat::Unified, // Unified, JSON, SideBySide, Compact
+    color: false,                  // Enable ANSI color codes
+    verbose: false,                // Show detailed information
+}
+```
+
+### `DiffResult`, `JsonDiffResult`, `BinaryDiffResult`
+
+Each result type provides:
+- `has_changes()` / `is_identical()` - Quick check
+- `additions()`, `deletions()` - Change counts
+- Iterator over changes for detailed analysis
+
 ## Algorithm: Longest Common Subsequence (LCS)
 
 The text diff uses dynamic programming to find the optimal diff:

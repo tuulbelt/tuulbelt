@@ -12,11 +12,12 @@ on:
       - 'scripts/record-*-demo.sh'
 
       # Tool implementation changes (triggers demo regeneration)
-      - 'test-flakiness-detector/**'
-      - 'cli-progress-reporting/**'
-      - 'cross-platform-path-normalizer/**'
-      - 'file-based-semaphore/**'
-      - 'output-diffing-utility/**'
+      # Only src/ changes affect demo output
+      - 'test-flakiness-detector/src/**'
+      - 'cli-progress-reporting/src/**'
+      - 'cross-platform-path-normalizer/src/**'
+      - 'file-based-semaphore/src/**'
+      - 'output-diffing-utility/src/**'
 
   workflow_dispatch:  # Manual trigger
     inputs:
