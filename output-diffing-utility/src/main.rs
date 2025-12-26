@@ -1,7 +1,11 @@
 //! CLI entry point for output-diff
 
-use output_diffing_utility::{diff_files, format_unified_diff, DiffConfig};
+use output_diffing_utility::{
+    detect_file_type, diff_binary, diff_text, format_binary_diff, format_unified_diff,
+    DiffConfig, FileType,
+};
 use std::env;
+use std::fs;
 use std::path::Path;
 use std::process::ExitCode;
 
@@ -76,13 +80,66 @@ fn main() -> ExitCode {
     let file1 = Path::new(&files[0]);
     let file2 = Path::new(&files[1]);
 
+    // Read both files as bytes
+    let content1 = match fs::read(file1) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("Error reading {}: {}", file1.display(), e);
+            return ExitCode::from(2);
+        }
+    };
+
+    let content2 = match fs::read(file2) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("Error reading {}: {}", file2.display(), e);
+            return ExitCode::from(2);
+        }
+    };
+
+    // Detect file types
+    let ext1 = file1.extension().and_then(|e| e.to_str());
+    let ext2 = file2.extension().and_then(|e| e.to_str());
+    let type1 = detect_file_type(&content1, ext1);
+    let type2 = detect_file_type(&content2, ext2);
+
+    if verbose {
+        eprintln!("[DEBUG] File 1 type: {:?}", type1);
+        eprintln!("[DEBUG] File 2 type: {:?}", type2);
+    }
+
+    // Use the more specific type (prefer Text/Json over Binary)
+    let file_type = match (type1, type2) {
+        (FileType::Json, _) | (_, FileType::Json) => FileType::Json,
+        (FileType::Text, _) | (_, FileType::Text) => FileType::Text,
+        _ => FileType::Binary,
+    };
+
     let config = DiffConfig {
         verbose,
         ..Default::default()
     };
 
-    match diff_files(file1, file2, &config) {
-        Ok(result) => {
+    // Perform diff based on file type
+    match file_type {
+        FileType::Text => {
+            // Convert to UTF-8 strings
+            let text1 = match std::str::from_utf8(&content1) {
+                Ok(t) => t,
+                Err(_) => {
+                    eprintln!("Error: File 1 is not valid UTF-8");
+                    return ExitCode::from(2);
+                }
+            };
+            let text2 = match std::str::from_utf8(&content2) {
+                Ok(t) => t,
+                Err(_) => {
+                    eprintln!("Error: File 2 is not valid UTF-8");
+                    return ExitCode::from(2);
+                }
+            };
+
+            let result = diff_text(text1, text2, &config);
             if result.has_changes() {
                 let formatted = format_unified_diff(
                     &result,
@@ -90,17 +147,30 @@ fn main() -> ExitCode {
                     file2.to_str().unwrap_or("file2"),
                 );
                 print!("{}", formatted);
-                ExitCode::from(1) // Files differ
+                ExitCode::from(1)
             } else {
                 if verbose {
                     println!("Files are identical");
                 }
-                ExitCode::SUCCESS // Files are identical
+                ExitCode::SUCCESS
             }
         }
-        Err(e) => {
-            eprintln!("Error: {}", e);
-            ExitCode::from(2) // Error occurred
+        FileType::Binary => {
+            let result = diff_binary(&content1, &content2, &config);
+            if result.is_identical() {
+                if verbose {
+                    println!("Files are identical");
+                }
+                ExitCode::SUCCESS
+            } else {
+                let formatted = format_binary_diff(&result);
+                print!("{}", formatted);
+                ExitCode::from(1)
+            }
+        }
+        FileType::Json => {
+            eprintln!("JSON diff not yet implemented");
+            ExitCode::from(2)
         }
     }
 }
