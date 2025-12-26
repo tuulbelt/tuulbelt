@@ -170,8 +170,8 @@ fn test_cli_binary_diff_identical() {
     let file1 = tmp_dir.join("test_cli_binary1.bin");
     let file2 = tmp_dir.join("test_cli_binary2.bin");
 
-    fs::write(&file1, &[0x00, 0x01, 0x02, 0xFF]).expect("Failed to write file1");
-    fs::write(&file2, &[0x00, 0x01, 0x02, 0xFF]).expect("Failed to write file2");
+    fs::write(&file1, [0x00, 0x01, 0x02, 0xFF]).expect("Failed to write file1");
+    fs::write(&file2, [0x00, 0x01, 0x02, 0xFF]).expect("Failed to write file2");
 
     let output = Command::new(binary_path())
         .arg(&file1)
@@ -191,8 +191,8 @@ fn test_cli_binary_diff_changes() {
     let file1 = tmp_dir.join("test_cli_binary_diff1.bin");
     let file2 = tmp_dir.join("test_cli_binary_diff2.bin");
 
-    fs::write(&file1, &[0x00, 0x01, 0x02]).expect("Failed to write file1");
-    fs::write(&file2, &[0x00, 0xFF, 0x02]).expect("Failed to write file2");
+    fs::write(&file1, [0x00, 0x01, 0x02]).expect("Failed to write file1");
+    fs::write(&file2, [0x00, 0xFF, 0x02]).expect("Failed to write file2");
 
     let output = Command::new(binary_path())
         .arg(&file1)

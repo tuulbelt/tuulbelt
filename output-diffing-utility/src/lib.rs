@@ -123,9 +123,7 @@ pub fn detect_file_type(content: &[u8], extension: Option<&str>) -> FileType {
         // Check if mostly printable (allow newlines, tabs, whitespace, Unicode)
         let printable_count = text
             .chars()
-            .filter(|c| {
-                !c.is_control() || *c == '\n' || *c == '\r' || *c == '\t'
-            })
+            .filter(|c| !c.is_control() || *c == '\n' || *c == '\r' || *c == '\t')
             .count();
 
         let total_chars = text.chars().count();
@@ -631,7 +629,10 @@ pub fn format_binary_diff(result: &BinaryDiffResult) -> String {
             .map(|b| format!("{:02x}", b))
             .unwrap_or_else(|| "--  ".to_string());
 
-        output.push_str(&format!("0x{:08x} | {}   | {}\n", diff.offset, old_hex, new_hex));
+        output.push_str(&format!(
+            "0x{:08x} | {}   | {}\n",
+            diff.offset, old_hex, new_hex
+        ));
     }
 
     output
@@ -695,7 +696,12 @@ impl JsonDiffResult {
     pub fn modifications(&self) -> usize {
         self.changes
             .iter()
-            .filter(|c| matches!(c, JsonChange::Modified { .. } | JsonChange::TypeChanged { .. }))
+            .filter(|c| {
+                matches!(
+                    c,
+                    JsonChange::Modified { .. } | JsonChange::TypeChanged { .. }
+                )
+            })
             .count()
     }
 }
@@ -887,7 +893,11 @@ pub fn format_json_diff(result: &JsonDiffResult) -> String {
     for change in &result.changes {
         match change {
             JsonChange::Added { path, value } => {
-                output.push_str(&format!("+ Added at '{}': {}\n", path, format_json_value(value)));
+                output.push_str(&format!(
+                    "+ Added at '{}': {}\n",
+                    path,
+                    format_json_value(value)
+                ));
             }
             JsonChange::Removed { path, value } => {
                 output.push_str(&format!(
@@ -1046,8 +1056,14 @@ pub fn format_as_json_report(
 
     let mut output = String::from("{\n");
     output.push_str("  \"format\": \"json\",\n");
-    output.push_str(&format!("  \"file1\": \"{}\",\n", escape_json_string(file1_name)));
-    output.push_str(&format!("  \"file2\": \"{}\",\n", escape_json_string(file2_name)));
+    output.push_str(&format!(
+        "  \"file1\": \"{}\",\n",
+        escape_json_string(file1_name)
+    ));
+    output.push_str(&format!(
+        "  \"file2\": \"{}\",\n",
+        escape_json_string(file2_name)
+    ));
     output.push_str(&format!("  \"identical\": {},\n", result.is_identical()));
     output.push_str(&format!("  \"file_type\": \"{}\",\n", type_str));
 
@@ -1121,7 +1137,11 @@ pub fn format_as_json_report(
                             escape_json_string(&format_json_value(value))
                         ));
                     }
-                    JsonChange::Modified { path, old_value, new_value } => {
+                    JsonChange::Modified {
+                        path,
+                        old_value,
+                        new_value,
+                    } => {
                         output.push_str(&format!(
                             "    {{\n      \"type\": \"modified\",\n      \"path\": \"{}\",\n      \"old_value\": \"{}\",\n      \"new_value\": \"{}\"\n    }}",
                             escape_json_string(path),
@@ -1129,7 +1149,11 @@ pub fn format_as_json_report(
                             escape_json_string(&format_json_value(new_value))
                         ));
                     }
-                    JsonChange::TypeChanged { path, old_value, new_value } => {
+                    JsonChange::TypeChanged {
+                        path,
+                        old_value,
+                        new_value,
+                    } => {
                         output.push_str(&format!(
                             "    {{\n      \"type\": \"type_changed\",\n      \"path\": \"{}\",\n      \"old_value\": \"{}\",\n      \"old_type\": \"{}\",\n      \"new_value\": \"{}\",\n      \"new_type\": \"{}\"\n    }}",
                             escape_json_string(path),
@@ -1149,10 +1173,16 @@ pub fn format_as_json_report(
 
     // Summary
     output.push_str("  \"summary\": {\n");
-    output.push_str(&format!("    \"total_changes\": {},\n", result.total_changes()));
+    output.push_str(&format!(
+        "    \"total_changes\": {},\n",
+        result.total_changes()
+    ));
     output.push_str(&format!("    \"additions\": {},\n", result.additions()));
     output.push_str(&format!("    \"deletions\": {},\n", result.deletions()));
-    output.push_str(&format!("    \"modifications\": {}\n", result.modifications()));
+    output.push_str(&format!(
+        "    \"modifications\": {}\n",
+        result.modifications()
+    ));
     output.push_str("  }\n");
     output.push_str("}\n");
 
@@ -1200,11 +1230,23 @@ pub fn format_compact(result: &DiffResult) -> String {
             output.push_str(&format!(
                 "\n{} change{} ({} addition{}, {} deletion{})\n",
                 text_result.additions() + text_result.deletions(),
-                if text_result.additions() + text_result.deletions() == 1 { "" } else { "s" },
+                if text_result.additions() + text_result.deletions() == 1 {
+                    ""
+                } else {
+                    "s"
+                },
                 text_result.additions(),
-                if text_result.additions() == 1 { "" } else { "s" },
+                if text_result.additions() == 1 {
+                    ""
+                } else {
+                    "s"
+                },
                 text_result.deletions(),
-                if text_result.deletions() == 1 { "" } else { "s" }
+                if text_result.deletions() == 1 {
+                    ""
+                } else {
+                    "s"
+                }
             ));
         }
         DiffResult::Binary(binary_result) => {
@@ -1217,12 +1259,24 @@ pub fn format_compact(result: &DiffResult) -> String {
                 output.push_str(&format!(
                     "0x{:08x}: {} → {}\n",
                     diff.offset,
-                    diff.old_byte.map(|b| format!("{:02x}", b)).unwrap_or_else(|| "--".to_string()),
-                    diff.new_byte.map(|b| format!("{:02x}", b)).unwrap_or_else(|| "--".to_string())
+                    diff.old_byte
+                        .map(|b| format!("{:02x}", b))
+                        .unwrap_or_else(|| "--".to_string()),
+                    diff.new_byte
+                        .map(|b| format!("{:02x}", b))
+                        .unwrap_or_else(|| "--".to_string())
                 ));
             }
 
-            output.push_str(&format!("\n{} byte{} differ\n", binary_result.differences.len(), if binary_result.differences.len() == 1 { "" } else { "s" }));
+            output.push_str(&format!(
+                "\n{} byte{} differ\n",
+                binary_result.differences.len(),
+                if binary_result.differences.len() == 1 {
+                    ""
+                } else {
+                    "s"
+                }
+            ));
         }
         DiffResult::Json(json_result) => {
             if !json_result.has_changes() {
@@ -1238,11 +1292,31 @@ pub fn format_compact(result: &DiffResult) -> String {
                     JsonChange::Removed { path, value } => {
                         output.push_str(&format!("- {}: {}\n", path, format_json_value(value)));
                     }
-                    JsonChange::Modified { path, old_value, new_value } => {
-                        output.push_str(&format!("~ {}: {} → {}\n", path, format_json_value(old_value), format_json_value(new_value)));
+                    JsonChange::Modified {
+                        path,
+                        old_value,
+                        new_value,
+                    } => {
+                        output.push_str(&format!(
+                            "~ {}: {} → {}\n",
+                            path,
+                            format_json_value(old_value),
+                            format_json_value(new_value)
+                        ));
                     }
-                    JsonChange::TypeChanged { path, old_value, new_value } => {
-                        output.push_str(&format!("! {}: {} ({}) → {} ({})\n", path, format_json_value(old_value), json_type_name(old_value), format_json_value(new_value), json_type_name(new_value)));
+                    JsonChange::TypeChanged {
+                        path,
+                        old_value,
+                        new_value,
+                    } => {
+                        output.push_str(&format!(
+                            "! {}: {} ({}) → {} ({})\n",
+                            path,
+                            format_json_value(old_value),
+                            json_type_name(old_value),
+                            format_json_value(new_value),
+                            json_type_name(new_value)
+                        ));
                     }
                 }
             }
@@ -1250,13 +1324,29 @@ pub fn format_compact(result: &DiffResult) -> String {
             output.push_str(&format!(
                 "\n{} change{} ({} addition{}, {} deletion{}, {} modification{})\n",
                 json_result.changes.len(),
-                if json_result.changes.len() == 1 { "" } else { "s" },
+                if json_result.changes.len() == 1 {
+                    ""
+                } else {
+                    "s"
+                },
                 json_result.additions(),
-                if json_result.additions() == 1 { "" } else { "s" },
+                if json_result.additions() == 1 {
+                    ""
+                } else {
+                    "s"
+                },
                 json_result.deletions(),
-                if json_result.deletions() == 1 { "" } else { "s" },
+                if json_result.deletions() == 1 {
+                    ""
+                } else {
+                    "s"
+                },
                 json_result.modifications(),
-                if json_result.modifications() == 1 { "" } else { "s" }
+                if json_result.modifications() == 1 {
+                    ""
+                } else {
+                    "s"
+                }
             ));
         }
     }
@@ -1265,13 +1355,28 @@ pub fn format_compact(result: &DiffResult) -> String {
 }
 
 /// Format diff result in side-by-side mode
-pub fn format_side_by_side(result: &DiffResult, file1_name: &str, file2_name: &str, width: usize) -> String {
+pub fn format_side_by_side(
+    result: &DiffResult,
+    file1_name: &str,
+    file2_name: &str,
+    width: usize,
+) -> String {
     let half_width = (width - 3) / 2;
     let mut output = String::new();
 
     // Header
-    output.push_str(&format!("{:<width$} | {}\n", file1_name, file2_name, width = half_width));
-    output.push_str(&format!("{:-<width$}-+-{:-<width$}\n", "", "", width = half_width));
+    output.push_str(&format!(
+        "{:<width$} | {}\n",
+        file1_name,
+        file2_name,
+        width = half_width
+    ));
+    output.push_str(&format!(
+        "{:-<width$}-+-{:-<width$}\n",
+        "",
+        "",
+        width = half_width
+    ));
 
     match result {
         DiffResult::Text(text_result) => {
@@ -1279,15 +1384,30 @@ pub fn format_side_by_side(result: &DiffResult, file1_name: &str, file2_name: &s
                 match change {
                     LineChange::Unchanged { line, .. } => {
                         let truncated = truncate_to_width(line, half_width);
-                        output.push_str(&format!("{:<width$} | {}\n", truncated, truncated, width = half_width));
+                        output.push_str(&format!(
+                            "{:<width$} | {}\n",
+                            truncated,
+                            truncated,
+                            width = half_width
+                        ));
                     }
                     LineChange::Added { line, .. } => {
                         let truncated = truncate_to_width(line, half_width);
-                        output.push_str(&format!("{:<width$} > {}\n", "", truncated, width = half_width));
+                        output.push_str(&format!(
+                            "{:<width$} > {}\n",
+                            "",
+                            truncated,
+                            width = half_width
+                        ));
                     }
                     LineChange::Removed { line, .. } => {
                         let truncated = truncate_to_width(line, half_width);
-                        output.push_str(&format!("{:<width$} < {}\n", truncated, "", width = half_width));
+                        output.push_str(&format!(
+                            "{:<width$} < {}\n",
+                            truncated,
+                            "",
+                            width = half_width
+                        ));
                     }
                 }
             }
@@ -1459,11 +1579,7 @@ mod tests {
     #[test]
     fn test_diff_text_multiline_delete() {
         let config = DiffConfig::default();
-        let result = diff_text(
-            "line 1\nline 2\nline 3\nline 4",
-            "line 1\nline 4",
-            &config,
-        );
+        let result = diff_text("line 1\nline 2\nline 3\nline 4", "line 1\nline 4", &config);
         assert!(result.has_changes());
         assert_eq!(result.additions(), 0);
         assert_eq!(result.deletions(), 2);
@@ -1707,7 +1823,10 @@ mod tests {
     #[test]
     fn test_detect_file_type_binary_from_content() {
         // Binary data (null bytes)
-        assert_eq!(detect_file_type(b"\x00\x01\x02\x03", None), FileType::Binary);
+        assert_eq!(
+            detect_file_type(b"\x00\x01\x02\x03", None),
+            FileType::Binary
+        );
 
         // Mixed binary/text (mostly binary)
         assert_eq!(
@@ -1719,7 +1838,10 @@ mod tests {
     #[test]
     fn test_detect_file_type_unicode_text() {
         // UTF-8 encoded text should be detected as text
-        assert_eq!(detect_file_type("café résumé".as_bytes(), None), FileType::Text);
+        assert_eq!(
+            detect_file_type("café résumé".as_bytes(), None),
+            FileType::Text
+        );
     }
 
     #[test]
@@ -1969,9 +2091,7 @@ mod tests {
 
     #[test]
     fn test_format_json_diff_no_changes() {
-        let result = JsonDiffResult {
-            changes: vec![],
-        };
+        let result = JsonDiffResult { changes: vec![] };
         let formatted = format_json_diff(&result);
         assert!(formatted.contains("No differences found"));
     }

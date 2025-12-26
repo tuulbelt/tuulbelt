@@ -33,9 +33,7 @@ pub fn parse_json(input: &str) -> Result<JsonValue, JsonError> {
     parse_value(&mut chars)
 }
 
-fn parse_value(
-    chars: &mut std::iter::Peekable<std::str::Chars>,
-) -> Result<JsonValue, JsonError> {
+fn parse_value(chars: &mut std::iter::Peekable<std::str::Chars>) -> Result<JsonValue, JsonError> {
     skip_whitespace(chars);
 
     match chars.peek() {
@@ -52,14 +50,15 @@ fn parse_value(
 }
 
 fn skip_whitespace(chars: &mut std::iter::Peekable<std::str::Chars>) {
-    while matches!(chars.peek(), Some(' ') | Some('\n') | Some('\r') | Some('\t')) {
+    while matches!(
+        chars.peek(),
+        Some(' ') | Some('\n') | Some('\r') | Some('\t')
+    ) {
         chars.next();
     }
 }
 
-fn parse_object(
-    chars: &mut std::iter::Peekable<std::str::Chars>,
-) -> Result<JsonValue, JsonError> {
+fn parse_object(chars: &mut std::iter::Peekable<std::str::Chars>) -> Result<JsonValue, JsonError> {
     chars.next(); // consume '{'
     let mut pairs = Vec::new();
 
@@ -106,9 +105,7 @@ fn parse_object(
     Ok(JsonValue::Object(pairs))
 }
 
-fn parse_array(
-    chars: &mut std::iter::Peekable<std::str::Chars>,
-) -> Result<JsonValue, JsonError> {
+fn parse_array(chars: &mut std::iter::Peekable<std::str::Chars>) -> Result<JsonValue, JsonError> {
     chars.next(); // consume '['
     let mut values = Vec::new();
 
@@ -142,9 +139,7 @@ fn parse_array(
     Ok(JsonValue::Array(values))
 }
 
-fn parse_string(
-    chars: &mut std::iter::Peekable<std::str::Chars>,
-) -> Result<String, JsonError> {
+fn parse_string(chars: &mut std::iter::Peekable<std::str::Chars>) -> Result<String, JsonError> {
     if chars.next() != Some('"') {
         return Err(JsonError {
             message: "Expected '\"'".to_string(),
@@ -155,20 +150,18 @@ fn parse_string(
     loop {
         match chars.next() {
             Some('"') => return Ok(string),
-            Some('\\') => {
-                match chars.next() {
-                    Some('n') => string.push('\n'),
-                    Some('r') => string.push('\r'),
-                    Some('t') => string.push('\t'),
-                    Some('\\') => string.push('\\'),
-                    Some('"') => string.push('"'),
-                    _ => {
-                        return Err(JsonError {
-                            message: "Invalid escape sequence".to_string(),
-                        })
-                    }
+            Some('\\') => match chars.next() {
+                Some('n') => string.push('\n'),
+                Some('r') => string.push('\r'),
+                Some('t') => string.push('\t'),
+                Some('\\') => string.push('\\'),
+                Some('"') => string.push('"'),
+                _ => {
+                    return Err(JsonError {
+                        message: "Invalid escape sequence".to_string(),
+                    })
                 }
-            }
+            },
             Some(c) => string.push(c),
             None => {
                 return Err(JsonError {
@@ -179,9 +172,7 @@ fn parse_string(
     }
 }
 
-fn parse_number(
-    chars: &mut std::iter::Peekable<std::str::Chars>,
-) -> Result<JsonValue, JsonError> {
+fn parse_number(chars: &mut std::iter::Peekable<std::str::Chars>) -> Result<JsonValue, JsonError> {
     let mut num_str = String::new();
 
     // Optional minus
@@ -190,8 +181,10 @@ fn parse_number(
     }
 
     // Digits
-    while matches!(chars.peek(), Some('0'..='9') | Some('.') | Some('e') | Some('E') | Some('+') | Some('-'))
-    {
+    while matches!(
+        chars.peek(),
+        Some('0'..='9') | Some('.') | Some('e') | Some('E') | Some('+') | Some('-')
+    ) {
         num_str.push(chars.next().unwrap());
     }
 
@@ -203,9 +196,7 @@ fn parse_number(
         })
 }
 
-fn parse_bool(
-    chars: &mut std::iter::Peekable<std::str::Chars>,
-) -> Result<JsonValue, JsonError> {
+fn parse_bool(chars: &mut std::iter::Peekable<std::str::Chars>) -> Result<JsonValue, JsonError> {
     let mut word = String::new();
     while matches!(chars.peek(), Some('a'..='z')) {
         word.push(chars.next().unwrap());
@@ -220,9 +211,7 @@ fn parse_bool(
     }
 }
 
-fn parse_null(
-    chars: &mut std::iter::Peekable<std::str::Chars>,
-) -> Result<JsonValue, JsonError> {
+fn parse_null(chars: &mut std::iter::Peekable<std::str::Chars>) -> Result<JsonValue, JsonError> {
     let mut word = String::new();
     while matches!(chars.peek(), Some('a'..='z')) {
         word.push(chars.next().unwrap());
@@ -256,7 +245,7 @@ mod tests {
     #[test]
     fn test_parse_number() {
         assert_eq!(parse_json("42").unwrap(), JsonValue::Number(42.0));
-        assert_eq!(parse_json("-3.14").unwrap(), JsonValue::Number(-3.14));
+        assert_eq!(parse_json("-2.5").unwrap(), JsonValue::Number(-2.5));
     }
 
     #[test]
@@ -325,7 +314,10 @@ mod tests {
         let result = parse_json("  {  \"key\"  :  \"value\"  }  ").unwrap();
         assert_eq!(
             result,
-            JsonValue::Object(vec![("key".to_string(), JsonValue::String("value".to_string()))])
+            JsonValue::Object(vec![(
+                "key".to_string(),
+                JsonValue::String("value".to_string())
+            )])
         );
     }
 }

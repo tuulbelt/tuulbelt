@@ -44,7 +44,10 @@ fn text_diff_examples() {
 
     // Side-by-side
     println!("4. SIDE-BY-SIDE:");
-    println!("{}", format_side_by_side(&diff_result, "old.txt", "new.txt", 120));
+    println!(
+        "{}",
+        format_side_by_side(&diff_result, "old.txt", "new.txt", 120)
+    );
 }
 
 fn json_diff_examples() {
