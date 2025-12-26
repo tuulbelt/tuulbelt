@@ -338,6 +338,165 @@ pub fn format_unified_diff(result: &TextDiffResult, file1_name: &str, file2_name
     output
 }
 
+// ============================================================================
+// Binary Diff
+// ============================================================================
+
+/// A single byte difference in binary files
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ByteDifference {
+    /// Offset in the file
+    pub offset: usize,
+    /// Old byte value (None if byte was added)
+    pub old_byte: Option<u8>,
+    /// New byte value (None if byte was removed)
+    pub new_byte: Option<u8>,
+}
+
+/// Result of a binary diff
+#[derive(Debug, Clone)]
+pub struct BinaryDiffResult {
+    /// Byte differences detected
+    pub differences: Vec<ByteDifference>,
+    /// Total bytes in old file
+    pub old_size: usize,
+    /// Total bytes in new file
+    pub new_size: usize,
+}
+
+impl BinaryDiffResult {
+    /// Check if files are identical
+    pub fn is_identical(&self) -> bool {
+        self.differences.is_empty()
+    }
+
+    /// Count byte additions
+    pub fn additions(&self) -> usize {
+        self.differences
+            .iter()
+            .filter(|d| d.old_byte.is_none())
+            .count()
+    }
+
+    /// Count byte deletions
+    pub fn deletions(&self) -> usize {
+        self.differences
+            .iter()
+            .filter(|d| d.new_byte.is_none())
+            .count()
+    }
+
+    /// Count byte modifications
+    pub fn modifications(&self) -> usize {
+        self.differences
+            .iter()
+            .filter(|d| d.old_byte.is_some() && d.new_byte.is_some())
+            .count()
+    }
+}
+
+/// Diff two byte arrays
+///
+/// # Arguments
+///
+/// * `old` - The old file contents
+/// * `new` - The new file contents
+/// * `config` - Configuration options
+///
+/// # Returns
+///
+/// Returns a `BinaryDiffResult` containing byte-level differences.
+///
+/// # Example
+///
+/// ```rust
+/// use output_diffing_utility::{diff_binary, DiffConfig};
+///
+/// let old = b"hello";
+/// let new = b"hallo";
+///
+/// let result = diff_binary(old, new, &DiffConfig::default());
+/// assert!(!result.is_identical());
+/// assert_eq!(result.modifications(), 1);
+/// ```
+pub fn diff_binary(old: &[u8], new: &[u8], config: &DiffConfig) -> BinaryDiffResult {
+    let max_len = old.len().max(new.len());
+    let mut differences = Vec::new();
+
+    if config.verbose {
+        eprintln!("[DEBUG] Old size: {}, New size: {}", old.len(), new.len());
+    }
+
+    for i in 0..max_len {
+        let old_byte = old.get(i).copied();
+        let new_byte = new.get(i).copied();
+
+        if old_byte != new_byte {
+            differences.push(ByteDifference {
+                offset: i,
+                old_byte,
+                new_byte,
+            });
+        }
+    }
+
+    BinaryDiffResult {
+        differences,
+        old_size: old.len(),
+        new_size: new.len(),
+    }
+}
+
+/// Diff two binary files
+pub fn diff_binary_files(
+    file1: &Path,
+    file2: &Path,
+    config: &DiffConfig,
+) -> Result<BinaryDiffResult, DiffError> {
+    let content1 = fs::read(file1)
+        .map_err(|e| DiffError::IoError(format!("Error reading {}: {}", file1.display(), e)))?;
+
+    let content2 = fs::read(file2)
+        .map_err(|e| DiffError::IoError(format!("Error reading {}: {}", file2.display(), e)))?;
+
+    Ok(diff_binary(&content1, &content2, config))
+}
+
+/// Format binary diff result as hex dump
+pub fn format_binary_diff(result: &BinaryDiffResult) -> String {
+    let mut output = String::new();
+
+    output.push_str(&format!(
+        "Binary files differ: {} bytes old, {} bytes new\n",
+        result.old_size, result.new_size
+    ));
+
+    if result.differences.is_empty() {
+        output.push_str("Files are identical\n");
+        return output;
+    }
+
+    output.push_str(&format!("\n{} differences:\n\n", result.differences.len()));
+    output.push_str("Offset     | Old  | New\n");
+    output.push_str("-----------|------|------\n");
+
+    for diff in &result.differences {
+        let old_hex = diff
+            .old_byte
+            .map(|b| format!("{:02x}", b))
+            .unwrap_or_else(|| "--  ".to_string());
+
+        let new_hex = diff
+            .new_byte
+            .map(|b| format!("{:02x}", b))
+            .unwrap_or_else(|| "--  ".to_string());
+
+        output.push_str(&format!("0x{:08x} | {}   | {}\n", diff.offset, old_hex, new_hex));
+    }
+
+    output
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -564,5 +723,141 @@ mod tests {
         let b = vec!["x", "y", "z"];
         let lcs = compute_lcs(&a, &b);
         assert_eq!(lcs, vec![]);
+    }
+
+    // Binary diff tests
+    #[test]
+    fn test_diff_binary_identical() {
+        let config = DiffConfig::default();
+        let result = diff_binary(b"hello", b"hello", &config);
+        assert!(result.is_identical());
+        assert_eq!(result.additions(), 0);
+        assert_eq!(result.deletions(), 0);
+        assert_eq!(result.modifications(), 0);
+    }
+
+    #[test]
+    fn test_diff_binary_one_byte_changed() {
+        let config = DiffConfig::default();
+        let result = diff_binary(b"hello", b"hallo", &config);
+        assert!(!result.is_identical());
+        assert_eq!(result.modifications(), 1);
+        assert_eq!(result.additions(), 0);
+        assert_eq!(result.deletions(), 0);
+        assert_eq!(result.differences.len(), 1);
+        assert_eq!(result.differences[0].offset, 1);
+        assert_eq!(result.differences[0].old_byte, Some(b'e'));
+        assert_eq!(result.differences[0].new_byte, Some(b'a'));
+    }
+
+    #[test]
+    fn test_diff_binary_bytes_added() {
+        let config = DiffConfig::default();
+        let result = diff_binary(b"hello", b"hello world", &config);
+        assert!(!result.is_identical());
+        assert_eq!(result.additions(), 6); // " world"
+        assert_eq!(result.deletions(), 0);
+        assert_eq!(result.modifications(), 0);
+    }
+
+    #[test]
+    fn test_diff_binary_bytes_removed() {
+        let config = DiffConfig::default();
+        let result = diff_binary(b"hello world", b"hello", &config);
+        assert!(!result.is_identical());
+        assert_eq!(result.additions(), 0);
+        assert_eq!(result.deletions(), 6); // " world"
+        assert_eq!(result.modifications(), 0);
+    }
+
+    #[test]
+    fn test_diff_binary_empty_files() {
+        let config = DiffConfig::default();
+        let result = diff_binary(b"", b"", &config);
+        assert!(result.is_identical());
+        assert_eq!(result.old_size, 0);
+        assert_eq!(result.new_size, 0);
+    }
+
+    #[test]
+    fn test_diff_binary_empty_to_content() {
+        let config = DiffConfig::default();
+        let result = diff_binary(b"", b"hello", &config);
+        assert!(!result.is_identical());
+        assert_eq!(result.additions(), 5);
+        assert_eq!(result.deletions(), 0);
+    }
+
+    #[test]
+    fn test_diff_binary_content_to_empty() {
+        let config = DiffConfig::default();
+        let result = diff_binary(b"hello", b"", &config);
+        assert!(!result.is_identical());
+        assert_eq!(result.additions(), 0);
+        assert_eq!(result.deletions(), 5);
+    }
+
+    #[test]
+    fn test_diff_binary_completely_different() {
+        let config = DiffConfig::default();
+        let result = diff_binary(b"abc", b"xyz", &config);
+        assert!(!result.is_identical());
+        assert_eq!(result.modifications(), 3);
+        assert_eq!(result.additions(), 0);
+        assert_eq!(result.deletions(), 0);
+    }
+
+    #[test]
+    fn test_diff_binary_null_bytes() {
+        let config = DiffConfig::default();
+        let result = diff_binary(b"\x00\x01\x02", b"\x00\x00\x02", &config);
+        assert!(!result.is_identical());
+        assert_eq!(result.modifications(), 1);
+        assert_eq!(result.differences[0].offset, 1);
+        assert_eq!(result.differences[0].old_byte, Some(0x01));
+        assert_eq!(result.differences[0].new_byte, Some(0x00));
+    }
+
+    #[test]
+    fn test_diff_binary_large_files() {
+        let config = DiffConfig::default();
+        let old = vec![0u8; 10000];
+        let mut new = vec![0u8; 10000];
+        new[5000] = 1;
+        let result = diff_binary(&old, &new, &config);
+        assert!(!result.is_identical());
+        assert_eq!(result.modifications(), 1);
+        assert_eq!(result.differences[0].offset, 5000);
+    }
+
+    #[test]
+    fn test_format_binary_diff_identical() {
+        let config = DiffConfig::default();
+        let result = diff_binary(b"test", b"test", &config);
+        let formatted = format_binary_diff(&result);
+        assert!(formatted.contains("Files are identical"));
+    }
+
+    #[test]
+    fn test_format_binary_diff_with_changes() {
+        let config = DiffConfig::default();
+        let result = diff_binary(b"hello", b"hallo", &config);
+        let formatted = format_binary_diff(&result);
+        assert!(formatted.contains("1 differences"));
+        assert!(formatted.contains("0x00000001"));
+        assert!(formatted.contains("65")); // 'e' = 0x65
+        assert!(formatted.contains("61")); // 'a' = 0x61
+    }
+
+    #[test]
+    fn test_binary_diff_mixed_changes() {
+        let config = DiffConfig::default();
+        let result = diff_binary(b"abcd", b"aXcdef", &config);
+        assert!(!result.is_identical());
+        // Position 1: b->X (modification)
+        // Position 3: d->d (same, not counted)
+        // Positions 4-5: e, f (additions)
+        assert_eq!(result.modifications(), 1);
+        assert_eq!(result.additions(), 2);
     }
 }
