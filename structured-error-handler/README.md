@@ -337,14 +337,6 @@ See [SPEC.md](SPEC.md) for detailed technical specification including:
 - Behavior specifications
 - Edge cases
 
-## Demo
-
-![Demo](docs/demo.gif)
-
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/PLACEHOLDER)**
-
-> Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/structured-error-handler)
-
 ## Dogfooding
 
 ### Validate This Tool's Tests
@@ -373,6 +365,15 @@ Potential improvements for future versions:
 - Integration with popular logging libraries (pino, winston)
 - Custom serializers for non-JSON-serializable metadata
 - Error aggregation for batch operations
+
+
+## Demo
+
+![Demo](docs/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/CIjVRMTZUZBUhrdu77rlEk6Aq)**
+
+> Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/structured-error-handler)
 
 ## License
 
