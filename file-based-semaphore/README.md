@@ -262,11 +262,12 @@ The test suite is deterministic and reliable! 🎉
 - [CLI Progress Reporting](../cli-progress-reporting/) - Could use this tool for exclusive log access
 
 
+
 ## Demo
 
 ![Demo](docs/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/FAcEITfypww6OehOiErwrimcZ)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/gN00E5ktBA6CDwzCRqVCUSRzt)**
 
 > Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/file-based-semaphore)
 
