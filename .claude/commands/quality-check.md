@@ -17,6 +17,14 @@ Before running checks:
 ### Universal Checks (All Languages)
 
 ```bash
+# 0. Check if branch is behind main (CRITICAL - prevents merge conflicts)
+git fetch origin main --quiet 2>/dev/null || true
+BEHIND=$(git rev-list --count HEAD..origin/main 2>/dev/null || echo "0")
+if [ "$BEHIND" != "0" ]; then
+  echo "⚠️  WARNING: Your branch is $BEHIND commit(s) behind origin/main"
+  echo "   Run: git pull --rebase origin main"
+fi
+
 # 1. Check git status for uncommitted changes
 git status --porcelain
 
@@ -103,6 +111,7 @@ grep -r "Cross-Platform Path Normalizer\|Test Flakiness Detector\|CLI Progress R
 
 ### MUST REVIEW (Warnings)
 
+- [ ] **Branch is up-to-date with main** (run `git pull --rebase origin main` if behind)
 - [ ] No uncommitted changes or untracked files (unless intentional)
 - [ ] No temporary test files or artifacts
 - [ ] No debug code (`console.log`, `println!`, etc.)
