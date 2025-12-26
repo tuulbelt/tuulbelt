@@ -12,11 +12,36 @@ on:
       - 'scripts/record-*-demo.sh'
 
       # Tool implementation changes (triggers demo regeneration)
-      - 'test-flakiness-detector/**'
-      - 'cli-progress-reporting/**'
-      - 'cross-platform-path-normalizer/**'
-      - 'file-based-semaphore/**'
-      - 'output-diffing-utility/**'
+      # Only implementation files, NOT documentation or demo files
+      - 'test-flakiness-detector/src/**'
+      - 'test-flakiness-detector/test/**'
+      - 'test-flakiness-detector/examples/**'
+      - 'test-flakiness-detector/package.json'
+      - 'test-flakiness-detector/tsconfig.json'
+
+      - 'cli-progress-reporting/src/**'
+      - 'cli-progress-reporting/test/**'
+      - 'cli-progress-reporting/examples/**'
+      - 'cli-progress-reporting/package.json'
+      - 'cli-progress-reporting/tsconfig.json'
+
+      - 'cross-platform-path-normalizer/src/**'
+      - 'cross-platform-path-normalizer/test/**'
+      - 'cross-platform-path-normalizer/examples/**'
+      - 'cross-platform-path-normalizer/package.json'
+      - 'cross-platform-path-normalizer/tsconfig.json'
+
+      - 'file-based-semaphore/src/**'
+      - 'file-based-semaphore/tests/**'
+      - 'file-based-semaphore/examples/**'
+      - 'file-based-semaphore/Cargo.toml'
+      - 'file-based-semaphore/Cargo.lock'
+
+      - 'output-diffing-utility/src/**'
+      - 'output-diffing-utility/tests/**'
+      - 'output-diffing-utility/examples/**'
+      - 'output-diffing-utility/Cargo.toml'
+      - 'output-diffing-utility/Cargo.lock'
 
   workflow_dispatch:  # Manual trigger
     inputs:
