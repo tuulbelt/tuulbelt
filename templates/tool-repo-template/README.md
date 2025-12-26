@@ -94,6 +94,34 @@ npm test              # Run all tests
 npm test -- --watch   # Watch mode
 ```
 
+## Integration with Tuulbelt Meta Repository
+
+When adding this tool to the Tuulbelt meta repository, ensure CI/CD integration:
+
+### Demo Recording Workflow
+
+**Required:** Add path filter to `.github/workflows/create-demos.yml`:
+
+```yaml
+paths:
+  - 'tool-name/**'  # Add this line for your tool
+```
+
+This enables smart detection to only record demos when your tool changes, not on every commit.
+
+**Required:** Create demo recording script at `scripts/record-tool-name-demo.sh`:
+
+```bash
+#!/bin/bash
+set -e
+
+asciinema rec "demo.cast" --overwrite --title "Tool Name - Tuulbelt" --command "bash -c '
+  # Your demo commands here
+'"
+```
+
+See existing tools for examples (test-flakiness-detector, cli-progress-reporting).
+
 ### Dogfooding
 
 Tuulbelt tools validate and enhance each other via dogfooding.
