@@ -426,4 +426,143 @@ mod tests {
         // LCS is "a", "c" at indices 0, 2 in b
         assert_eq!(lcs, vec![0, 2]);
     }
+
+    // Edge case tests
+    #[test]
+    fn test_diff_text_content_to_empty() {
+        let config = DiffConfig::default();
+        let result = diff_text("line 1\nline 2", "", &config);
+        assert!(result.has_changes());
+        assert_eq!(result.additions(), 0);
+        assert_eq!(result.deletions(), 2);
+    }
+
+    #[test]
+    fn test_diff_text_completely_different() {
+        let config = DiffConfig::default();
+        let result = diff_text("a\nb\nc", "x\ny\nz", &config);
+        assert!(result.has_changes());
+        assert_eq!(result.additions(), 3);
+        assert_eq!(result.deletions(), 3);
+    }
+
+    #[test]
+    fn test_diff_text_whitespace_changes() {
+        let config = DiffConfig::default();
+        let result = diff_text("line 1\nline 2", "line 1\nline  2", &config);
+        assert!(result.has_changes());
+        assert_eq!(result.additions(), 1);
+        assert_eq!(result.deletions(), 1);
+    }
+
+    #[test]
+    fn test_diff_text_large_common_prefix() {
+        let config = DiffConfig::default();
+        let mut old_lines = vec!["same"; 100];
+        old_lines.push("different1");
+        let mut new_lines = vec!["same"; 100];
+        new_lines.push("different2");
+
+        let old_text = old_lines.join("\n");
+        let new_text = new_lines.join("\n");
+
+        let result = diff_text(&old_text, &new_text, &config);
+        assert!(result.has_changes());
+        assert_eq!(result.additions(), 1);
+        assert_eq!(result.deletions(), 1);
+    }
+
+    #[test]
+    fn test_diff_text_multiline_insert() {
+        let config = DiffConfig::default();
+        let result = diff_text("line 1\nline 4", "line 1\nline 2\nline 3\nline 4", &config);
+        assert!(result.has_changes());
+        assert_eq!(result.additions(), 2);
+        assert_eq!(result.deletions(), 0);
+    }
+
+    #[test]
+    fn test_diff_text_multiline_delete() {
+        let config = DiffConfig::default();
+        let result = diff_text(
+            "line 1\nline 2\nline 3\nline 4",
+            "line 1\nline 4",
+            &config,
+        );
+        assert!(result.has_changes());
+        assert_eq!(result.additions(), 0);
+        assert_eq!(result.deletions(), 2);
+    }
+
+    #[test]
+    fn test_diff_text_trailing_newlines() {
+        let config = DiffConfig::default();
+        // In Rust, lines() ignores trailing newlines, so these are identical
+        let result = diff_text("line 1\nline 2\n", "line 1\nline 2", &config);
+        assert!(!result.has_changes());
+    }
+
+    #[test]
+    fn test_diff_text_unicode() {
+        let config = DiffConfig::default();
+        let result = diff_text("café\nrésumé", "café\nresume", &config);
+        assert!(result.has_changes());
+        assert_eq!(result.additions(), 1);
+        assert_eq!(result.deletions(), 1);
+    }
+
+    #[test]
+    fn test_diff_text_very_long_lines() {
+        let config = DiffConfig::default();
+        let long_line1 = "a".repeat(10000);
+        let long_line2 = "b".repeat(10000);
+        let result = diff_text(&long_line1, &long_line2, &config);
+        assert!(result.has_changes());
+    }
+
+    #[test]
+    fn test_format_unified_diff_additions_only() {
+        let config = DiffConfig::default();
+        let result = diff_text("line 1", "line 1\nline 2", &config);
+        let formatted = format_unified_diff(&result, "old.txt", "new.txt");
+
+        assert!(formatted.contains("--- old.txt"));
+        assert!(formatted.contains("+++ new.txt"));
+        assert!(formatted.contains("+ line 2"));
+    }
+
+    #[test]
+    fn test_format_unified_diff_deletions_only() {
+        let config = DiffConfig::default();
+        let result = diff_text("line 1\nline 2", "line 1", &config);
+        let formatted = format_unified_diff(&result, "old.txt", "new.txt");
+
+        assert!(formatted.contains("--- old.txt"));
+        assert!(formatted.contains("+++ new.txt"));
+        assert!(formatted.contains("- line 2"));
+    }
+
+    #[test]
+    fn test_compute_lcs_empty_sequences() {
+        let a: Vec<&str> = vec![];
+        let b: Vec<&str> = vec![];
+        let lcs = compute_lcs(&a, &b);
+        assert_eq!(lcs, vec![]);
+    }
+
+    #[test]
+    fn test_compute_lcs_one_empty() {
+        let a = vec!["a", "b", "c"];
+        let b: Vec<&str> = vec![];
+        let lcs = compute_lcs(&a, &b);
+        assert_eq!(lcs, vec![]);
+    }
+
+    #[test]
+    fn test_compute_lcs_completely_different() {
+        let a = vec!["a", "b", "c"];
+        let b = vec!["x", "y", "z"];
+        let lcs = compute_lcs(&a, &b);
+        assert_eq!(lcs, vec![]);
+    }
 }

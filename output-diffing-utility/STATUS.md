@@ -1,6 +1,6 @@
-# {{TOOL_NAME}} - Development Status
+# Output Diffing Utility - Development Status
 
-**Last Updated:** {{DATE}}
+**Last Updated:** 2025-12-26
 **Version:** 0.1.0 (Development)
 **Status:** 🔄 In Development
 **Progress:** 0%
@@ -117,7 +117,7 @@ cargo fmt -- --check
 
 ## Session Notes
 
-### {{DATE}}
+### 2025-12-26
 
 **Session Goal:** Initial scaffolding
 
