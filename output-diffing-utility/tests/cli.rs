@@ -370,7 +370,7 @@ fn test_cli_file_not_found() {
     assert_eq!(output.status.code(), Some(2));
 
     let stderr = String::from_utf8_lossy(&output.stderr);
-    assert!(stderr.contains("Error reading"));
+    assert!(stderr.contains("Error accessing"));
 }
 
 #[test]
