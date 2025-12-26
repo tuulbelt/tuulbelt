@@ -52,15 +52,23 @@ echo \"# Output Diffing Utility Demo\"
 sleep 1
 
 echo \"\"
-echo \"# 1. Text diff (unified format)\"
+echo \"# 1. Text diff with color (unified format)\"
 sleep 0.5
-echo \"\$ $BIN /tmp/old.txt /tmp/new.txt\"
+echo \"\$ $BIN --color /tmp/old.txt /tmp/new.txt\"
 sleep 0.5
-$BIN /tmp/old.txt /tmp/new.txt
+$BIN --color /tmp/old.txt /tmp/new.txt
 sleep 2
 
 echo \"\"
-echo \"# 2. JSON diff (structural)\"
+echo \"# 2. JSON diff with color (structural)\"
+sleep 0.5
+echo \"\$ $BIN --color /tmp/old.json /tmp/new.json\"
+sleep 0.5
+$BIN --color /tmp/old.json /tmp/new.json
+sleep 2
+
+echo \"\"
+echo \"# 3. JSON output format (no color, structured data)\"
 sleep 0.5
 echo \"\$ $BIN --format json /tmp/old.json /tmp/new.json\"
 sleep 0.5
@@ -68,19 +76,11 @@ $BIN --format json /tmp/old.json /tmp/new.json | head -20
 sleep 2
 
 echo \"\"
-echo \"# 3. Compact format\"
+echo \"# 4. Compact format\"
 sleep 0.5
 echo \"\$ $BIN --format compact /tmp/old.txt /tmp/new.txt\"
 sleep 0.5
 $BIN --format compact /tmp/old.txt /tmp/new.txt
-sleep 2
-
-echo \"\"
-echo \"# 4. Context lines (show only 1 line around changes)\"
-sleep 0.5
-echo \"\$ $BIN --context 1 /tmp/old.txt /tmp/new.txt\"
-sleep 0.5
-$BIN --context 1 /tmp/old.txt /tmp/new.txt
 sleep 2
 
 echo \"\"
