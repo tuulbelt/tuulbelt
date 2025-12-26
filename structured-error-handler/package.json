@@ -1,0 +1,32 @@
+{
+  "name": "@tuulbelt/structured-error-handler",
+  "version": "0.1.0",
+  "description": "Structured error format with context preservation and serialization",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "node --import tsx --test test/index.test.ts",
+    "test:watch": "node --import tsx --test --watch test/index.test.ts"
+  },
+  "keywords": [
+    "tuulbelt",
+    "error-handling",
+    "structured-errors",
+    "error-context"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tuulbelt/tuulbelt.git",
+    "directory": "structured-error-handler"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  }
+}

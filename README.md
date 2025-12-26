@@ -15,7 +15,7 @@ Each tool in Tuulbelt:
 ## Current Tools
 
 ### CLI/DevTools
-- **[Structured Error Handler](https://github.com/tuulbelt/structured-error-handler)** — Error format + serialization with context preservation (TBD)
+- **[Structured Error Handler](structured-error-handler/)** — Error format + serialization with context preservation 🟢 v0.1.0 | [📖 Docs](structured-error-handler/) | [🚀 Examples](structured-error-handler/examples/)
 - **[CLI Progress Reporting](cli-progress-reporting/)** — Concurrent-safe progress updates 🟢 v0.1.0 | [📖 Docs](cli-progress-reporting/) | [🚀 Examples](cli-progress-reporting/examples/)
 - **[Configuration File Merger](https://github.com/tuulbelt/config-file-merger)** — ENV + config + CLI arg merging (TBD)
 - **[Cross-Platform Path Normalizer](cross-platform-path-normalizer/)** — Windows/Unix path consistency 🟢 v0.1.0 | [📖 Docs](cross-platform-path-normalizer/) | [🚀 Examples](cross-platform-path-normalizer/examples/)
@@ -144,15 +144,15 @@ This creates a **bidirectional validation network** where tools prove their reli
 
 ## Status
 
-🟢 = Implemented (5/33)
+🟢 = Implemented (6/33)
 🟡 = In progress (0/33)
-🔴 = TBD (28/33)
+🔴 = TBD (27/33)
 
-**Recently Completed:** Output Diffing Utility v0.1.0 (2025-12-26)
+**Recently Completed:** Structured Error Handler v0.1.0 (2025-12-26)
 
-**Next Up:** Structured Error Handler 🎯
+**Next Up:** Configuration File Merger 🎯
 
-**Progress:** 5 of 33 tools implemented (15%) | Phase 1 Quick Tools: 5/5 (100% ✅)
+**Progress:** 6 of 33 tools implemented (18%) | Phase 1 Quick Tools: 5/5 (100% ✅) | Phase 2: 1/28
 
 ## License
 

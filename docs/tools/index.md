@@ -2,7 +2,7 @@
 
 Tuulbelt provides a curated collection of focused, zero-dependency tools for modern software development.
 
-## Completed Tools (5/33)
+## Completed Tools (6/33)
 
 ### Test Flakiness Detector
 
@@ -99,6 +99,27 @@ Semantic diff for JSON, text, and binary files. Compare structured data, configu
 - Zero runtime dependencies
 
 [View Documentation →](/tools/output-diffing-utility/)
+
+---
+
+### Structured Error Handler
+
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
+**Language:** TypeScript
+**Tests:** 68 tests
+
+Structured error format with context preservation and serialization. Chain context through call stacks and serialize errors for logging and debugging.
+
+**Features:**
+- Context chaining through call stacks
+- Full serialization/deserialization support
+- Cause chain analysis (getRootCause, getCauseChain)
+- Programmatic error routing (hasCode, hasCategory)
+- Human-readable and JSON output formats
+- CLI and library API
+- Zero runtime dependencies
+
+[View Documentation →](/tools/structured-error-handler/)
 
 ---
 
