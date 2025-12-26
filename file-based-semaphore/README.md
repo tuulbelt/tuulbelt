@@ -263,11 +263,12 @@ The test suite is deterministic and reliable! 🎉
 
 
 
+
 ## Demo
 
 ![Demo](docs/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/gN00E5ktBA6CDwzCRqVCUSRzt)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/TcQzmCQR4F4v2izMaCPz9tH9p)**
 
 > Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/file-based-semaphore)
 
