@@ -22,7 +22,7 @@ Each tool in Tuulbelt:
 
 ### Testing & Observability
 - **[Test Flakiness Detector](test-flakiness-detector/)** — Identify unreliable tests 🟢 v0.1.0 | [📖 Docs](test-flakiness-detector/docs/) | [🚀 Examples](test-flakiness-detector/examples/)
-- **[Output Diffing Utility](output-diffing-utility/)** — Semantic diff for JSON, text, binary files 🟢 v0.1.0 | [📖 Docs](/tools/output-diffing-utility/) | [🚀 Examples](output-diffing-utility/examples/)
+- **[Output Diffing Utility](output-diffing-utility/)** — Semantic diff for JSON, text, binary files 🟢 v0.1.0 | [📖 Docs](output-diffing-utility/) | [🚀 Examples](output-diffing-utility/examples/)
 - **[Snapshot Comparison](https://github.com/tuulbelt/snapshot-comparison)** — Binary/structured data snapshots (TBD)
 - **[Test Port Conflict Resolver](https://github.com/tuulbelt/test-port-resolver)** — Concurrent test port allocation (TBD)
 

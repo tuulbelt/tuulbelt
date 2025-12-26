@@ -261,8 +261,13 @@ fn main() -> ExitCode {
     }
 
     if verbose {
-        eprintln!("[DEBUG] File sizes: {} = {} bytes, {} = {} bytes",
-            file1.display(), size1, file2.display(), size2);
+        eprintln!(
+            "[DEBUG] File sizes: {} = {} bytes, {} = {} bytes",
+            file1.display(),
+            size1,
+            file2.display(),
+            size2
+        );
     }
 
     // Read files
