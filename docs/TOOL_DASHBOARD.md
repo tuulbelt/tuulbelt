@@ -1,6 +1,7 @@
 # Tuulbelt Tool Quality Dashboard
 
-**Last Updated:** 2025-12-25 22:40 UTC
+**Last Updated:** 2025-12-26 00:16 UTC
+**Test Results From:** 2025-12-26T00:15:49Z
 **Total Tools:** 4
 **Passing:** 4 | **Failing:** 0
 
@@ -10,10 +11,10 @@
 
 | Tool | Language | Tests | Build | Status | Version |
 |------|----------|-------|-------|--------|---------|
-| test-flakiness-detector | TypeScript | 35 | ✅ | 🟢 Production | 0.1.0 |
 | cli-progress-reporting | TypeScript | 9 | ✅ | 🟢 Production | 0.1.0 |
 | cross-platform-path-normalizer | TypeScript | 14 | ✅ | 🟢 Production | 0.1.0 |
 | file-based-semaphore | Rust | 81 | ✅ | 🟢 Production | 0.1.0 |
+| test-flakiness-detector | TypeScript | 35 | ✅ | 🟢 Production | 0.1.0 |
 
 ---
 
@@ -26,11 +27,11 @@
 
 ---
 
-## Recent Updates
+## How This Works
 
-- Dashboard updated automatically via GitHub Actions
-- Runs after each test-all-tools workflow completion
-- Also runs nightly at 3 AM UTC
+1. **Test All Tools** workflow runs tests and uploads results as artifact
+2. **Update Dashboard** workflow downloads results and generates this page
+3. No tests are re-run - dashboard is generated from cached results
 
 ---
 
