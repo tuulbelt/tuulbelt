@@ -105,7 +105,7 @@ Review changes in generated files, build outputs, or compiled artifacts.
 
 ## Demo
 
-![Output Diffing Utility Demo](/output-diffing-utility/docs/demo.gif)
+![Output Diffing Utility Demo](/output-diffing-utility/demo.gif)
 
 **Try it yourself:**
 - <a href="https://asciinema.org/a/output-diff-demo" target="_blank">🎬 Interactive Terminal Recording</a>
@@ -238,8 +238,8 @@ Line 2:
 
 ## Related Tools
 
-- [Test Flakiness Detector](/tools/test-flakiness-detector) - Could validate this tool's test suite
-- [File-Based Semaphore](/tools/file-based-semaphore) - Cross-platform locking (also Rust)
+- [Test Flakiness Detector](/tools/test-flakiness-detector/) - Could validate this tool's test suite
+- [File-Based Semaphore](/tools/file-based-semaphore/) - Cross-platform locking (also Rust)
 
 ## License
 
