@@ -5,80 +5,61 @@ All notable changes to Structured Error Handler will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.1.0] - 2025-12-26
 
 ### Added
-- Initial project scaffolding
-- TypeScript configuration with strict mode
-- Node.js native test runner setup
-- Basic project structure
 
-## [0.1.0] - YYYY-MM-DD (Not Released)
+- **StructuredError class** - Extends Error with context chain preservation
+  - `code` and `category` properties for programmatic error handling
+  - `context` array storing operation history (most recent first)
+  - Immutable enrichment via `addContext()` method
 
-### Added
-- Core functionality (TODO: describe main features)
-- Comprehensive test suite
-- API documentation
-- Usage examples
+- **Static factory methods**
+  - `StructuredError.wrap()` - Wrap existing errors with additional context
+  - `StructuredError.from()` - Convert any value to StructuredError
+  - `StructuredError.fromJSON()` - Deserialize from JSON
+
+- **Instance methods**
+  - `addContext()` - Add operation context (returns new instance)
+  - `toJSON()` - Serialize to JSON-compatible object
+  - `toString()` - Human-readable formatted output
+  - `hasCode()` - Check if error or cause has specific code
+  - `hasCategory()` - Check if error or cause has specific category
+  - `getRootCause()` - Get deepest error in cause chain
+  - `getCauseChain()` - Get all errors as array
+
+- **Helper functions**
+  - `serializeError()` - Serialize any Error to JSON format
+  - `deserializeError()` - Deserialize JSON back to Error
+  - `formatError()` - Format any error for display
+
+- **TypeScript types**
+  - `ErrorContext` - Context entry with operation, component, metadata, timestamp
+  - `SerializedError` - JSON-serializable error representation
+  - `StructuredErrorOptions` - Constructor options
+
+- **CLI interface**
+  - `demo` command - Show structured error examples
+  - `parse` command - Parse and validate JSON errors
+  - `validate` command - Validate error JSON structure
+  - `--format` flag - Output as `json` or `text`
+  - `--help` and `--version` flags
+
+- **Documentation**
+  - SPEC.md - Technical specification (403 lines)
+  - DOGFOODING_STRATEGY.md - Composition patterns
+  - 6 VitePress documentation pages
+  - 2 example files (basic.ts, advanced.ts)
+
+- **Test suite**
+  - 68 tests covering core, serialization, and CLI
+  - 80%+ code coverage
+  - Dogfooding script for flakiness detection
 
 ### Implementation Notes
+
 - Zero runtime dependencies
 - Uses Node.js built-in modules only
 - TypeScript with strict type checking
-
----
-
-## Template Instructions
-
-When releasing versions, follow this format:
-
-### Version 0.1.0 - Initial Release
-
-**Added:**
-- List new features
-- New functions or capabilities
-- New documentation
-
-**Changed:**
-- List modifications to existing features
-- API changes
-
-**Deprecated:**
-- List features marked for removal
-
-**Removed:**
-- List removed features
-- Breaking changes
-
-**Fixed:**
-- List bug fixes
-
-**Security:**
-- List security fixes or improvements
-
-### Version Numbering
-
-- **MAJOR (X.0.0)**: Breaking changes, incompatible API changes
-- **MINOR (0.X.0)**: New features, backwards-compatible
-- **PATCH (0.0.X)**: Bug fixes, backwards-compatible
-
-### Example Entry
-
-```markdown
-## [1.2.3] - 2025-01-15
-
-### Added
-- New `processData()` function with validation
-- Support for UTF-8 input (#42)
-
-### Fixed
-- Handle empty string input correctly (#38)
-- Memory leak in parsing loop (#40)
-
-### Security
-- Validate file paths to prevent traversal attacks
-```
-
----
-
-*Remove these instructions before the first release.*
+- Context stored most-recent-first (stack order)
+- Code and category inherited through wrap() unless overridden
