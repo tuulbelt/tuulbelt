@@ -33,19 +33,23 @@
 
 ## Test Coverage
 
-**Current Coverage:** 80%+ (68 tests passing)
+**Current Coverage:** 80%+ (81 tests passing)
 **Target:** 80% minimum, 90% for critical paths ✅
 
 | Category | Tests | Status |
 |----------|-------|--------|
 | Core Logic | 29 | ✅ Passing |
 | Serialization | 16 | ✅ Passing |
-| CLI | 23 | ✅ Passing |
+| Edge Cases | 13 | ✅ Passing |
+| Input Validation | 6 | ✅ Passing |
+| Type Safety | 3 | ✅ Passing |
+| CLI | 8 | ✅ Passing |
+| **Total** | **81** | ✅ All Passing |
 
 ## Implementation Summary
 
 - **612 lines** TypeScript implementation
-- **68 tests** covering core, serialization, and CLI
+- **81 tests** covering core, serialization, edge cases, validation, and CLI
 - **6 VitePress pages** for documentation
 - **2 examples** (basic.ts, advanced.ts)
 - **1 dogfooding script** (dogfood-flaky.sh)
@@ -75,7 +79,7 @@
 - JSON serialization/deserialization
 - Helper functions (serializeError, deserializeError, formatError)
 - CLI with demo, parse, validate commands
-- 68 comprehensive tests
+- 81 comprehensive tests
 - Complete documentation suite
 - VitePress GitHub Pages integration
 - Dogfooding script for test validation

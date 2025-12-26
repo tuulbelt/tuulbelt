@@ -106,7 +106,7 @@ Semantic diff for JSON, text, and binary files. Compare structured data, configu
 
 **Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
 **Language:** TypeScript
-**Tests:** 68 tests
+**Tests:** 81 tests
 
 Structured error format with context preservation and serialization. Chain context through call stacks and serialize errors for logging and debugging.
 

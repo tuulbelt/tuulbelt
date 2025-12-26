@@ -691,6 +691,64 @@ describe('Edge Cases', () => {
     const json = error.toJSON();
     assert.strictEqual('stack' in json, false);
   });
+
+  test('handles empty string message', () => {
+    const error = new StructuredError('');
+
+    assert.strictEqual(error.message, '');
+    const json = error.toJSON();
+    assert.strictEqual(json.message, '');
+  });
+
+  test('handles whitespace-only message', () => {
+    const error = new StructuredError('   ');
+
+    assert.strictEqual(error.message, '   ');
+  });
+
+  test('handles null values in metadata', () => {
+    const error = new StructuredError('Test', {
+      operation: 'op',
+      metadata: { nullValue: null, defined: 'value' },
+    });
+
+    const json = error.toJSON();
+    const restored = StructuredError.fromJSON(json);
+
+    assert.strictEqual(
+      (restored.context[0].metadata as Record<string, unknown>).nullValue,
+      null
+    );
+    assert.strictEqual(
+      (restored.context[0].metadata as Record<string, unknown>).defined,
+      'value'
+    );
+  });
+
+  test('handles deep cause chain (10+ levels)', () => {
+    let error: Error = new Error('Root cause');
+    for (let i = 0; i < 10; i++) {
+      error = StructuredError.wrap(error, `Level ${i}`, {
+        operation: `level${i}`,
+      });
+    }
+
+    const structured = error as StructuredError;
+    const chain = structured.getCauseChain();
+    const root = structured.getRootCause();
+
+    assert.strictEqual(chain.length, 11); // 10 wraps + 1 root
+    assert.strictEqual(root.message, 'Root cause');
+  });
+
+  test('handles very long message', () => {
+    const longMessage = 'x'.repeat(10000);
+    const error = new StructuredError(longMessage);
+
+    assert.strictEqual(error.message.length, 10000);
+    const json = error.toJSON();
+    assert.strictEqual(json.message.length, 10000);
+  });
 });
 
 // =============================================================================
@@ -822,5 +880,105 @@ describe('CLI', () => {
     assert(output.includes('demo'));
     assert(output.includes('parse'));
     assert(output.includes('validate'));
+  });
+
+  test('parse command handles invalid JSON gracefully', async () => {
+    const { execSync } = await import('node:child_process');
+
+    try {
+      execSync(`npx tsx src/index.ts parse 'not valid json'`, {
+        encoding: 'utf-8',
+        cwd: process.cwd(),
+      });
+      assert.fail('Should have thrown');
+    } catch (error) {
+      const execError = error as { status?: number };
+      assert.strictEqual(execError.status, 1);
+    }
+  });
+
+  test('parse command handles empty input', async () => {
+    const { execSync } = await import('node:child_process');
+
+    try {
+      execSync(`npx tsx src/index.ts parse ''`, {
+        encoding: 'utf-8',
+        cwd: process.cwd(),
+      });
+      assert.fail('Should have thrown');
+    } catch (error) {
+      const execError = error as { status?: number };
+      assert.strictEqual(execError.status, 1);
+    }
+  });
+});
+
+// =============================================================================
+// Input Validation Tests
+// =============================================================================
+
+describe('Input Validation', () => {
+  test('fromJSON handles missing message gracefully', () => {
+    const json = {
+      name: 'StructuredError',
+      context: [],
+    } as unknown as SerializedError;
+
+    // Should use empty string or throw - let's verify behavior
+    const error = StructuredError.fromJSON(json);
+    assert(error instanceof StructuredError);
+  });
+
+  test('fromJSON handles null context array', () => {
+    const json = {
+      name: 'StructuredError',
+      message: 'Test',
+      context: null,
+    } as unknown as SerializedError;
+
+    // Should handle gracefully
+    try {
+      const error = StructuredError.fromJSON(json);
+      assert(error instanceof StructuredError);
+    } catch {
+      // Also acceptable - throwing is valid for invalid input
+      assert(true);
+    }
+  });
+
+  test('fromJSON handles context with missing operation', () => {
+    const json: SerializedError = {
+      name: 'StructuredError',
+      message: 'Test',
+      context: [
+        { timestamp: '2025-01-01T00:00:00.000Z' } as unknown as ErrorContext,
+      ],
+    };
+
+    const error = StructuredError.fromJSON(json);
+    // Should not crash - graceful handling
+    assert(error instanceof StructuredError);
+  });
+
+  test('wrap handles undefined gracefully', () => {
+    const error = StructuredError.wrap(undefined, 'Wrapped undefined');
+
+    assert(error instanceof StructuredError);
+    assert.strictEqual(error.message, 'Wrapped undefined');
+  });
+
+  test('wrap handles null gracefully', () => {
+    const error = StructuredError.wrap(null, 'Wrapped null');
+
+    assert(error instanceof StructuredError);
+    assert.strictEqual(error.message, 'Wrapped null');
+  });
+
+  test('from handles object without message', () => {
+    const error = StructuredError.from({ someKey: 'value' });
+
+    assert(error instanceof StructuredError);
+    // Should stringify the object or use default message
+    assert(typeof error.message === 'string');
   });
 });

@@ -95,10 +95,11 @@ See `README.md` for complete roadmap (27 remaining tools).
 ### Structured Error Handler 🆕
 
 - ✅ v0.1.0 stable (First Phase 2 tool!)
-- ✅ Dogfooding: 1 composition script implemented
-  - dogfood-flaky.sh: Validate determinism (68 tests × 10 runs)
+- ✅ Dogfooding: 2 composition scripts implemented
+  - dogfood-flaky.sh: Validate determinism (81 tests × 10 runs)
+  - dogfood-diff.sh: Prove deterministic serialization
 - ✅ DOGFOODING_STRATEGY.md: Complete strategy document
-- 68 tests passing
+- 81 tests passing (core, serialization, edge cases, validation, CLI)
 - Complete documentation (6 VitePress pages + SPEC.md)
 - Context chain preservation through call stacks
 - Full JSON serialization/deserialization
