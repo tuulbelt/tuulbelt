@@ -57,9 +57,11 @@ output-diff data1.json data2.json
 output-diff image1.png image2.png
 
 # With ANSI color codes (works for text, JSON, and binary diffs)
-output-diff --color file1.txt file2.txt
-output-diff --color data1.json data2.json
-output-diff --color image1.png image2.png
+output-diff --color always file1.txt file2.txt
+output-diff --color always data1.json data2.json
+output-diff --color always image1.png image2.png
+# Or use 'auto' to enable color only when outputting to a terminal
+output-diff --color auto file1.txt file2.txt
 
 # Verbose output
 output-diff --verbose file1.txt file2.txt
