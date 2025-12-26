@@ -264,11 +264,15 @@ See `DOGFOODING_STRATEGY.md` for implementation details.
 
 
 
+
+
+
+
 ## Demo
 
 ![Demo](docs/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/TcQzmCQR4F4v2izMaCPz9tH9p)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/wksi9u7cq9tsWYJQlX2iEOeAD)**
 
 > Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/file-based-semaphore)
 
