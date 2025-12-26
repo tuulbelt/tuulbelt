@@ -115,6 +115,9 @@ See `docs/KNOWN_ISSUES.md` for tracked issues.
 - ✅ **File-Based Semaphore CLI tests** - 39 CLI tests added, docs updated (85 total tests)
 - ✅ **Output Diffing Utility docs** - README, SPEC.md, 7 VitePress pages, 2 examples 🆕
 - ✅ **Demo workflow optimization** - Smart detection, path filters, proper titles 🆕
+- ✅ **Template performance patterns** - Added to both Rust and TypeScript templates 🆕
+- ✅ **Template SPEC.md guidance** - When/how to create specifications 🆕
+- ✅ **Template advanced examples** - examples/advanced.rs and examples/advanced.ts 🆕
 
 ### Pending
 - [ ] Add "Contributing" guide page to VitePress (currently just links to CONTRIBUTING.md)
