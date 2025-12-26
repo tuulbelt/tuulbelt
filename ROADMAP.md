@@ -1,9 +1,9 @@
 # Tuulbelt Development Roadmap
 
-**Last Updated:** 2025-12-23
+**Last Updated:** 2025-12-26
 **Total Tools Planned:** 33
-**Completed:** 2 (6%)
-**Current Phase:** Phase 1 - Infrastructure & Quick Tools
+**Completed:** 5 (15%)
+**Current Phase:** Phase 2 - High-Impact Medium Tools
 
 ---
 
@@ -18,12 +18,12 @@ See `docs/setup/TUULBELT_TRIAGE.md` for detailed complexity analysis.
 
 ---
 
-## Phase 1: Infrastructure & Quick Tools
+## Phase 1: Infrastructure & Quick Tools ✅ COMPLETE
 
 **Goal:** Establish development infrastructure and build highest-impact quick tools
 
-**Timeline:** Current phase
-**Status:** Infrastructure ✅ Complete | Quick Tools 🔄 In Progress
+**Timeline:** Completed 2025-12-26
+**Status:** Infrastructure ✅ Complete | Quick Tools ✅ Complete (5/5)
 
 ### Infrastructure (Complete ✅)
 
@@ -83,60 +83,72 @@ See `docs/setup/TUULBELT_TRIAGE.md` for detailed complexity analysis.
 
 ---
 
-#### 🎯 Next Up: Cross-Platform Path Handling
+#### ✅ Cross-Platform Path Normalizer (COMPLETE)
 
 **Priority:** MEDIUM
-**Language:** TypeScript or Rust
+**Language:** TypeScript
 **Complexity:** Quick (2-3 days)
-**Status:** Not started
+**Status:** ✅ Complete v0.1.0 (2025-12-24)
 
-**Description:** Normalize paths consistently, especially Windows. Standard library base.
+**Description:** Normalize paths consistently across Windows/Unix. Standard library base.
 
-**Use Case:**
-```bash
-path-normalizer /path/to/file    # Unix
-path-normalizer C:\path\to\file  # Windows
-# Both output: normalized absolute path
-```
+**Completed Features:**
+- ✅ Windows/Unix path conversion and normalization
+- ✅ Multiple output formats (unix, windows, posix, native)
+- ✅ CLI and library API
+- ✅ 145 tests across all edge cases
+- ✅ Dogfooding validation (10 runs, 1,450 executions, 0 flaky)
+- ✅ Full VitePress documentation
+
+**Location:** `/cross-platform-path-normalizer/`
+**Dogfooding:** Validated with Test Flakiness Detector (100% pass rate)
 
 ---
 
-#### File-Based Semaphore
+#### ✅ File-Based Semaphore (COMPLETE)
 
 **Priority:** MEDIUM
 **Language:** Rust
 **Complexity:** Quick (2-3 days)
-**Status:** Not started
+**Status:** ✅ Complete v0.1.0 (2025-12-25)
 
-**Description:** Cross-platform locking utility for shell scripts. Handles stale locks.
+**Description:** Cross-platform locking utility for shell scripts. First Rust tool in Tuulbelt.
 
-**Use Case:**
-```bash
-# Script 1
-semaphore acquire my-lock || exit 1
-# ... critical section ...
-semaphore release my-lock
+**Completed Features:**
+- ✅ Cross-platform process locking via filesystem
+- ✅ CLI commands: acquire, release, check, info, list
+- ✅ Stale lock detection and automatic cleanup
+- ✅ 85 tests (31 unit + 39 CLI + 11 integration + 4 doctests)
+- ✅ Zero clippy warnings, zero runtime dependencies
+- ✅ Complete SPEC.md defining lock protocol
+- ✅ Full VitePress documentation
 
-# Script 2 (blocks until lock available)
-semaphore acquire my-lock --timeout 30
-```
+**Location:** `/file-based-semaphore/`
 
 ---
 
-#### Output Diffing Utility
+#### ✅ Output Diffing Utility (COMPLETE)
 
 **Priority:** LOW
-**Language:** TypeScript
+**Language:** Rust
 **Complexity:** Quick (2-3 days)
-**Status:** Not started
+**Status:** ✅ Complete v0.1.0 (2025-12-26)
 
-**Description:** Better than textual diffs for JSON, binary, structured data in assertions.
+**Description:** Semantic diff for text, JSON, and binary files. Second Rust tool in Tuulbelt.
 
-**Use Case:**
-```bash
-diff-structured actual.json expected.json
-# Output: Semantic diff showing field-level changes
-```
+**Completed Features:**
+- ✅ Text diff using LCS algorithm with context
+- ✅ JSON structural diff (field-level comparison)
+- ✅ Binary hex dump comparison
+- ✅ Multiple output formats (unified, context, side-by-side, JSON)
+- ✅ 99 tests (76 lib + 18 CLI + 5 doc)
+- ✅ Zero clippy warnings, zero runtime dependencies
+- ✅ File size safety (100MB default, --max-size override)
+- ✅ Optimized performance (vector pre-allocation)
+- ✅ Complete SPEC.md defining diff algorithm and formats
+- ✅ Full VitePress documentation (7 pages + SPEC)
+
+**Location:** `/output-diffing-utility/`
 
 ---
 
@@ -144,8 +156,8 @@ diff-structured actual.json expected.json
 
 **Goal:** Build most valuable medium-complexity tools
 
-**Timeline:** After Phase 1 completion
-**Status:** Not started
+**Timeline:** Current phase (started 2025-12-26)
+**Status:** 🔄 In Progress | Recommended: Structured Error Handler
 
 ### Configuration & CLI (3 tools)
 
