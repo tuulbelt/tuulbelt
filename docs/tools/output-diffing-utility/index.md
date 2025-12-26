@@ -103,26 +103,48 @@ Compare database exports, API responses, or data snapshots. JSON diff highlights
 
 Review changes in generated files, build outputs, or compiled artifacts.
 
+## Dogfooding
+
+We use **[Test Flakiness Detector](/tools/test-flakiness-detector/)** to validate test reliability:
+
+```bash
+# From test-flakiness-detector directory
+npx tsx src/index.ts --test "cd ../output-diffing-utility && cargo test" --runs 10
+```
+
+This validates that all 99 tests are deterministic across multiple runs.
+
 ## Demo
 
 ![Output Diffing Utility Demo](/output-diffing-utility/demo.gif)
 
-**Try it yourself:**
-- <a href="https://asciinema.org/a/output-diff-demo" target="_blank">🎬 Interactive Terminal Recording</a>
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/output-diff-demo)**
 
-**Try it online:**
-<div>
-  <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
-    <strong>Try it online:</strong>
-  </span>
-  <a href="https://stackblitz.com/edit/output-diffing-utility-demo" style="display: inline-block; vertical-align: middle;">
-    <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"
-         alt="Open in StackBlitz"
-         style="vertical-align: middle;">
-  </a>
-</div>
+### Try it Locally
 
-*Demo recording automatically generated from test suite execution*
+```bash
+# Clone and build
+git clone https://github.com/tuulbelt/tuulbelt.git
+cd tuulbelt/output-diffing-utility
+cargo build --release
+
+# Run examples
+cargo run --example basic
+cargo run --example advanced
+
+# Compare two files
+echo '{"name": "Alice", "age": 30}' > old.json
+echo '{"name": "Bob", "age": 25}' > new.json
+cargo run --release old.json new.json
+
+# Try different output formats
+cargo run --release --format json old.json new.json
+cargo run --release --format summary old.json new.json
+```
+
+> **Note:** StackBlitz is not available for Rust projects. Clone the repository to try it locally.
+
+> Demo recordings are automatically generated via GitHub Actions.
 
 ## Supported Scenarios
 

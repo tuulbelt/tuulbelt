@@ -130,9 +130,31 @@ cargo fmt
 cargo build --release
 ```
 
+### Dogfooding
+
+We validate this tool's test reliability using **Test Flakiness Detector** (another Tuulbelt tool):
+
+```bash
+# Run the dogfood script
+./scripts/dogfood.sh
+
+# Or with custom run count
+./scripts/dogfood.sh 20
+```
+
+This ensures all 99 tests are deterministic across multiple runs.
+
 ## Examples
 
 See `examples/` directory for real-world usage patterns.
+
+## Demo
+
+![Demo](docs/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/output-diff-demo)**
+
+> Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/output-diffing-utility)
 
 ## License
 

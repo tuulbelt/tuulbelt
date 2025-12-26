@@ -1,6 +1,6 @@
 # Known Issues
 
-**Last Updated:** 2025-12-24
+**Last Updated:** 2025-12-26
 
 This document tracks known bugs, limitations, and cosmetic issues across the Tuulbelt project. Issues are categorized by severity and area.
 
@@ -20,52 +20,7 @@ This document tracks known bugs, limitations, and cosmetic issues across the Tuu
 
 ## 🟢 Low Priority Issues (Cosmetic)
 
-### 1. VitePress Card Icons Not Theme-Adaptive
-
-**Status:** Open
-**Severity:** Low (Cosmetic)
-**Area:** Documentation Site (VitePress)
-**Affects:** Home page feature cards
-
-**Description:**
-
-The 6 feature card icons on the VitePress home page (Single Problem Per Tool, Zero External Dependencies, Portable Interface, Composable, Independently Cloneable, Proven Implementation) do not invert colors when switching between light and dark themes. Icons remain black in both themes.
-
-**Location:**
-- File: `docs/index.md` (features section)
-- CSS: `docs/.vitepress/theme/custom.css`
-- Class: `.vp-feature-icon`
-
-**Attempted Fixes:**
-
-1. Applied `filter: invert(1)` to `.vp-feature-icon img` elements (failed)
-2. Applied `filter: invert(1)` to entire `.vp-feature-icon` container (failed)
-3. Used multiple selector variations: `html.dark`, `.dark`, `:root.dark` (failed)
-4. Added `!important` flags (failed)
-
-**Hypothesis:**
-
-VitePress may be loading these icons differently than expected (possibly as background images, or with conflicting styles that override our CSS). The icons might be embedded in a way that prevents CSS filters from applying.
-
-**Next Steps to Try:**
-
-1. Inspect actual rendered HTML in browser DevTools to see how VitePress loads these icons
-2. Check if VitePress has built-in icon theming that needs to be configured
-3. Try providing separate light/dark icon files and conditionally rendering
-4. Check VitePress documentation for theme customization of feature icons
-5. Consider using VitePress's built-in icon system if available
-
-**Workaround:**
-
-None currently. Icons are visible and functional, just not theme-adaptive.
-
-**References:**
-- VitePress theme docs: https://vitepress.dev/guide/extending-default-theme
-- Custom CSS: `docs/.vitepress/theme/custom.css` lines 34-42
-
----
-
-### 2. StackBlitz Badge Vertical Alignment
+### 1. StackBlitz Badge Vertical Alignment
 
 **Status:** Open
 **Severity:** Low (Cosmetic)
@@ -127,7 +82,24 @@ None currently. Badge is functional and mostly aligned, just not pixel-perfect.
 
 ## ✅ Resolved Issues
 
-**None yet.** (Issues will be moved here when fixed)
+### VitePress Card Icons Not Theme-Adaptive ✅
+
+**Resolved:** 2025-12-26
+**Severity:** Low (Cosmetic)
+**Area:** Documentation Site (VitePress)
+
+**Problem:** The 6 feature card icons on the VitePress home page did not invert colors when switching between light and dark themes.
+
+**Root Cause:** CSS was targeting `.vp-feature-icon` class, but VitePress actually uses `.VPImage` class within `.VPFeature` container.
+
+**Solution:** Updated `docs/.vitepress/theme/custom.css` to target the correct selectors:
+```css
+.VPFeature .VPImage {
+  filter: invert(1) !important; /* dark mode */
+}
+```
+
+**Commit:** `fb646ed` - "fix(docs): home page feature icons now adapt to dark/light theme"
 
 ---
 
@@ -211,15 +183,15 @@ git commit -m "fix: improve icon theming (partial fix for KNOWN_ISSUES.md #1)"
 
 ## Statistics
 
-**Total Issues:** 2
+**Total Issues:** 1
 **Critical:** 0
 **High:** 0
 **Medium:** 0
-**Low (Cosmetic):** 2
-**Resolved:** 0
+**Low (Cosmetic):** 1
+**Resolved:** 1
 
 **By Area:**
-- Documentation: 2
+- Documentation: 1
 - Core: 0
 - Testing: 0
 - CI/CD: 0
@@ -235,5 +207,5 @@ git commit -m "fix: improve icon theming (partial fix for KNOWN_ISSUES.md #1)"
 
 ---
 
-**Last Review:** 2025-12-24
+**Last Review:** 2025-12-26
 **Next Review:** When new issues discovered or existing issues resolved
