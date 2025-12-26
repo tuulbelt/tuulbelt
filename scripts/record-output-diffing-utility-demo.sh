@@ -54,17 +54,17 @@ sleep 1
 echo \"\"
 echo \"# 1. Text diff with color (unified format)\"
 sleep 0.5
-echo \"\$ $BIN --color /tmp/old.txt /tmp/new.txt\"
+echo \"\$ $BIN --color always /tmp/old.txt /tmp/new.txt\"
 sleep 0.5
-$BIN --color /tmp/old.txt /tmp/new.txt
+$BIN --color always /tmp/old.txt /tmp/new.txt
 sleep 2
 
 echo \"\"
 echo \"# 2. JSON diff with color (structural)\"
 sleep 0.5
-echo \"\$ $BIN --color /tmp/old.json /tmp/new.json\"
+echo \"\$ $BIN --color always /tmp/old.json /tmp/new.json\"
 sleep 0.5
-$BIN --color /tmp/old.json /tmp/new.json
+$BIN --color always /tmp/old.json /tmp/new.json
 sleep 2
 
 echo \"\"
