@@ -129,7 +129,7 @@ This tool demonstrates the power of composability by working seamlessly with oth
 
 **Test Flakiness Detector** - Validate test reliability:
 ```bash
-./scripts/dogfood.sh
+./scripts/dogfood-flaky.sh
 # Validates all 99 tests are deterministic
 ```
 
@@ -172,7 +172,7 @@ We dogfood this tool by composing it with other Tuulbelt tools:
 
 ```bash
 # Validate test reliability (Test Flakiness Detector)
-./scripts/dogfood.sh 20
+./scripts/dogfood-flaky.sh 20
 
 # Show progress tracking (CLI Progress Reporting)
 ./scripts/dogfood-progress.sh

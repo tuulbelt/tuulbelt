@@ -127,7 +127,7 @@ $ output-diff file1.json file2.json &
 **Implementation:**
 ```bash
 #!/bin/bash
-# scripts/dogfood.sh
+# scripts/dogfood-flaky.sh
 
 RUNS="${1:-10}"
 cd ../test-flakiness-detector
@@ -140,7 +140,7 @@ npx tsx src/index.ts \
 **Example:**
 ```
 $ cd output-diffing-utility
-$ bash scripts/dogfood.sh 20
+$ bash scripts/dogfood-flaky.sh 20
 ✅ NO FLAKINESS DETECTED (85 tests × 20 runs = 1,700 executions)
 ```
 
@@ -190,7 +190,7 @@ Final diff output returned to user
 - [x] ~~Integrate CLI Progress Reporting for large files (>1MB)~~ → `scripts/dogfood-progress.sh`
 - [x] ~~Integrate Cross-Platform Path Normalizer for input paths~~ → `scripts/dogfood-paths.sh`
 - [x] ~~Integrate File-Based Semaphore for cache locking~~ → `scripts/dogfood-semaphore.sh`
-- [x] ~~Add `scripts/dogfood.sh` for Test Flakiness Detector validation~~ → `scripts/dogfood.sh`
+- [x] ~~Add `scripts/dogfood-flaky.sh` for Test Flakiness Detector validation~~ → `scripts/dogfood-flaky.sh`
 - [x] ~~Document all integrations in README~~ → See "Composability with Tuulbelt Tools" section
 - [x] ~~Add examples showing multi-tool composition~~ → `scripts/dogfood-pipeline.sh`
 - [x] ~~Test graceful fallback when tools not available (standalone mode)~~ → All scripts check for tool availability

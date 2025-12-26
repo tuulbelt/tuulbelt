@@ -129,7 +129,7 @@ This tool demonstrates the power of composability by working seamlessly with oth
 
 **[Test Flakiness Detector](/tools/test-flakiness-detector/)** - Validate test reliability:
 ```bash
-./scripts/dogfood.sh
+./scripts/dogfood-flaky.sh
 # Validates all 99 tests are deterministic
 ```
 
