@@ -3,7 +3,7 @@
 use output_diffing_utility::{
     detect_file_type, diff_binary, diff_json, diff_text, format_as_json_report,
     format_binary_diff, format_compact, format_json_diff, format_side_by_side,
-    format_unified_diff, DiffConfig, DiffResult, FileType, OutputFormat,
+    format_unified_diff_with_color, DiffConfig, DiffResult, FileType, OutputFormat,
 };
 use std::env;
 use std::fs;
@@ -68,8 +68,8 @@ fn main() -> ExitCode {
     // Parse command-line options
     let mut format = OutputFormat::Unified;
     let mut force_type: Option<FileType> = None;
-    let mut context_lines = 3;
-    let mut _color = "auto"; // Color not yet implemented
+    let mut context_lines = usize::MAX; // Show all context by default
+    let mut color_when = "auto";
     let mut quiet = false;
     let mut output_file: Option<String> = None;
     let mut verbose = false;
@@ -157,7 +157,7 @@ fn main() -> ExitCode {
                     eprintln!("Error: --color requires a value");
                     return ExitCode::from(2);
                 }
-                _color = match args[i + 1].as_str() {
+                color_when = match args[i + 1].as_str() {
                     "auto" | "always" | "never" => &args[i + 1],
                     other => {
                         eprintln!(
@@ -244,11 +244,22 @@ fn main() -> ExitCode {
         }
     };
 
+    // Determine if color should be enabled
+    let use_color = match color_when {
+        "always" => true,
+        "never" => false,
+        "auto" => {
+            // Check if stdout is a terminal
+            std::io::IsTerminal::is_terminal(&std::io::stdout())
+        }
+        _ => false,
+    };
+
     // Create config
     let config = DiffConfig {
         context_lines,
         format,
-        color: false, // Color support not yet implemented
+        color: use_color,
         verbose,
     };
 
@@ -275,7 +286,7 @@ fn main() -> ExitCode {
 
             let formatted = match format {
                 OutputFormat::Unified => {
-                    format_unified_diff(&result, &files[0], &files[1])
+                    format_unified_diff_with_color(&result, &files[0], &files[1], config.color)
                 }
                 OutputFormat::Json => format_as_json_report(
                     &diff_result,

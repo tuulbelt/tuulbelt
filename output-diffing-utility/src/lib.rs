@@ -48,7 +48,7 @@ pub struct DiffConfig {
 impl Default for DiffConfig {
     fn default() -> Self {
         Self {
-            context_lines: 3,
+            context_lines: usize::MAX, // Show all context by default
             format: OutputFormat::Unified,
             color: false,
             verbose: false,
@@ -311,18 +311,19 @@ fn build_changes_from_lcs(
     old_lines: &[&str],
     new_lines: &[&str],
     lcs_indices: &[usize],
-    _context_lines: usize,
+    context_lines: usize,
 ) -> Vec<LineChange> {
-    let mut changes = Vec::new();
+    let mut all_changes = Vec::new();
     let mut old_idx = 0;
     let mut new_idx = 0;
     let mut lcs_iter = lcs_indices.iter().peekable();
 
+    // First pass: collect all changes
     while old_idx < old_lines.len() || new_idx < new_lines.len() {
         if let Some(&&lcs_new_idx) = lcs_iter.peek() {
             if new_idx == lcs_new_idx {
                 // This line is in LCS (unchanged)
-                changes.push(LineChange::Unchanged {
+                all_changes.push(LineChange::Unchanged {
                     line: new_lines[new_idx].to_string(),
                     old_line_num: old_idx + 1,
                     new_line_num: new_idx + 1,
@@ -342,14 +343,14 @@ fn build_changes_from_lcs(
 
         if !old_line_in_lcs && old_idx < old_lines.len() {
             // Line removed
-            changes.push(LineChange::Removed {
+            all_changes.push(LineChange::Removed {
                 line: old_lines[old_idx].to_string(),
                 old_line_num: old_idx + 1,
             });
             old_idx += 1;
         } else if new_idx < new_lines.len() {
             // Line added
-            changes.push(LineChange::Added {
+            all_changes.push(LineChange::Added {
                 line: new_lines[new_idx].to_string(),
                 new_line_num: new_idx + 1,
             });
@@ -359,7 +360,61 @@ fn build_changes_from_lcs(
         }
     }
 
-    changes
+    // Second pass: filter to only include context around changes
+    if context_lines == usize::MAX {
+        // Show all context
+        return all_changes;
+    }
+
+    let mut filtered_changes = Vec::new();
+    let len = all_changes.len();
+
+    // Find indices of actual changes (not unchanged)
+    let change_indices: Vec<usize> = all_changes
+        .iter()
+        .enumerate()
+        .filter_map(|(i, change)| {
+            if !matches!(change, LineChange::Unchanged { .. }) {
+                Some(i)
+            } else {
+                None
+            }
+        })
+        .collect();
+
+    if change_indices.is_empty() {
+        // No changes, return empty
+        return filtered_changes;
+    }
+
+    let mut included = vec![false; len];
+
+    // Mark changes and their context
+    for &change_idx in &change_indices {
+        // Mark the change itself
+        included[change_idx] = true;
+
+        // Mark context before
+        let start = change_idx.saturating_sub(context_lines);
+        for item in included.iter_mut().take(change_idx).skip(start) {
+            *item = true;
+        }
+
+        // Mark context after
+        let end = (change_idx + context_lines + 1).min(len);
+        for item in included.iter_mut().take(end).skip(change_idx + 1) {
+            *item = true;
+        }
+    }
+
+    // Build filtered list
+    for (i, change) in all_changes.into_iter().enumerate() {
+        if included[i] {
+            filtered_changes.push(change);
+        }
+    }
+
+    filtered_changes
 }
 
 /// Diff two files
@@ -379,6 +434,20 @@ pub fn diff_files(
 
 /// Format diff result as unified diff
 pub fn format_unified_diff(result: &TextDiffResult, file1_name: &str, file2_name: &str) -> String {
+    format_unified_diff_with_color(result, file1_name, file2_name, false)
+}
+
+/// Format unified diff with optional ANSI colors
+pub fn format_unified_diff_with_color(
+    result: &TextDiffResult,
+    file1_name: &str,
+    file2_name: &str,
+    color: bool,
+) -> String {
+    const RED: &str = "\x1b[31m";
+    const GREEN: &str = "\x1b[32m";
+    const RESET: &str = "\x1b[0m";
+
     let mut output = String::new();
 
     output.push_str(&format!("--- {}\n", file1_name));
@@ -390,10 +459,18 @@ pub fn format_unified_diff(result: &TextDiffResult, file1_name: &str, file2_name
                 output.push_str(&format!("  {}\n", line));
             }
             LineChange::Added { line, .. } => {
-                output.push_str(&format!("+ {}\n", line));
+                if color {
+                    output.push_str(&format!("{}+ {}{}\n", GREEN, line, RESET));
+                } else {
+                    output.push_str(&format!("+ {}\n", line));
+                }
             }
             LineChange::Removed { line, .. } => {
-                output.push_str(&format!("- {}\n", line));
+                if color {
+                    output.push_str(&format!("{}- {}{}\n", RED, line, RESET));
+                } else {
+                    output.push_str(&format!("- {}\n", line));
+                }
             }
         }
     }
