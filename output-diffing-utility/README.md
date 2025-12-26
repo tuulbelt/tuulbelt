@@ -232,11 +232,12 @@ These scripts demonstrate real-world tool composition and validate that all 99 t
 See `examples/` directory for real-world usage patterns.
 
 
+
 ## Demo
 
 ![Demo](docs/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/VAFo9KUKMlO78tKPZKxoDRdiO)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/J6n5759dZaYsY3JYlpikUDOX7)**
 
 > Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/output-diffing-utility)
 
