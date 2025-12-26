@@ -247,11 +247,12 @@ See `examples/` directory for real-world usage patterns.
 
 
 
+
 ## Demo
 
 ![Demo](docs/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/jFitZ77WJpSRMeoGK49TDhLQ1)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/D06dl3yWJ0NvfhXSQSytKRaGW)**
 
 > Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/output-diffing-utility)
 
