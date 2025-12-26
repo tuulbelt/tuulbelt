@@ -896,6 +896,346 @@ fn json_type_name(value: &JsonValue) -> &'static str {
     }
 }
 
+// ============================================================================
+// Additional Output Formats
+// ============================================================================
+
+/// Unified diff result type for formatting
+#[derive(Debug)]
+pub enum DiffResult {
+    /// Text diff result
+    Text(TextDiffResult),
+    /// Binary diff result
+    Binary(BinaryDiffResult),
+    /// JSON diff result
+    Json(JsonDiffResult),
+}
+
+impl DiffResult {
+    /// Check if files are identical
+    pub fn is_identical(&self) -> bool {
+        match self {
+            DiffResult::Text(r) => !r.has_changes(),
+            DiffResult::Binary(r) => r.is_identical(),
+            DiffResult::Json(r) => !r.has_changes(),
+        }
+    }
+
+    /// Get additions count
+    pub fn additions(&self) -> usize {
+        match self {
+            DiffResult::Text(r) => r.additions(),
+            DiffResult::Binary(r) => r.additions(),
+            DiffResult::Json(r) => r.additions(),
+        }
+    }
+
+    /// Get deletions count
+    pub fn deletions(&self) -> usize {
+        match self {
+            DiffResult::Text(r) => r.deletions(),
+            DiffResult::Binary(r) => r.deletions(),
+            DiffResult::Json(r) => r.deletions(),
+        }
+    }
+
+    /// Get modifications count
+    pub fn modifications(&self) -> usize {
+        match self {
+            DiffResult::Text(_) => 0, // Text doesn't track mods separately
+            DiffResult::Binary(r) => r.modifications(),
+            DiffResult::Json(r) => r.modifications(),
+        }
+    }
+
+    /// Get total changes count
+    pub fn total_changes(&self) -> usize {
+        self.additions() + self.deletions() + self.modifications()
+    }
+}
+
+/// Format diff result as JSON report
+pub fn format_as_json_report(
+    result: &DiffResult,
+    file1_name: &str,
+    file2_name: &str,
+    file_type: FileType,
+) -> String {
+    let type_str = match file_type {
+        FileType::Text => "text",
+        FileType::Json => "json",
+        FileType::Binary => "binary",
+    };
+
+    let mut output = String::from("{\n");
+    output.push_str("  \"format\": \"json\",\n");
+    output.push_str(&format!("  \"file1\": \"{}\",\n", escape_json_string(file1_name)));
+    output.push_str(&format!("  \"file2\": \"{}\",\n", escape_json_string(file2_name)));
+    output.push_str(&format!("  \"identical\": {},\n", result.is_identical()));
+    output.push_str(&format!("  \"file_type\": \"{}\",\n", type_str));
+
+    // Differences array
+    output.push_str("  \"differences\": [\n");
+
+    match result {
+        DiffResult::Text(text_result) => {
+            let mut first = true;
+            for change in &text_result.changes {
+                match change {
+                    LineChange::Added { new_line_num, line } => {
+                        if !first {
+                            output.push_str(",\n");
+                        }
+                        output.push_str(&format!(
+                            "    {{\n      \"type\": \"added\",\n      \"line\": {},\n      \"content\": \"{}\"\n    }}",
+                            new_line_num,
+                            escape_json_string(line)
+                        ));
+                        first = false;
+                    }
+                    LineChange::Removed { old_line_num, line } => {
+                        if !first {
+                            output.push_str(",\n");
+                        }
+                        output.push_str(&format!(
+                            "    {{\n      \"type\": \"removed\",\n      \"line\": {},\n      \"content\": \"{}\"\n    }}",
+                            old_line_num,
+                            escape_json_string(line)
+                        ));
+                        first = false;
+                    }
+                    LineChange::Unchanged { .. } => {}
+                }
+            }
+        }
+        DiffResult::Binary(binary_result) => {
+            let mut first = true;
+            for diff in &binary_result.differences {
+                if !first {
+                    output.push_str(",\n");
+                }
+                output.push_str(&format!(
+                    "    {{\n      \"offset\": {},\n      \"old_byte\": {},\n      \"new_byte\": {}\n    }}",
+                    diff.offset,
+                    diff.old_byte.map(|b| format!("{}", b)).unwrap_or_else(|| "null".to_string()),
+                    diff.new_byte.map(|b| format!("{}", b)).unwrap_or_else(|| "null".to_string())
+                ));
+                first = false;
+            }
+        }
+        DiffResult::Json(json_result) => {
+            let mut first = true;
+            for change in &json_result.changes {
+                if !first {
+                    output.push_str(",\n");
+                }
+                match change {
+                    JsonChange::Added { path, value } => {
+                        output.push_str(&format!(
+                            "    {{\n      \"type\": \"added\",\n      \"path\": \"{}\",\n      \"value\": \"{}\"\n    }}",
+                            escape_json_string(path),
+                            escape_json_string(&format_json_value(value))
+                        ));
+                    }
+                    JsonChange::Removed { path, value } => {
+                        output.push_str(&format!(
+                            "    {{\n      \"type\": \"removed\",\n      \"path\": \"{}\",\n      \"value\": \"{}\"\n    }}",
+                            escape_json_string(path),
+                            escape_json_string(&format_json_value(value))
+                        ));
+                    }
+                    JsonChange::Modified { path, old_value, new_value } => {
+                        output.push_str(&format!(
+                            "    {{\n      \"type\": \"modified\",\n      \"path\": \"{}\",\n      \"old_value\": \"{}\",\n      \"new_value\": \"{}\"\n    }}",
+                            escape_json_string(path),
+                            escape_json_string(&format_json_value(old_value)),
+                            escape_json_string(&format_json_value(new_value))
+                        ));
+                    }
+                    JsonChange::TypeChanged { path, old_value, new_value } => {
+                        output.push_str(&format!(
+                            "    {{\n      \"type\": \"type_changed\",\n      \"path\": \"{}\",\n      \"old_value\": \"{}\",\n      \"old_type\": \"{}\",\n      \"new_value\": \"{}\",\n      \"new_type\": \"{}\"\n    }}",
+                            escape_json_string(path),
+                            escape_json_string(&format_json_value(old_value)),
+                            json_type_name(old_value),
+                            escape_json_string(&format_json_value(new_value)),
+                            json_type_name(new_value)
+                        ));
+                    }
+                }
+                first = false;
+            }
+        }
+    }
+
+    output.push_str("\n  ],\n");
+
+    // Summary
+    output.push_str("  \"summary\": {\n");
+    output.push_str(&format!("    \"total_changes\": {},\n", result.total_changes()));
+    output.push_str(&format!("    \"additions\": {},\n", result.additions()));
+    output.push_str(&format!("    \"deletions\": {},\n", result.deletions()));
+    output.push_str(&format!("    \"modifications\": {}\n", result.modifications()));
+    output.push_str("  }\n");
+    output.push_str("}\n");
+
+    output
+}
+
+/// Escape string for JSON output
+fn escape_json_string(s: &str) -> String {
+    s.chars()
+        .map(|c| match c {
+            '"' => "\\\"".to_string(),
+            '\\' => "\\\\".to_string(),
+            '\n' => "\\n".to_string(),
+            '\r' => "\\r".to_string(),
+            '\t' => "\\t".to_string(),
+            c if c.is_control() => format!("\\u{:04x}", c as u32),
+            c => c.to_string(),
+        })
+        .collect()
+}
+
+/// Format diff result in compact mode (only changes)
+pub fn format_compact(result: &DiffResult) -> String {
+    let mut output = String::new();
+
+    match result {
+        DiffResult::Text(text_result) => {
+            if !text_result.has_changes() {
+                output.push_str("No differences\n");
+                return output;
+            }
+
+            for change in &text_result.changes {
+                match change {
+                    LineChange::Added { new_line_num, line } => {
+                        output.push_str(&format!("+ Line {}: {}\n", new_line_num, line));
+                    }
+                    LineChange::Removed { old_line_num, line } => {
+                        output.push_str(&format!("- Line {}: {}\n", old_line_num, line));
+                    }
+                    LineChange::Unchanged { .. } => {}
+                }
+            }
+
+            output.push_str(&format!(
+                "\n{} change{} ({} addition{}, {} deletion{})\n",
+                text_result.additions() + text_result.deletions(),
+                if text_result.additions() + text_result.deletions() == 1 { "" } else { "s" },
+                text_result.additions(),
+                if text_result.additions() == 1 { "" } else { "s" },
+                text_result.deletions(),
+                if text_result.deletions() == 1 { "" } else { "s" }
+            ));
+        }
+        DiffResult::Binary(binary_result) => {
+            if binary_result.is_identical() {
+                output.push_str("No differences\n");
+                return output;
+            }
+
+            for diff in &binary_result.differences {
+                output.push_str(&format!(
+                    "0x{:08x}: {} → {}\n",
+                    diff.offset,
+                    diff.old_byte.map(|b| format!("{:02x}", b)).unwrap_or_else(|| "--".to_string()),
+                    diff.new_byte.map(|b| format!("{:02x}", b)).unwrap_or_else(|| "--".to_string())
+                ));
+            }
+
+            output.push_str(&format!("\n{} byte{} differ\n", binary_result.differences.len(), if binary_result.differences.len() == 1 { "" } else { "s" }));
+        }
+        DiffResult::Json(json_result) => {
+            if !json_result.has_changes() {
+                output.push_str("No differences\n");
+                return output;
+            }
+
+            for change in &json_result.changes {
+                match change {
+                    JsonChange::Added { path, value } => {
+                        output.push_str(&format!("+ {}: {}\n", path, format_json_value(value)));
+                    }
+                    JsonChange::Removed { path, value } => {
+                        output.push_str(&format!("- {}: {}\n", path, format_json_value(value)));
+                    }
+                    JsonChange::Modified { path, old_value, new_value } => {
+                        output.push_str(&format!("~ {}: {} → {}\n", path, format_json_value(old_value), format_json_value(new_value)));
+                    }
+                    JsonChange::TypeChanged { path, old_value, new_value } => {
+                        output.push_str(&format!("! {}: {} ({}) → {} ({})\n", path, format_json_value(old_value), json_type_name(old_value), format_json_value(new_value), json_type_name(new_value)));
+                    }
+                }
+            }
+
+            output.push_str(&format!(
+                "\n{} change{} ({} addition{}, {} deletion{}, {} modification{})\n",
+                json_result.changes.len(),
+                if json_result.changes.len() == 1 { "" } else { "s" },
+                json_result.additions(),
+                if json_result.additions() == 1 { "" } else { "s" },
+                json_result.deletions(),
+                if json_result.deletions() == 1 { "" } else { "s" },
+                json_result.modifications(),
+                if json_result.modifications() == 1 { "" } else { "s" }
+            ));
+        }
+    }
+
+    output
+}
+
+/// Format diff result in side-by-side mode
+pub fn format_side_by_side(result: &DiffResult, file1_name: &str, file2_name: &str, width: usize) -> String {
+    let half_width = (width - 3) / 2;
+    let mut output = String::new();
+
+    // Header
+    output.push_str(&format!("{:<width$} | {}\n", file1_name, file2_name, width = half_width));
+    output.push_str(&format!("{:-<width$}-+-{:-<width$}\n", "", "", width = half_width));
+
+    match result {
+        DiffResult::Text(text_result) => {
+            for change in &text_result.changes {
+                match change {
+                    LineChange::Unchanged { line, .. } => {
+                        let truncated = truncate_to_width(line, half_width);
+                        output.push_str(&format!("{:<width$} | {}\n", truncated, truncated, width = half_width));
+                    }
+                    LineChange::Added { line, .. } => {
+                        let truncated = truncate_to_width(line, half_width);
+                        output.push_str(&format!("{:<width$} > {}\n", "", truncated, width = half_width));
+                    }
+                    LineChange::Removed { line, .. } => {
+                        let truncated = truncate_to_width(line, half_width);
+                        output.push_str(&format!("{:<width$} < {}\n", truncated, "", width = half_width));
+                    }
+                }
+            }
+        }
+        DiffResult::Binary(_) => {
+            output.push_str("Side-by-side view not supported for binary files\n");
+        }
+        DiffResult::Json(_) => {
+            output.push_str("Side-by-side view not supported for JSON diffs\n");
+            output.push_str("Use --format compact or --format json instead\n");
+        }
+    }
+
+    output
+}
+
+/// Truncate string to fit within width
+fn truncate_to_width(s: &str, width: usize) -> String {
+    if s.len() <= width {
+        s.to_string()
+    } else {
+        format!("{}...", &s[..width.saturating_sub(3)])
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

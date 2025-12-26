@@ -32,7 +32,8 @@ fn test_cli_help() {
 
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
-    assert!(stdout.contains("Usage: output-diff"));
+    assert!(stdout.contains("USAGE:"));
+    assert!(stdout.contains("output-diff"));
     assert!(stdout.contains("Semantic diff tool"));
 }
 
