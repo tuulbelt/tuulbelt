@@ -1,9 +1,10 @@
 //! CLI entry point for output-diff
 
 use output_diffing_utility::{
-    detect_file_type, diff_binary, diff_json, diff_text, format_as_json_report, format_binary_diff,
-    format_compact, format_json_diff, format_side_by_side, format_unified_diff_with_color,
-    DiffConfig, DiffResult, FileType, OutputFormat,
+    detect_file_type, diff_binary, diff_json, diff_text, format_as_json_report,
+    format_binary_diff_with_color, format_compact, format_json_diff_with_color,
+    format_side_by_side, format_unified_diff_with_color, DiffConfig, DiffResult, FileType,
+    OutputFormat,
 };
 use std::env;
 use std::fs;
@@ -374,7 +375,7 @@ fn main() -> ExitCode {
             let diff_result = DiffResult::Binary(result.clone());
 
             let formatted = match format {
-                OutputFormat::Unified => format_binary_diff(&result),
+                OutputFormat::Unified => format_binary_diff_with_color(&result, config.color),
                 OutputFormat::Json => {
                     format_as_json_report(&diff_result, &files[0], &files[1], FileType::Binary)
                 }
@@ -408,7 +409,7 @@ fn main() -> ExitCode {
                     let diff_result = DiffResult::Json(result.clone());
 
                     let formatted = match format {
-                        OutputFormat::Unified => format_json_diff(&result),
+                        OutputFormat::Unified => format_json_diff_with_color(&result, config.color),
                         OutputFormat::Json => format_as_json_report(
                             &diff_result,
                             &files[0],

@@ -605,6 +605,16 @@ pub fn diff_binary_files(
 
 /// Format binary diff result as hex dump
 pub fn format_binary_diff(result: &BinaryDiffResult) -> String {
+    format_binary_diff_with_color(result, false)
+}
+
+/// Format binary diff with optional ANSI colors
+pub fn format_binary_diff_with_color(result: &BinaryDiffResult, color: bool) -> String {
+    const RED: &str = "\x1b[31m";
+    const GREEN: &str = "\x1b[32m";
+    const CYAN: &str = "\x1b[36m";
+    const RESET: &str = "\x1b[0m";
+
     let mut output = String::new();
 
     output.push_str(&format!(
@@ -618,7 +628,12 @@ pub fn format_binary_diff(result: &BinaryDiffResult) -> String {
     }
 
     output.push_str(&format!("\n{} differences:\n\n", result.differences.len()));
-    output.push_str("Offset     | Old  | New\n");
+
+    if color {
+        output.push_str(&format!("{}Offset     | Old  | New{}\n", CYAN, RESET));
+    } else {
+        output.push_str("Offset     | Old  | New\n");
+    }
     output.push_str("-----------|------|------\n");
 
     for diff in &result.differences {
@@ -632,10 +647,30 @@ pub fn format_binary_diff(result: &BinaryDiffResult) -> String {
             .map(|b| format!("{:02x}", b))
             .unwrap_or_else(|| "--  ".to_string());
 
-        output.push_str(&format!(
-            "0x{:08x} | {}   | {}\n",
-            diff.offset, old_hex, new_hex
-        ));
+        if color {
+            // Color the offset in cyan, old bytes in red, new bytes in green
+            let old_colored = if diff.old_byte.is_some() {
+                format!("{}{}{}  ", RED, old_hex, RESET)
+            } else {
+                format!("{}--  {}", RED, RESET)
+            };
+
+            let new_colored = if diff.new_byte.is_some() {
+                format!("{}{}  {}", GREEN, new_hex, RESET)
+            } else {
+                format!("{}--  {}", GREEN, RESET)
+            };
+
+            output.push_str(&format!(
+                "{}0x{:08x}{} | {} | {}\n",
+                CYAN, diff.offset, RESET, old_colored, new_colored
+            ));
+        } else {
+            output.push_str(&format!(
+                "0x{:08x} | {}   | {}\n",
+                diff.offset, old_hex, new_hex
+            ));
+        }
     }
 
     output
@@ -880,6 +915,17 @@ fn compare_json_values(
 
 /// Format JSON diff result as human-readable output
 pub fn format_json_diff(result: &JsonDiffResult) -> String {
+    format_json_diff_with_color(result, false)
+}
+
+/// Format JSON diff with optional ANSI colors
+pub fn format_json_diff_with_color(result: &JsonDiffResult, color: bool) -> String {
+    const RED: &str = "\x1b[31m";
+    const GREEN: &str = "\x1b[32m";
+    const YELLOW: &str = "\x1b[33m";
+    const CYAN: &str = "\x1b[36m";
+    const RESET: &str = "\x1b[0m";
+
     let mut output = String::new();
 
     if result.changes.is_empty() {
@@ -896,44 +942,102 @@ pub fn format_json_diff(result: &JsonDiffResult) -> String {
     for change in &result.changes {
         match change {
             JsonChange::Added { path, value } => {
-                output.push_str(&format!(
-                    "+ Added at '{}': {}\n",
-                    path,
-                    format_json_value(value)
-                ));
+                if color {
+                    output.push_str(&format!(
+                        "{}+ Added at '{}{}{}': {}{}\n",
+                        GREEN,
+                        CYAN,
+                        path,
+                        GREEN,
+                        format_json_value(value),
+                        RESET
+                    ));
+                } else {
+                    output.push_str(&format!(
+                        "+ Added at '{}': {}\n",
+                        path,
+                        format_json_value(value)
+                    ));
+                }
             }
             JsonChange::Removed { path, value } => {
-                output.push_str(&format!(
-                    "- Removed at '{}': {}\n",
-                    path,
-                    format_json_value(value)
-                ));
+                if color {
+                    output.push_str(&format!(
+                        "{}- Removed at '{}{}{}': {}{}\n",
+                        RED,
+                        CYAN,
+                        path,
+                        RED,
+                        format_json_value(value),
+                        RESET
+                    ));
+                } else {
+                    output.push_str(&format!(
+                        "- Removed at '{}': {}\n",
+                        path,
+                        format_json_value(value)
+                    ));
+                }
             }
             JsonChange::Modified {
                 path,
                 old_value,
                 new_value,
             } => {
-                output.push_str(&format!(
-                    "~ Modified at '{}':\n  Old: {}\n  New: {}\n",
-                    path,
-                    format_json_value(old_value),
-                    format_json_value(new_value)
-                ));
+                if color {
+                    output.push_str(&format!(
+                        "{}~ Modified at '{}{}{}':\n  {}Old: {}{}\n  {}New: {}{}\n",
+                        YELLOW,
+                        CYAN,
+                        path,
+                        RESET,
+                        RED,
+                        format_json_value(old_value),
+                        RESET,
+                        GREEN,
+                        format_json_value(new_value),
+                        RESET
+                    ));
+                } else {
+                    output.push_str(&format!(
+                        "~ Modified at '{}':\n  Old: {}\n  New: {}\n",
+                        path,
+                        format_json_value(old_value),
+                        format_json_value(new_value)
+                    ));
+                }
             }
             JsonChange::TypeChanged {
                 path,
                 old_value,
                 new_value,
             } => {
-                output.push_str(&format!(
-                    "! Type changed at '{}':\n  Old: {} ({})\n  New: {} ({})\n",
-                    path,
-                    format_json_value(old_value),
-                    json_type_name(old_value),
-                    format_json_value(new_value),
-                    json_type_name(new_value)
-                ));
+                if color {
+                    output.push_str(&format!(
+                        "{}! Type changed at '{}{}{}':\n  {}Old: {} ({}){}\n  {}New: {} ({}){}\n",
+                        YELLOW,
+                        CYAN,
+                        path,
+                        RESET,
+                        RED,
+                        format_json_value(old_value),
+                        json_type_name(old_value),
+                        RESET,
+                        GREEN,
+                        format_json_value(new_value),
+                        json_type_name(new_value),
+                        RESET
+                    ));
+                } else {
+                    output.push_str(&format!(
+                        "! Type changed at '{}':\n  Old: {} ({})\n  New: {} ({})\n",
+                        path,
+                        format_json_value(old_value),
+                        json_type_name(old_value),
+                        format_json_value(new_value),
+                        json_type_name(new_value)
+                    ));
+                }
             }
         }
     }
