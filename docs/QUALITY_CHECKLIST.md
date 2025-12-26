@@ -12,6 +12,8 @@ Run these checks **before committing any code**:
 
 ### Universal Checks (All Languages)
 
+- [ ] **Branch synced with main**: Run `git fetch origin main && git rev-list --count HEAD..origin/main` (should be 0)
+  - If behind, run: `git pull --rebase origin main`
 - [ ] **Build succeeds**: `npm run build` or `cargo build`
 - [ ] **All tests pass**: `npm test` or `cargo test`
 - [ ] **No lint errors**: Language-specific linters pass
@@ -479,6 +481,31 @@ const counterFile = join(tmpDir, `counter-${Date.now()}-${testId}.txt`);
 // Shared filename
 const counterFile = join(tmpDir, 'counter.txt');  // Collision!
 ```
+
+---
+
+#### Merge Conflicts After CI Updates (2025-12-26)
+
+**Symptom:**
+After merging a PR, CI runs update files (like demo.gif). Your next commit from a feature branch creates merge conflicts.
+
+**Root Cause:**
+CI workflows commit changes to main (demo recordings, documentation updates). Feature branches diverge from main.
+
+**Prevention:**
+```bash
+# Before making changes, always sync with main
+git fetch origin main
+BEHIND=$(git rev-list --count HEAD..origin/main)
+if [ "$BEHIND" != "0" ]; then
+  echo "Behind by $BEHIND commits - rebasing..."
+  git pull --rebase origin main
+fi
+```
+
+**Verification:**
+- `/quality-check` now automatically checks if branch is behind main
+- Run `git rev-list --count HEAD..origin/main` - should return 0
 
 ---
 
