@@ -119,7 +119,9 @@ See [`DOGFOODING_STRATEGY.md`](https://github.com/tuulbelt/tuulbelt/blob/main/st
 
 ## Demo
 
-<!-- Demo will be generated automatically by GitHub Actions -->
+![Structured Error Handler Demo](/structured-error-handler/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/PLACEHOLDER)**
 
 ### Try it Locally
 
