@@ -1,8 +1,8 @@
 # Session Handoff
 
 **Last Updated:** 2025-12-25
-**Session:** File-Based Semaphore Implementation Complete
-**Status:** ✅ Tool #4 Complete - Ready for Next Tool
+**Session:** File-Based Semaphore CLI Tests Added
+**Status:** ✅ Tool #4 Complete with Full Test Coverage - Ready for Next Tool
 
 ---
 
@@ -20,21 +20,28 @@
      - RAII-style guards for automatic release
      - Both CLI and library interfaces
    - Zero runtime dependencies (std only)
-   - 31 tests passing (16 unit + 11 integration + 4 doctests)
+   - **85 tests passing** (31 unit + 39 CLI + 11 integration + 4 doctests)
    - Zero clippy warnings
 
-2. **Documentation Complete**
+2. **CLI Test Coverage Added** ✅ (This Session)
+   - Created `tests/cli.rs` with 39 comprehensive CLI tests
+   - Covers all commands: help, version, try, acquire, release, status, wait
+   - Edge cases: special chars, spaces in tags, stale lock recovery, timeouts
+   - Fixed rustfmt formatting issue caught by CI
+
+3. **Documentation Complete**
    - Comprehensive README.md with API reference
    - SPEC.md with lock file format specification
    - VitePress docs (7 pages in docs/tools/file-based-semaphore/)
    - Two examples (basic.rs and concurrent.rs)
    - Updated root README.md (4/33 tools, 12% progress)
    - Updated docs/tools/index.md
+   - All docs updated with correct test count (85)
 
-3. **Quality Verified**
-   - `cargo test` - all 31 tests pass
+4. **Quality Verified**
+   - `cargo test` - all 85 tests pass
    - `cargo clippy -- -D warnings` - zero warnings
-   - `cargo fmt` - formatted
+   - `cargo fmt` - formatted (fixed CI failure)
    - `npm run docs:build` - builds without errors
    - Zero runtime dependencies verified
 
@@ -43,6 +50,7 @@
 **Implementation:**
 - `file-based-semaphore/src/lib.rs` - Core library (Semaphore, SemaphoreGuard, SemaphoreConfig, LockInfo, SemaphoreError)
 - `file-based-semaphore/src/main.rs` - CLI interface (try, acquire, release, status, wait commands)
+- `file-based-semaphore/tests/cli.rs` - 39 CLI integration tests
 - `file-based-semaphore/tests/integration.rs` - 11 integration tests
 - `file-based-semaphore/examples/` - basic.rs and concurrent.rs
 
@@ -66,7 +74,7 @@ tag=<optional-identifier>
 | Test Flakiness Detector | TypeScript | v0.1.0 | 148 | ✅ |
 | CLI Progress Reporting | TypeScript | v0.1.0 | 125 | ✅ |
 | Cross-Platform Path Normalizer | TypeScript | v0.1.0 | 145 | ✅ |
-| **File-Based Semaphore** | **Rust** | **v0.1.0** | **31** | ✅ |
+| **File-Based Semaphore** | **Rust** | **v0.1.0** | **85** | ✅ |
 
 **Language Distribution:** 3 TypeScript, 1 Rust
 

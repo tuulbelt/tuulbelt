@@ -13,6 +13,11 @@ on:
   workflow_dispatch:
     # Allow manual trigger
 
+# Cancel in-progress runs when new commits are pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   discover-tools:
     name: Discover Tools
@@ -101,22 +106,55 @@ jobs:
         working-directory: ${{ matrix.tool }}
         run: npm ci
 
+      - name: Check TypeScript (fail fast)
+        id: typecheck
+        working-directory: ${{ matrix.tool }}
+        run: npx tsc --noEmit
+
       - name: Run tests
+        id: test
         working-directory: ${{ matrix.tool }}
         run: npm test
 
       - name: Build
+        id: build
         working-directory: ${{ matrix.tool }}
         run: npm run build
 
-      - name: Report test results
+      - name: Get tool info
+        id: info
+        if: always()
+        working-directory: ${{ matrix.tool }}
+        run: |
+          VERSION=$(jq -r '.version' package.json 2>/dev/null || echo "unknown")
+          TEST_COUNT=$(grep -r "^test(" test/ 2>/dev/null | wc -l || echo "0")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "test-count=$TEST_COUNT" >> $GITHUB_OUTPUT
+
+      - name: Save test result
         if: always()
         run: |
-          if [ $? -eq 0 ]; then
-            echo "✅ ${{ matrix.tool }} - Tests passed"
-          else
-            echo "❌ ${{ matrix.tool }} - Tests failed"
-          fi
+          mkdir -p results
+          cat > results/${{ matrix.tool }}.json << EOF
+          {
+            "tool": "${{ matrix.tool }}",
+            "language": "TypeScript",
+            "version": "${{ steps.info.outputs.version }}",
+            "testCount": ${{ steps.info.outputs.test-count }},
+            "typecheck": "${{ steps.typecheck.outcome }}",
+            "tests": "${{ steps.test.outcome }}",
+            "build": "${{ steps.build.outcome }}",
+            "status": "${{ job.status }}"
+          }
+          EOF
+
+      - name: Upload result artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: result-${{ matrix.tool }}
+          path: results/${{ matrix.tool }}.json
+          retention-days: 1
 
   test-rust-tools:
     name: Test Rust Tools
@@ -132,48 +170,71 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          profile: minimal
           components: clippy, rustfmt
-          override: true
 
       - name: Cache Cargo
-        uses: actions/cache@v3
+        uses: Swatinem/rust-cache@v2
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            ${{ matrix.tool }}/target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          workspaces: "${{ matrix.tool }} -> target"
+          shared-key: "rust-${{ runner.os }}"
 
-      - name: Run tests
-        working-directory: ${{ matrix.tool }}
-        run: cargo test --verbose
-
-      - name: Run clippy
-        working-directory: ${{ matrix.tool }}
-        run: cargo clippy -- -D warnings
-
-      - name: Check formatting
+      - name: Check formatting (fail fast)
+        id: fmt
         working-directory: ${{ matrix.tool }}
         run: cargo fmt -- --check
 
+      - name: Run clippy (fail fast)
+        id: clippy
+        working-directory: ${{ matrix.tool }}
+        run: cargo clippy -- -D warnings
+
+      - name: Run tests
+        id: test
+        working-directory: ${{ matrix.tool }}
+        run: cargo test --verbose
+
       - name: Build release
+        id: build
         working-directory: ${{ matrix.tool }}
         run: cargo build --release
 
-      - name: Report test results
+      - name: Get tool info
+        id: info
+        if: always()
+        working-directory: ${{ matrix.tool }}
+        run: |
+          VERSION=$(grep "^version" Cargo.toml | head -1 | sed 's/.*"\(.*\)".*/\1/' || echo "unknown")
+          TEST_COUNT=$(grep -r "#\[test\]" src/ tests/ 2>/dev/null | wc -l || echo "0")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "test-count=$TEST_COUNT" >> $GITHUB_OUTPUT
+
+      - name: Save test result
         if: always()
         run: |
-          if [ $? -eq 0 ]; then
-            echo "✅ ${{ matrix.tool }} - Tests passed"
-          else
-            echo "❌ ${{ matrix.tool }} - Tests failed"
-          fi
+          mkdir -p results
+          cat > results/${{ matrix.tool }}.json << EOF
+          {
+            "tool": "${{ matrix.tool }}",
+            "language": "Rust",
+            "version": "${{ steps.info.outputs.version }}",
+            "testCount": ${{ steps.info.outputs.test-count }},
+            "fmt": "${{ steps.fmt.outcome }}",
+            "clippy": "${{ steps.clippy.outcome }}",
+            "tests": "${{ steps.test.outcome }}",
+            "build": "${{ steps.build.outcome }}",
+            "status": "${{ job.status }}"
+          }
+          EOF
+
+      - name: Upload result artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: result-${{ matrix.tool }}
+          path: results/${{ matrix.tool }}.json
+          retention-days: 1
 
   summary:
     name: Test Summary
@@ -181,11 +242,58 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Check test results
+      - name: Download all result artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: result-*
+          path: results
+          merge-multiple: true
+
+      - name: Combine results
+        id: combine
+        run: |
+          # Combine all JSON results into a single file
+          echo '{"timestamp": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'", "results": [' > test-results.json
+
+          first=true
+          for file in results/*.json; do
+            if [ -f "$file" ]; then
+              if [ "$first" = true ]; then
+                first=false
+              else
+                echo "," >> test-results.json
+              fi
+              cat "$file" >> test-results.json
+            fi
+          done
+
+          echo ']}' >> test-results.json
+
+          # Count passing/failing
+          PASSING=$(jq '[.results[] | select(.status == "success")] | length' test-results.json)
+          FAILING=$(jq '[.results[] | select(.status != "success")] | length' test-results.json)
+          TOTAL=$(jq '.results | length' test-results.json)
+
+          echo "passing=$PASSING" >> $GITHUB_OUTPUT
+          echo "failing=$FAILING" >> $GITHUB_OUTPUT
+          echo "total=$TOTAL" >> $GITHUB_OUTPUT
+
+          echo "Results: $PASSING passing, $FAILING failing, $TOTAL total"
+
+      - name: Upload combined results artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results.json
+          retention-days: 30
+
+      - name: Create summary
         run: |
           echo "## Test All Tools Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Total Tools:** ${{ needs.discover-tools.outputs.tool-count }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Passing:** ${{ steps.combine.outputs.passing }} ✅" >> $GITHUB_STEP_SUMMARY
+          echo "**Failing:** ${{ steps.combine.outputs.failing }} ❌" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           # TypeScript results

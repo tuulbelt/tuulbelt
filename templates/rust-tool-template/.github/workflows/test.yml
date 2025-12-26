@@ -3,8 +3,17 @@ name: Test
 on:
   push:
     branches: [main]
+    # Only run when this tool's files change (in monorepo context)
+    # Uncomment and adjust when used in monorepo:
+    # paths: ['<tool-name>/**']
   pull_request:
     branches: [main]
+    # paths: ['<tool-name>/**']
+
+# Cancel in-progress runs when new commits are pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   CARGO_TERM_COLOR: always
@@ -25,10 +34,10 @@ jobs:
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
 
-      - name: Check formatting
+      - name: Check formatting (fail fast)
         run: cargo fmt --all -- --check
 
-      - name: Run clippy
+      - name: Run clippy (fail fast)
         run: cargo clippy --all-targets --all-features -- -D warnings
 
       - name: Run tests
@@ -37,20 +46,15 @@ jobs:
       - name: Build release
         run: cargo build --release
 
-  # Test on multiple platforms
-  cross-platform:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Run tests
-        run: cargo test
+  # Cross-platform testing (optional - enable for releases)
+  # Uncomment for comprehensive testing across platforms
+  # cross-platform:
+  #   strategy:
+  #     matrix:
+  #       os: [ubuntu-latest, macos-latest, windows-latest]
+  #   runs-on: ${{ matrix.os }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: dtolnay/rust-toolchain@stable
+  #     - uses: Swatinem/rust-cache@v2
+  #     - run: cargo test

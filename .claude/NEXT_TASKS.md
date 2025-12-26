@@ -57,7 +57,8 @@ See `README.md` for complete roadmap (30 remaining tools).
 
 - ✅ v0.1.0 stable (First Rust tool!)
 - ✅ Dogfooding: Can be validated by test-flakiness-detector
-- 31 tests passing (16 unit + 11 integration + 4 doctests)
+- ✅ Full CLI test coverage added
+- 85 tests passing (31 unit + 39 CLI + 11 integration + 4 doctests)
 - Zero clippy warnings
 
 ---
@@ -100,6 +101,7 @@ See `docs/KNOWN_ISSUES.md` for tracked issues.
 - ✅ **Asciinema placeholders** - Added placeholder link for cross-platform-path-normalizer (GitHub Actions will populate)
 - ✅ **Documentation consistency achieved** - All tools have matching structure, quality, and Demo sections
 - ✅ **File-Based Semaphore docs** - README, SPEC.md, 7 VitePress pages, 2 examples 🆕
+- ✅ **File-Based Semaphore CLI tests** - 39 CLI tests added, docs updated (85 total tests) 🆕
 
 ### Pending
 - [ ] Add "Contributing" guide page to VitePress (currently just links to CONTRIBUTING.md)

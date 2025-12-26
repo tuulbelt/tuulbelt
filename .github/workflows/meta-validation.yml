@@ -3,8 +3,29 @@ name: Meta Validation
 on:
   push:
     branches: [main]
+    paths:
+      - 'templates/**'
+      - 'docs/*.md'
+      - 'README.md'
+      - 'PRINCIPLES.md'
+      - 'CONTRIBUTING.md'
+      - 'ARCHITECTURE.md'
+      - '.github/workflows/meta-validation.yml'
   pull_request:
     branches: [main]
+    paths:
+      - 'templates/**'
+      - 'docs/*.md'
+      - 'README.md'
+      - 'PRINCIPLES.md'
+      - 'CONTRIBUTING.md'
+      - 'ARCHITECTURE.md'
+      - '.github/workflows/meta-validation.yml'
+
+# Cancel in-progress runs when new commits are pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   validate-structure:
