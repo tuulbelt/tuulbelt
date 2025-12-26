@@ -284,7 +284,8 @@ fn compute_lcs<T: PartialEq>(a: &[T], b: &[T]) -> Vec<usize> {
     }
 
     // Backtrack to find LCS indices in b
-    let mut lcs_indices = Vec::new();
+    // Pre-allocate: LCS length is at most min(m, n)
+    let mut lcs_indices = Vec::with_capacity(m.min(n));
     let mut i = m;
     let mut j = n;
 
@@ -311,7 +312,8 @@ fn build_changes_from_lcs(
     lcs_indices: &[usize],
     context_lines: usize,
 ) -> Vec<LineChange> {
-    let mut all_changes = Vec::new();
+    // Pre-allocate: worst case is all lines changed
+    let mut all_changes = Vec::with_capacity(old_lines.len() + new_lines.len());
     let mut old_idx = 0;
     let mut new_idx = 0;
     let mut lcs_iter = lcs_indices.iter().peekable();
@@ -364,7 +366,8 @@ fn build_changes_from_lcs(
         return all_changes;
     }
 
-    let mut filtered_changes = Vec::new();
+    // Pre-allocate: filtered result is at most the size of all_changes
+    let mut filtered_changes = Vec::with_capacity(all_changes.len());
     let len = all_changes.len();
 
     // Find indices of actual changes (not unchanged)

@@ -11,6 +11,10 @@ use std::io::Write;
 use std::path::Path;
 use std::process::ExitCode;
 
+/// Default maximum file size: 100 MB
+/// Prevents memory exhaustion on very large files
+const DEFAULT_MAX_FILE_SIZE: u64 = 100 * 1024 * 1024;
+
 fn print_help() {
     println!(
         r#"output-diff {}
@@ -28,6 +32,7 @@ OPTIONS:
     -t, --type <TYPE>           Force file type [default: auto] [possible: text, json, binary, auto]
     -c, --context <LINES>       Context lines around diffs [default: 3]
         --color <WHEN>          Colored output [default: auto] [possible: auto, always, never]
+        --max-size <BYTES>      Maximum file size in bytes [default: 104857600 (100MB)]
     -q, --quiet                 Suppress output, only exit code
     -o, --output <FILE>         Write output to file
     -v, --verbose               Verbose output
@@ -70,6 +75,7 @@ fn main() -> ExitCode {
     let mut force_type: Option<FileType> = None;
     let mut context_lines = usize::MAX; // Show all context by default
     let mut color_when = "auto";
+    let mut max_file_size = DEFAULT_MAX_FILE_SIZE;
     let mut quiet = false;
     let mut output_file: Option<String> = None;
     let mut verbose = false;
@@ -169,6 +175,20 @@ fn main() -> ExitCode {
                 };
                 i += 2;
             }
+            "--max-size" => {
+                if i + 1 >= args.len() {
+                    eprintln!("Error: --max-size requires a value");
+                    return ExitCode::from(2);
+                }
+                match args[i + 1].parse::<u64>() {
+                    Ok(size) => max_file_size = size,
+                    Err(_) => {
+                        eprintln!("Error: --max-size must be a number");
+                        return ExitCode::from(2);
+                    }
+                }
+                i += 2;
+            }
             "-o" | "--output" => {
                 if i + 1 >= args.len() {
                     eprintln!("Error: --output requires a value");
@@ -200,6 +220,50 @@ fn main() -> ExitCode {
 
     let file1 = Path::new(&files[0]);
     let file2 = Path::new(&files[1]);
+
+    // Check file sizes before reading to prevent memory exhaustion
+    let size1 = match fs::metadata(file1) {
+        Ok(meta) => meta.len(),
+        Err(e) => {
+            eprintln!("Error accessing {}: {}", file1.display(), e);
+            return ExitCode::from(2);
+        }
+    };
+
+    let size2 = match fs::metadata(file2) {
+        Ok(meta) => meta.len(),
+        Err(e) => {
+            eprintln!("Error accessing {}: {}", file2.display(), e);
+            return ExitCode::from(2);
+        }
+    };
+
+    if size1 > max_file_size {
+        eprintln!(
+            "Error: File {} ({} bytes) exceeds maximum size ({} bytes)",
+            file1.display(),
+            size1,
+            max_file_size
+        );
+        eprintln!("Use --max-size to increase the limit");
+        return ExitCode::from(2);
+    }
+
+    if size2 > max_file_size {
+        eprintln!(
+            "Error: File {} ({} bytes) exceeds maximum size ({} bytes)",
+            file2.display(),
+            size2,
+            max_file_size
+        );
+        eprintln!("Use --max-size to increase the limit");
+        return ExitCode::from(2);
+    }
+
+    if verbose {
+        eprintln!("[DEBUG] File sizes: {} = {} bytes, {} = {} bytes",
+            file1.display(), size1, file2.display(), size2);
+    }
 
     // Read files
     let content1 = match fs::read(file1) {
