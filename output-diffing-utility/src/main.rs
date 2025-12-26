@@ -1,8 +1,8 @@
 //! CLI entry point for output-diff
 
 use output_diffing_utility::{
-    detect_file_type, diff_binary, diff_text, format_binary_diff, format_unified_diff,
-    DiffConfig, FileType,
+    detect_file_type, diff_binary, diff_json, diff_text, format_binary_diff, format_json_diff,
+    format_unified_diff, DiffConfig, FileType,
 };
 use std::env;
 use std::fs;
@@ -169,8 +169,40 @@ fn main() -> ExitCode {
             }
         }
         FileType::Json => {
-            eprintln!("JSON diff not yet implemented");
-            ExitCode::from(2)
+            // Convert to UTF-8 strings
+            let text1 = match std::str::from_utf8(&content1) {
+                Ok(t) => t,
+                Err(_) => {
+                    eprintln!("Error: File 1 is not valid UTF-8");
+                    return ExitCode::from(2);
+                }
+            };
+            let text2 = match std::str::from_utf8(&content2) {
+                Ok(t) => t,
+                Err(_) => {
+                    eprintln!("Error: File 2 is not valid UTF-8");
+                    return ExitCode::from(2);
+                }
+            };
+
+            match diff_json(text1, text2, &config) {
+                Ok(result) => {
+                    if result.has_changes() {
+                        let formatted = format_json_diff(&result);
+                        print!("{}", formatted);
+                        ExitCode::from(1)
+                    } else {
+                        if verbose {
+                            println!("Files are identical");
+                        }
+                        ExitCode::SUCCESS
+                    }
+                }
+                Err(e) => {
+                    eprintln!("Error parsing JSON: {}", e);
+                    ExitCode::from(2)
+                }
+            }
         }
     }
 }

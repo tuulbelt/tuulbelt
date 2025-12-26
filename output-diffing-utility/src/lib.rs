@@ -24,6 +24,9 @@
 //! assert!(result.has_changes());
 //! ```
 
+mod json;
+pub use json::{parse_json, JsonError, JsonValue};
+
 use std::error::Error;
 use std::fmt;
 use std::fs;
@@ -557,6 +560,342 @@ pub fn format_binary_diff(result: &BinaryDiffResult) -> String {
     output
 }
 
+// ============================================================================
+// JSON Diff
+// ============================================================================
+
+/// A change in JSON structure
+#[derive(Debug, Clone, PartialEq)]
+pub enum JsonChange {
+    /// Value added at path
+    Added { path: String, value: JsonValue },
+    /// Value removed from path
+    Removed { path: String, value: JsonValue },
+    /// Value modified at path
+    Modified {
+        path: String,
+        old_value: JsonValue,
+        new_value: JsonValue,
+    },
+    /// Type changed at path
+    TypeChanged {
+        path: String,
+        old_value: JsonValue,
+        new_value: JsonValue,
+    },
+}
+
+/// Result of a JSON diff operation
+#[derive(Debug, Clone, PartialEq)]
+pub struct JsonDiffResult {
+    /// List of detected changes
+    pub changes: Vec<JsonChange>,
+}
+
+impl JsonDiffResult {
+    /// Check if there are any changes
+    pub fn has_changes(&self) -> bool {
+        !self.changes.is_empty()
+    }
+
+    /// Count additions
+    pub fn additions(&self) -> usize {
+        self.changes
+            .iter()
+            .filter(|c| matches!(c, JsonChange::Added { .. }))
+            .count()
+    }
+
+    /// Count deletions
+    pub fn deletions(&self) -> usize {
+        self.changes
+            .iter()
+            .filter(|c| matches!(c, JsonChange::Removed { .. }))
+            .count()
+    }
+
+    /// Count modifications
+    pub fn modifications(&self) -> usize {
+        self.changes
+            .iter()
+            .filter(|c| matches!(c, JsonChange::Modified { .. } | JsonChange::TypeChanged { .. }))
+            .count()
+    }
+}
+
+/// Diff two JSON strings structurally
+///
+/// # Arguments
+///
+/// * `old` - The old JSON content
+/// * `new` - The new JSON content
+/// * `config` - Configuration options
+///
+/// # Returns
+///
+/// Returns a `Result<JsonDiffResult, JsonError>` containing the structural differences.
+///
+/// # Example
+///
+/// ```rust
+/// use output_diffing_utility::{diff_json, DiffConfig};
+///
+/// let old = r#"{"name": "Alice", "age": 30}"#;
+/// let new = r#"{"name": "Bob", "age": 30}"#;
+///
+/// let result = diff_json(old, new, &DiffConfig::default()).unwrap();
+/// assert!(result.has_changes());
+/// assert_eq!(result.modifications(), 1);
+/// ```
+pub fn diff_json(old: &str, new: &str, config: &DiffConfig) -> Result<JsonDiffResult, JsonError> {
+    let old_value = parse_json(old)?;
+    let new_value = parse_json(new)?;
+
+    if config.verbose {
+        eprintln!("[DEBUG] Comparing JSON structures");
+    }
+
+    let mut changes = Vec::new();
+    compare_json_values("", &old_value, &new_value, &mut changes);
+
+    Ok(JsonDiffResult { changes })
+}
+
+/// Recursively compare two JSON values and collect changes
+fn compare_json_values(
+    path: &str,
+    old: &JsonValue,
+    new: &JsonValue,
+    changes: &mut Vec<JsonChange>,
+) {
+    use JsonValue::*;
+
+    match (old, new) {
+        // Both null - no change
+        (Null, Null) => {}
+
+        // Both bool - compare values
+        (Bool(a), Bool(b)) => {
+            if a != b {
+                changes.push(JsonChange::Modified {
+                    path: path.to_string(),
+                    old_value: old.clone(),
+                    new_value: new.clone(),
+                });
+            }
+        }
+
+        // Both number - compare values
+        (Number(a), Number(b)) => {
+            if (a - b).abs() > f64::EPSILON {
+                changes.push(JsonChange::Modified {
+                    path: path.to_string(),
+                    old_value: old.clone(),
+                    new_value: new.clone(),
+                });
+            }
+        }
+
+        // Both string - compare values
+        (String(a), String(b)) => {
+            if a != b {
+                changes.push(JsonChange::Modified {
+                    path: path.to_string(),
+                    old_value: old.clone(),
+                    new_value: new.clone(),
+                });
+            }
+        }
+
+        // Both array - compare elements
+        (Array(old_arr), Array(new_arr)) => {
+            let max_len = old_arr.len().max(new_arr.len());
+
+            for i in 0..max_len {
+                let element_path = if path.is_empty() {
+                    format!("[{}]", i)
+                } else {
+                    format!("{}[{}]", path, i)
+                };
+
+                match (old_arr.get(i), new_arr.get(i)) {
+                    (Some(old_elem), Some(new_elem)) => {
+                        compare_json_values(&element_path, old_elem, new_elem, changes);
+                    }
+                    (Some(old_elem), None) => {
+                        changes.push(JsonChange::Removed {
+                            path: element_path,
+                            value: old_elem.clone(),
+                        });
+                    }
+                    (None, Some(new_elem)) => {
+                        changes.push(JsonChange::Added {
+                            path: element_path,
+                            value: new_elem.clone(),
+                        });
+                    }
+                    (None, None) => unreachable!(),
+                }
+            }
+        }
+
+        // Both object - compare keys and values
+        (Object(old_obj), Object(new_obj)) => {
+            // Collect all unique keys
+            let mut all_keys = std::collections::HashSet::new();
+            for (key, _) in old_obj {
+                all_keys.insert(key.as_str());
+            }
+            for (key, _) in new_obj {
+                all_keys.insert(key.as_str());
+            }
+
+            for key in all_keys {
+                let field_path = if path.is_empty() {
+                    key.to_string()
+                } else {
+                    format!("{}.{}", path, key)
+                };
+
+                let old_val = old_obj.iter().find(|(k, _)| k == key).map(|(_, v)| v);
+                let new_val = new_obj.iter().find(|(k, _)| k == key).map(|(_, v)| v);
+
+                match (old_val, new_val) {
+                    (Some(old_v), Some(new_v)) => {
+                        compare_json_values(&field_path, old_v, new_v, changes);
+                    }
+                    (Some(old_v), None) => {
+                        changes.push(JsonChange::Removed {
+                            path: field_path,
+                            value: old_v.clone(),
+                        });
+                    }
+                    (None, Some(new_v)) => {
+                        changes.push(JsonChange::Added {
+                            path: field_path,
+                            value: new_v.clone(),
+                        });
+                    }
+                    (None, None) => unreachable!(),
+                }
+            }
+        }
+
+        // Type mismatch
+        _ => {
+            changes.push(JsonChange::TypeChanged {
+                path: path.to_string(),
+                old_value: old.clone(),
+                new_value: new.clone(),
+            });
+        }
+    }
+}
+
+/// Format JSON diff result as human-readable output
+pub fn format_json_diff(result: &JsonDiffResult) -> String {
+    let mut output = String::new();
+
+    if result.changes.is_empty() {
+        output.push_str("No differences found\n");
+        return output;
+    }
+
+    output.push_str(&format!(
+        "JSON diff: {} change{}\n\n",
+        result.changes.len(),
+        if result.changes.len() == 1 { "" } else { "s" }
+    ));
+
+    for change in &result.changes {
+        match change {
+            JsonChange::Added { path, value } => {
+                output.push_str(&format!("+ Added at '{}': {}\n", path, format_json_value(value)));
+            }
+            JsonChange::Removed { path, value } => {
+                output.push_str(&format!(
+                    "- Removed at '{}': {}\n",
+                    path,
+                    format_json_value(value)
+                ));
+            }
+            JsonChange::Modified {
+                path,
+                old_value,
+                new_value,
+            } => {
+                output.push_str(&format!(
+                    "~ Modified at '{}':\n  Old: {}\n  New: {}\n",
+                    path,
+                    format_json_value(old_value),
+                    format_json_value(new_value)
+                ));
+            }
+            JsonChange::TypeChanged {
+                path,
+                old_value,
+                new_value,
+            } => {
+                output.push_str(&format!(
+                    "! Type changed at '{}':\n  Old: {} ({})\n  New: {} ({})\n",
+                    path,
+                    format_json_value(old_value),
+                    json_type_name(old_value),
+                    format_json_value(new_value),
+                    json_type_name(new_value)
+                ));
+            }
+        }
+    }
+
+    output
+}
+
+/// Format a JSON value as a compact string
+fn format_json_value(value: &JsonValue) -> String {
+    match value {
+        JsonValue::Null => "null".to_string(),
+        JsonValue::Bool(b) => b.to_string(),
+        JsonValue::Number(n) => n.to_string(),
+        JsonValue::String(s) => format!("\"{}\"", s),
+        JsonValue::Array(arr) => {
+            if arr.is_empty() {
+                "[]".to_string()
+            } else if arr.len() <= 3 {
+                let items: Vec<String> = arr.iter().map(format_json_value).collect();
+                format!("[{}]", items.join(", "))
+            } else {
+                format!("[...{} items...]", arr.len())
+            }
+        }
+        JsonValue::Object(obj) => {
+            if obj.is_empty() {
+                "{}".to_string()
+            } else if obj.len() <= 3 {
+                let items: Vec<String> = obj
+                    .iter()
+                    .map(|(k, v)| format!("\"{}\": {}", k, format_json_value(v)))
+                    .collect();
+                format!("{{{}}}", items.join(", "))
+            } else {
+                format!("{{...{} fields...}}", obj.len())
+            }
+        }
+    }
+}
+
+/// Get the type name of a JSON value
+fn json_type_name(value: &JsonValue) -> &'static str {
+    match value {
+        JsonValue::Null => "null",
+        JsonValue::Bool(_) => "boolean",
+        JsonValue::Number(_) => "number",
+        JsonValue::String(_) => "string",
+        JsonValue::Array(_) => "array",
+        JsonValue::Object(_) => "object",
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -993,5 +1332,287 @@ mod tests {
             detect_file_type(b"\x00\x01\x02", Some("xyz")),
             FileType::Binary
         );
+    }
+
+    // JSON diff tests
+    #[test]
+    fn test_json_diff_identical() {
+        let config = DiffConfig::default();
+        let json = r#"{"name": "Alice", "age": 30}"#;
+        let result = diff_json(json, json, &config).unwrap();
+        assert!(!result.has_changes());
+        assert_eq!(result.additions(), 0);
+        assert_eq!(result.deletions(), 0);
+        assert_eq!(result.modifications(), 0);
+    }
+
+    #[test]
+    fn test_json_diff_modified_string() {
+        let config = DiffConfig::default();
+        let old = r#"{"name": "Alice"}"#;
+        let new = r#"{"name": "Bob"}"#;
+        let result = diff_json(old, new, &config).unwrap();
+        assert!(result.has_changes());
+        assert_eq!(result.modifications(), 1);
+        assert_eq!(result.additions(), 0);
+        assert_eq!(result.deletions(), 0);
+    }
+
+    #[test]
+    fn test_json_diff_modified_number() {
+        let config = DiffConfig::default();
+        let old = r#"{"age": 30}"#;
+        let new = r#"{"age": 31}"#;
+        let result = diff_json(old, new, &config).unwrap();
+        assert!(result.has_changes());
+        assert_eq!(result.modifications(), 1);
+    }
+
+    #[test]
+    fn test_json_diff_modified_bool() {
+        let config = DiffConfig::default();
+        let old = r#"{"active": true}"#;
+        let new = r#"{"active": false}"#;
+        let result = diff_json(old, new, &config).unwrap();
+        assert!(result.has_changes());
+        assert_eq!(result.modifications(), 1);
+    }
+
+    #[test]
+    fn test_json_diff_added_field() {
+        let config = DiffConfig::default();
+        let old = r#"{"name": "Alice"}"#;
+        let new = r#"{"name": "Alice", "age": 30}"#;
+        let result = diff_json(old, new, &config).unwrap();
+        assert!(result.has_changes());
+        assert_eq!(result.additions(), 1);
+        assert_eq!(result.deletions(), 0);
+        assert_eq!(result.modifications(), 0);
+    }
+
+    #[test]
+    fn test_json_diff_removed_field() {
+        let config = DiffConfig::default();
+        let old = r#"{"name": "Alice", "age": 30}"#;
+        let new = r#"{"name": "Alice"}"#;
+        let result = diff_json(old, new, &config).unwrap();
+        assert!(result.has_changes());
+        assert_eq!(result.additions(), 0);
+        assert_eq!(result.deletions(), 1);
+        assert_eq!(result.modifications(), 0);
+    }
+
+    #[test]
+    fn test_json_diff_type_changed() {
+        let config = DiffConfig::default();
+        let old = r#"{"value": 42}"#;
+        let new = r#"{"value": "42"}"#;
+        let result = diff_json(old, new, &config).unwrap();
+        assert!(result.has_changes());
+        // Type change counts as modification
+        assert_eq!(result.modifications(), 1);
+    }
+
+    #[test]
+    fn test_json_diff_nested_object() {
+        let config = DiffConfig::default();
+        let old = r#"{"user": {"name": "Alice", "age": 30}}"#;
+        let new = r#"{"user": {"name": "Bob", "age": 30}}"#;
+        let result = diff_json(old, new, &config).unwrap();
+        assert!(result.has_changes());
+        assert_eq!(result.modifications(), 1);
+
+        // Check path is correct
+        assert_eq!(result.changes.len(), 1);
+        if let JsonChange::Modified { path, .. } = &result.changes[0] {
+            assert_eq!(path, "user.name");
+        } else {
+            panic!("Expected Modified change");
+        }
+    }
+
+    #[test]
+    fn test_json_diff_array_elements() {
+        let config = DiffConfig::default();
+        let old = r#"{"items": [1, 2, 3]}"#;
+        let new = r#"{"items": [1, 5, 3]}"#;
+        let result = diff_json(old, new, &config).unwrap();
+        assert!(result.has_changes());
+        assert_eq!(result.modifications(), 1);
+
+        // Check path is correct
+        if let JsonChange::Modified { path, .. } = &result.changes[0] {
+            assert_eq!(path, "items[1]");
+        } else {
+            panic!("Expected Modified change");
+        }
+    }
+
+    #[test]
+    fn test_json_diff_array_added_element() {
+        let config = DiffConfig::default();
+        let old = r#"{"items": [1, 2]}"#;
+        let new = r#"{"items": [1, 2, 3]}"#;
+        let result = diff_json(old, new, &config).unwrap();
+        assert!(result.has_changes());
+        assert_eq!(result.additions(), 1);
+        assert_eq!(result.deletions(), 0);
+    }
+
+    #[test]
+    fn test_json_diff_array_removed_element() {
+        let config = DiffConfig::default();
+        let old = r#"{"items": [1, 2, 3]}"#;
+        let new = r#"{"items": [1, 2]}"#;
+        let result = diff_json(old, new, &config).unwrap();
+        assert!(result.has_changes());
+        assert_eq!(result.additions(), 0);
+        assert_eq!(result.deletions(), 1);
+    }
+
+    #[test]
+    fn test_json_diff_root_array() {
+        let config = DiffConfig::default();
+        let old = r#"[1, 2, 3]"#;
+        let new = r#"[1, 5, 3]"#;
+        let result = diff_json(old, new, &config).unwrap();
+        assert!(result.has_changes());
+        assert_eq!(result.modifications(), 1);
+
+        // Root array paths should start with [index]
+        if let JsonChange::Modified { path, .. } = &result.changes[0] {
+            assert_eq!(path, "[1]");
+        } else {
+            panic!("Expected Modified change");
+        }
+    }
+
+    #[test]
+    fn test_json_diff_complex_nested() {
+        let config = DiffConfig::default();
+        let old = r#"{
+            "users": [
+                {"name": "Alice", "age": 30},
+                {"name": "Bob", "age": 25}
+            ]
+        }"#;
+        let new = r#"{
+            "users": [
+                {"name": "Alice", "age": 31},
+                {"name": "Bob", "age": 25}
+            ]
+        }"#;
+        let result = diff_json(old, new, &config).unwrap();
+        assert!(result.has_changes());
+        assert_eq!(result.modifications(), 1);
+
+        if let JsonChange::Modified { path, .. } = &result.changes[0] {
+            assert_eq!(path, "users[0].age");
+        } else {
+            panic!("Expected Modified change");
+        }
+    }
+
+    #[test]
+    fn test_json_diff_multiple_changes() {
+        let config = DiffConfig::default();
+        let old = r#"{"name": "Alice", "age": 30}"#;
+        let new = r#"{"name": "Bob", "age": 31, "city": "NYC"}"#;
+        let result = diff_json(old, new, &config).unwrap();
+        assert!(result.has_changes());
+        // 2 modifications (name, age) + 1 addition (city)
+        assert_eq!(result.modifications(), 2);
+        assert_eq!(result.additions(), 1);
+        assert_eq!(result.changes.len(), 3);
+    }
+
+    #[test]
+    fn test_json_diff_empty_objects() {
+        let config = DiffConfig::default();
+        let result = diff_json("{}", "{}", &config).unwrap();
+        assert!(!result.has_changes());
+    }
+
+    #[test]
+    fn test_json_diff_empty_arrays() {
+        let config = DiffConfig::default();
+        let result = diff_json("[]", "[]", &config).unwrap();
+        assert!(!result.has_changes());
+    }
+
+    #[test]
+    fn test_json_diff_null_values() {
+        let config = DiffConfig::default();
+        let old = r#"{"value": null}"#;
+        let new = r#"{"value": 42}"#;
+        let result = diff_json(old, new, &config).unwrap();
+        assert!(result.has_changes());
+        assert_eq!(result.modifications(), 1); // Type change
+    }
+
+    #[test]
+    fn test_format_json_diff_no_changes() {
+        let result = JsonDiffResult {
+            changes: vec![],
+        };
+        let formatted = format_json_diff(&result);
+        assert!(formatted.contains("No differences found"));
+    }
+
+    #[test]
+    fn test_format_json_diff_with_changes() {
+        let result = JsonDiffResult {
+            changes: vec![JsonChange::Modified {
+                path: "name".to_string(),
+                old_value: JsonValue::String("Alice".to_string()),
+                new_value: JsonValue::String("Bob".to_string()),
+            }],
+        };
+        let formatted = format_json_diff(&result);
+        assert!(formatted.contains("JSON diff: 1 change"));
+        assert!(formatted.contains("Modified at 'name'"));
+        assert!(formatted.contains("Alice"));
+        assert!(formatted.contains("Bob"));
+    }
+
+    #[test]
+    fn test_format_json_diff_added() {
+        let result = JsonDiffResult {
+            changes: vec![JsonChange::Added {
+                path: "city".to_string(),
+                value: JsonValue::String("NYC".to_string()),
+            }],
+        };
+        let formatted = format_json_diff(&result);
+        assert!(formatted.contains("Added at 'city'"));
+        assert!(formatted.contains("NYC"));
+    }
+
+    #[test]
+    fn test_format_json_diff_removed() {
+        let result = JsonDiffResult {
+            changes: vec![JsonChange::Removed {
+                path: "age".to_string(),
+                value: JsonValue::Number(30.0),
+            }],
+        };
+        let formatted = format_json_diff(&result);
+        assert!(formatted.contains("Removed at 'age'"));
+        assert!(formatted.contains("30"));
+    }
+
+    #[test]
+    fn test_format_json_diff_type_changed() {
+        let result = JsonDiffResult {
+            changes: vec![JsonChange::TypeChanged {
+                path: "value".to_string(),
+                old_value: JsonValue::Number(42.0),
+                new_value: JsonValue::String("42".to_string()),
+            }],
+        };
+        let formatted = format_json_diff(&result);
+        assert!(formatted.contains("Type changed at 'value'"));
+        assert!(formatted.contains("number"));
+        assert!(formatted.contains("string"));
     }
 }
