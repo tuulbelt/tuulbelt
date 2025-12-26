@@ -56,9 +56,20 @@ output-diff data1.json data2.json
 # Binary diff
 output-diff image1.png image2.png
 
+# With ANSI color codes (works for text, JSON, and binary diffs)
+output-diff --color file1.txt file2.txt
+output-diff --color data1.json data2.json
+output-diff --color image1.png image2.png
+
 # Verbose output
 output-diff --verbose file1.txt file2.txt
 ```
+
+**Color Support:**
+- ✅ **Text diffs**: Green for additions, red for deletions
+- ✅ **JSON diffs**: Cyan for paths, green for added values, red for removed values, yellow for modifications
+- ✅ **Binary diffs**: Cyan for offsets, red for old bytes, green for new bytes
+- ❌ **JSON/SideBySide/Compact formats**: Color not applied (use `--format unified` for color)
 
 **Output:**
 ```diff
