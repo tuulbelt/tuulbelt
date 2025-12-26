@@ -191,6 +191,32 @@ Exit codes:
 
 Errors are returned in the `error` field of the result object, not thrown.
 
+## Specification (SPEC.md)
+
+**When to create SPEC.md:**
+
+If your tool defines a **format, protocol, or algorithm**, create a `SPEC.md` file:
+
+- **File formats** (e.g., JSON schema, custom binary format)
+- **Protocols** (e.g., WebSocket message structure, API contract)
+- **Algorithms** (e.g., parsing algorithm, transformation rules)
+- **Data structures** (e.g., cache format, index structure)
+
+**What to include:**
+- Formal description of the format/protocol/algorithm
+- Examples with sample inputs/outputs
+- Edge cases and validation rules
+- Version compatibility notes
+
+**Examples in Tuulbelt:**
+- `output-diffing-utility/SPEC.md` - Diff format and LCS algorithm
+- `file-based-semaphore/SPEC.md` - Lock file structure and semantics
+
+**When NOT to create SPEC.md:**
+- Simple CLI tools with no custom format
+- Wrappers around existing formats
+- Tools that just process data without defining structure
+
 ## Future Enhancements
 
 Potential improvements for future versions:

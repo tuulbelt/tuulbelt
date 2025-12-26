@@ -177,6 +177,32 @@ Exit codes:
 
 All errors implement `std::error::Error` and can be displayed with `{}`.
 
+## Specification (SPEC.md)
+
+**When to create SPEC.md:**
+
+If your tool defines a **format, protocol, or algorithm**, create a `SPEC.md` file:
+
+- **File formats** (e.g., binary wire format, serialization scheme)
+- **Protocols** (e.g., RPC message structure, handshake sequence)
+- **Algorithms** (e.g., diff algorithm, compression scheme)
+- **Data structures** (e.g., index format, manifest structure)
+
+**What to include:**
+- Formal description of the format/protocol/algorithm
+- Examples with hex dumps or diagrams
+- Edge cases and constraints
+- Version compatibility notes
+
+**Examples in Tuulbelt:**
+- `output-diffing-utility/SPEC.md` - Diff format and LCS algorithm
+- `file-based-semaphore/SPEC.md` - Lock file structure and semantics
+
+**When NOT to create SPEC.md:**
+- Simple CLI tools with no custom format
+- Wrappers around existing formats
+- Tools that just process data without defining structure
+
 ## License
 
 MIT — see [LICENSE](LICENSE)
