@@ -419,7 +419,8 @@ fn test_security_deeply_nested_json() {
     fs::write(&file2, &nested).expect("Failed to write file2");
 
     let output = Command::new(binary_path())
-        .arg("-f").arg("json")
+        .arg("-f")
+        .arg("json")
         .arg(&file1)
         .arg(&file2)
         .output()
@@ -445,7 +446,8 @@ fn test_security_malformed_json_bomb() {
     fs::write(&file2, r#"{"a":"c"}"#).expect("Failed to write file2");
 
     let output = Command::new(binary_path())
-        .arg("-f").arg("json")
+        .arg("-f")
+        .arg("json")
         .arg(&file1)
         .arg(&file2)
         .output()
@@ -472,7 +474,8 @@ fn test_security_null_bytes_in_text() {
     fs::write(&file2, content2).expect("Failed to write file2");
 
     let output = Command::new(binary_path())
-        .arg("-f").arg("text")
+        .arg("-f")
+        .arg("text")
         .arg(&file1)
         .arg(&file2)
         .output()
@@ -500,7 +503,8 @@ fn test_security_binary_with_patterns() {
     fs::write(&file2, &content2).expect("Failed to write file2");
 
     let output = Command::new(binary_path())
-        .arg("-f").arg("binary")
+        .arg("-f")
+        .arg("binary")
         .arg(&file1)
         .arg(&file2)
         .output()
@@ -511,7 +515,11 @@ fn test_security_binary_with_patterns() {
     assert!(output.status.code().is_some());
     // Different length files may cause error - that's acceptable
     let code = output.status.code().unwrap();
-    assert!(code == 1 || code == 2, "Expected exit code 1 (diff) or 2 (error), got {}", code);
+    assert!(
+        code == 1 || code == 2,
+        "Expected exit code 1 (diff) or 2 (error), got {}",
+        code
+    );
 
     fs::remove_file(&file1).ok();
     fs::remove_file(&file2).ok();
@@ -531,7 +539,8 @@ fn test_security_unicode_edge_cases() {
     fs::write(&file2, content2).expect("Failed to write file2");
 
     let output = Command::new(binary_path())
-        .arg("-f").arg("text")
+        .arg("-f")
+        .arg("text")
         .arg(&file1)
         .arg(&file2)
         .output()
@@ -541,7 +550,11 @@ fn test_security_unicode_edge_cases() {
     // Unicode line separators may be treated specially
     assert!(output.status.code().is_some());
     let code = output.status.code().unwrap();
-    assert!(code == 1 || code == 2, "Expected exit code 1 (diff) or 2 (error), got {}", code);
+    assert!(
+        code == 1 || code == 2,
+        "Expected exit code 1 (diff) or 2 (error), got {}",
+        code
+    );
 
     fs::remove_file(&file1).ok();
     fs::remove_file(&file2).ok();
@@ -561,7 +574,8 @@ fn test_security_large_single_line() {
     fs::write(&file2, &large_line2).expect("Failed to write file2");
 
     let output = Command::new(binary_path())
-        .arg("-f").arg("text")
+        .arg("-f")
+        .arg("text")
         .arg(&file1)
         .arg(&file2)
         .output()
@@ -581,14 +595,17 @@ fn test_security_json_with_special_keys() {
     let file2 = tmp_dir.join("sec_keys2.json");
 
     // JSON with potentially problematic keys
-    let content1 = r#"{"__proto__":"polluted","constructor":"bad","prototype":"evil","normal":"value1"}"#;
-    let content2 = r#"{"__proto__":"polluted","constructor":"bad","prototype":"evil","normal":"value2"}"#;
+    let content1 =
+        r#"{"__proto__":"polluted","constructor":"bad","prototype":"evil","normal":"value1"}"#;
+    let content2 =
+        r#"{"__proto__":"polluted","constructor":"bad","prototype":"evil","normal":"value2"}"#;
 
     fs::write(&file1, content1).expect("Failed to write file1");
     fs::write(&file2, content2).expect("Failed to write file2");
 
     let output = Command::new(binary_path())
-        .arg("-f").arg("json")
+        .arg("-f")
+        .arg("json")
         .arg(&file1)
         .arg(&file2)
         .output()

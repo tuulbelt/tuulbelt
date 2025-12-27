@@ -860,16 +860,30 @@ mod tests {
         let serialized = info.serialize();
 
         // Count lines starting with "pid=" - should be exactly one (the real one)
-        let pid_lines: Vec<_> = serialized.lines().filter(|l| l.starts_with("pid=")).collect();
-        assert_eq!(pid_lines.len(), 1, "Should only have one pid= line, got {:?}", pid_lines);
+        let pid_lines: Vec<_> = serialized
+            .lines()
+            .filter(|l| l.starts_with("pid="))
+            .collect();
+        assert_eq!(
+            pid_lines.len(),
+            1,
+            "Should only have one pid= line, got {:?}",
+            pid_lines
+        );
 
         // Count lines starting with "timestamp=" - should be exactly one
-        let ts_lines: Vec<_> = serialized.lines().filter(|l| l.starts_with("timestamp=")).collect();
+        let ts_lines: Vec<_> = serialized
+            .lines()
+            .filter(|l| l.starts_with("timestamp="))
+            .collect();
         assert_eq!(ts_lines.len(), 1, "Should only have one timestamp= line");
 
         // The tag should contain the sanitized version (spaces instead of newlines)
-        assert!(serialized.contains("tag=mytag pid=99999 timestamp=0"),
-            "Sanitized tag should have spaces: {}", serialized);
+        assert!(
+            serialized.contains("tag=mytag pid=99999 timestamp=0"),
+            "Sanitized tag should have spaces: {}",
+            serialized
+        );
 
         // Verify parsing doesn't pick up fake values
         let parsed = LockInfo::parse(&serialized).unwrap();
@@ -886,7 +900,10 @@ mod tests {
         let serialized = info.serialize();
 
         // Should only have one line starting with pid=
-        let pid_lines: Vec<_> = serialized.lines().filter(|l| l.starts_with("pid=")).collect();
+        let pid_lines: Vec<_> = serialized
+            .lines()
+            .filter(|l| l.starts_with("pid="))
+            .collect();
         assert_eq!(pid_lines.len(), 1, "Should only have one pid= line");
 
         // Tag should have sanitized whitespace (both \r and \n replaced)
@@ -894,7 +911,10 @@ mod tests {
         // Verify no literal newlines or carriage returns in the serialized output
         // (except for the actual line separators between key=value pairs)
         let tag_line = serialized.lines().find(|l| l.starts_with("tag=")).unwrap();
-        assert!(!tag_line.contains('\r'), "Tag should not contain carriage return");
+        assert!(
+            !tag_line.contains('\r'),
+            "Tag should not contain carriage return"
+        );
     }
 
     #[test]
