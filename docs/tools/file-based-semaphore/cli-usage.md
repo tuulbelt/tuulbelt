@@ -9,7 +9,7 @@ File-Based Semaphore provides a command-line interface for process coordination 
 Try to acquire a lock without waiting. Returns immediately.
 
 ```bash
-file-semaphore try /tmp/my.lock
+sema try /tmp/my.lock
 ```
 
 **Exit Codes:**
@@ -22,7 +22,7 @@ file-semaphore try /tmp/my.lock
 Acquire a lock, waiting until available or timeout.
 
 ```bash
-file-semaphore acquire /tmp/my.lock --timeout 30
+sema acquire /tmp/my.lock --timeout 30
 ```
 
 **Options:**
@@ -33,7 +33,7 @@ file-semaphore acquire /tmp/my.lock --timeout 30
 Remove a lock file (force release).
 
 ```bash
-file-semaphore release /tmp/my.lock
+sema release /tmp/my.lock
 ```
 
 ### `status` - Check Status
@@ -41,7 +41,7 @@ file-semaphore release /tmp/my.lock
 Check if a lock is held and who holds it.
 
 ```bash
-file-semaphore status /tmp/my.lock
+sema status /tmp/my.lock
 ```
 
 **Output:**
@@ -59,7 +59,7 @@ Lock status: LOCKED
 Wait for a lock to be released without acquiring it.
 
 ```bash
-file-semaphore wait /tmp/my.lock --timeout 60
+sema wait /tmp/my.lock --timeout 60
 ```
 
 ## Global Options
@@ -89,10 +89,10 @@ file-semaphore wait /tmp/my.lock --timeout 60
 
 ```bash
 #!/bin/bash
-if file-semaphore try /tmp/deploy.lock; then
+if sema try /tmp/deploy.lock; then
     echo "Deploying..."
     ./deploy.sh
-    file-semaphore release /tmp/deploy.lock
+    sema release /tmp/deploy.lock
 else
     echo "Another deployment in progress"
     exit 1
@@ -103,10 +103,10 @@ fi
 
 ```bash
 #!/bin/bash
-if file-semaphore acquire /tmp/critical.lock --timeout 30; then
+if sema acquire /tmp/critical.lock --timeout 30; then
     echo "Got lock, running critical section"
     ./critical-operation.sh
-    file-semaphore release /tmp/critical.lock
+    sema release /tmp/critical.lock
 else
     echo "Timeout waiting for lock"
     exit 1
@@ -126,14 +126,14 @@ fi
 ### Tagged Locks
 
 ```bash
-file-semaphore try /tmp/job.lock --tag "nightly-backup-$(date +%Y%m%d)"
+sema try /tmp/job.lock --tag "nightly-backup-$(date +%Y%m%d)"
 ```
 
 ### Quiet Mode for Scripts
 
 ```bash
 # Only show errors
-file-semaphore try /tmp/silent.lock -q && ./my-script.sh
+sema try /tmp/silent.lock -q && ./my-script.sh
 ```
 
 ## Shell Integration Tips
@@ -143,11 +143,11 @@ file-semaphore try /tmp/silent.lock -q && ./my-script.sh
 ```bash
 #!/bin/bash
 cleanup() {
-    file-semaphore release /tmp/my.lock -q
+    sema release /tmp/my.lock -q
 }
 trap cleanup EXIT
 
-file-semaphore acquire /tmp/my.lock --timeout 60
+sema acquire /tmp/my.lock --timeout 60
 # Your code here...
 # Lock auto-released on script exit
 ```
@@ -156,12 +156,12 @@ file-semaphore acquire /tmp/my.lock --timeout 60
 
 ```bash
 # Check if lock is available before starting
-if file-semaphore status /tmp/heavy-job.lock -q; then
+if sema status /tmp/heavy-job.lock -q; then
     echo "Job already running"
     exit 1
 fi
 
-file-semaphore try /tmp/heavy-job.lock
+sema try /tmp/heavy-job.lock
 ./heavy-operation.sh
-file-semaphore release /tmp/heavy-job.lock
+sema release /tmp/heavy-job.lock
 ```

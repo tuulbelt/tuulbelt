@@ -49,13 +49,13 @@ cd tuulbelt/file-based-semaphore
 cargo build --release
 
 # CLI: Try to acquire a lock
-./target/release/file-semaphore try /tmp/my.lock
+./target/release/sema try /tmp/my.lock
 
 # CLI: Check status
-./target/release/file-semaphore status /tmp/my.lock
+./target/release/sema status /tmp/my.lock
 
 # CLI: Release
-./target/release/file-semaphore release /tmp/my.lock
+./target/release/sema release /tmp/my.lock
 ```
 
 ```rust

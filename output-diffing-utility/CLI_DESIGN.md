@@ -5,7 +5,7 @@ Design specification for the output-diffing-utility command-line interface.
 ## Command Signature
 
 ```bash
-output-diff [OPTIONS] <FILE1> <FILE2>
+odiff [OPTIONS] <FILE1> <FILE2>
 ```
 
 ---
@@ -19,9 +19,9 @@ output-diff [OPTIONS] <FILE1> <FILE2>
 
 **Examples:**
 ```bash
-output-diff file1.json file2.json
-output-diff /path/to/old.txt /path/to/new.txt
-output-diff data.bin updated-data.bin
+odiff file1.json file2.json
+odiff /path/to/old.txt /path/to/new.txt
+odiff data.bin updated-data.bin
 ```
 
 ---
@@ -42,9 +42,9 @@ Specify diff output format.
 
 **Examples:**
 ```bash
-output-diff --format unified file1.txt file2.txt
-output-diff --format json data1.json data2.json
-output-diff -f side-by-side old.txt new.txt
+odiff --format unified file1.txt file2.txt
+odiff --format json data1.json data2.json
+odiff -f side-by-side old.txt new.txt
 ```
 
 ---
@@ -63,9 +63,9 @@ Force file type interpretation (overrides auto-detection).
 
 **Examples:**
 ```bash
-output-diff --type json file.txt file2.txt  # Treat .txt as JSON
-output-diff --type text data.json data2.json  # Line-based, not structural
-output-diff -t binary file1 file2  # Force binary comparison
+odiff --type json file.txt file2.txt  # Treat .txt as JSON
+odiff --type text data.json data2.json  # Line-based, not structural
+odiff -t binary file1 file2  # Force binary comparison
 ```
 
 ---
@@ -80,8 +80,8 @@ Number of context lines to show around differences (text diffs only).
 
 **Examples:**
 ```bash
-output-diff --context 5 file1.txt file2.txt  # 5 lines of context
-output-diff -c 0 file1.txt file2.txt  # No context, only changes
+odiff --context 5 file1.txt file2.txt  # 5 lines of context
+odiff -c 0 file1.txt file2.txt  # No context, only changes
 ```
 
 ---
@@ -99,8 +99,8 @@ Control colored output.
 
 **Examples:**
 ```bash
-output-diff --color always file1.txt file2.txt
-output-diff --color never file1.txt file2.txt > diff.txt
+odiff --color always file1.txt file2.txt
+odiff --color never file1.txt file2.txt > diff.txt
 ```
 
 **`-q, --quiet`**
@@ -111,7 +111,7 @@ Suppress output, only set exit code.
 
 **Examples:**
 ```bash
-if output-diff --quiet file1.txt file2.txt; then
+if odiff --quiet file1.txt file2.txt; then
     echo "Files are identical"
 else
     echo "Files differ"
@@ -124,8 +124,8 @@ Write diff output to file instead of stdout.
 
 **Examples:**
 ```bash
-output-diff -o changes.diff file1.txt file2.txt
-output-diff --output report.json --format json data1.json data2.json
+odiff -o changes.diff file1.txt file2.txt
+odiff --output report.json --format json data1.json data2.json
 ```
 
 ---
@@ -140,7 +140,7 @@ Enable progress reporting for large files using cli-progress-reporting.
 
 **Examples:**
 ```bash
-output-diff --progress-id my-diff large1.json large2.json
+odiff --progress-id my-diff large1.json large2.json
 # Shows: [45%] 4.5MB/10MB - Comparing JSON structures (12s)
 ```
 
@@ -152,7 +152,7 @@ Enable diff result caching using file-based-semaphore.
 
 **Examples:**
 ```bash
-output-diff --cache file1.json file2.json
+odiff --cache file1.json file2.json
 # Second run: instant result from cache
 ```
 
@@ -174,7 +174,7 @@ Enable verbose output (debug information).
 
 **Examples:**
 ```bash
-output-diff --verbose file1.json file2.json
+odiff --verbose file1.json file2.json
 # Output includes: file sizes, detection logic, timing info
 ```
 
@@ -190,7 +190,7 @@ output-diff --verbose file1.json file2.json
 
 **Examples:**
 ```bash
-output-diff file1.txt file2.txt
+odiff file1.txt file2.txt
 echo $?  # 0 if identical, 1 if different, 2 if error
 ```
 
@@ -315,7 +315,7 @@ PROGRESS_ID="diff-$(date +%s)"
 npx tsx ../cli-progress-reporting/src/index.ts init --total 100 --id "$PROGRESS_ID" --message "Comparing files"
 
 # 3. Run diff with progress
-output-diff "$FILE1" "$FILE2" --progress-id "$PROGRESS_ID" --format json
+odiff "$FILE1" "$FILE2" --progress-id "$PROGRESS_ID" --format json
 
 # 4. Finish progress
 npx tsx ../cli-progress-reporting/src/index.ts finish --id "$PROGRESS_ID" --message "Diff complete"
@@ -325,8 +325,8 @@ npx tsx ../cli-progress-reporting/src/index.ts finish --id "$PROGRESS_ID" --mess
 
 ```bash
 # Multiple processes can safely use cached diffs
-output-diff --cache large-file1.json large-file2.json &
-output-diff --cache large-file1.json large-file2.json &
+odiff --cache large-file1.json large-file2.json &
+odiff --cache large-file1.json large-file2.json &
 # File-Based Semaphore ensures no cache corruption
 ```
 
@@ -362,11 +362,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 ## CLI Help Output
 
 ```
-output-diff 0.1.0
+odiff 0.1.0
 Semantic diff tool for JSON, text, and binary files
 
 USAGE:
-    output-diff [OPTIONS] <FILE1> <FILE2>
+    odiff [OPTIONS] <FILE1> <FILE2>
 
 ARGS:
     <FILE1>    First file to compare
@@ -392,16 +392,16 @@ EXIT CODES:
 
 EXAMPLES:
     # Basic diff
-    output-diff file1.json file2.json
+    odiff file1.json file2.json
 
     # JSON report
-    output-diff --format json data1.json data2.json
+    odiff --format json data1.json data2.json
 
     # With progress for large files
-    output-diff --progress-id my-task large1.json large2.json
+    odiff --progress-id my-task large1.json large2.json
 
     # Cached diff
-    output-diff --cache file1.json file2.json
+    odiff --cache file1.json file2.json
 
 DOGFOODING:
     This tool integrates with other Tuulbelt tools:

@@ -53,16 +53,16 @@ cd tuulbelt/output-diffing-utility
 cargo build --release
 
 # CLI: Basic diff
-./target/release/output-diff file1.txt file2.txt
+./target/release/odiff file1.txt file2.txt
 
 # CLI: JSON format
-./target/release/output-diff --format json data1.json data2.json
+./target/release/odiff --format json data1.json data2.json
 
 # CLI: Colored output
-./target/release/output-diff --color always file1.txt file2.txt
+./target/release/odiff --color always file1.txt file2.txt
 
 # CLI: Quiet mode (exit code only)
-./target/release/output-diff --quiet file1.txt file2.txt
+./target/release/odiff --quiet file1.txt file2.txt
 echo $?  # 0=identical, 1=differ, 2=error
 ```
 

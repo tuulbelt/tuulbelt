@@ -30,14 +30,14 @@ set -e
 LOCK_FILE="/var/lock/deploy.lock"
 
 # Try to acquire lock
-if ! file-semaphore try "$LOCK_FILE" --tag "deploy-$(hostname)-$$"; then
+if ! sema try "$LOCK_FILE" --tag "deploy-$(hostname)-$$"; then
     echo "Another deployment is already running"
-    file-semaphore status "$LOCK_FILE"
+    sema status "$LOCK_FILE"
     exit 1
 fi
 
 # Ensure lock is released on exit
-trap 'file-semaphore release "$LOCK_FILE"' EXIT
+trap 'sema release "$LOCK_FILE"' EXIT
 
 echo "Starting deployment..."
 ./deploy.sh
@@ -56,12 +56,12 @@ Ensure only one instance of a cron job runs:
 LOCK="/var/lock/backup.lock"
 
 # Non-blocking try
-if ! file-semaphore try "$LOCK" --stale 86400 -q; then
+if ! sema try "$LOCK" --stale 86400 -q; then
     # Another backup running or stale lock
     exit 0
 fi
 
-trap 'file-semaphore release "$LOCK" -q' EXIT
+trap 'sema release "$LOCK" -q' EXIT
 
 /usr/local/bin/run-backup.sh
 ```
@@ -77,8 +77,8 @@ Coordinate shared resources in CI:
 DB_LOCK="/tmp/ci-database.lock"
 
 echo "Waiting for database access..."
-if file-semaphore acquire "$DB_LOCK" --timeout 300 --tag "ci-job-${CI_JOB_ID}"; then
-    trap 'file-semaphore release "$DB_LOCK"' EXIT
+if sema acquire "$DB_LOCK" --timeout 300 --tag "ci-job-${CI_JOB_ID}"; then
+    trap 'sema release "$DB_LOCK"' EXIT
 
     echo "Running database migrations..."
     ./migrate.sh
@@ -279,7 +279,7 @@ services:
       - locks:/var/locks
     command: |
       sh -c '
-        file-semaphore try /var/locks/worker.lock --tag "worker-$$HOSTNAME" &&
+        sema try /var/locks/worker.lock --tag "worker-$$HOSTNAME" &&
         trap "file-semaphore release /var/locks/worker.lock" EXIT &&
         ./start-worker.sh
       '
@@ -300,7 +300,7 @@ jobs:
 
       - name: Acquire deploy lock
         run: |
-          file-semaphore acquire /tmp/deploy.lock \
+          sema acquire /tmp/deploy.lock \
             --timeout 300 \
             --tag "github-run-${{ github.run_id }}"
 
@@ -309,5 +309,5 @@ jobs:
 
       - name: Release lock
         if: always()
-        run: file-semaphore release /tmp/deploy.lock
+        run: sema release /tmp/deploy.lock
 ```

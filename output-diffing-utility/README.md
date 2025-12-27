@@ -31,7 +31,7 @@ cd output-diffing-utility
 cargo build --release
 ```
 
-The binary will be at `target/release/output-diff`.
+The binary will be at `target/release/odiff`.
 
 ### As a Library
 
@@ -48,23 +48,23 @@ output-diffing-utility = { git = "https://github.com/tuulbelt/output-diffing-uti
 
 ```bash
 # Basic text diff
-output-diff file1.txt file2.txt
+odiff file1.txt file2.txt
 
 # JSON structural diff
-output-diff data1.json data2.json
+odiff data1.json data2.json
 
 # Binary diff
-output-diff image1.png image2.png
+odiff image1.png image2.png
 
 # With ANSI color codes (works for text, JSON, and binary diffs)
-output-diff --color always file1.txt file2.txt
-output-diff --color always data1.json data2.json
-output-diff --color always image1.png image2.png
+odiff --color always file1.txt file2.txt
+odiff --color always data1.json data2.json
+odiff --color always image1.png image2.png
 # Or use 'auto' to enable color only when outputting to a terminal
-output-diff --color auto file1.txt file2.txt
+odiff --color auto file1.txt file2.txt
 
 # Verbose output
-output-diff --verbose file1.txt file2.txt
+odiff --verbose file1.txt file2.txt
 ```
 
 **Color Support:**
