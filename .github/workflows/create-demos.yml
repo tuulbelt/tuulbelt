@@ -312,6 +312,12 @@ jobs:
           else
             git commit -m "docs: update demo recordings and embed in READMEs [skip ci]"
 
+            # Clean up unstaged changes (build artifacts from npm install, cargo build)
+            # These are not needed after we've committed the demo files we care about
+            echo "Cleaning up build artifacts before pull..."
+            git checkout -- . 2>/dev/null || true
+            git clean -fd 2>/dev/null || true
+
             # Pull latest changes with rebase to avoid conflicts
             git pull --rebase origin main
 
