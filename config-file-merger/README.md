@@ -232,14 +232,6 @@ npx tsx examples/basic.ts
 npx tsx examples/advanced.ts
 ```
 
-## Demo
-
-![Demo](docs/demo.gif)
-
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/a4yPiHRkCwFWeaaZxKcHt63Dy)**
-
-> Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/config-file-merger)
-
 ## Dogfooding
 
 Config File Merger uses other Tuulbelt tools to validate its reliability:
@@ -283,6 +275,15 @@ See [SPEC.md](SPEC.md) for detailed technical specification including:
 - Type coercion rules
 - Environment variable handling
 - Error cases and exit codes
+
+
+## Demo
+
+![Demo](docs/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/Z6MnFzDhqu6fVAGYA4veOlGk6)**
+
+> Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/config-file-merger)
 
 ## License
 
