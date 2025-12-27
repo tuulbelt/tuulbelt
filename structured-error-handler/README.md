@@ -373,7 +373,7 @@ Potential improvements for future versions:
 
 ![Demo](docs/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/312AMWEStHLIP6uzk8qYtPDzA)**
+**[▶ View interactive recording on asciinema.org](#)**
 
 > Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/structured-error-handler)
 
