@@ -1,58 +1,65 @@
-# Dogfooding Strategy: [Tool Name]
+# Dogfooding Strategy: Config File Merger
 
-This document outlines how this tool leverages other Tuulbelt tools to demonstrate composability.
+This document outlines how Config File Merger leverages other Tuulbelt tools to demonstrate composability.
 
 ## High-Value Compositions
 
 ### 1. Test Flakiness Detector - Validate test reliability
 
-**Why:** [Explain why test reliability matters for this tool]
+**Why:** Configuration merging involves parsing, type coercion, and precedence rules. Tests must be 100% deterministic to ensure consistent behavior across environments.
 
 **Script:** `scripts/dogfood-flaky.sh`
 
 ```bash
 ./scripts/dogfood-flaky.sh [runs]
-# Validates all tests are deterministic
+# Validates all 135 tests are deterministic across N runs
+# Default: 10 runs = 1,350 test executions
 ```
+
+**Expected outcome:** Zero flaky tests detected.
 
 ### 2. Output Diffing Utility - Prove deterministic outputs
 
-**Why:** [Explain why output consistency matters]
+**Why:** Configuration merging must produce identical output for identical input. This validates that type coercion, precedence, and source tracking are deterministic.
 
 **Script:** `scripts/dogfood-diff.sh`
 
 ```bash
 ./scripts/dogfood-diff.sh
-# Compares outputs between runs
+# Runs the same merge operation twice and compares outputs
+# Proves JSON output is byte-for-byte identical
 ```
 
-### 3. [Other Relevant Tool] - [Purpose]
-
-**Why:** [Explain the value this composition provides]
-
-**Script:** `scripts/dogfood-[name].sh`
-
-```bash
-./scripts/dogfood-[name].sh
-# Description
-```
+**Expected outcome:** `IDENTICAL` status for all test cases.
 
 ## Implementation Checklist
 
-- [ ] Identify high-value compositions (focus on REAL utility, not checkboxes)
-- [ ] Create composition scripts (`scripts/dogfood-*.sh`)
-- [ ] Update README with dogfooding section
-- [ ] Update GH Pages docs (if applicable)
-  - Use GitHub links: `[DOGFOODING_STRATEGY.md](https://github.com/tuulbelt/tuulbelt/blob/main/[tool-name]/DOGFOODING_STRATEGY.md)`
-  - Not relative paths: `See DOGFOODING_STRATEGY.md in the repository`
-- [ ] Test graceful fallback when tools not available
-- [ ] Document in this file
+- [x] Identify high-value compositions (focus on REAL utility, not checkboxes)
+- [x] Create composition scripts (`scripts/dogfood-*.sh`)
+- [x] Update README with dogfooding section
+- [x] Update GH Pages docs (if applicable)
+  - Use GitHub links: `[DOGFOODING_STRATEGY.md](https://github.com/tuulbelt/tuulbelt/blob/main/config-file-merger/DOGFOODING_STRATEGY.md)`
+- [x] Test graceful fallback when tools not available
+- [x] Document in this file
 
 ## Expected Outcomes
 
-1. **Proves Reliability:** Tests and outputs are deterministic
-2. **Demonstrates Composability:** Shows tools working together via CLI
-3. **Real Value:** Each composition solves an actual problem
+1. **Proves Reliability:** 135 tests × 10 runs = 1,350 deterministic executions
+2. **Demonstrates Composability:** CLI-based validation works across tool boundaries
+3. **Real Value:** Catches edge cases in type coercion and precedence handling
+
+## Graceful Fallback
+
+Both scripts exit gracefully (exit 0) when not in monorepo context:
+
+```bash
+# When run standalone (not in monorepo)
+./scripts/dogfood-flaky.sh
+# Output: "Not in monorepo context, skipping dogfooding"
+# Exit: 0 (success)
+```
+
+This ensures config-file-merger works independently while gaining validation benefits when used within the Tuulbelt ecosystem.
 
 ---
 
@@ -63,4 +70,4 @@ This document outlines how this tool leverages other Tuulbelt tools to demonstra
 - Keep tools standalone (graceful fallback)
 - Prioritize: Test validation > Output consistency > Domain-specific needs
 
-**Status:** Template - customize for your tool
+**Status:** Implemented (2 high-value compositions)

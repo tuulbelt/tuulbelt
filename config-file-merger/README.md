@@ -238,6 +238,27 @@ npx tsx examples/advanced.ts
   </a>
 </div>
 
+## Dogfooding
+
+Config File Merger uses other Tuulbelt tools to validate its reliability:
+
+### Test Flakiness Detection
+
+```bash
+./scripts/dogfood-flaky.sh [runs]
+# Validates all 135 tests are deterministic
+# Default: 10 runs = 1,350 test executions
+```
+
+### Output Determinism
+
+```bash
+./scripts/dogfood-diff.sh
+# Proves config merging produces identical output for identical input
+```
+
+See [DOGFOODING_STRATEGY.md](DOGFOODING_STRATEGY.md) for composition details.
+
 ## Error Handling
 
 Exit codes:
