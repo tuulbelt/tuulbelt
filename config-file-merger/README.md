@@ -227,14 +227,11 @@ npx tsx examples/advanced.ts
 
 ## Demo
 
-> **Note:** Demo recording will be generated automatically after merge via GitHub Actions.
+![Demo](docs/demo.gif)
 
-<div>
-  <span style="display: inline-block; vertical-align: middle; margin-right: 8px;"><strong>Try it online:</strong></span>
-  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/config-file-merger" style="display: inline-block; vertical-align: middle;">
-    <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
-  </a>
-</div>
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/placeholder-config-file-merger)**
+
+> Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/config-file-merger)
 
 ## Dogfooding
 

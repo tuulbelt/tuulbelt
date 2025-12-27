@@ -70,7 +70,11 @@ Values are merged in this order (highest precedence first):
 
 ## Demo
 
-> **Note:** Demo recording will be generated automatically after merge via GitHub Actions.
+See the tool in action:
+
+![Config File Merger Demo](/config-file-merger/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/placeholder-config-file-merger)**
 
 <div style="margin: 20px 0;">
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
@@ -82,6 +86,8 @@ Values are merged in this order (highest precedence first):
 </div>
 
 Merge configurations directly in your browser with zero setup. Experiment with different sources, precedence, and output formats.
+
+> Demos are automatically generated via GitHub Actions when demo scripts are updated.
 
 ## Next Steps
 
