@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Without shebang, `npm link` symlinks fail with "import: command not found"
 - Short names (`flaky`, `prog`, `normpath`, `serr`) now work after `npm link`
 - Added bin entry and shebang to scaffold template for future tools
+- Fixed entry point detection to resolve symlinks with `realpathSync()` before comparing paths
 
 **Demo Recording Workflow Fixes:**
 - Fixed race condition in create-demos.yml (rebase conflicts from build artifacts)
@@ -24,11 +25,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reset all demo content (GIFs, asciinema URLs, cast files) to placeholders
 - Workflow will regenerate all 6 demos on merge with correct short CLI names
 
-**Documentation Updates:**
-- Added shebang requirement to `docs/QUALITY_CHECKLIST.md`
-- Added "Missing Shebang for npm link" pitfall entry
-- Updated `.claude/commands/scaffold-tool.md` with shebang + bin entry instructions
-- Updated HANDOFF.md with session details
+**Template and Documentation Updates:**
+- Updated TypeScript and Rust template READMEs to document both CLI forms
+- Both short and long CLI names work; short form recommended
+- Added "CLI names documented" check to `docs/QUALITY_CHECKLIST.md`
+- Updated `.claude/commands/scaffold-tool.md` with instructions for both languages
+- Added shebang requirement and pitfall entry to quality checklist
+- Updated tracking documents (STATUS.md, HANDOFF.md, CHANGELOG.md)
 
 ### Fixed - Demo and Documentation (2025-12-26)
 

@@ -38,13 +38,17 @@ Based on the language choice, copy the appropriate template and customize it:
        "tool-name": "./src/index.ts"
      }
      ```
+   - Choose short name: See `.claude/NEXT_TASKS.md` for proposed names
 
 3. Verify src/index.ts has the shebang (required for `npm link`):
    ```typescript
    #!/usr/bin/env -S npx tsx
    ```
 
-4. Update README.md with the tool name and description
+4. Update README.md:
+   - Replace `tool-name` placeholder with actual tool name
+   - Replace `short-name` placeholder with chosen short name
+   - Both forms should be documented with short form recommended
 
 4. Customize STATUS.md:
    - Replace {{TOOL_NAME}} with the actual tool name
@@ -68,9 +72,24 @@ Based on the language choice, copy the appropriate template and customize it:
    cp -r templates/rust-tool-template "$1"
    ```
 
-2. Customize Cargo.toml with the tool name
+2. Customize Cargo.toml:
+   - Update name, description, repository URL
+   - **Update `[[bin]]` entries with short and long names:**
+     ```toml
+     [[bin]]
+     name = "short-name"
+     path = "src/main.rs"
 
-3. Update README.md with the tool name and description
+     [[bin]]
+     name = "tool-name"
+     path = "src/main.rs"
+     ```
+   - Choose short name: See `.claude/NEXT_TASKS.md` for proposed names
+
+3. Update README.md:
+   - Replace `tool-name` placeholder with actual tool name
+   - Replace `short-name` placeholder with chosen short name
+   - Both forms should be documented with short form recommended
 
 4. Customize STATUS.md:
    - Replace {{TOOL_NAME}} with the actual tool name

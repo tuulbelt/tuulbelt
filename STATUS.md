@@ -91,6 +91,7 @@
 - `flaky`, `prog`, `normpath`, `sema`, `odiff`, `serr`
 - npm link support with proper shebang
 - Scaffold template updated for future tools
+- Both short and long CLI forms documented and work
 
 **Infrastructure Improvements (2025-12-26)**
 - Demo workflow optimization (75-80% CI time savings via smart detection)
@@ -252,6 +253,7 @@
 - Zero runtime dependencies (both languages)
 - Multiple test categories (unit, CLI, integration, doctests)
 - **Short CLI names** for all tools (`flaky`, `prog`, etc.)
+- **Both CLI forms documented** (short recommended, long also works)
 - **Shebang required** for TypeScript entry points (`#!/usr/bin/env -S npx tsx`)
 
 **Infrastructure Improvements:**

@@ -90,6 +90,10 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
 - [ ] **Tool code complete**: All functionality implemented and tested
 - [ ] **Tests passing**: 80%+ coverage, all tests green
 - [ ] **README complete**: Installation, usage, API docs, examples
+- [ ] **CLI names documented**: Both short and long CLI names documented in README
+  - Short name recommended for ease of use
+  - Setup instructions for global installation (`npm link` or `cargo install --path .`)
+  - Both forms shown in CLI usage examples
 - [ ] **Zero dependencies**: `dependencies` object empty in package.json or Cargo.toml
 - [ ] **Runs /quality-check**: Tool-level quality check passes
 

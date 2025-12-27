@@ -43,6 +43,13 @@
    - Added shebang requirement to `docs/QUALITY_CHECKLIST.md`
    - Added "Missing Shebang for npm link" pitfall entry
 
+6. **Updated Templates for Both CLI Forms** ✅
+   - Updated TypeScript template README to document both short and long CLI names
+   - Updated Rust template README to document both short and long CLI names
+   - Updated scaffold-tool.md with instructions for both languages
+   - Added "CLI names documented" check to QUALITY_CHECKLIST.md
+   - Short form recommended, both forms work
+
 ### Previous Session Summary (Short CLI Names)
 
 1. **Short CLI Names for All 6 Tools** ✅
@@ -131,7 +138,8 @@ cargo run -- try /tmp/my.lock           # Rust
 - **npm link requires shebang** - All TypeScript entry points need `#!/usr/bin/env -S npx tsx`
 - **Demos will regenerate on merge** - create-demos.yml workflow handles all 6 tools
 - **Scaffold template updated** - New tools automatically get bin entry + shebang
-- **Quality check** verifies short name configuration
+- **Both CLI forms documented** - Templates and tools document both short and long names
+- **Quality check** verifies short name configuration and CLI documentation
 
 ---
 

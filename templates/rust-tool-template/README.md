@@ -23,7 +23,17 @@ cd tool-name
 cargo build --release
 ```
 
-The binary will be at `target/release/tool-name`.
+The binary supports **both short and long command names**:
+- Short (recommended): `target/release/short-name`
+- Long: `target/release/tool-name`
+
+**Recommended setup** — install globally for easy access:
+
+```bash
+cargo install --path .
+# Now use `short-name` anywhere
+short-name --help
+```
 
 ### As a Library
 
@@ -38,19 +48,27 @@ tuulbelt-tool-name = { git = "https://github.com/tuulbelt/tool-name.git" }
 
 ### As a CLI
 
+Using short name (recommended after `cargo install --path .`):
+
 ```bash
 # Basic usage
-./tool-name "hello world"
+short-name "hello world"
 # Output: HELLO WORLD
 
 # With verbose output
-./tool-name --verbose "hello world"
+short-name --verbose "hello world"
 
 # Show help
-./tool-name --help
+short-name --help
 
 # Show version
-./tool-name --version
+short-name --version
+```
+
+Using long name:
+
+```bash
+tool-name "hello world"
 ```
 
 ### As a Library
