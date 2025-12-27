@@ -26,7 +26,7 @@ sleep 0.5
 echo \"\$ normpath \\\"C:\\\\Users\\\\Documents\\\\file.txt\\\"\"
 sleep 0.5
 cd \"$TOOL_DIR\"
-npx normpath \"C:\\Users\\Documents\\file.txt\"
+npx tsx src/index.ts \"C:\\Users\\Documents\\file.txt\"
 sleep 1.5
 
 echo \"\"
@@ -34,7 +34,7 @@ echo \"# Convert Windows path to Unix format\"
 sleep 0.5
 echo \"\$ normpath --format unix \\\"C:\\\\Users\\\\Documents\\\\file.txt\\\"\"
 sleep 0.5
-npx normpath --format unix \"C:\\Users\\Documents\\file.txt\"
+npx tsx src/index.ts --format unix \"C:\\Users\\Documents\\file.txt\"
 sleep 1.5
 
 echo \"\"
@@ -42,7 +42,7 @@ echo \"# Convert Unix path to Windows format\"
 sleep 0.5
 echo \"\$ normpath --format windows \\\"/home/user/project/src\\\"\"
 sleep 0.5
-npx normpath --format windows \"/home/user/project/src\"
+npx tsx src/index.ts --format windows \"/home/user/project/src\"
 sleep 1.5
 
 echo \"\"
@@ -50,7 +50,7 @@ echo \"# Handle UNC network paths\"
 sleep 0.5
 echo \"\$ normpath --format unix \\\"\\\\\\\\\\\\\\\\server\\\\\\\\share\\\\\\\\folder\\\"\"
 sleep 0.5
-npx normpath --format unix \"\\\\\\\\server\\\\share\\\\folder\"
+npx tsx src/index.ts --format unix \"\\\\\\\\server\\\\share\\\\folder\"
 sleep 1.5
 
 echo \"\"
@@ -58,7 +58,7 @@ echo \"# Show help\"
 sleep 0.5
 echo \"\$ normpath --help\"
 sleep 0.5
-npx normpath --help
+npx tsx src/index.ts --help
 sleep 2
 
 echo \"\"

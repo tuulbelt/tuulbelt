@@ -26,7 +26,7 @@ sleep 0.5
 echo \"\$ prog init --total 100 --message \\\"Processing files\\\"\"
 sleep 0.5
 cd \"$TOOL_DIR\"
-npx prog init --total 100 --message \"Processing files\"
+npx tsx src/index.ts init --total 100 --message \"Processing files\"
 sleep 1
 
 echo \"\"
@@ -34,7 +34,7 @@ echo \"# Update progress in a loop\"
 sleep 0.5
 for i in {1..5}; do
   echo \"\$ prog increment --amount 20\"
-  npx prog increment --amount 20
+  npx tsx src/index.ts increment --amount 20
   sleep 0.8
 done
 sleep 1
@@ -44,7 +44,7 @@ echo \"# Finish with completion message\"
 sleep 0.5
 echo \"\$ prog finish --message \\\"Complete!\\\"\"
 sleep 0.5
-npx prog finish --message \"Complete!\"
+npx tsx src/index.ts finish --message \"Complete!\"
 sleep 2
 
 echo \"\"
@@ -52,7 +52,7 @@ echo \"# Show help\"
 sleep 0.5
 echo \"\$ prog --help\"
 sleep 0.5
-npx prog --help
+npx tsx src/index.ts --help
 sleep 2
 
 echo \"\"

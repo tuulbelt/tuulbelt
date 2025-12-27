@@ -26,7 +26,7 @@ sleep 0.5
 echo \"\$ flaky --test \\\"echo test\\\" --runs 5\"
 sleep 0.5
 cd \"$TOOL_DIR\"
-npx flaky --test \"echo test\" --runs 5
+npx tsx src/index.ts --test \"echo test\" --runs 5
 sleep 2
 
 echo \"\"
@@ -54,7 +54,7 @@ echo \"# Show help\"
 sleep 0.5
 echo \"\$ flaky --help\"
 sleep 0.5
-npx flaky --help
+npx tsx src/index.ts --help
 sleep 2
 
 echo \"\"

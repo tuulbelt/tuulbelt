@@ -26,7 +26,7 @@ sleep 0.5
 echo \"\$ serr demo\"
 sleep 0.5
 cd \"$TOOL_DIR\"
-npx serr demo | head -30
+npx tsx src/index.ts demo | head -30
 sleep 2
 
 echo \"\"
@@ -34,7 +34,7 @@ echo \"# 2. Show demo with human-readable text format\"
 sleep 0.5
 echo \"\$ serr demo --format text\"
 sleep 0.5
-npx serr demo --format text
+npx tsx src/index.ts demo --format text
 sleep 2
 
 echo \"\"
@@ -42,7 +42,7 @@ echo \"# 3. Parse a JSON error\"
 sleep 0.5
 echo '\''$ serr parse '\''\"'\"'{\"message\":\"Test error\",\"code\":\"TEST_CODE\",\"context\":[]}'\''\"'\"
 sleep 0.5
-npx serr parse '\''{\"message\":\"Test error\",\"code\":\"TEST_CODE\",\"context\":[]}'\'' --format text
+npx tsx src/index.ts parse '\''{\"message\":\"Test error\",\"code\":\"TEST_CODE\",\"context\":[]}'\'' --format text
 sleep 2
 
 echo \"\"
@@ -50,7 +50,7 @@ echo \"# 4. Validate JSON error format\"
 sleep 0.5
 echo '\''$ serr validate '\''\"'\"'{\"message\":\"Hello\"}'\''\"'\"
 sleep 0.5
-npx serr validate '\''{\"message\":\"Hello\"}'\''
+npx tsx src/index.ts validate '\''{\"message\":\"Hello\"}'\''
 sleep 1
 
 echo \"\"
@@ -58,7 +58,7 @@ echo \"# 5. Show help\"
 sleep 0.5
 echo \"\$ serr --help\"
 sleep 0.5
-npx serr --help
+npx tsx src/index.ts --help
 sleep 2
 
 echo \"\"
