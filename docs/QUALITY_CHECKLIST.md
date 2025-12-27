@@ -39,6 +39,19 @@ Run these checks **before committing any code**:
 - [ ] **No `unwrap()` in production**: Use `?` operator or proper error handling
 - [ ] **Cargo.toml valid**: Proper edition, dependencies empty
 
+### Security Checks (All Languages)
+
+- [ ] **No hardcoded secrets**: No passwords, API keys, tokens in source code
+  - Run: `grep -r -iE '(password.*=|api_key.*=|secret.*=|token.*=)' src/ | grep -v test`
+- [ ] **No secrets in staged changes**: Check before committing
+  - Run: `git diff --cached | grep -iE '(password|api_key|secret|token|private_key|credentials)'`
+- [ ] **No .env files tracked**: Sensitive config files not in git
+  - Run: `git ls-files | grep -E '\.env'` (should be empty)
+- [ ] **No high-severity vulnerabilities**: Dependencies are secure
+  - TypeScript: `npm audit --audit-level=high`
+  - Rust: `cargo audit` (if installed)
+- [ ] **Protected files untouched**: No edits to package-lock.json, Cargo.lock manually
+
 ### Documentation (VitePress) Specific
 
 - [ ] **Docs build succeeds**: `npm run docs:build` (no errors)
@@ -790,9 +803,33 @@ if [ -n "$(git status --porcelain)" ]; then
   git status --short
 fi
 
+# Security checks (all languages)
+echo ""
+echo "→ Running security checks..."
+
+echo "  ✓ Checking for hardcoded secrets..."
+if grep -r -iE '(password.*=|api_key.*=|secret.*=|token.*=)' src/ 2>/dev/null | grep -v test | grep -v '.md' | grep -q .; then
+  echo "  ⚠ WARNING: Potential secrets found in source files!"
+  grep -r -iE '(password.*=|api_key.*=|secret.*=|token.*=)' src/ 2>/dev/null | grep -v test | grep -v '.md'
+fi
+
+echo "  ✓ Checking for tracked .env files..."
+if git ls-files | grep -qE '\.env'; then
+  echo "  ✗ ERROR: .env files are tracked by git!"
+  git ls-files | grep -E '\.env'
+  exit 1
+fi
+
+echo "  ✓ Running dependency vulnerability scan..."
+if [ -f "package.json" ]; then
+  npm audit --audit-level=high 2>&1 || echo "  ⚠ Review vulnerabilities above"
+fi
+
 echo ""
 echo "All quality checks passed!"
 ```
+
+> **Note:** For comprehensive security analysis, also run `/security-scan` in Claude Code.
 
 **Usage:**
 ```bash

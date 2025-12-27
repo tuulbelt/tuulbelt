@@ -10,7 +10,7 @@ This document tracks pending work across the Tuulbelt project. Tasks are organiz
 
 All tools have short CLI names for better DX:
 
-### Implemented (6 tools)
+### Implemented (7 tools)
 
 | Tool | Short Name | Long Name |
 |------|------------|-----------|
@@ -20,12 +20,12 @@ All tools have short CLI names for better DX:
 | File-Based Semaphore | `sema` | `file-semaphore` |
 | Output Diffing Utility | `odiff` | `output-diff` |
 | Structured Error Handler | `serr` | `structured-error-handler` |
+| Configuration File Merger | `cfgmerge` | `config-file-merger` |
 
-### Proposed (27 remaining tools)
+### Proposed (26 remaining tools)
 
 | Tool | Short Name | Rationale |
 |------|------------|-----------|
-| Configuration File Merger | `cfgmerge` | config + merge |
 | Snapshot Comparison | `snapcmp` | snapshot + compare |
 | Test Port Conflict Resolver | `portres` | port + resolver |
 | Component Prop Validator | `propval` | prop + validate |
@@ -69,19 +69,20 @@ All 5 Phase 1 tools implemented!
 ✅ **File-Based Semaphore** (v0.1.0) - Rust
 ✅ **Output Diffing Utility** (v0.1.0) - Rust
 
-### Completed (Phase 2: 1/28) 🆕
+### Completed (Phase 2: 2/28) 🆕
 
-✅ **Structured Error Handler** (v0.1.0) - TypeScript 🆕
+✅ **Structured Error Handler** (v0.1.0) - TypeScript
+✅ **Configuration File Merger** (v0.1.0) - TypeScript 🆕
 
 ### Phase 2: Next Up
 
-See `README.md` for complete roadmap (27 remaining tools).
+See `README.md` for complete roadmap (26 remaining tools).
 
 **Recommended Next Tools:**
-- **Configuration File Merger** - ENV + config + CLI merging (TypeScript)
 - **Snapshot Comparison** - Binary/structured data snapshots (Rust)
 - **Test Port Conflict Resolver** - Concurrent test port allocation (TypeScript)
 - **Component Prop Validator** - TypeScript runtime validation (TypeScript)
+- **Exhaustiveness Checker** - Union case coverage for TS/JS (TypeScript)
 
 ---
 
@@ -141,7 +142,7 @@ See `README.md` for complete roadmap (27 remaining tools).
 - File size safety (100MB default, --max-size override)
 - Optimized vector allocations
 
-### Structured Error Handler 🆕
+### Structured Error Handler
 
 - ✅ v0.1.0 stable (First Phase 2 tool!)
 - ✅ Dogfooding: 2 composition scripts implemented
@@ -152,6 +153,18 @@ See `README.md` for complete roadmap (27 remaining tools).
 - Complete documentation (6 VitePress pages + SPEC.md)
 - Context chain preservation through call stacks
 - Full JSON serialization/deserialization
+
+### Configuration File Merger 🆕
+
+- ✅ v0.1.0 stable (Second Phase 2 tool!)
+- ✅ Dogfooding: 2 composition scripts implemented
+  - dogfood-flaky.sh: Validate determinism (135 tests × 10 runs)
+  - dogfood-diff.sh: Prove config merging produces identical output
+- ✅ DOGFOODING_STRATEGY.md: Complete strategy document
+- 135 tests passing (parsing, merging, CLI, type coercion, edge cases)
+- Complete documentation (7 VitePress pages)
+- Clear precedence: CLI > ENV > File > Defaults
+- Source tracking for debugging config origins
 
 ---
 
@@ -260,7 +273,8 @@ See `docs/KNOWN_ISSUES.md` for tracked issues.
 - ✅ Cross-Platform Path Normalizer: 80%+ coverage ✅
 - ✅ File-Based Semaphore: 80%+ coverage ✅
 - ✅ Output Diffing Utility: 80%+ coverage ✅
-- ✅ Structured Error Handler: 80%+ coverage ✅ 🆕
+- ✅ Structured Error Handler: 80%+ coverage ✅
+- ✅ Configuration File Merger: 80%+ coverage ✅ 🆕
 - Target: All tools maintain 80%+ coverage
 
 ---
@@ -338,32 +352,29 @@ Priority: Cross-Platform Path Normalizer
 
 ## Session Notes (2025-12-27)
 
-**npm link and Demo Fixes Complete!** Short CLI names now work correctly.
+**Configuration File Merger Complete!** Tool #7 implemented.
 
-**Latest Session (Demo & npm link Fixes):**
+**Latest Session (Configuration File Merger):**
+- Implemented Configuration File Merger (`cfgmerge`) ✅
+  - 135 tests passing
+  - Clear precedence: CLI > ENV > File > Defaults
+  - Source tracking for debugging
+  - Type coercion for numbers, booleans, null
+- Complete dogfooding setup ✅
+  - DOGFOODING_STRATEGY.md customized
+  - dogfood-flaky.sh: Validate 135 tests × 10 runs
+  - dogfood-diff.sh: Prove deterministic output
+- GitHub Pages documentation ✅
+  - 7 VitePress pages
+  - Demo recording script created
+
+**Previous Session (Demo & npm link Fixes):**
 - Fixed npm link support for TypeScript CLIs ✅
-  - Added shebang `#!/usr/bin/env -S npx tsx` to all 5 TypeScript entry points
-  - Without shebang, `npm link` symlinks fail with "import: command not found"
 - Fixed demo workflow race condition ✅
-  - Added cleanup before `git pull --rebase` (build artifacts caused conflicts)
-- Updated demo recording scripts to use `npm link --force` + actual short names
-- Reset all broken demo content (GIFs, asciinema URLs) to placeholders
 - Updated scaffold template with bin entry + shebang requirements
-- Added shebang requirement to QUALITY_CHECKLIST.md
 
 **Previous Session (Short CLI Names):**
 - Implemented short CLI names for all 6 tools ✅
-  - `flaky`, `prog`, `normpath`, `sema`, `odiff`, `serr`
-- Updated 69 files with documentation changes
-- Added bin entries to all TypeScript package.json files
-- Added [[bin]] entries to Rust Cargo.toml files
-- Updated all dogfooding scripts
 - Enhanced `/quality-check` with short name verification
-- Proposed short names for all 27 remaining tools
 
-**Previous Session (Structured Error Handler):**
-- Implemented Structured Error Handler (first Phase 2 tool) ✅
-- 81 tests passing, complete documentation
-- Demo recording script created
-
-**Next Priority:** Merge branch, then Configuration File Merger (`cfgmerge`) or Snapshot Comparison (`snapcmp`)
+**Next Priority:** Snapshot Comparison (`snapcmp`) or Test Port Conflict Resolver (`portres`)

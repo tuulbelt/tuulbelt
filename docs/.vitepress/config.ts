@@ -25,7 +25,8 @@ export default defineConfig({
             { text: 'Cross-Platform Path Normalizer', link: '/tools/cross-platform-path-normalizer/' },
             { text: 'File-Based Semaphore', link: '/tools/file-based-semaphore/' },
             { text: 'Output Diffing Utility', link: '/tools/output-diffing-utility/' },
-            { text: 'Structured Error Handler', link: '/tools/structured-error-handler/' }
+            { text: 'Structured Error Handler', link: '/tools/structured-error-handler/' },
+            { text: 'Config File Merger', link: '/tools/config-file-merger/' }
           ]
         }
       ],
@@ -126,6 +127,19 @@ export default defineConfig({
             { text: 'Library Usage', link: '/tools/structured-error-handler/library-usage' },
             { text: 'Examples', link: '/tools/structured-error-handler/examples' },
             { text: 'API Reference', link: '/tools/structured-error-handler/api-reference' }
+          ]
+        }
+      ],
+      '/tools/config-file-merger/': [
+        {
+          text: 'Config File Merger',
+          items: [
+            { text: 'Overview', link: '/tools/config-file-merger/' },
+            { text: 'Getting Started', link: '/tools/config-file-merger/getting-started' },
+            { text: 'CLI Usage', link: '/tools/config-file-merger/cli-usage' },
+            { text: 'Library Usage', link: '/tools/config-file-merger/library-usage' },
+            { text: 'Examples', link: '/tools/config-file-merger/examples' },
+            { text: 'API Reference', link: '/tools/config-file-merger/api-reference' }
           ]
         }
       ]

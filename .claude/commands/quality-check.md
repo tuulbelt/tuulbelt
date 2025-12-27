@@ -98,6 +98,23 @@ else
 fi
 ```
 
+### Security Checks (All Projects)
+
+Run the `/security-scan` command to perform comprehensive security analysis:
+
+- Secret detection (staged changes and source files)
+- Protected file check (.env files tracked by git)
+- Dependency vulnerability scan (npm audit, cargo audit)
+- Zero-dependency validation
+
+See @.claude/commands/security-scan.md for full details.
+
+**Quick verification:**
+```bash
+# Minimal secret check (full scan via /security-scan)
+git diff --cached | grep -iE '(password|api_key|secret|token)' && echo "⚠️  Review staged changes for secrets"
+```
+
 ### Documentation Checks (If at Root Level)
 
 If you're at the root of the Tuulbelt repo (contains `docs/.vitepress/`), also run:
@@ -128,6 +145,9 @@ grep -r "Cross-Platform Path Normalizer\|Test Flakiness Detector\|CLI Progress R
 - [ ] All tests pass (exit code 0)
 - [ ] No TypeScript/Clippy errors or warnings
 - [ ] Zero runtime dependencies in `dependencies` section
+- [ ] **No hardcoded secrets** in source files
+- [ ] **No .env files tracked** by git
+- [ ] **No high-severity vulnerabilities** in dependencies
 - [ ] **Documentation builds** (if at root: `npm run docs:build` succeeds)
 - [ ] **No dead links** in VitePress output
 
@@ -177,6 +197,7 @@ CHECKS PASSED:
   ✓ Tests passed (X/X tests, 100%)
   ✓ Type/lint checks passed
   ✓ Zero runtime dependencies verified
+  ✓ Security scan passed (no secrets, no vulnerabilities)
 
 WARNINGS:
   ⚠ [Any warnings or items to review]
