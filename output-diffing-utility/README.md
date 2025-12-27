@@ -31,7 +31,16 @@ cd output-diffing-utility
 cargo build --release
 ```
 
-The binary will be at `target/release/odiff`.
+The binary supports **both short and long command names**:
+- Short (recommended): `target/release/odiff`
+- Long: `target/release/output-diff`
+
+**Recommended setup** - install globally for easy access:
+```bash
+cargo install --path .
+# Now use `odiff` anywhere
+odiff --help
+```
 
 ### As a Library
 

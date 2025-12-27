@@ -38,7 +38,16 @@ cd file-based-semaphore
 cargo build --release
 ```
 
-The binary will be at `target/release/sema`.
+The binary supports **both short and long command names**:
+- Short (recommended): `target/release/sema`
+- Long: `target/release/file-semaphore`
+
+**Recommended setup** - install globally for easy access:
+```bash
+cargo install --path .
+# Now use `sema` anywhere
+sema --help
+```
 
 ### As a Library
 
