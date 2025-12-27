@@ -1,9 +1,9 @@
 # Tuulbelt Tool Quality Dashboard
 
-**Last Updated:** 2025-12-27 15:34 UTC
-**Test Results From:** 2025-12-27T15:34:16Z
-**Total Tools:** 6
-**Passing:** 6 | **Failing:** 0
+**Last Updated:** 2025-12-27 17:17 UTC
+**Test Results From:** 2025-12-27T17:17:25Z
+**Total Tools:** 7
+**Passing:** 7 | **Failing:** 0
 
 ---
 
@@ -12,6 +12,7 @@
 | Tool | Language | Tests | Build | Status | Version |
 |------|----------|-------|-------|--------|---------|
 | cli-progress-reporting | TypeScript | 9 | ✅ | 🟢 Production | 0.1.0 |
+| config-file-merger | TypeScript | 0 | ✅ | 🟢 Production | 0.1.0 |
 | cross-platform-path-normalizer | TypeScript | 14 | ✅ | 🟢 Production | 0.1.0 |
 | file-based-semaphore | Rust | 81 | ✅ | 🟢 Production | 0.1.0 |
 | output-diffing-utility | Rust | 94 | ✅ | 🟢 Production | 0.1.0 |
