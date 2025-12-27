@@ -1,14 +1,49 @@
 # Session Handoff
 
 **Last Updated:** 2025-12-27
-**Session:** Short CLI Names Implementation
-**Status:** ✅ Complete - All 6 tools have short CLI names
+**Session:** Demo & npm link Fixes for Short CLI Names
+**Status:** ✅ Complete - Ready to merge
 
 ---
 
 ## Current Session Summary
 
 ### What Was Accomplished
+
+**This session fixed issues that emerged after merging short CLI names:**
+
+1. **Fixed Demo Workflow Race Condition** ✅
+   - Added `git checkout -- .` and `git clean -fd` before `git pull --rebase`
+   - Prevents "cannot pull with rebase: unstaged changes" error from build artifacts
+   - File: `.github/workflows/create-demos.yml`
+
+2. **Fixed npm link Support for TypeScript CLIs** ✅
+   - Added shebang `#!/usr/bin/env -S npx tsx` to all 5 TypeScript entry points:
+     - `cli-progress-reporting/src/index.ts`
+     - `cross-platform-path-normalizer/src/index.ts`
+     - `structured-error-handler/src/index.ts`
+     - `test-flakiness-detector/src/index.ts`
+     - `templates/tool-repo-template/src/index.ts`
+   - Without shebang, `npm link` creates symlinks that fail with "import: command not found"
+
+3. **Updated Demo Recording Scripts** ✅
+   - All 4 TypeScript demo scripts now run `npm link --force` before recording
+   - Scripts use actual short CLI names (`flaky`, `prog`, `normpath`, `serr`)
+   - Demos will show real usage instead of `npx tsx src/index.ts`
+
+4. **Reset All Broken Demo Content** ✅
+   - All 12 demo.gif files reset to 42-byte placeholders
+   - All asciinema URLs replaced with `#` placeholder
+   - Deleted all demo.cast and demo-url.txt files
+   - create-demos.yml will regenerate everything on merge
+
+5. **Updated Scaffold Template & Documentation** ✅
+   - Added `bin` entry to `templates/tool-repo-template/package.json`
+   - Updated `.claude/commands/scaffold-tool.md` with shebang + bin entry instructions
+   - Added shebang requirement to `docs/QUALITY_CHECKLIST.md`
+   - Added "Missing Shebang for npm link" pitfall entry
+
+### Previous Session Summary (Short CLI Names)
 
 1. **Short CLI Names for All 6 Tools** ✅
    - `flaky` → test-flakiness-detector
@@ -22,26 +57,6 @@
    - Added `bin` entries to all 4 TypeScript package.json files
    - Added `[[bin]]` entries to both Rust Cargo.toml files
    - Both short and long names supported for backwards compatibility
-
-3. **Documentation Updated (69 files)** ✅
-   - All tool READMEs now show `# Tool Name / \`short-name\`` format
-   - All VitePress GH Pages docs updated
-   - All local VitePress docs updated
-   - Root README and docs/index.md updated
-   - All dogfooding scripts updated
-   - QUALITY_CHECKLIST.md examples updated
-   - Scaffold templates updated with short name guidance
-
-4. **Quality Check Enhanced** ✅
-   - Added short name verification to `/quality-check` command
-   - Checks for `bin` entry in TypeScript package.json
-   - Checks for `[[bin]]` entries in Rust Cargo.toml
-
-5. **Demo Recordings Reset** ✅
-   - Replaced all demo.gif files with placeholders
-   - Updated demo recording scripts to use short names
-   - Deleted old demo.cast files
-   - create-demos.yml workflow will regenerate all on merge
 
 ### Current Status
 
@@ -60,14 +75,23 @@
 
 ## CLI Usage
 
-**For installed packages** (via npm link, npm install -g, or as dependency):
+**For installed packages** (via `npm link`):
 ```bash
+# First time setup (run once per tool)
+cd test-flakiness-detector && npm install && npm link
+
+# Then use short names anywhere
 flaky --test "npm test" --runs 10
 prog init --total 100 --message "Processing"
 normpath --format unix "C:\Users\file.txt"
+serr demo --format text
+```
+
+**For Rust tools:**
+```bash
+cargo install --path file-based-semaphore
 sema try /tmp/my.lock --tag build
 odiff --color always old.json new.json
-serr demo --format text
 ```
 
 **For local development** (from source):
@@ -80,10 +104,10 @@ cargo run -- try /tmp/my.lock           # Rust
 
 ## Next Immediate Tasks
 
-**Priority 1: Create PR and Merge** ⭐
-- [ ] Create PR for short CLI names
+**Priority 1: Merge This Branch** ⭐
+- [ ] Create PR from `claude/resume-work-assessment-87UDw`
 - [ ] Merge to main to trigger demo regeneration
-- [ ] Verify demos are regenerated with short names
+- [ ] Verify demos are regenerated correctly with short CLI names
 
 **Priority 2: Choose Next Tool (Phase 2)**
 
@@ -98,31 +122,32 @@ cargo run -- try /tmp/my.lock           # Rust
 
 - **Short Names Table**: `.claude/NEXT_TASKS.md` - Has proposed names for all 33 tools
 - **CI Guide**: `docs/CI_GUIDE.md` - Single source of truth for CI/CD
-- **Quality Checklist**: `docs/QUALITY_CHECKLIST.md` - Pre-commit checks (includes short name verification)
+- **Quality Checklist**: `docs/QUALITY_CHECKLIST.md` - Pre-commit checks (includes shebang + bin entry requirements)
 
 ---
 
 ## Notes for Next Session
 
-- **Short names implemented!** - All 6 tools now have memorable CLI names
-- **Demos pending** - Will be auto-generated by GitHub Actions on merge
-- **Local dev note**: Use `npx tsx src/index.ts` for TypeScript, `cargo run` for Rust
-- **Quality check** now verifies short name configuration
+- **npm link requires shebang** - All TypeScript entry points need `#!/usr/bin/env -S npx tsx`
+- **Demos will regenerate on merge** - create-demos.yml workflow handles all 6 tools
+- **Scaffold template updated** - New tools automatically get bin entry + shebang
+- **Quality check** verifies short name configuration
 
 ---
 
 ## Quick Start for Next Session
 
 ```bash
-# 1. Verify short names work (after npm install)
-cd test-flakiness-detector && npm install
-npx flaky --help
+# 1. Verify short names work
+cd test-flakiness-detector && npm install && npm link
+flaky --help  # Should work!
 
 # 2. Check next tool candidates
 cat .claude/NEXT_TASKS.md | grep -A10 "Recommended Next Tools"
 
 # 3. Start new tool with proposed short name
 # Use: /scaffold-tool <tool-name> <typescript|rust>
+# Remember: Update bin entry and add shebang!
 ```
 
 ---

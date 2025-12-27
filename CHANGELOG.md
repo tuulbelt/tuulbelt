@@ -9,6 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - npm link and Demo Recording (2025-12-27)
+
+**npm link Support for Short CLI Names:**
+- Added shebang `#!/usr/bin/env -S npx tsx` to all 5 TypeScript entry points
+- Without shebang, `npm link` symlinks fail with "import: command not found"
+- Short names (`flaky`, `prog`, `normpath`, `serr`) now work after `npm link`
+- Added bin entry and shebang to scaffold template for future tools
+
+**Demo Recording Workflow Fixes:**
+- Fixed race condition in create-demos.yml (rebase conflicts from build artifacts)
+- Added `git checkout -- .` and `git clean -fd` before `git pull --rebase`
+- Updated all 4 TypeScript demo scripts to use `npm link --force` + actual short names
+- Reset all demo content (GIFs, asciinema URLs, cast files) to placeholders
+- Workflow will regenerate all 6 demos on merge with correct short CLI names
+
+**Documentation Updates:**
+- Added shebang requirement to `docs/QUALITY_CHECKLIST.md`
+- Added "Missing Shebang for npm link" pitfall entry
+- Updated `.claude/commands/scaffold-tool.md` with shebang + bin entry instructions
+- Updated HANDOFF.md with session details
+
 ### Fixed - Demo and Documentation (2025-12-26)
 
 **Demo Color Implementation:**
