@@ -30,8 +30,8 @@ if [ ! -d "$DIFFER_DIR" ] || [ ! -f "$DIFFER_DIR/target/release/output-diffing-u
     cd "$TOOL_DIR"
 
     # Run demo twice and compare (masking timestamps)
-    npx tsx src/index.ts demo --format json 2>/dev/null | sed 's/"timestamp":"[^"]*"/"timestamp":"MASKED"/g' > "$TMP_DIR/run1.json"
-    npx tsx src/index.ts demo --format json 2>/dev/null | sed 's/"timestamp":"[^"]*"/"timestamp":"MASKED"/g' > "$TMP_DIR/run2.json"
+    npx serr demo --format json 2>/dev/null | sed 's/"timestamp":"[^"]*"/"timestamp":"MASKED"/g' > "$TMP_DIR/run1.json"
+    npx serr demo --format json 2>/dev/null | sed 's/"timestamp":"[^"]*"/"timestamp":"MASKED"/g' > "$TMP_DIR/run2.json"
 
     if diff -q "$TMP_DIR/run1.json" "$TMP_DIR/run2.json" > /dev/null; then
         echo "✅ Serialization is deterministic (basic check)"
@@ -47,8 +47,8 @@ fi
 cd "$TOOL_DIR"
 echo "📝 Generating serialized outputs..."
 
-npx tsx src/index.ts demo --format json 2>/dev/null | sed 's/"timestamp":"[^"]*"/"timestamp":"MASKED"/g' > "$TMP_DIR/run1.json"
-npx tsx src/index.ts demo --format json 2>/dev/null | sed 's/"timestamp":"[^"]*"/"timestamp":"MASKED"/g' > "$TMP_DIR/run2.json"
+npx serr demo --format json 2>/dev/null | sed 's/"timestamp":"[^"]*"/"timestamp":"MASKED"/g' > "$TMP_DIR/run1.json"
+npx serr demo --format json 2>/dev/null | sed 's/"timestamp":"[^"]*"/"timestamp":"MASKED"/g' > "$TMP_DIR/run2.json"
 
 echo "🔍 Comparing outputs with Output Diffing Utility..."
 echo ""

@@ -8,11 +8,11 @@ Real-world usage scenarios for Cross-Platform Path Normalizer.
 
 ```bash
 # Convert Windows path to Unix
-npx tsx src/index.ts --format unix "C:\Users\Documents\file.txt"
+normpath --format unix "C:\Users\Documents\file.txt"
 # Output: /c/Users/Documents/file.txt
 
 # Convert Unix path to Windows
-npx tsx src/index.ts --format windows "/home/user/project/src/index.ts"
+normpath --format windows "/home/user/project/src/index.ts"
 # Output: \home\user\project\src\index.ts
 ```
 
@@ -20,11 +20,11 @@ npx tsx src/index.ts --format windows "/home/user/project/src/index.ts"
 
 ```bash
 # Let the tool detect the format
-npx tsx src/index.ts "C:\Program Files\app.exe"
+normpath "C:\Program Files\app.exe"
 # Detected format: windows
 # Output: C:\Program Files\app.exe
 
-npx tsx src/index.ts "/usr/local/bin/node"
+normpath "/usr/local/bin/node"
 # Detected format: unix
 # Output: /usr/local/bin/node
 ```
@@ -34,7 +34,7 @@ npx tsx src/index.ts "/usr/local/bin/node"
 ```bash
 # Process multiple paths
 for path in "C:\Windows\System32" "/usr/bin" "\\\\server\\share"; do
-  npx tsx src/index.ts --format unix "$path"
+  normpath --format unix "$path"
 done
 ```
 
@@ -173,7 +173,7 @@ jobs:
         id: normalize
         run: |
           ARTIFACT_PATH="${{ runner.temp }}/dist.zip"
-          NORMALIZED=$(npx tsx src/index.ts --format unix "$ARTIFACT_PATH")
+          NORMALIZED=$(normpath --format unix "$ARTIFACT_PATH")
           echo "path=$NORMALIZED" >> $GITHUB_OUTPUT
 
       - name: Build

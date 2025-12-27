@@ -53,13 +53,13 @@ if (result.success) {
 
 ```bash
 # Basic usage
-npx tsx src/index.ts "hello world"
+short-name "hello world"
 
 # With verbose output
-npx tsx src/index.ts --verbose "hello world"
+short-name --verbose "hello world"
 
 # Show help
-npx tsx src/index.ts --help
+short-name --help
 ```
 
 ## API

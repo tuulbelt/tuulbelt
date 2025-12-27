@@ -14,7 +14,7 @@ FILES=(images/*.jpg)
 TOTAL=${#FILES[@]}
 
 # Initialize progress
-npx tsx src/index.ts init --total $TOTAL --message "Processing images" --id "$TASK_ID"
+prog init --total $TOTAL --message "Processing images" --id "$TASK_ID"
 
 # Process each file
 for i in "${!FILES[@]}"; do
@@ -24,13 +24,13 @@ for i in "${!FILES[@]}"; do
   convert "$file" -resize 800x600 "thumbnails/$(basename "$file")"
 
   # Update progress
-  npx tsx src/index.ts increment \
+  prog increment \
     --message "Processed $(basename "$file")" \
     --id "$TASK_ID"
 done
 
 # Mark complete
-npx tsx src/index.ts finish --message "All images processed" --id "$TASK_ID"
+prog finish --message "All images processed" --id "$TASK_ID"
 ```
 
 ## Parallel Workers
@@ -44,14 +44,14 @@ TASK_ID="parallel-download"
 TOTAL_URLS=100
 
 # Initialize
-npx tsx src/index.ts init --total $TOTAL_URLS --message "Downloading files" --id "$TASK_ID"
+prog init --total $TOTAL_URLS --message "Downloading files" --id "$TASK_ID"
 
 # Function to download and update progress
 download_file() {
   local url=$1
   local output=$2
   curl -s "$url" -o "$output"
-  npx tsx src/index.ts increment --id "$TASK_ID"
+  prog increment --id "$TASK_ID"
 }
 
 export -f download_file
@@ -60,7 +60,7 @@ export TASK_ID
 # Download 10 files in parallel
 cat urls.txt | xargs -P 10 -I {} bash -c 'download_file "$@"' _ {}
 
-npx tsx src/index.ts finish --message "All downloads complete" --id "$TASK_ID"
+prog finish --message "All downloads complete" --id "$TASK_ID"
 ```
 
 ## CI/CD Pipeline
@@ -73,27 +73,27 @@ Track multi-stage build progress:
 PIPELINE_ID="build-${CI_COMMIT_SHA}"
 
 # 5 stages: lint, test, build, package, deploy
-npx tsx src/index.ts init --total 5 --message "Starting pipeline" --id "$PIPELINE_ID"
+prog init --total 5 --message "Starting pipeline" --id "$PIPELINE_ID"
 
 # Stage 1: Lint
 npm run lint
-npx tsx src/index.ts increment --message "Lint complete" --id "$PIPELINE_ID"
+prog increment --message "Lint complete" --id "$PIPELINE_ID"
 
 # Stage 2: Test
 npm test
-npx tsx src/index.ts increment --message "Tests passed" --id "$PIPELINE_ID"
+prog increment --message "Tests passed" --id "$PIPELINE_ID"
 
 # Stage 3: Build
 npm run build
-npx tsx src/index.ts increment --message "Build complete" --id "$PIPELINE_ID"
+prog increment --message "Build complete" --id "$PIPELINE_ID"
 
 # Stage 4: Package
 tar -czf dist.tar.gz dist/
-npx tsx src/index.ts increment --message "Package created" --id "$PIPELINE_ID"
+prog increment --message "Package created" --id "$PIPELINE_ID"
 
 # Stage 5: Deploy
 scp dist.tar.gz deploy@server:/releases/
-npx tsx src/index.ts finish --message "Deployed successfully" --id "$PIPELINE_ID"
+prog finish --message "Deployed successfully" --id "$PIPELINE_ID"
 ```
 
 ## Database Migration
@@ -109,18 +109,18 @@ MIGRATION_ID="db-migration-v2.0"
 MIGRATIONS=(migrations/*.sql)
 TOTAL=${#MIGRATIONS[@]}
 
-npx tsx src/index.ts init --total $TOTAL --message "Running migrations" --id "$MIGRATION_ID"
+prog init --total $TOTAL --message "Running migrations" --id "$MIGRATION_ID"
 
 for migration in "${MIGRATIONS[@]}"; do
   echo "Running $(basename "$migration")..."
   psql -f "$migration" database_name
 
-  npx tsx src/index.ts increment \
+  prog increment \
     --message "Applied $(basename "$migration")" \
     --id "$MIGRATION_ID"
 done
 
-npx tsx src/index.ts finish --message "All migrations complete" --id "$MIGRATION_ID"
+prog finish --message "All migrations complete" --id "$MIGRATION_ID"
 ```
 
 ## Progress Monitoring Script
@@ -146,7 +146,7 @@ while true; do
   clear
 
   # Get current progress
-  PROGRESS=$(npx tsx src/index.ts get --id "$TASK_ID" 2>/dev/null)
+  PROGRESS=$(prog get --id "$TASK_ID" 2>/dev/null)
 
   if [ $? -eq 0 ]; then
     # Parse JSON and display
@@ -238,12 +238,12 @@ if [ -f "$CHECKPOINT_FILE" ]; then
   echo "Resuming from item $RESUME_FROM"
 
   # Get existing progress
-  CURRENT=$(npx tsx src/index.ts get --id "$TASK_ID" | jq -r '.current')
+  CURRENT=$(prog get --id "$TASK_ID" | jq -r '.current')
   START=$CURRENT
 else
   START=0
   TOTAL=100
-  npx tsx src/index.ts init --total $TOTAL --message "Starting job" --id "$TASK_ID"
+  prog init --total $TOTAL --message "Starting job" --id "$TASK_ID"
 fi
 
 # Process items
@@ -255,13 +255,13 @@ for i in $(seq $START 99); do
     exit 1
   fi
 
-  npx tsx src/index.ts increment --id "$TASK_ID"
+  prog increment --id "$TASK_ID"
   echo $((i + 1)) > "$CHECKPOINT_FILE"
 done
 
 # Success - cleanup
 rm -f "$CHECKPOINT_FILE"
-npx tsx src/index.ts finish --message "Job complete" --id "$TASK_ID"
+prog finish --message "Job complete" --id "$TASK_ID"
 ```
 
 ## Testing with Progress

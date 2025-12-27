@@ -5,7 +5,7 @@ Command-line interface for Test Flakiness Detector.
 ## Basic Syntax
 
 ```bash
-npx tsx src/index.ts [options]
+flaky [options]
 ```
 
 ## Options
@@ -15,7 +15,7 @@ npx tsx src/index.ts [options]
 **Required.** The test command to execute repeatedly.
 
 ```bash
-npx tsx src/index.ts --test "npm test"
+flaky --test "npm test"
 ```
 
 ### `--runs <number>`
@@ -23,7 +23,7 @@ npx tsx src/index.ts --test "npm test"
 **Optional.** Number of times to run the tests. Default: `10`, Max: `1000`
 
 ```bash
-npx tsx src/index.ts --test "npm test" --runs 20
+flaky --test "npm test" --runs 20
 ```
 
 ### `--verbose`
@@ -31,7 +31,7 @@ npx tsx src/index.ts --test "npm test" --runs 20
 **Optional.** Enable verbose output showing each run's result. Default: `false`
 
 ```bash
-npx tsx src/index.ts --test "npm test" --verbose
+flaky --test "npm test" --verbose
 ```
 
 ### `--help`
@@ -39,7 +39,7 @@ npx tsx src/index.ts --test "npm test" --verbose
 Display help message with all available options.
 
 ```bash
-npx tsx src/index.ts --help
+flaky --help
 ```
 
 ## Examples
@@ -47,40 +47,40 @@ npx tsx src/index.ts --help
 ### Basic Flakiness Detection
 
 ```bash
-npx tsx src/index.ts --test "npm test" --runs 10
+flaky --test "npm test" --runs 10
 ```
 
 ### With Verbose Output
 
 ```bash
-npx tsx src/index.ts --test "npm test" --runs 20 --verbose
+flaky --test "npm test" --runs 20 --verbose
 ```
 
 ### Different Test Frameworks
 
 **Jest:**
 ```bash
-npx tsx src/index.ts --test "npm run test:jest" --runs 15
+flaky --test "npm run test:jest" --runs 15
 ```
 
 **Pytest:**
 ```bash
-npx tsx src/index.ts --test "pytest tests/" --runs 20
+flaky --test "pytest tests/" --runs 20
 ```
 
 **Cargo (Rust):**
 ```bash
-npx tsx src/index.ts --test "cargo test" --runs 10
+flaky --test "cargo test" --runs 10
 ```
 
 **Go:**
 ```bash
-npx tsx src/index.ts --test "go test ./..." --runs 15
+flaky --test "go test ./..." --runs 15
 ```
 
 **Vitest:**
 ```bash
-npx tsx src/index.ts --test "vitest run" --runs 20
+flaky --test "vitest run" --runs 20
 ```
 
 ## Output Format
@@ -150,7 +150,7 @@ jobs:
       - name: Run flakiness detection
         run: |
           cd test-flakiness-detector
-          npx tsx src/index.ts --test "npm test" --runs 20
+          flaky --test "npm test" --runs 20
 
       - name: Upload report
         uses: actions/upload-artifact@v4
@@ -167,7 +167,7 @@ test:flakiness:
   script:
     - cd test-flakiness-detector
     - npm install
-    - npx tsx src/index.ts --test "npm test" --runs 20
+    - flaky --test "npm test" --runs 20
   artifacts:
     paths:
       - test-flakiness-detector/flakiness-report.json
@@ -181,7 +181,7 @@ stage('Flakiness Detection') {
   steps {
     dir('test-flakiness-detector') {
       sh 'npm install'
-      sh 'npx tsx src/index.ts --test "npm test" --runs 20'
+      sh 'flaky --test "npm test" --runs 20'
       archiveArtifacts artifacts: 'flakiness-report.json'
     }
   }
@@ -200,7 +200,7 @@ stage('Flakiness Detection') {
 ### Use Verbose Mode for Debugging
 
 ```bash
-npx tsx src/index.ts --test "npm test" --runs 10 --verbose
+flaky --test "npm test" --runs 10 --verbose
 ```
 
 This shows the output of each individual run, helpful for diagnosing why tests are flaky.
@@ -209,7 +209,7 @@ This shows the output of each individual run, helpful for diagnosing why tests a
 
 ```bash
 # Run detection
-npx tsx src/index.ts --test "npm test" --runs 20
+flaky --test "npm test" --runs 20
 
 # Check the report
 cat flakiness-report.json | jq '.summary'
@@ -224,10 +224,10 @@ For slow test suites, use fewer runs:
 
 ```bash
 # For suites that take > 1 minute
-npx tsx src/index.ts --test "npm test" --runs 5
+flaky --test "npm test" --runs 5
 
 # For fast suites (< 10 seconds)
-npx tsx src/index.ts --test "npm test" --runs 50
+flaky --test "npm test" --runs 50
 ```
 
 ## See Also

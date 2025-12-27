@@ -1,4 +1,4 @@
-# Structured Error Handler
+# Structured Error Handler / `serr`
 
 [![Tests](https://github.com/tuulbelt/tuulbelt/actions/workflows/test-all-tools.yml/badge.svg)](https://github.com/tuulbelt/tuulbelt/actions/workflows/test-all-tools.yml)
 [![Tool Tests](https://github.com/tuulbelt/tuulbelt/workflows/Test%20All%20Tools/badge.svg?branch=main)](https://github.com/tuulbelt/tuulbelt/actions)
@@ -117,19 +117,19 @@ const enrichedError = error.addContext('handleRequest', {
 
 ```bash
 # Show a demo of structured errors
-npx tsx src/index.ts demo
+serr demo
 
 # Demo with text format
-npx tsx src/index.ts demo --format text
+serr demo --format text
 
 # Parse and format a JSON error
-npx tsx src/index.ts parse '{"message":"test error","code":"TEST","context":[]}'
+serr parse '{"message":"test error","code":"TEST","context":[]}'
 
 # Validate JSON error format
-npx tsx src/index.ts validate '{"message":"test"}'
+serr validate '{"message":"test"}'
 
 # Show help
-npx tsx src/index.ts --help
+serr --help
 ```
 
 ## CLI Options

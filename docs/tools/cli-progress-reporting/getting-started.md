@@ -26,7 +26,7 @@ CLI Progress Reporting has **zero runtime dependencies**. The `npm install` step
 ### Initialize Progress
 
 ```bash
-npx tsx src/index.ts init --total 100 --message "Processing files"
+prog init --total 100 --message "Processing files"
 ```
 
 Output:
@@ -37,7 +37,7 @@ Output:
 ### Update Progress
 
 ```bash
-npx tsx src/index.ts increment --amount 10
+prog increment --amount 10
 ```
 
 Output:
@@ -48,7 +48,7 @@ Output:
 ### Check Current Status
 
 ```bash
-npx tsx src/index.ts get
+prog get
 ```
 
 Output (JSON):
@@ -67,7 +67,7 @@ Output (JSON):
 ### Mark as Complete
 
 ```bash
-npx tsx src/index.ts finish --message "All done!"
+prog finish --message "All done!"
 ```
 
 Output:
@@ -95,12 +95,12 @@ Use unique IDs to track multiple operations simultaneously:
 
 ```bash
 # Track two separate jobs
-npx tsx src/index.ts init --total 100 --message "Job 1" --id job1
-npx tsx src/index.ts init --total 50 --message "Job 2" --id job2
+prog init --total 100 --message "Job 1" --id job1
+prog init --total 50 --message "Job 2" --id job2
 
 # Update them independently
-npx tsx src/index.ts increment --amount 10 --id job1
-npx tsx src/index.ts increment --amount 5 --id job2
+prog increment --amount 10 --id job1
+prog increment --amount 5 --id job2
 ```
 
 If no ID is specified, a default ID is used.
@@ -134,7 +134,7 @@ This ensures concurrent processes never see partial updates.
 If you get permission errors, the temp directory may not be writable. Use a custom path:
 
 ```bash
-npx tsx src/index.ts init --total 100 --message "Test" --path ./progress
+prog init --total 100 --message "Test" --path ./progress
 ```
 
 ### Progress Not Updating
@@ -143,12 +143,12 @@ Make sure you're using the same ID for all commands:
 
 ```bash
 # Correct - same ID
-npx tsx src/index.ts init --total 100 --id myproject
-npx tsx src/index.ts increment --id myproject
+prog init --total 100 --id myproject
+prog increment --id myproject
 
 # Wrong - different IDs
-npx tsx src/index.ts init --total 100 --id project1
-npx tsx src/index.ts increment --id project2  # Won't find project1
+prog init --total 100 --id project1
+prog increment --id project2  # Won't find project1
 ```
 
 ### JSON Parse Errors
@@ -156,6 +156,6 @@ npx tsx src/index.ts increment --id project2  # Won't find project1
 If the progress file becomes corrupted, clear it and start fresh:
 
 ```bash
-npx tsx src/index.ts clear --id myproject
-npx tsx src/index.ts init --total 100 --message "Restarting" --id myproject
+prog clear --id myproject
+prog init --total 100 --message "Restarting" --id myproject
 ```

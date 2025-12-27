@@ -131,7 +131,7 @@ $ output-diff file1.json file2.json &
 
 RUNS="${1:-10}"
 cd ../test-flakiness-detector
-npx tsx src/index.ts \
+flaky \
     --test "cd ../output-diffing-utility && cargo test" \
     --runs "$RUNS" \
     --verbose

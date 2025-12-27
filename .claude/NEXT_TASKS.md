@@ -1,8 +1,57 @@
 # Next Tasks
 
-**Last Updated:** 2025-12-26
+**Last Updated:** 2025-12-27
 
 This document tracks pending work across the Tuulbelt project. Tasks are organized by type and priority.
+
+---
+
+## 🎯 Short CLI Names Reference
+
+All tools have short CLI names for better DX:
+
+### Implemented (6 tools)
+
+| Tool | Short Name | Long Name |
+|------|------------|-----------|
+| Test Flakiness Detector | `flaky` | `test-flakiness-detector` |
+| CLI Progress Reporting | `prog` | `cli-progress-reporting` |
+| Cross-Platform Path Normalizer | `normpath` | `cross-platform-path-normalizer` |
+| File-Based Semaphore | `sema` | `file-semaphore` |
+| Output Diffing Utility | `odiff` | `output-diff` |
+| Structured Error Handler | `serr` | `structured-error-handler` |
+
+### Proposed (27 remaining tools)
+
+| Tool | Short Name | Rationale |
+|------|------------|-----------|
+| Configuration File Merger | `cfgmerge` | config + merge |
+| Snapshot Comparison | `snapcmp` | snapshot + compare |
+| Test Port Conflict Resolver | `portres` | port + resolver |
+| Component Prop Validator | `propval` | prop + validate |
+| Exhaustiveness Checker | `excheck` | exhaustive + check |
+| Content-Addressable Blob Store | `blobstore` | self-explanatory |
+| Schema Converter (YAML↔JSON) | `schconv` | schema + convert |
+| Minimalist Pub-Sub Protocol | `pubsub` | self-explanatory |
+| Self-Describing Binary Wire Protocol | `wireproto` | wire + protocol |
+| Request/Response Envelope Codec | `envcodec` | envelope + codec |
+| API Versioning Helper | `apiver` | api + version |
+| JSON Schema Validator | `jsonval` | json + validate |
+| Streaming JSON Parser | `jsonstream` | json + stream |
+| Stateless Identity Generator | `idgen` | identity + generate |
+| Static Site Search Indexer | `searchidx` | search + index |
+| Peer Discovery (UDP Multicast) | `peerdisco` | peer + discover |
+| One-File Reverse Proxy | `revproxy` | reverse + proxy |
+| Universal Log Normalizer | `lognorm` | log + normalize |
+| Manifest-First Sync Tool | `mansync` | manifest + sync |
+| Universal Health-Check Probe | `healthprobe` | health + probe |
+| Secret Injector | `secretinj` | secret + inject |
+| Deterministic Task Runner | `taskrun` | task + run |
+| Zero-Overhead Timing | `timeinj` | timing + inject |
+| Deterministic Build Artifact Generator | `detbuild` | deterministic + build |
+| Structured Trace-to-SVG | `tracesvg` | trace + svg |
+| Backpressure Proxy | `bpproxy` | backpressure + proxy |
+| FFI Binding Generator | `ffigen` | ffi + generate |
 
 ---
 
@@ -150,12 +199,18 @@ See `docs/KNOWN_ISSUES.md` for tracked issues.
 - ✅ **Template performance patterns** - Added to both Rust and TypeScript templates 🆕
 - ✅ **Template SPEC.md guidance** - When/how to create specifications 🆕
 - ✅ **Template advanced examples** - examples/advanced.rs and examples/advanced.ts 🆕
-- ✅ **Systematic dogfooding implementation** - All 4 remaining Phase 1 tools 🆕
+- ✅ **Systematic dogfooding implementation** - All 4 remaining Phase 1 tools
   - Created DOGFOODING_STRATEGY.md for all tools
   - Implemented 10 composition scripts (4+2+2+2)
   - Updated all tool documentation (README + GH Pages)
   - Created templates for future tools (TypeScript + Rust)
   - Updated QUALITY_CHECKLIST.md with dogfooding requirements
+- ✅ **Short CLI names documentation** - All 6 tools updated 🆕
+  - All READMEs show `# Tool Name / \`short-name\`` format
+  - All VitePress docs use short names in examples
+  - All dogfooding scripts use short names
+  - Proposed names for 27 remaining tools documented
+  - /quality-check verifies short name configuration
 
 ### Pending
 - [ ] Add "Contributing" guide page to VitePress (currently just links to CONTRIBUTING.md)
@@ -276,28 +331,29 @@ Priority: Cross-Platform Path Normalizer
 
 ---
 
-**Last Review:** 2025-12-26
+**Last Review:** 2025-12-27
 **Next Review:** When starting next session
 
 ---
 
-## Session Notes (2025-12-26)
+## Session Notes (2025-12-27)
 
-**Phase 2 Started!** 6 of 33 tools implemented (18%).
+**Short CLI Names Implemented!** All 6 tools now have memorable short names.
 
-**Latest Session (Structured Error Handler):**
+**Latest Session (Short CLI Names):**
+- Implemented short CLI names for all 6 tools ✅
+  - `flaky`, `prog`, `normpath`, `sema`, `odiff`, `serr`
+- Updated 69 files with documentation changes
+- Added bin entries to all TypeScript package.json files
+- Added [[bin]] entries to Rust Cargo.toml files
+- Updated all dogfooding scripts
+- Enhanced `/quality-check` with short name verification
+- Demo recordings will be regenerated on merge
+- Proposed short names for all 27 remaining tools
+
+**Previous Session (Structured Error Handler):**
 - Implemented Structured Error Handler (first Phase 2 tool) ✅
-- 612 lines TypeScript implementation
-- 68 tests passing (core, serialization, CLI)
-- Complete documentation (README, SPEC.md, 6 VitePress pages)
-- 2 examples (basic.ts, advanced.ts)
-- Dogfooding script implemented (dogfood-flaky.sh)
+- 81 tests passing, complete documentation
 - Demo recording script created
-- VitePress documentation deployed
 
-**Previous Session (Demo Fixes):**
-- Fixed output-diffing-utility demo color implementation (`--color always` syntax)
-- Updated all 5 VitePress demo links with correct asciinema URLs
-- Fixed create-demos.yml workflow pattern to match any asciinema URL
-
-**Next Priority:** Configuration File Merger or Snapshot Comparison
+**Next Priority:** Configuration File Merger (`cfgmerge`) or Snapshot Comparison (`snapcmp`)

@@ -132,13 +132,13 @@ cd tuulbelt/structured-error-handler
 npm install
 
 # Run CLI demo
-npx tsx src/index.ts demo
+serr demo
 
 # Human-readable format
-npx tsx src/index.ts demo --format text
+serr demo --format text
 
 # Parse a JSON error
-npx tsx src/index.ts parse '{"message":"test","context":[]}'
+serr parse '{"message":"test","context":[]}'
 ```
 
 <div>

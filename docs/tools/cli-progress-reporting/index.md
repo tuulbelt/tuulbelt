@@ -43,13 +43,13 @@ cd tuulbelt/cli-progress-reporting
 npm install
 
 # Initialize a progress tracker
-npx tsx src/index.ts init --total 100 --message "Processing files"
+prog init --total 100 --message "Processing files"
 
 # Update progress
-npx tsx src/index.ts increment --amount 10
+prog increment --amount 10
 
 # Check current status
-npx tsx src/index.ts get
+prog get
 ```
 
 ## Use Cases

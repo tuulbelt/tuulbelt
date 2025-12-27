@@ -49,7 +49,7 @@ cd tuulbelt/cross-platform-path-normalizer
 npm install
 
 # Convert a path
-npx tsx src/index.ts --format unix "C:\Users\file.txt"
+normpath --format unix "C:\Users\file.txt"
 # Output: /c/Users/file.txt
 
 # Library usage

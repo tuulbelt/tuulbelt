@@ -81,7 +81,7 @@ npm test  # or cargo test for Rust tools
 
 ```bash
 cd test-flakiness-detector && npm install
-npx tsx src/index.ts --test "npm test" --runs 10
+flaky --test "npm test" --runs 10
 ```
 
 [📖 Docs](test-flakiness-detector/docs/) | [🚀 Examples](test-flakiness-detector/examples/)
@@ -92,7 +92,7 @@ npx tsx src/index.ts --test "npm test" --runs 10
 
 ```bash
 cd cli-progress-reporting && npm install
-npx tsx src/index.ts init --total 100 --message "Processing files"
+flaky init --total 100 --message "Processing files"
 ```
 
 [📖 Docs](cli-progress-reporting/) | [🚀 Examples](cli-progress-reporting/examples/)
@@ -103,7 +103,7 @@ npx tsx src/index.ts init --total 100 --message "Processing files"
 
 ```bash
 cd cross-platform-path-normalizer && npm install
-npx tsx src/index.ts --format unix "C:\Users\file.txt"
+flaky --format unix "C:\Users\file.txt"
 ```
 
 [📖 Docs](cross-platform-path-normalizer/) | [🚀 Examples](cross-platform-path-normalizer/examples/)
@@ -117,7 +117,7 @@ Tuulbelt tools validate and enhance each other through real-world composition:
 **Test Flakiness Detector** integrates **CLI Progress Reporting** for real-time progress tracking:
 ```bash
 cd test-flakiness-detector
-npx tsx src/index.ts --test "npm test" --runs 20 --verbose
+flaky --test "npm test" --runs 20 --verbose
 # [INFO] Progress tracking enabled (dogfooding cli-progress-reporting)
 # Shows live run counts and pass/fail status
 ```

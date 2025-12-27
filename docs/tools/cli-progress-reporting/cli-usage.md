@@ -9,7 +9,7 @@ Complete reference for the command-line interface.
 Create a new progress tracker.
 
 ```bash
-npx tsx src/index.ts init --total <number> --message <string> [options]
+prog init --total <number> --message <string> [options]
 ```
 
 **Required:**
@@ -22,7 +22,7 @@ npx tsx src/index.ts init --total <number> --message <string> [options]
 
 **Example:**
 ```bash
-npx tsx src/index.ts init --total 100 --message "Processing files" --id myproject
+prog init --total 100 --message "Processing files" --id myproject
 ```
 
 ---
@@ -32,7 +32,7 @@ npx tsx src/index.ts init --total 100 --message "Processing files" --id myprojec
 Increment progress by a specified amount.
 
 ```bash
-npx tsx src/index.ts increment [options]
+prog increment [options]
 ```
 
 **Optional:**
@@ -43,7 +43,7 @@ npx tsx src/index.ts increment [options]
 
 **Example:**
 ```bash
-npx tsx src/index.ts increment --amount 10 --message "Processing batch 2" --id myproject
+prog increment --amount 10 --message "Processing batch 2" --id myproject
 ```
 
 ---
@@ -53,7 +53,7 @@ npx tsx src/index.ts increment --amount 10 --message "Processing batch 2" --id m
 Set progress to an absolute value.
 
 ```bash
-npx tsx src/index.ts set --current <number> [options]
+prog set --current <number> [options]
 ```
 
 **Required:**
@@ -66,7 +66,7 @@ npx tsx src/index.ts set --current <number> [options]
 
 **Example:**
 ```bash
-npx tsx src/index.ts set --current 75 --message "Almost done" --id myproject
+prog set --current 75 --message "Almost done" --id myproject
 ```
 
 ---
@@ -76,7 +76,7 @@ npx tsx src/index.ts set --current 75 --message "Almost done" --id myproject
 Retrieve current progress state as JSON.
 
 ```bash
-npx tsx src/index.ts get [options]
+prog get [options]
 ```
 
 **Optional:**
@@ -85,7 +85,7 @@ npx tsx src/index.ts get [options]
 
 **Example:**
 ```bash
-npx tsx src/index.ts get --id myproject
+prog get --id myproject
 ```
 
 **Output:**
@@ -108,7 +108,7 @@ npx tsx src/index.ts get --id myproject
 Mark progress as 100% complete.
 
 ```bash
-npx tsx src/index.ts finish [options]
+prog finish [options]
 ```
 
 **Optional:**
@@ -118,7 +118,7 @@ npx tsx src/index.ts finish [options]
 
 **Example:**
 ```bash
-npx tsx src/index.ts finish --message "All files processed successfully" --id myproject
+prog finish --message "All files processed successfully" --id myproject
 ```
 
 ---
@@ -128,7 +128,7 @@ npx tsx src/index.ts finish --message "All files processed successfully" --id my
 Delete the progress tracker file.
 
 ```bash
-npx tsx src/index.ts clear [options]
+prog clear [options]
 ```
 
 **Optional:**
@@ -137,7 +137,7 @@ npx tsx src/index.ts clear [options]
 
 **Example:**
 ```bash
-npx tsx src/index.ts clear --id myproject
+prog clear --id myproject
 ```
 
 ---
@@ -162,16 +162,16 @@ TASK="backup-$(date +%Y%m%d)"
 FILES=$(ls data/*.csv | wc -l)
 
 # Initialize
-npx tsx src/index.ts init --total $FILES --message "Starting backup" --id "$TASK"
+prog init --total $FILES --message "Starting backup" --id "$TASK"
 
 # Process files
 for file in data/*.csv; do
   cp "$file" backup/
-  npx tsx src/index.ts increment --id "$TASK"
+  prog increment --id "$TASK"
 done
 
 # Finish
-npx tsx src/index.ts finish --message "Backup complete" --id "$TASK"
+prog finish --message "Backup complete" --id "$TASK"
 ```
 
 ### Parallel Processing
@@ -179,7 +179,7 @@ npx tsx src/index.ts finish --message "Backup complete" --id "$TASK"
 ```bash
 #!/bin/bash
 TOTAL=100
-npx tsx src/index.ts init --total $TOTAL --message "Parallel processing" --id parallel
+prog init --total $TOTAL --message "Parallel processing" --id parallel
 
 # Run 4 workers in parallel
 for i in {1..4}; do
@@ -187,13 +187,13 @@ for i in {1..4}; do
     for j in $(seq 1 25); do
       # Do work...
       sleep 0.1
-      npx tsx src/index.ts increment --id parallel
+      prog increment --id parallel
     done
   ) &
 done
 
 wait
-npx tsx src/index.ts finish --message "All workers complete" --id parallel
+prog finish --message "All workers complete" --id parallel
 ```
 
 ### Error Handling
@@ -205,14 +205,14 @@ set -e  # Exit on error
 TASK_ID="important-job"
 
 # Trap errors and update progress
-trap 'npx tsx src/index.ts set --current 0 --message "Failed: $BASH_COMMAND" --id "$TASK_ID"' ERR
+trap 'prog set --current 0 --message "Failed: $BASH_COMMAND" --id "$TASK_ID"' ERR
 
-npx tsx src/index.ts init --total 10 --message "Starting job" --id "$TASK_ID"
+prog init --total 10 --message "Starting job" --id "$TASK_ID"
 
 # Do work...
-npx tsx src/index.ts increment --id "$TASK_ID"
+prog increment --id "$TASK_ID"
 
-npx tsx src/index.ts finish --message "Success!" --id "$TASK_ID"
+prog finish --message "Success!" --id "$TASK_ID"
 ```
 
 ## Exit Codes
@@ -233,8 +233,8 @@ None. All configuration is via command-line flags.
 When tracking multiple operations, use descriptive IDs:
 
 ```bash
-npx tsx src/index.ts init --total 100 --message "Database backup" --id db-backup-$(date +%Y%m%d)
-npx tsx src/index.ts init --total 50 --message "File cleanup" --id cleanup-$(date +%Y%m%d)
+prog init --total 100 --message "Database backup" --id db-backup-$(date +%Y%m%d)
+prog init --total 50 --message "File cleanup" --id cleanup-$(date +%Y%m%d)
 ```
 
 ### Monitor from Separate Process
@@ -243,10 +243,10 @@ Progress can be queried from a separate monitoring script:
 
 ```bash
 # Worker script
-npx tsx src/index.ts increment --id longrunning
+prog increment --id longrunning
 
 # Monitor script (separate terminal)
-watch -n 1 'npx tsx src/index.ts get --id longrunning | jq ".percentage"'
+watch -n 1 'prog get --id longrunning | jq ".percentage"'
 ```
 
 ### Clean Up Old Progress Files

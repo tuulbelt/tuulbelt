@@ -4,6 +4,10 @@
   "description": "Structured error format with context preservation and serialization",
   "main": "src/index.ts",
   "type": "module",
+  "bin": {
+    "serr": "./src/index.ts",
+    "structured-error-handler": "./src/index.ts"
+  },
   "scripts": {
     "build": "tsc",
     "test": "node --import tsx --test test/index.test.ts",
