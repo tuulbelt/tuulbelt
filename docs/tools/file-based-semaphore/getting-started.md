@@ -19,8 +19,8 @@ cd tuulbelt/file-based-semaphore
 # Build release binary
 cargo build --release
 
-# Binary is at: target/release/file-semaphore
-./target/release/file-semaphore --version
+# Binary is at: target/release/sema
+./target/release/sema --version
 ```
 
 ### As a Rust Library
@@ -36,15 +36,15 @@ file-based-semaphore = { git = "https://github.com/tuulbelt/tuulbelt.git", path 
 
 ```bash
 # Create a test lock
-./target/release/file-semaphore try /tmp/test.lock
+./target/release/sema try /tmp/test.lock
 # Output: Lock acquired: /tmp/test.lock
 
 # Check status
-./target/release/file-semaphore status /tmp/test.lock
+./target/release/sema status /tmp/test.lock
 # Output: Lock status: LOCKED
 
 # Release it
-./target/release/file-semaphore release /tmp/test.lock
+./target/release/sema release /tmp/test.lock
 # Output: Lock released: /tmp/test.lock
 ```
 

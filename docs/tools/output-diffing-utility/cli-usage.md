@@ -5,7 +5,7 @@ Complete command-line reference for `output-diff`.
 ## Synopsis
 
 ```bash
-output-diff [OPTIONS] <FILE1> <FILE2>
+odiff [OPTIONS] <FILE1> <FILE2>
 ```
 
 ## Arguments
@@ -18,7 +18,7 @@ First file to compare.
 
 **Example:**
 ```bash
-output-diff /path/to/old.txt new.txt
+odiff /path/to/old.txt new.txt
 ```
 
 ### `<FILE2>` (Required)
@@ -29,7 +29,7 @@ Second file to compare.
 
 **Example:**
 ```bash
-output-diff file1.json file2.json
+odiff file1.json file2.json
 ```
 
 ## Options
@@ -49,16 +49,16 @@ Output format for diff results.
 **Examples:**
 ```bash
 # Unified diff (default)
-output-diff file1.txt file2.txt
+odiff file1.txt file2.txt
 
 # JSON report
-output-diff --format json data1.json data2.json
+odiff --format json data1.json data2.json
 
 # Side-by-side
-output-diff -f side-by-side old.txt new.txt
+odiff -f side-by-side old.txt new.txt
 
 # Compact
-output-diff --format compact file1.txt file2.txt
+odiff --format compact file1.txt file2.txt
 ```
 
 ### Type Detection
@@ -81,13 +81,13 @@ Force file type interpretation (overrides auto-detection).
 **Examples:**
 ```bash
 # Treat JSON as plain text
-output-diff --type text config.json config2.json
+odiff --type text config.json config2.json
 
 # Force binary mode
-output-diff --type binary file1.dat file2.dat
+odiff --type binary file1.dat file2.dat
 
 # Auto-detect (default)
-output-diff --type auto file1.txt file2.txt
+odiff --type auto file1.txt file2.txt
 ```
 
 ### Context Control
@@ -103,16 +103,16 @@ Number of unchanged lines to show around changes (text diffs only).
 **Examples:**
 ```bash
 # 3 lines of context
-output-diff --context 3 file1.txt file2.txt
+odiff --context 3 file1.txt file2.txt
 
 # No context (changes only)
-output-diff -c 0 file1.txt file2.txt
+odiff -c 0 file1.txt file2.txt
 
 # 10 lines of context
-output-diff --context 10 large1.txt large2.txt
+odiff --context 10 large1.txt large2.txt
 
 # All context (default)
-output-diff file1.txt file2.txt
+odiff file1.txt file2.txt
 ```
 
 ### Color Control
@@ -129,13 +129,13 @@ Control ANSI color output (unified format only).
 **Examples:**
 ```bash
 # Auto-detect terminal
-output-diff file1.txt file2.txt
+odiff file1.txt file2.txt
 
 # Force color for piping
-output-diff --color always file1.txt file2.txt | less -R
+odiff --color always file1.txt file2.txt | less -R
 
 # Disable color for file output
-output-diff --color never file1.txt file2.txt > diff.txt
+odiff --color never file1.txt file2.txt > diff.txt
 ```
 
 ### Output Control
@@ -149,14 +149,14 @@ Suppress all output; only set exit code.
 **Examples:**
 ```bash
 # Check if files differ
-if output-diff --quiet file1.txt file2.txt; then
+if odiff --quiet file1.txt file2.txt; then
     echo "Identical"
 else
     echo "Different"
 fi
 
 # One-liner
-output-diff -q expected.txt actual.txt && echo "✅ Pass" || echo "❌ Fail"
+odiff -q expected.txt actual.txt && echo "✅ Pass" || echo "❌ Fail"
 ```
 
 #### `-o, --output <FILE>`
@@ -166,13 +166,13 @@ Write diff output to file instead of stdout.
 **Examples:**
 ```bash
 # Save unified diff
-output-diff --output changes.diff file1.txt file2.txt
+odiff --output changes.diff file1.txt file2.txt
 
 # Save JSON report
-output-diff -f json -o report.json data1.json data2.json
+odiff -f json -o report.json data1.json data2.json
 
 # Save side-by-side
-output-diff --format side-by-side --output review.txt old.txt new.txt
+odiff --format side-by-side --output review.txt old.txt new.txt
 ```
 
 #### `-v, --verbose`
@@ -188,14 +188,14 @@ Enable verbose debug output (written to stderr).
 **Examples:**
 ```bash
 # Verbose mode
-output-diff --verbose file1.txt file2.txt
+odiff --verbose file1.txt file2.txt
 # Output to stderr:
 # [DEBUG] File 1 type: Text
 # [DEBUG] File 2 type: Text
 # [DEBUG] Using unified diff format
 
 # Identical files with verbose
-output-diff -v identical1.txt identical2.txt
+odiff -v identical1.txt identical2.txt
 # [INFO] Files are identical
 ```
 
@@ -207,7 +207,7 @@ Show help message and exit.
 
 **Example:**
 ```bash
-output-diff --help
+odiff --help
 ```
 
 #### `-V, --version`
@@ -216,8 +216,8 @@ Show version information and exit.
 
 **Example:**
 ```bash
-output-diff --version
-# Output: output-diff 0.1.0
+odiff --version
+# Output: odiff 0.1.0
 ```
 
 ## Exit Codes
@@ -231,11 +231,11 @@ output-diff --version
 **Examples:**
 ```bash
 # Check exit code
-output-diff file1.txt file2.txt
+odiff file1.txt file2.txt
 echo $?  # 0, 1, or 2
 
 # Use in conditional
-output-diff --quiet expected.txt actual.txt
+odiff --quiet expected.txt actual.txt
 if [ $? -eq 0 ]; then
     echo "Test passed"
 elif [ $? -eq 1 ]; then
@@ -251,24 +251,24 @@ fi
 
 ```bash
 # JSON report with verbose logging
-output-diff --format json --verbose data1.json data2.json 2> debug.log
+odiff --format json --verbose data1.json data2.json 2> debug.log
 
 # Compact diff with no context
-output-diff --format compact --context 0 file1.txt file2.txt
+odiff --format compact --context 0 file1.txt file2.txt
 
 # Side-by-side with color for review
-output-diff --format side-by-side --color always file1.txt file2.txt | less -R
+odiff --format side-by-side --color always file1.txt file2.txt | less -R
 
 # Silent check, show diff only on failure
-output-diff --quiet file1.txt file2.txt || output-diff file1.txt file2.txt
+odiff --quiet file1.txt file2.txt || odiff file1.txt file2.txt
 
 # Force text mode with JSON output format
-output-diff --type text --format json config1.json config2.json
+odiff --type text --format json config1.json config2.json
 
 # Save colored diff to file
-output-diff --color always file1.txt file2.txt > /dev/null  # Can't save colors to file
+odiff --color always file1.txt file2.txt > /dev/null  # Can't save colors to file
 # Better:
-output-diff --color never --output diff.txt file1.txt file2.txt
+odiff --color never --output diff.txt file1.txt file2.txt
 ```
 
 ### Testing Workflows
@@ -278,9 +278,9 @@ output-diff --color never --output diff.txt file1.txt file2.txt
 #!/bin/bash
 for test in tests/*.expected; do
     actual="${test%.expected}.actual"
-    if ! output-diff --quiet "$test" "$actual"; then
+    if ! odiff --quiet "$test" "$actual"; then
         echo "❌ Failed: $test"
-        output-diff --format compact "$test" "$actual"
+        odiff --format compact "$test" "$actual"
         exit 1
     fi
 done
@@ -291,7 +291,7 @@ echo "✅ All tests passed"
 
 ```bash
 # Generate diff report in CI
-output-diff \
+odiff \
     --format json \
     --output diff-report.json \
     baseline.json \
@@ -363,7 +363,7 @@ Exit code: 2
 find dir1 -type f | while read -r file; do
     rel_path="${file#dir1/}"
     if [ -f "dir2/$rel_path" ]; then
-        output-diff --quiet "$file" "dir2/$rel_path" || echo "Differs: $rel_path"
+        odiff --quiet "$file" "dir2/$rel_path" || echo "Differs: $rel_path"
     else
         echo "Missing in dir2: $rel_path"
     fi
@@ -381,10 +381,10 @@ diff <(tr -s ' ' < file1.txt) <(tr -s ' ' < file2.txt)
 
 ```bash
 # Use context limit for large files
-output-diff --context 5 large1.txt large2.txt
+odiff --context 5 large1.txt large2.txt
 
 # Or compact format
-output-diff --format compact large1.txt large2.txt
+odiff --format compact large1.txt large2.txt
 ```
 
 ## See Also

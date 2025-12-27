@@ -15,22 +15,22 @@ cd tuulbelt/output-diffing-utility
 cargo build --release
 
 # Binary location
-./target/release/output-diff
+./target/release/odiff
 ```
 
 ### Add to PATH
 
 ```bash
 # Option 1: Symlink to /usr/local/bin
-sudo ln -s "$(pwd)/target/release/output-diff" /usr/local/bin/output-diff
+sudo ln -s "$(pwd)/target/release/odiff" /usr/local/bin/output-diff
 
 # Option 2: Copy to ~/.local/bin
 mkdir -p ~/.local/bin
-cp target/release/output-diff ~/.local/bin/
+cp target/release/odiff ~/.local/bin/
 export PATH="$HOME/.local/bin:$PATH"  # Add to ~/.bashrc or ~/.zshrc
 
 # Verify installation
-output-diff --version
+odiff --version
 ```
 
 ## Quick Test
@@ -43,7 +43,7 @@ echo -e "line 1\nline 2\nline 3" > file1.txt
 echo -e "line 1\nline 2 modified\nline 3" > file2.txt
 
 # Run diff
-output-diff file1.txt file2.txt
+odiff file1.txt file2.txt
 ```
 
 **Expected output:**
@@ -67,7 +67,7 @@ echo '{"name": "Alice", "age": 30}' > data1.json
 echo '{"name": "Bob", "age": 30}' > data2.json
 
 # Run JSON diff
-output-diff data1.json data2.json
+odiff data1.json data2.json
 ```
 
 **Expected output:**
@@ -82,13 +82,13 @@ JSON diff for 'data1.json' vs 'data2.json':
 
 ```bash
 # JSON report format
-output-diff --format json data1.json data2.json
+odiff --format json data1.json data2.json
 
 # Side-by-side format
-output-diff --format side-by-side file1.txt file2.txt
+odiff --format side-by-side file1.txt file2.txt
 
 # Compact format
-output-diff --format compact file1.txt file2.txt
+odiff --format compact file1.txt file2.txt
 ```
 
 ## Basic Usage Patterns
@@ -96,11 +96,11 @@ output-diff --format compact file1.txt file2.txt
 ### Check if Files Differ (Shell Scripts)
 
 ```bash
-if output-diff --quiet expected.txt actual.txt; then
+if odiff --quiet expected.txt actual.txt; then
     echo "✅ Test passed"
 else
     echo "❌ Test failed - files differ"
-    output-diff expected.txt actual.txt  # Show diff
+    odiff expected.txt actual.txt  # Show diff
     exit 1
 fi
 ```
@@ -109,36 +109,36 @@ fi
 
 ```bash
 # Save unified diff
-output-diff file1.txt file2.txt > changes.diff
+odiff file1.txt file2.txt > changes.diff
 
 # Or use --output flag
-output-diff --output changes.diff file1.txt file2.txt
+odiff --output changes.diff file1.txt file2.txt
 
 # Save JSON report
-output-diff --format json --output report.json data1.json data2.json
+odiff --format json --output report.json data1.json data2.json
 ```
 
 ### Colored Output for Review
 
 ```bash
 # Force color even when piping
-output-diff --color always file1.txt file2.txt | less -R
+odiff --color always file1.txt file2.txt | less -R
 
 # Disable color for file output
-output-diff --color never file1.txt file2.txt > changes.txt
+odiff --color never file1.txt file2.txt > changes.txt
 ```
 
 ### Limit Context Lines
 
 ```bash
 # Show only 1 line before/after changes
-output-diff --context 1 large1.txt large2.txt
+odiff --context 1 large1.txt large2.txt
 
 # Show no context (only changes)
-output-diff --context 0 file1.txt file2.txt
+odiff --context 0 file1.txt file2.txt
 
 # Show all context (default)
-output-diff file1.txt file2.txt
+odiff file1.txt file2.txt
 ```
 
 ## Common Workflows
@@ -153,12 +153,12 @@ output-diff file1.txt file2.txt
 ./my-tool --config config.json > actual.txt
 
 # Compare with expected
-if output-diff --quiet expected.txt actual.txt; then
+if odiff --quiet expected.txt actual.txt; then
     echo "✅ Output matches expected"
     exit 0
 else
     echo "❌ Output differs from expected:"
-    output-diff expected.txt actual.txt
+    odiff expected.txt actual.txt
     exit 1
 fi
 ```
@@ -167,7 +167,7 @@ fi
 
 ```bash
 # Compare staging vs production config
-output-diff \
+odiff \
     --format side-by-side \
     configs/staging.json \
     configs/production.json
@@ -177,7 +177,7 @@ output-diff \
 
 ```bash
 # Compare database exports
-output-diff \
+odiff \
     --format json \
     --output validation-report.json \
     export-2025-01-01.json \
@@ -198,7 +198,7 @@ fi
 
 **Solution:** Force binary mode:
 ```bash
-output-diff --type binary file1.dat file2.dat
+odiff --type binary file1.dat file2.dat
 ```
 
 ### Issue: "Error parsing JSON"
@@ -207,7 +207,7 @@ output-diff --type binary file1.dat file2.dat
 
 **Solution:** Force text mode to see line-level diff:
 ```bash
-output-diff --type text invalid1.json invalid2.json
+odiff --type text invalid1.json invalid2.json
 ```
 
 ### Issue: "No differences shown for identical files"
@@ -216,7 +216,7 @@ output-diff --type text invalid1.json invalid2.json
 
 **Solution:** Check exit code or use `--verbose`:
 ```bash
-output-diff --verbose file1.txt file2.txt
+odiff --verbose file1.txt file2.txt
 # Output: "[INFO] Files are identical"
 ```
 
@@ -226,9 +226,9 @@ output-diff --verbose file1.txt file2.txt
 
 **Solution:** Use compact format or limit context:
 ```bash
-output-diff --format compact large1.txt large2.txt
+odiff --format compact large1.txt large2.txt
 # or
-output-diff --context 0 large1.txt large2.txt
+odiff --context 0 large1.txt large2.txt
 ```
 
 ## Next Steps

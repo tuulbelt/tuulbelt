@@ -36,7 +36,7 @@ fn report_progress(current: usize, total: usize, message: &str) {
 
 **Example Output:**
 ```
-$ output-diff large-file1.json large-file2.json
+$ odiff large-file1.json large-file2.json
 [45%] 4.5MB/10MB - Comparing JSON structures (12s)
 ```
 
@@ -75,7 +75,7 @@ fn normalize_path(input_path: &str) -> Result<String, String> {
 
 **Example:**
 ```
-$ output-diff "C:\data\file1.json" "/home/user/file2.json"
+$ odiff "C:\data\file1.json" "/home/user/file2.json"
 # Internally normalizes both paths to consistent format
 ```
 
@@ -108,8 +108,8 @@ fn get_cached_diff(file1: &str, file2: &str) -> Option<DiffResult> {
 
 **Example:**
 ```
-$ output-diff file1.json file2.json &
-$ output-diff file1.json file2.json &
+$ odiff file1.json file2.json &
+$ odiff file1.json file2.json &
 # Second process waits for cache lock before reading
 ```
 
@@ -159,7 +159,7 @@ FILE2=$(npx tsx ../cross-platform-path-normalizer/src/index.ts --absolute "/home
 npx tsx ../cli-progress-reporting/src/index.ts init --total 100 --id diff-task --message "Comparing files"
 
 # 3. Run diff with progress updates (output-diffing-utility)
-output-diff "$FILE1" "$FILE2" --progress-id diff-task
+odiff "$FILE1" "$FILE2" --progress-id diff-task
 
 # 4. Mark complete (cli-progress-reporting)
 npx tsx ../cli-progress-reporting/src/index.ts finish --id diff-task --message "Diff complete"

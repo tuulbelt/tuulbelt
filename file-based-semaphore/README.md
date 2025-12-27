@@ -38,7 +38,16 @@ cd file-based-semaphore
 cargo build --release
 ```
 
-The binary will be at `target/release/file-semaphore`.
+The binary supports **both short and long command names**:
+- Short (recommended): `target/release/sema`
+- Long: `target/release/file-semaphore`
+
+**Recommended setup** - install globally for easy access:
+```bash
+cargo install --path .
+# Now use `sema` anywhere
+sema --help
+```
 
 ### As a Library
 
@@ -55,22 +64,22 @@ file-based-semaphore = { git = "https://github.com/tuulbelt/file-based-semaphore
 
 ```bash
 # Try to acquire a lock (non-blocking)
-file-semaphore try /tmp/my.lock
+sema try /tmp/my.lock
 
 # Acquire with timeout (blocks up to 10 seconds)
-file-semaphore acquire /tmp/my.lock --timeout 10
+sema acquire /tmp/my.lock --timeout 10
 
 # Check lock status
-file-semaphore status /tmp/my.lock
+sema status /tmp/my.lock
 
 # Release a lock
-file-semaphore release /tmp/my.lock
+sema release /tmp/my.lock
 
 # Wait for a lock to be released
-file-semaphore wait /tmp/my.lock --timeout 30
+sema wait /tmp/my.lock --timeout 30
 
 # Get JSON output
-file-semaphore status /tmp/my.lock --json
+sema status /tmp/my.lock --json
 ```
 
 ### Library
@@ -167,10 +176,10 @@ This format is:
 #!/bin/bash
 
 # Acquire lock before running exclusive task
-if file-semaphore try /tmp/deploy.lock --tag "deploy-$(date +%s)"; then
+if sema try /tmp/deploy.lock --tag "deploy-$(date +%s)"; then
     echo "Lock acquired, deploying..."
     ./deploy.sh
-    file-semaphore release /tmp/deploy.lock
+    sema release /tmp/deploy.lock
 else
     echo "Another deployment in progress"
     exit 1

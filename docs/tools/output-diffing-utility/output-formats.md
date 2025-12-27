@@ -71,7 +71,7 @@ When `--color always` or auto-detected terminal:
 
 **Example:**
 ```bash
-output-diff --color always file1.txt file2.txt | cat -v
+odiff --color always file1.txt file2.txt | cat -v
 # Shows: ^[[31m- old line^[[0m and ^[[32m+ new line^[[0m
 ```
 
@@ -79,13 +79,13 @@ output-diff --color always file1.txt file2.txt | cat -v
 
 ```bash
 # No context (changes only)
-output-diff --context 0 file1.txt file2.txt
+odiff --context 0 file1.txt file2.txt
 @@ -2,1 +2,1 @@
 -line 2
 +line 2 modified
 
 # 3 lines context
-output-diff --context 3 file1.txt file2.txt
+odiff --context 3 file1.txt file2.txt
 @@ -1,3 +1,3 @@
  line 1
 -line 2
@@ -227,13 +227,13 @@ interface Summary {
 
 ```bash
 # Extract summary using jq
-output-diff --format json file1.json file2.json | jq '.summary'
+odiff --format json file1.json file2.json | jq '.summary'
 
 # Count changes
-output-diff --format json file1.json file2.json | jq '.summary.total_changes'
+odiff --format json file1.json file2.json | jq '.summary.total_changes'
 
 # List modified paths
-output-diff --format json file1.json file2.json | \
+odiff --format json file1.json file2.json | \
   jq '.differences[] | select(.type == "modified") | .path'
 ```
 

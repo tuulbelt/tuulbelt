@@ -29,10 +29,26 @@ Clone the repository:
 git clone https://github.com/tuulbelt/tool-name.git
 cd tool-name
 npm install  # Install dev dependencies only
-npm link     # Enable the 'short-name' command globally
 ```
 
 No runtime dependencies — this tool uses only Node.js standard library.
+
+**CLI names** — both short and long forms work:
+- Short (recommended): `short-name`
+- Long: `tool-name`
+
+**Recommended setup** — install globally for easy access:
+
+```bash
+npm link  # Enable the 'short-name' command globally
+short-name --help
+```
+
+For local development without global install:
+
+```bash
+npx tsx src/index.ts --help
+```
 
 ## Usage
 
@@ -52,6 +68,8 @@ if (result.success) {
 
 ### As a CLI
 
+Using short name (recommended after `npm link`):
+
 ```bash
 # Basic usage
 short-name "hello world"
@@ -61,6 +79,12 @@ short-name --verbose "hello world"
 
 # Show help
 short-name --help
+```
+
+Using long name:
+
+```bash
+tool-name "hello world"
 ```
 
 ## API

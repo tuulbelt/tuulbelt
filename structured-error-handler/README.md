@@ -45,7 +45,16 @@ Clone the repository:
 git clone https://github.com/tuulbelt/tuulbelt.git
 cd tuulbelt/structured-error-handler
 npm install  # Install dev dependencies only
-npm link     # Enable the 'serr' command globally
+```
+
+**CLI names** - both short and long forms work:
+- Short (recommended): `serr`
+- Long: `structured-error-handler`
+
+**Recommended setup** - install globally for easy access:
+```bash
+npm link  # Enable the 'serr' command globally
+serr --help
 ```
 
 No runtime dependencies — this tool uses only Node.js standard library.

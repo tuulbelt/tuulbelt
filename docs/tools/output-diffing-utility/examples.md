@@ -55,11 +55,11 @@ mod tests {
 ./my-tool --mode production > /tmp/actual-output.json
 
 # Compare with snapshot
-if output-diff --quiet snapshots/expected-output.json /tmp/actual-output.json; then
+if odiff --quiet snapshots/expected-output.json /tmp/actual-output.json; then
     echo "✅ Snapshot test passed"
 else
     echo "❌ Snapshot test failed:"
-    output-diff --format compact snapshots/expected-output.json /tmp/actual-output.json
+    odiff --format compact snapshots/expected-output.json /tmp/actual-output.json
 
     # Update snapshot if UPDATE=1
     if [ "$UPDATE" = "1" ]; then
@@ -94,7 +94,7 @@ jobs:
 
       - name: Compare with Expected
         run: |
-          if ! ./output-diffing-utility/target/release/output-diff \
+          if ! ./output-diffing-utility/target/release/odiff \
                  --format json \
                  --output diff-report.json \
                  expected-baseline.json baseline.json; then
@@ -114,14 +114,14 @@ jobs:
 
 echo "Comparing staging vs production config..."
 
-output-diff \
+odiff \
     --format side-by-side \
     --color always \
     config/staging.json \
     config/production.json | less -R
 
 # Generate JSON report for auditing
-output-diff \
+odiff \
     --format json \
     --output config-diff-report.json \
     config/staging.json \
@@ -176,7 +176,7 @@ pg_dump prod_db > /tmp/prod-export.sql
 pg_dump staging_db > /tmp/staging-export.sql
 
 # Compare schemas
-output-diff \
+odiff \
     --format compact \
     --context 5 \
     <(grep "CREATE TABLE" /tmp/prod-export.sql | sort) \
@@ -231,10 +231,10 @@ fn validate_api_migration(
 ./codegen/generate.sh > /tmp/generated.rs
 
 # Compare with committed version
-if ! output-diff --quiet src/generated.rs /tmp/generated.rs; then
+if ! odiff --quiet src/generated.rs /tmp/generated.rs; then
     echo "❌ Generated code differs from committed version"
     echo "Run: ./codegen/generate.sh > src/generated.rs"
-    output-diff --format compact src/generated.rs /tmp/generated.rs
+    odiff --format compact src/generated.rs /tmp/generated.rs
     exit 1
 fi
 
@@ -283,7 +283,7 @@ if git diff --cached --name-only | grep -q "package-lock.json"; then
     git show HEAD:package-lock.json > /tmp/old-lock.json 2>/dev/null || echo "{}" > /tmp/old-lock.json
     cp package-lock.json /tmp/new-lock.json
 
-    output-diff \
+    odiff \
         --format compact \
         /tmp/old-lock.json \
         /tmp/new-lock.json
@@ -312,7 +312,7 @@ for artifact in binary.tar.gz checksums.txt; do
     curl -sL "https://releases.example.com/v${PREVIOUS_VERSION}/${artifact}" -o /tmp/prev-${artifact}
     cp "dist/${artifact}" /tmp/new-${artifact}
 
-    if output-diff --type binary /tmp/prev-${artifact} /tmp/new-${artifact}; then
+    if odiff --type binary /tmp/prev-${artifact} /tmp/new-${artifact}; then
         echo "⚠️  WARNING: $artifact unchanged from previous release"
     else
         echo "✅ $artifact updated"
@@ -332,7 +332,7 @@ done
 jq -S '.' file1.json > /tmp/file1-sorted.json
 jq -S '.' file2.json > /tmp/file2-sorted.json
 
-output-diff /tmp/file1-sorted.json /tmp/file2-sorted.json
+odiff /tmp/file1-sorted.json /tmp/file2-sorted.json
 ```
 
 ### Example 13: Progressive Diff Review
@@ -347,9 +347,9 @@ for file in $FILES; do
     echo "Reviewing: $file"
 
     if git show HEAD:"./$file" > /tmp/old-version 2>/dev/null; then
-        if ! output-diff --quiet /tmp/old-version "$file"; then
+        if ! odiff --quiet /tmp/old-version "$file"; then
             echo "Changed: $file"
-            output-diff --format side-by-side --color always /tmp/old-version "$file" | less -R
+            odiff --format side-by-side --color always /tmp/old-version "$file" | less -R
 
             read -p "Continue to next file? (y/n) " -n 1 -r
             echo
