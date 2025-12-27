@@ -19,6 +19,7 @@ on:
       - 'file-based-semaphore/src/**'
       - 'output-diffing-utility/src/**'
       - 'structured-error-handler/src/**'
+      - 'config-file-merger/src/**'
 
   workflow_dispatch:  # Manual trigger
     inputs:

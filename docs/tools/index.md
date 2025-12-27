@@ -2,7 +2,7 @@
 
 Tuulbelt provides a curated collection of focused, zero-dependency tools for modern software development.
 
-## Completed Tools (6/33)
+## Completed Tools (7/33)
 
 ### Test Flakiness Detector
 
@@ -120,6 +120,26 @@ Structured error format with context preservation and serialization. Chain conte
 - Zero runtime dependencies
 
 [View Documentation →](/tools/structured-error-handler/)
+
+---
+
+### Config File Merger
+
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
+**Language:** TypeScript
+**Tests:** 135 tests
+
+Merge configuration from ENV variables, config files, and CLI arguments with clear precedence rules and source tracking.
+
+**Features:**
+- Clear precedence: CLI > ENV > File > Defaults
+- Source tracking for configuration provenance
+- Automatic type coercion (strings to booleans, numbers, null)
+- Environment variable prefix filtering
+- CLI and library API
+- Zero runtime dependencies
+
+[View Documentation →](/tools/config-file-merger/)
 
 ---
 

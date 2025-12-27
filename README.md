@@ -17,7 +17,7 @@ Each tool in Tuulbelt:
 ### CLI/DevTools
 - **[Structured Error Handler](structured-error-handler/)** — Error format + serialization with context preservation 🟢 v0.1.0 | [📖 Docs](structured-error-handler/) | [🚀 Examples](structured-error-handler/examples/)
 - **[CLI Progress Reporting](cli-progress-reporting/)** — Concurrent-safe progress updates 🟢 v0.1.0 | [📖 Docs](cli-progress-reporting/) | [🚀 Examples](cli-progress-reporting/examples/)
-- **[Configuration File Merger](https://github.com/tuulbelt/config-file-merger)** — ENV + config + CLI arg merging (TBD)
+- **[Configuration File Merger](config-file-merger/)** — ENV + config + CLI arg merging 🟢 v0.1.0 | [📖 Docs](config-file-merger/) | [🚀 Examples](config-file-merger/examples/)
 - **[Cross-Platform Path Normalizer](cross-platform-path-normalizer/)** — Windows/Unix path consistency 🟢 v0.1.0 | [📖 Docs](cross-platform-path-normalizer/) | [🚀 Examples](cross-platform-path-normalizer/examples/)
 
 ### Testing & Observability
@@ -92,7 +92,7 @@ flaky --test "npm test" --runs 10
 
 ```bash
 cd cli-progress-reporting && npm install
-flaky init --total 100 --message "Processing files"
+prog init --total 100 --message "Processing files"
 ```
 
 [📖 Docs](cli-progress-reporting/) | [🚀 Examples](cli-progress-reporting/examples/)
@@ -103,10 +103,21 @@ flaky init --total 100 --message "Processing files"
 
 ```bash
 cd cross-platform-path-normalizer && npm install
-flaky --format unix "C:\Users\file.txt"
+normpath --format unix "C:\Users\file.txt"
 ```
 
 [📖 Docs](cross-platform-path-normalizer/) | [🚀 Examples](cross-platform-path-normalizer/examples/)
+
+---
+
+### Configuration File Merger
+
+```bash
+cd config-file-merger && npm install
+cfgmerge --file config.json --env --prefix APP_ --args "port=3000"
+```
+
+[📖 Docs](config-file-merger/) | [🚀 Examples](config-file-merger/examples/)
 
 _[See all 33 tools →](#current-tools)_
 
@@ -144,15 +155,15 @@ This creates a **bidirectional validation network** where tools prove their reli
 
 ## Status
 
-🟢 = Implemented (6/33)
+🟢 = Implemented (7/33)
 🟡 = In progress (0/33)
-🔴 = TBD (27/33)
+🔴 = TBD (26/33)
 
-**Recently Completed:** Structured Error Handler v0.1.0 (2025-12-26)
+**Recently Completed:** Configuration File Merger v0.1.0 (2025-12-27)
 
-**Next Up:** Configuration File Merger 🎯
+**Next Up:** Snapshot Comparison 🎯
 
-**Progress:** 6 of 33 tools implemented (18%) | Phase 1 Quick Tools: 5/5 (100% ✅) | Phase 2: 1/28
+**Progress:** 7 of 33 tools implemented (21%) | Phase 1 Quick Tools: 5/5 (100% ✅) | Phase 2: 2/28
 
 ## License
 
