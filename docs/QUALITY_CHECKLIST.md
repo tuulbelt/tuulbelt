@@ -144,6 +144,11 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
   - VitePress validates image imports at build time - missing images FAIL the build
   - Run: `mkdir -p docs/public/{tool-name} && echo "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" | base64 -d > docs/public/{tool-name}/demo.gif`
   - The create-demos workflow will replace this with the real demo after merge
+- [ ] **Demo section has no broken links**: Until workflow generates demos:
+  - Do NOT use `[text](#)` links - `#` reloads the page in VitePress
+  - Remove demo.gif reference and asciinema link from Demo section
+  - Add note: "Demo recording will be generated automatically after merge via GitHub Actions"
+  - Keep StackBlitz button (works without demo recording)
 - [ ] **Docs build succeeds**: Run `npm run docs:build` from root - must pass with no dead links
 - [ ] **Tools index updated**: `docs/tools/index.md` shows correct count (e.g., "3/33") and includes new tool card
 - [ ] **Home page updated**: `docs/index.md` updated with:
@@ -184,19 +189,20 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
 ```
 1. [x] Implement tool functionality
 2. [x] Write tests (80%+ coverage)
-3. [x] Create tool README
+3. [x] Create tool README (with placeholder demo section - no broken links!)
 4. [ ] Create demo recording script (scripts/record-{tool-name}-demo.sh)
 5. [ ] Add path filter to create-demos.yml workflow
 6. [ ] Add to VitePress config (docs/.vitepress/config.ts)
 7. [ ] Create docs/tools/{tool-name}/ directory
 8. [ ] Copy docs pages and fix links
 9. [ ] Create placeholder demo.gif in docs/public/{tool-name}/
-10. [ ] Update docs/tools/index.md (tool count, add tool card)
-11. [ ] Update docs/index.md (home page: tool count, More Tools, Progress)
-12. [ ] Update root README.md
-13. [ ] Run npm run docs:build (verify - MUST PASS)
-14. [ ] Run /quality-check
-15. [ ] Update HANDOFF.md and NEXT_TASKS.md
+10. [ ] Verify Demo sections have no broken # links (use "Coming after merge" note)
+11. [ ] Update docs/tools/index.md (tool count, add tool card)
+12. [ ] Update docs/index.md (home page: tool count, More Tools, Progress)
+13. [ ] Update root README.md
+14. [ ] Run npm run docs:build (verify - MUST PASS)
+15. [ ] Run /quality-check
+16. [ ] Update HANDOFF.md and NEXT_TASKS.md
 ```
 
 ---
