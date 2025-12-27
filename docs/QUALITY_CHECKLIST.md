@@ -51,6 +51,11 @@ Run these checks **before committing any code**:
   - TypeScript: `npm audit --audit-level=high`
   - Rust: `cargo audit` (if installed)
 - [ ] **Protected files untouched**: No edits to package-lock.json, Cargo.lock manually
+- [ ] **Prototype pollution prevented**: Object keys validated against `__proto__`, `constructor`, `prototype`
+- [ ] **Path traversal prevented**: User-provided paths/IDs validated (no `..`, slashes, null bytes)
+- [ ] **Stack traces not exposed**: Production APIs use safe serialization (no stack traces)
+- [ ] **Input size limits**: Large inputs (files, messages, arrays) have reasonable limits
+- [ ] **Security section in README**: Document security considerations for users
 
 ### Documentation (VitePress) Specific
 
@@ -89,6 +94,70 @@ After completing a feature or fix:
 - [ ] **Works standalone**: Can be cloned and used independently
 - [ ] **Dogfooding opportunities considered**: Can this tool use or validate other Tuulbelt tools?
 - [ ] **Dogfooding documented**: If tool uses other tools, document in README and VitePress docs
+
+---
+
+## Pre-Release Security Scan
+
+**REQUIRED: Run before any version release (v0.x.x, v1.x.x, etc.)**
+
+### When to Run
+
+- Before tagging a new version release
+- After major refactoring that touches security-sensitive code
+- When adding new input handling (file paths, user IDs, etc.)
+
+### How to Run
+
+Use Claude Code's `/security-scan` command on each tool:
+
+```bash
+# In Claude Code
+/security-scan
+
+# The scan covers:
+# - OWASP Top 10 vulnerabilities
+# - Language-specific security patterns
+# - Input validation gaps
+# - Information disclosure risks
+```
+
+### Security Scan Checklist
+
+- [ ] **Run `/security-scan`** on the tool being released
+- [ ] **Address all CRITICAL findings** - these block release
+- [ ] **Address all HIGH findings** - these block release
+- [ ] **Review MEDIUM findings** - fix or document as acceptable
+- [ ] **Update Security section in README** if new protections added
+- [ ] **Add security tests** for any vulnerabilities fixed
+
+### Common Security Patterns (Quick Reference)
+
+**TypeScript:**
+```typescript
+// Prototype pollution prevention
+const DANGEROUS_KEYS = ['__proto__', 'constructor', 'prototype'];
+if (DANGEROUS_KEYS.includes(key)) { throw new Error('Invalid key'); }
+
+// Path traversal prevention
+if (!/^[a-zA-Z0-9_-]+$/.test(id)) { return { ok: false, error: 'Invalid ID' }; }
+
+// Safe serialization (no stack traces)
+toSafeJSON() { return { ...this, stack: undefined }; }
+```
+
+**Rust:**
+```rust
+// Input validation
+if input.contains('\0') || input.contains("..") {
+    return Err(Error::InvalidInput("path traversal attempt"));
+}
+
+// File size limits
+if file_size > MAX_FILE_SIZE {
+    return Err(Error::FileTooLarge(file_size, MAX_FILE_SIZE));
+}
+```
 
 ---
 

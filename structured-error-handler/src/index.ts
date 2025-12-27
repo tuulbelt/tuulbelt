@@ -217,6 +217,9 @@ export class StructuredError extends Error {
 
   /**
    * Serialize the error to a JSON-compatible object
+   *
+   * ⚠️ WARNING: This includes stack traces by default, which may expose
+   * internal file paths. For production logging, use toSafeJSON() instead.
    */
   toJSON(): SerializedError {
     const serialized: SerializedError = {
@@ -239,6 +242,50 @@ export class StructuredError extends Error {
 
     if (this.cause) {
       serialized.cause = serializeError(this.cause);
+    }
+
+    return serialized;
+  }
+
+  /**
+   * Serialize the error to a safe JSON-compatible object for production logging.
+   *
+   * This method:
+   * - Excludes stack traces (prevents path disclosure)
+   * - Optionally sanitizes metadata (removes sensitive-looking keys)
+   *
+   * @param options - Serialization options
+   * @returns A safe serialized error without sensitive information
+   */
+  toSafeJSON(options: { sanitizeMetadata?: boolean } = {}): SerializedError {
+    const { sanitizeMetadata = false } = options;
+
+    const safeContext = sanitizeMetadata
+      ? this.context.map((ctx) => ({
+          ...ctx,
+          metadata: ctx.metadata ? sanitizeMetadataObject(ctx.metadata) : undefined,
+        }))
+      : this.context;
+
+    const serialized: SerializedError = {
+      name: this.name,
+      message: this.message,
+      context: safeContext,
+    };
+
+    if (this.code) {
+      serialized.code = this.code;
+    }
+
+    if (this.category) {
+      serialized.category = this.category;
+    }
+
+    // Explicitly exclude stack trace for security
+
+    if (this.cause) {
+      // Recursively serialize cause without stack
+      serialized.cause = serializeErrorSafe(this.cause, sanitizeMetadata);
     }
 
     return serialized;
@@ -390,6 +437,78 @@ export function serializeError(error: Error): SerializedError {
 
   if (error.cause instanceof Error) {
     serialized.cause = serializeError(error.cause);
+  }
+
+  return serialized;
+}
+
+// =============================================================================
+// Security Helpers
+// =============================================================================
+
+/**
+ * Keys that might contain sensitive data and should be sanitized
+ */
+const SENSITIVE_KEY_PATTERNS = [
+  'password',
+  'passwd',
+  'secret',
+  'token',
+  'api_key',
+  'apikey',
+  'auth',
+  'credential',
+  'private',
+  'key',
+];
+
+/**
+ * Check if a key might contain sensitive data
+ */
+function isSensitiveKey(key: string): boolean {
+  const lowerKey = key.toLowerCase();
+  return SENSITIVE_KEY_PATTERNS.some((pattern) => lowerKey.includes(pattern));
+}
+
+/**
+ * Sanitize a metadata object by redacting sensitive-looking keys
+ */
+export function sanitizeMetadataObject(
+  metadata: Record<string, unknown>
+): Record<string, unknown> {
+  const sanitized: Record<string, unknown> = {};
+
+  for (const [key, value] of Object.entries(metadata)) {
+    if (isSensitiveKey(key)) {
+      sanitized[key] = '[REDACTED]';
+    } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      sanitized[key] = sanitizeMetadataObject(value as Record<string, unknown>);
+    } else {
+      sanitized[key] = value;
+    }
+  }
+
+  return sanitized;
+}
+
+/**
+ * Serialize any error to a safe JSON-compatible format (no stack traces)
+ */
+export function serializeErrorSafe(error: Error, sanitizeMetadata = false): SerializedError {
+  if (error instanceof StructuredError) {
+    return error.toSafeJSON({ sanitizeMetadata });
+  }
+
+  const serialized: SerializedError = {
+    name: error.name,
+    message: error.message,
+    context: [],
+  };
+
+  // Explicitly exclude stack trace for security
+
+  if (error.cause instanceof Error) {
+    serialized.cause = serializeErrorSafe(error.cause, sanitizeMetadata);
   }
 
   return serialized;

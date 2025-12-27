@@ -209,6 +209,13 @@ CLI arguments are automatically parsed:
 | `"hello"` | `"hello"` | string |
 | `'"42"'` | `"42"` | string (quoted) |
 
+## Security
+
+- **Prototype pollution prevention**: Built-in protection against `__proto__`, `constructor`, `prototype` keys
+- **No schema validation**: Zero-dependency principle—validate merged config structure in your application if needed
+- **Type coercion**: CLI argument strings are automatically parsed to numbers, booleans, or null
+- **Environment filtering**: Use `--prefix` to include only expected environment variables
+
 ## Testing
 
 ```bash

@@ -157,10 +157,14 @@ impl LockInfo {
     }
 
     /// Serialize to string for writing to lock file
+    ///
+    /// Note: Newlines in tags are sanitized to spaces to prevent injection attacks.
     pub fn serialize(&self) -> String {
         let mut content = format!("pid={}\ntimestamp={}\n", self.pid, self.timestamp);
         if let Some(ref tag) = self.tag {
-            content.push_str(&format!("tag={}\n", tag));
+            // Sanitize newlines to prevent injection of fake keys
+            let sanitized_tag = tag.replace(['\n', '\r'], " ");
+            content.push_str(&format!("tag={}\n", sanitized_tag));
         }
         content
     }
@@ -845,6 +849,72 @@ mod tests {
         }
 
         cleanup(&path);
+    }
+
+    #[test]
+    fn test_tag_newline_injection_prevention() {
+        // Security test: newlines in tags should be sanitized to prevent
+        // injection of fake keys into the lock file format
+        let malicious_tag = "mytag\npid=99999\ntimestamp=0";
+        let info = LockInfo::with_tag(malicious_tag);
+        let serialized = info.serialize();
+
+        // Count lines starting with "pid=" - should be exactly one (the real one)
+        let pid_lines: Vec<_> = serialized
+            .lines()
+            .filter(|l| l.starts_with("pid="))
+            .collect();
+        assert_eq!(
+            pid_lines.len(),
+            1,
+            "Should only have one pid= line, got {:?}",
+            pid_lines
+        );
+
+        // Count lines starting with "timestamp=" - should be exactly one
+        let ts_lines: Vec<_> = serialized
+            .lines()
+            .filter(|l| l.starts_with("timestamp="))
+            .collect();
+        assert_eq!(ts_lines.len(), 1, "Should only have one timestamp= line");
+
+        // The tag should contain the sanitized version (spaces instead of newlines)
+        assert!(
+            serialized.contains("tag=mytag pid=99999 timestamp=0"),
+            "Sanitized tag should have spaces: {}",
+            serialized
+        );
+
+        // Verify parsing doesn't pick up fake values
+        let parsed = LockInfo::parse(&serialized).unwrap();
+        assert_eq!(parsed.pid, info.pid); // Original PID preserved
+        assert_ne!(parsed.pid, 99999); // Fake PID not used
+        assert!(parsed.tag.unwrap().contains("mytag"));
+    }
+
+    #[test]
+    fn test_tag_carriage_return_injection_prevention() {
+        // Also test carriage returns
+        let malicious_tag = "mytag\r\npid=99999";
+        let info = LockInfo::with_tag(malicious_tag);
+        let serialized = info.serialize();
+
+        // Should only have one line starting with pid=
+        let pid_lines: Vec<_> = serialized
+            .lines()
+            .filter(|l| l.starts_with("pid="))
+            .collect();
+        assert_eq!(pid_lines.len(), 1, "Should only have one pid= line");
+
+        // Tag should have sanitized whitespace (both \r and \n replaced)
+        assert!(serialized.contains("tag=mytag"));
+        // Verify no literal newlines or carriage returns in the serialized output
+        // (except for the actual line separators between key=value pairs)
+        let tag_line = serialized.lines().find(|l| l.starts_with("tag=")).unwrap();
+        assert!(
+            !tag_line.contains('\r'),
+            "Tag should not contain carriage return"
+        );
     }
 
     #[test]
