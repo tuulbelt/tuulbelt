@@ -98,6 +98,40 @@ else
 fi
 ```
 
+### Security Checks (All Projects)
+
+Run security scans to detect potential issues:
+
+```bash
+# 1. Secret detection in staged changes
+echo "Checking for secrets in staged changes..."
+git diff --cached | grep -iE '(password|api_key|secret|token|private_key|credentials)' && echo "⚠️  Potential secrets detected in staged files" || echo "✓ No obvious secrets in staged changes"
+
+# 2. Secret detection in source files
+echo "Checking for hardcoded secrets in source..."
+grep -r -iE '(password.*=|api_key.*=|secret.*=|token.*=)' src/ 2>/dev/null | grep -v 'test' | grep -v '.md' && echo "⚠️  Potential secrets in source files" || echo "✓ No hardcoded secrets detected"
+
+# 3. Protected file check (.env files)
+echo "Checking for tracked .env files..."
+find . -name ".env*" -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/target/*" 2>/dev/null | while read file; do
+  if git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
+    echo "⚠️  WARNING: $file is tracked by git - remove immediately"
+  fi
+done
+
+# 4. Dependency vulnerability scan (TypeScript)
+if [ -f package.json ]; then
+  echo "Running npm audit..."
+  npm audit --audit-level=high 2>&1 || echo "⚠️  Vulnerabilities found - review above"
+fi
+
+# 5. Dependency vulnerability scan (Rust)
+if [ -f Cargo.toml ]; then
+  echo "Running cargo audit (if available)..."
+  cargo audit 2>&1 || echo "ℹ️  cargo-audit not installed, skipping"
+fi
+```
+
 ### Documentation Checks (If at Root Level)
 
 If you're at the root of the Tuulbelt repo (contains `docs/.vitepress/`), also run:
@@ -128,6 +162,9 @@ grep -r "Cross-Platform Path Normalizer\|Test Flakiness Detector\|CLI Progress R
 - [ ] All tests pass (exit code 0)
 - [ ] No TypeScript/Clippy errors or warnings
 - [ ] Zero runtime dependencies in `dependencies` section
+- [ ] **No hardcoded secrets** in source files
+- [ ] **No .env files tracked** by git
+- [ ] **No high-severity vulnerabilities** in dependencies
 - [ ] **Documentation builds** (if at root: `npm run docs:build` succeeds)
 - [ ] **No dead links** in VitePress output
 
@@ -177,6 +214,7 @@ CHECKS PASSED:
   ✓ Tests passed (X/X tests, 100%)
   ✓ Type/lint checks passed
   ✓ Zero runtime dependencies verified
+  ✓ Security scan passed (no secrets, no vulnerabilities)
 
 WARNINGS:
   ⚠ [Any warnings or items to review]
