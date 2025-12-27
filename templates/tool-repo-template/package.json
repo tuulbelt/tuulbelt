@@ -4,6 +4,10 @@
   "description": "One sentence description of what this tool does",
   "main": "src/index.ts",
   "type": "module",
+  "bin": {
+    "short-name": "./src/index.ts",
+    "tool-name": "./src/index.ts"
+  },
   "scripts": {
     "build": "tsc",
     "test": "node --import tsx --test test/index.test.ts",

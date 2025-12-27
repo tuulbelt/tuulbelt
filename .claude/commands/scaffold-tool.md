@@ -29,9 +29,22 @@ Based on the language choice, copy the appropriate template and customize it:
    cp -r templates/tool-repo-template "$1"
    ```
 
-2. Customize package.json with the tool name
+2. Customize package.json:
+   - Update name, description, repository URL
+   - **Update `bin` entry with short CLI name and full tool name:**
+     ```json
+     "bin": {
+       "short-name": "./src/index.ts",
+       "tool-name": "./src/index.ts"
+     }
+     ```
 
-3. Update README.md with the tool name and description
+3. Verify src/index.ts has the shebang (required for `npm link`):
+   ```typescript
+   #!/usr/bin/env -S npx tsx
+   ```
+
+4. Update README.md with the tool name and description
 
 4. Customize STATUS.md:
    - Replace {{TOOL_NAME}} with the actual tool name
