@@ -34,16 +34,38 @@ use output_diffing_utility::{diff_text, diff_json, diff_binary};
 ./scripts/dogfood-flaky.sh 20    # Custom: 20 runs
 ```
 
-### 3. Output Diffing Utility - Prove deterministic outputs (CLI)
+### 3. File-Based Semaphore - Concurrent snapshot safety
 
-**Why:** Snapshot creation and comparison must produce identical results across runs. Any non-determinism would undermine the tool's purpose.
+**Why:** When tests run in parallel, multiple processes may try to update the same snapshot simultaneously. Without coordination, this can corrupt snapshot files or cause non-deterministic test results.
 
-**Script:** `scripts/dogfood-diff.sh`
+**The Problem:**
+```
+Test A: read snapshot → modify → write
+Test B: read snapshot → modify → write  (overwrites A mid-write)
+Result: Corrupted or interleaved content
+```
+
+**The Solution:**
+```bash
+# Wrap snapshot updates with sema
+sema acquire /tmp/snapshot.lock --tag "test-$PID"
+snapcmp update my-snapshot < new-content
+sema release /tmp/snapshot.lock
+```
+
+**Script:** `scripts/dogfood-sema.sh`
 
 ```bash
-./scripts/dogfood-diff.sh
-# Compares CLI outputs between runs
+./scripts/dogfood-sema.sh        # Default: 10 concurrent workers
+./scripts/dogfood-sema.sh 20     # Custom: 20 concurrent workers
 ```
+
+**What it proves:**
+| Scenario | Without sema | With sema |
+|----------|--------------|-----------|
+| Concurrent writes | Possible corruption | Serialized, clean |
+| Final state | Non-deterministic | Deterministic |
+| File integrity | May be invalid | Always valid |
 
 ## Implementation Checklist
 
@@ -56,8 +78,9 @@ use output_diffing_utility::{diff_text, diff_json, diff_binary};
 ## Expected Outcomes
 
 1. **Proves Reliability:** 42 tests × 10 runs = 420 deterministic executions
-2. **Demonstrates Composability:** Library + CLI integration patterns
-3. **Real Value:** Semantic diffs are essential for snapshot testing UX
+2. **Proves Concurrency Safety:** N workers × serialized access = no corruption
+3. **Demonstrates Composability:** Library (odiff) + CLI (sema, flaky) integration
+4. **Real Value:** Both compositions solve actual problems in snapshot testing
 
 ## Standalone Behavior
 
@@ -67,9 +90,9 @@ When run outside the monorepo context:
 - **Dogfood scripts:** Exit gracefully with informative message
 
 ```bash
-$ ./scripts/dogfood-flaky.sh
-Not in monorepo context - test-flakiness-detector not available
-Skipping dogfooding validation
+$ ./scripts/dogfood-sema.sh
+Not in monorepo context - file-based-semaphore not available
+Skipping concurrent safety validation
 ```
 
 ---

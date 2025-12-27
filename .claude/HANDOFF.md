@@ -102,7 +102,7 @@ This enables:
 - `SPEC.md` - Snapshot file format specification
 - `DOGFOODING_STRATEGY.md` - Composition strategy
 - `scripts/dogfood-flaky.sh` - Test validation script
-- `scripts/dogfood-diff.sh` - Output consistency script
+- `scripts/dogfood-sema.sh` - Concurrent snapshot safety with sema
 - `scripts/record-snapshot-comparison-demo.sh` - Demo recording
 
 ### Modified Files

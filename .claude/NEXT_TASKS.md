@@ -180,7 +180,7 @@ See `README.md` for complete roadmap (25 remaining tools).
 - ✅ Integrates output-diffing-utility as path dependency
 - ✅ Dogfooding: 2 composition scripts implemented
   - dogfood-flaky.sh: Validate determinism (42 tests × 10 runs)
-  - dogfood-diff.sh: Prove snapshot comparison produces identical outputs
+  - dogfood-sema.sh: Concurrent snapshot safety with file-based-semaphore
 - ✅ DOGFOODING_STRATEGY.md: Complete strategy document
 - ✅ **Security:** Path traversal prevention in snapshot names
 - 42 tests passing (20 unit + 18 integration + 4 doc tests)
@@ -386,7 +386,7 @@ Priority: Cross-Platform Path Normalizer
 - Complete dogfooding setup ✅
   - DOGFOODING_STRATEGY.md customized
   - dogfood-flaky.sh: Validate 42 tests × 10 runs
-  - dogfood-diff.sh: Prove snapshot comparison produces identical outputs
+  - dogfood-sema.sh: Concurrent snapshot safety with sema
 - GitHub Pages documentation ✅
   - 6 VitePress pages + SPEC.md
   - Demo recording script created
