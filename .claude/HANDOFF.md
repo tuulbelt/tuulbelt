@@ -1,8 +1,8 @@
 # Session Handoff
 
-**Last Updated:** 2025-12-26
-**Session:** Structured Error Handler - Consistency Fixes
-**Status:** ✅ Complete - All inconsistencies with ODU fixed
+**Last Updated:** 2025-12-27
+**Session:** Short CLI Names Implementation
+**Status:** ✅ Complete - All 6 tools have short CLI names
 
 ---
 
@@ -10,113 +10,119 @@
 
 ### What Was Accomplished
 
-1. **Comparison: Output Diffing Utility vs Structured Error Handler** ✅
-   - Systematic comparison of implementation structure
-   - Local documentation (README, SPEC, DOGFOODING_STRATEGY)
-   - GitHub Pages documentation (VitePress pages)
-   - Dogfooding scripts and strategies
+1. **Short CLI Names for All 6 Tools** ✅
+   - `flaky` → test-flakiness-detector
+   - `prog` → cli-progress-reporting
+   - `normpath` → cross-platform-path-normalizer
+   - `sema` → file-based-semaphore
+   - `odiff` → output-diffing-utility
+   - `serr` → structured-error-handler
 
-2. **Inconsistencies Fixed** ✅
-   - Created `structured-error-handler/docs/` directory for demo.gif
-   - Updated GH Pages index.md Demo section with demo.gif image reference
-   - Added asciinema placeholder link (workflow will update on push)
-   - Demo infrastructure now consistent with ODU
+2. **Package Configuration Updated** ✅
+   - Added `bin` entries to all 4 TypeScript package.json files
+   - Added `[[bin]]` entries to both Rust Cargo.toml files
+   - Both short and long names supported for backwards compatibility
 
-3. **Previous Session: Implementation** ✅
-   - Complete TypeScript implementation (612 lines)
-   - 81 tests passing (added 13 edge cases and validation tests)
-   - CLI interface (demo, parse, validate commands)
-   - 2 dogfooding scripts (dogfood-flaky.sh, dogfood-diff.sh)
+3. **Documentation Updated (69 files)** ✅
+   - All tool READMEs now show `# Tool Name / \`short-name\`` format
+   - All VitePress GH Pages docs updated
+   - All local VitePress docs updated
+   - Root README and docs/index.md updated
+   - All dogfooding scripts updated
+   - QUALITY_CHECKLIST.md examples updated
+   - Scaffold templates updated with short name guidance
 
-4. **Documentation** ✅
-   - README.md with full API reference and examples
-   - SPEC.md with formal specification
-   - 6 VitePress pages (index, getting-started, cli-usage, library-usage, examples, api-reference)
-   - 2 example files (basic.ts, advanced.ts)
-   - Demo recording script at scripts/record-structured-error-handler-demo.sh
+4. **Quality Check Enhanced** ✅
+   - Added short name verification to `/quality-check` command
+   - Checks for `bin` entry in TypeScript package.json
+   - Checks for `[[bin]]` entries in Rust Cargo.toml
+
+5. **Demo Recordings Reset** ✅
+   - Replaced all demo.gif files with placeholders
+   - Updated demo recording scripts to use short names
+   - Deleted old demo.cast files
+   - create-demos.yml workflow will regenerate all on merge
 
 ### Current Status
 
 **6 of 33 tools completed (18% progress)** 🎉
 
-**Phase 1: Quick Tools - COMPLETE (5/5)**
-**Phase 2: Started (1/28)**
+| Tool | Short Name | Language | Version | Tests | Status |
+|------|------------|----------|---------|-------|--------|
+| Test Flakiness Detector | `flaky` | TypeScript | v0.1.0 | 148 | ✅ |
+| CLI Progress Reporting | `prog` | TypeScript | v0.1.0 | 125 | ✅ |
+| Cross-Platform Path Normalizer | `normpath` | TypeScript | v0.1.0 | 145 | ✅ |
+| File-Based Semaphore | `sema` | Rust | v0.1.0 | 85 | ✅ |
+| Output Diffing Utility | `odiff` | Rust | v0.1.0 | 99 | ✅ |
+| Structured Error Handler | `serr` | TypeScript | v0.1.0 | 81 | ✅ |
 
-| Tool | Language | Version | Tests | Status |
-|------|----------|---------|-------|--------|
-| Test Flakiness Detector | TypeScript | v0.1.0 | 148 | ✅ |
-| CLI Progress Reporting | TypeScript | v0.1.0 | 125 | ✅ |
-| Cross-Platform Path Normalizer | TypeScript | v0.1.0 | 145 | ✅ |
-| File-Based Semaphore | Rust | v0.1.0 | 85 | ✅ |
-| Output Diffing Utility | Rust | v0.1.0 | 99 | ✅ |
-| **Structured Error Handler** | TypeScript | v0.1.0 | 81 | ✅ 🆕 |
+---
+
+## CLI Usage
+
+**For installed packages** (via npm link, npm install -g, or as dependency):
+```bash
+flaky --test "npm test" --runs 10
+prog init --total 100 --message "Processing"
+normpath --format unix "C:\Users\file.txt"
+sema try /tmp/my.lock --tag build
+odiff --color always old.json new.json
+serr demo --format text
+```
+
+**For local development** (from source):
+```bash
+npx tsx src/index.ts --test "npm test"  # TypeScript
+cargo run -- try /tmp/my.lock           # Rust
+```
 
 ---
 
 ## Next Immediate Tasks
 
-**Priority 1: Final Verification and Push** ⭐
-
-- [ ] Run /quality-check (tool tests, build, zero deps)
-- [ ] Verify git status clean
-- [ ] Commit all changes
-- [ ] Push to feature branch
+**Priority 1: Create PR and Merge** ⭐
+- [ ] Create PR for short CLI names
+- [ ] Merge to main to trigger demo regeneration
+- [ ] Verify demos are regenerated with short names
 
 **Priority 2: Choose Next Tool (Phase 2)**
 
 **Candidates:**
-- **Configuration File Merger** - ENV + config + CLI arg merging (TypeScript)
-- **Snapshot Comparison** - Binary/structured data snapshots (Rust)
-- **Test Port Conflict Resolver** - Concurrent test port allocation (TypeScript)
-- **Component Prop Validator** - TypeScript runtime validation
-
-**Recommendation:** Configuration File Merger (natural progression from error handling)
+- **Configuration File Merger** (`cfgmerge`) - ENV + config + CLI merging
+- **Snapshot Comparison** (`snapcmp`) - Binary/structured data snapshots
+- **Test Port Conflict Resolver** (`portres`) - Concurrent test port allocation
 
 ---
 
 ## Important References
 
+- **Short Names Table**: `.claude/NEXT_TASKS.md` - Has proposed names for all 33 tools
 - **CI Guide**: `docs/CI_GUIDE.md` - Single source of truth for CI/CD
-- **Principles**: `PRINCIPLES.md` - What belongs in Tuulbelt
-- **Work Standards**: `CLAUDE.md` - Quality requirements (MANDATORY WORKFLOW section)
-- **Quality Checklist**: `docs/QUALITY_CHECKLIST.md` - Pre-commit checks
-- **Known Issues**: `docs/KNOWN_ISSUES.md` - Tracked bugs
-- **Next Tasks**: `.claude/NEXT_TASKS.md` - Task backlog
-
----
-
-## Blockers / Issues
-
-**Demo GIF Pending** 🟡
-
-The demo.gif for structured-error-handler will be generated by GitHub Actions when changes are pushed to main. The VitePress index.md now has proper demo.gif reference and asciinema placeholder (consistent with output-diffing-utility).
+- **Quality Checklist**: `docs/QUALITY_CHECKLIST.md` - Pre-commit checks (includes short name verification)
 
 ---
 
 ## Notes for Next Session
 
-- **Phase 2 Started!** - First Phase 2 tool (Structured Error Handler) complete
-- **6 of 33 tools** - 18% progress toward goal
-- **Demo pending** - Will be auto-generated by GitHub Actions
-- **Quality Standard**: 80%+ test coverage, zero runtime deps
-- **FIRST STEP**: Create TodoWrite checklist from QUALITY_CHECKLIST.md before ANY coding
+- **Short names implemented!** - All 6 tools now have memorable CLI names
+- **Demos pending** - Will be auto-generated by GitHub Actions on merge
+- **Local dev note**: Use `npx tsx src/index.ts` for TypeScript, `cargo run` for Rust
+- **Quality check** now verifies short name configuration
 
 ---
 
 ## Quick Start for Next Session
 
 ```bash
-# 1. Read this handoff
-cat .claude/HANDOFF.md
+# 1. Verify short names work (after npm install)
+cd test-flakiness-detector && npm install
+npx flaky --help
 
-# 2. Check task backlog
-cat .claude/NEXT_TASKS.md
+# 2. Check next tool candidates
+cat .claude/NEXT_TASKS.md | grep -A10 "Recommended Next Tools"
 
-# 3. Review CI guide if needed
-cat docs/CI_GUIDE.md
-
-# 4. Start new tool
-# Use: /resume-work
+# 3. Start new tool with proposed short name
+# Use: /scaffold-tool <tool-name> <typescript|rust>
 ```
 
 ---
