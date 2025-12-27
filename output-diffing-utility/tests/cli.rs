@@ -398,3 +398,259 @@ fn test_cli_auto_detection_text_to_json() {
     fs::remove_file(&file1).ok();
     fs::remove_file(&file2).ok();
 }
+
+// =============================================================================
+// Security Tests
+// =============================================================================
+
+#[test]
+fn test_security_deeply_nested_json() {
+    let tmp_dir = std::env::temp_dir();
+    let file1 = tmp_dir.join("sec_deep1.json");
+    let file2 = tmp_dir.join("sec_deep2.json");
+
+    // Create deeply nested JSON (1000 levels)
+    let mut nested = String::from("\"leaf\"");
+    for _ in 0..1000 {
+        nested = format!("{{\"nested\": {}}}", nested);
+    }
+
+    fs::write(&file1, &nested).expect("Failed to write file1");
+    fs::write(&file2, &nested).expect("Failed to write file2");
+
+    let output = Command::new(binary_path())
+        .arg("-f").arg("json")
+        .arg(&file1)
+        .arg(&file2)
+        .output()
+        .expect("Failed to execute command");
+
+    // Should handle gracefully - either succeed or fail with error, not hang or crash
+    assert!(output.status.code().is_some());
+
+    fs::remove_file(&file1).ok();
+    fs::remove_file(&file2).ok();
+}
+
+#[test]
+fn test_security_malformed_json_bomb() {
+    let tmp_dir = std::env::temp_dir();
+    let file1 = tmp_dir.join("sec_bomb1.json");
+    let file2 = tmp_dir.join("sec_bomb2.json");
+
+    // Exponential key duplication pattern (not valid JSON but tests parser robustness)
+    let bomb = r#"{"a":"b","a":"b","a":"b","a":"b","a":"b","a":"b","a":"b","a":"b"}"#;
+
+    fs::write(&file1, bomb).expect("Failed to write file1");
+    fs::write(&file2, r#"{"a":"c"}"#).expect("Failed to write file2");
+
+    let output = Command::new(binary_path())
+        .arg("-f").arg("json")
+        .arg(&file1)
+        .arg(&file2)
+        .output()
+        .expect("Failed to execute command");
+
+    // Should handle gracefully
+    assert!(output.status.code().is_some());
+
+    fs::remove_file(&file1).ok();
+    fs::remove_file(&file2).ok();
+}
+
+#[test]
+fn test_security_null_bytes_in_text() {
+    let tmp_dir = std::env::temp_dir();
+    let file1 = tmp_dir.join("sec_null1.txt");
+    let file2 = tmp_dir.join("sec_null2.txt");
+
+    // Text with embedded null bytes
+    let content1 = b"line1\0line2\0line3";
+    let content2 = b"line1\0line2\0line4";
+
+    fs::write(&file1, content1).expect("Failed to write file1");
+    fs::write(&file2, content2).expect("Failed to write file2");
+
+    let output = Command::new(binary_path())
+        .arg("-f").arg("text")
+        .arg(&file1)
+        .arg(&file2)
+        .output()
+        .expect("Failed to execute command");
+
+    // Should handle gracefully - may treat as binary or handle null bytes
+    assert!(output.status.code().is_some());
+
+    fs::remove_file(&file1).ok();
+    fs::remove_file(&file2).ok();
+}
+
+#[test]
+fn test_security_binary_with_patterns() {
+    let tmp_dir = std::env::temp_dir();
+    let file1 = tmp_dir.join("sec_bin1.bin");
+    let file2 = tmp_dir.join("sec_bin2.bin");
+
+    // Binary content with various byte patterns
+    let mut content1: Vec<u8> = (0..=255).collect();
+    content1.extend_from_slice(&[0xFF, 0xFE, 0x00, 0x00]); // BOM-like sequences
+    let content2: Vec<u8> = (0..=255).rev().collect();
+
+    fs::write(&file1, &content1).expect("Failed to write file1");
+    fs::write(&file2, &content2).expect("Failed to write file2");
+
+    let output = Command::new(binary_path())
+        .arg("-f").arg("binary")
+        .arg(&file1)
+        .arg(&file2)
+        .output()
+        .expect("Failed to execute command");
+
+    // Should handle gracefully - either detect diff (1) or report error (2)
+    // The important thing is it doesn't crash or hang
+    assert!(output.status.code().is_some());
+    // Different length files may cause error - that's acceptable
+    let code = output.status.code().unwrap();
+    assert!(code == 1 || code == 2, "Expected exit code 1 (diff) or 2 (error), got {}", code);
+
+    fs::remove_file(&file1).ok();
+    fs::remove_file(&file2).ok();
+}
+
+#[test]
+fn test_security_unicode_edge_cases() {
+    let tmp_dir = std::env::temp_dir();
+    let file1 = tmp_dir.join("sec_unicode1.txt");
+    let file2 = tmp_dir.join("sec_unicode2.txt");
+
+    // Various unicode edge cases
+    let content1 = "normal\u{FEFF}BOM\u{200B}zero-width\u{202E}RTL override\u{2028}line sep";
+    let content2 = "normal\u{FEFF}BOM\u{200B}zero-width\u{202E}RTL override\u{2029}para sep";
+
+    fs::write(&file1, content1).expect("Failed to write file1");
+    fs::write(&file2, content2).expect("Failed to write file2");
+
+    let output = Command::new(binary_path())
+        .arg("-f").arg("text")
+        .arg(&file1)
+        .arg(&file2)
+        .output()
+        .expect("Failed to execute command");
+
+    // Should handle gracefully - either detect diff (1) or report error (2)
+    // Unicode line separators may be treated specially
+    assert!(output.status.code().is_some());
+    let code = output.status.code().unwrap();
+    assert!(code == 1 || code == 2, "Expected exit code 1 (diff) or 2 (error), got {}", code);
+
+    fs::remove_file(&file1).ok();
+    fs::remove_file(&file2).ok();
+}
+
+#[test]
+fn test_security_large_single_line() {
+    let tmp_dir = std::env::temp_dir();
+    let file1 = tmp_dir.join("sec_large_line1.txt");
+    let file2 = tmp_dir.join("sec_large_line2.txt");
+
+    // Single line with 10MB of content (no newlines)
+    let large_line = "x".repeat(10_000_000);
+    let large_line2 = "y".repeat(10_000_000);
+
+    fs::write(&file1, &large_line).expect("Failed to write file1");
+    fs::write(&file2, &large_line2).expect("Failed to write file2");
+
+    let output = Command::new(binary_path())
+        .arg("-f").arg("text")
+        .arg(&file1)
+        .arg(&file2)
+        .output()
+        .expect("Failed to execute command");
+
+    // Should handle gracefully
+    assert!(output.status.code().is_some());
+
+    fs::remove_file(&file1).ok();
+    fs::remove_file(&file2).ok();
+}
+
+#[test]
+fn test_security_json_with_special_keys() {
+    let tmp_dir = std::env::temp_dir();
+    let file1 = tmp_dir.join("sec_keys1.json");
+    let file2 = tmp_dir.join("sec_keys2.json");
+
+    // JSON with potentially problematic keys
+    let content1 = r#"{"__proto__":"polluted","constructor":"bad","prototype":"evil","normal":"value1"}"#;
+    let content2 = r#"{"__proto__":"polluted","constructor":"bad","prototype":"evil","normal":"value2"}"#;
+
+    fs::write(&file1, content1).expect("Failed to write file1");
+    fs::write(&file2, content2).expect("Failed to write file2");
+
+    let output = Command::new(binary_path())
+        .arg("-f").arg("json")
+        .arg(&file1)
+        .arg(&file2)
+        .output()
+        .expect("Failed to execute command");
+
+    // Should detect difference and handle special keys safely
+    assert_eq!(output.status.code(), Some(1));
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("normal") || stdout.contains("Modified"));
+
+    fs::remove_file(&file1).ok();
+    fs::remove_file(&file2).ok();
+}
+
+#[test]
+fn test_security_empty_files() {
+    let tmp_dir = std::env::temp_dir();
+    let file1 = tmp_dir.join("sec_empty1.txt");
+    let file2 = tmp_dir.join("sec_empty2.txt");
+
+    fs::write(&file1, "").expect("Failed to write file1");
+    fs::write(&file2, "").expect("Failed to write file2");
+
+    let output = Command::new(binary_path())
+        .arg(&file1)
+        .arg(&file2)
+        .output()
+        .expect("Failed to execute command");
+
+    // Two empty files should be identical
+    assert_eq!(output.status.code(), Some(0));
+
+    fs::remove_file(&file1).ok();
+    fs::remove_file(&file2).ok();
+}
+
+#[test]
+fn test_security_symlink_handling() {
+    let tmp_dir = std::env::temp_dir();
+    let real_file = tmp_dir.join("sec_real.txt");
+    let link_path = tmp_dir.join("sec_symlink.txt");
+
+    fs::write(&real_file, "content").expect("Failed to write file");
+
+    // Try to create symlink (may fail on some systems)
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::symlink;
+        if symlink(&real_file, &link_path).is_ok() {
+            let output = Command::new(binary_path())
+                .arg(&real_file)
+                .arg(&link_path)
+                .output()
+                .expect("Failed to execute command");
+
+            // Should follow symlink and compare identical content
+            assert_eq!(output.status.code(), Some(0));
+
+            fs::remove_file(&link_path).ok();
+        }
+    }
+
+    fs::remove_file(&real_file).ok();
+}

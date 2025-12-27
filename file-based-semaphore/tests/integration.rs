@@ -326,3 +326,205 @@ fn test_error_types() {
 
     cleanup(&path);
 }
+
+// =============================================================================
+// Security Tests
+// =============================================================================
+
+#[test]
+fn test_security_path_traversal_attempt() {
+    // Path with traversal attempt should still work (paths are not sanitized,
+    // but the OS handles them safely)
+    let traversal_path = temp_lock_path("../../../tmp/traversal-test");
+
+    // This will create the lock in the temp directory with a normalized path
+    // The OS handles path canonicalization
+    let result = Semaphore::with_defaults(&traversal_path);
+
+    // May succeed or fail depending on OS path handling, but should not crash
+    match result {
+        Ok(sem) => {
+            // Clean up if it succeeded
+            let _ = sem.force_release();
+        }
+        Err(_) => {
+            // Failure is acceptable - no crash is the important part
+        }
+    }
+}
+
+#[test]
+fn test_security_null_bytes_in_lock_file() {
+    let path = temp_lock_path("null-byte-lock");
+    cleanup(&path);
+
+    // Write lock info with null bytes manually
+    fs::write(&path, "pid=123\0timestamp=0\0tag=test").unwrap();
+
+    let sem = Semaphore::with_defaults(&path).unwrap();
+
+    // Should handle gracefully - either treat as corrupted or locked
+    let result = sem.try_acquire();
+
+    // Should not panic - either error or success is acceptable
+    match result {
+        Ok(_guard) => {
+            // Managed to recover from corrupted file
+        }
+        Err(_) => {
+            // Treated as locked - acceptable
+        }
+    }
+
+    cleanup(&path);
+}
+
+#[test]
+fn test_security_very_long_path() {
+    // Test with path that exceeds typical OS limits
+    let long_name = "a".repeat(500);
+    let path = temp_lock_path(&long_name);
+
+    let result = Semaphore::with_defaults(&path);
+
+    // Should fail gracefully, not crash or hang
+    match result {
+        Ok(sem) => {
+            // If it somehow succeeded, clean up
+            let _ = sem.force_release();
+        }
+        Err(_) => {
+            // Expected - long paths typically fail
+        }
+    }
+}
+
+#[test]
+fn test_security_very_long_lock_content() {
+    let path = temp_lock_path("long-content-test");
+    cleanup(&path);
+
+    // Write very large lock file content
+    let large_content = "x".repeat(1_000_000);
+    fs::write(&path, &large_content).unwrap();
+
+    let sem = Semaphore::with_defaults(&path).unwrap();
+
+    // Should handle gracefully - file is invalid JSON so should handle as corrupted
+    let result = sem.try_acquire();
+
+    // Should not panic - either error or success is acceptable
+    match result {
+        Ok(_guard) => {
+            // Managed to recover from corrupted file
+        }
+        Err(_) => {
+            // Treated as locked - acceptable
+        }
+    }
+
+    cleanup(&path);
+}
+
+#[test]
+fn test_security_unicode_in_path() {
+    // Unicode paths are valid on modern systems
+    let path = temp_lock_path("unicode-测试-тест-🔒");
+    cleanup(&path);
+
+    let result = Semaphore::with_defaults(&path);
+
+    // Should work on most modern systems
+    match result {
+        Ok(sem) => {
+            let guard = sem.try_acquire();
+            assert!(guard.is_ok());
+            drop(guard);
+            cleanup(&path);
+        }
+        Err(_) => {
+            // Some filesystems may not support unicode
+        }
+    }
+}
+
+#[test]
+fn test_security_concurrent_force_release_safety() {
+    // Verify concurrent force_release doesn't cause issues
+    let path = temp_lock_path("concurrent-force");
+    cleanup(&path);
+
+    let sem = Semaphore::with_defaults(&path).unwrap();
+    let _guard = sem.try_acquire().unwrap();
+
+    let path_clone = path.clone();
+    let handles: Vec<_> = (0..10)
+        .map(|_| {
+            let p = path_clone.clone();
+            thread::spawn(move || {
+                let sem = Semaphore::with_defaults(&p).unwrap();
+                // Multiple force_release calls should be safe
+                let _ = sem.force_release();
+            })
+        })
+        .collect();
+
+    for h in handles {
+        h.join().unwrap();
+    }
+
+    cleanup(&path);
+}
+
+#[test]
+fn test_security_lock_info_tampering() {
+    let path = temp_lock_path("tampered-lock");
+    cleanup(&path);
+
+    // Write invalid JSON to lock file
+    fs::write(&path, "not valid json at all!").unwrap();
+
+    let sem = Semaphore::with_defaults(&path).unwrap();
+
+    // Should handle corrupted lock file gracefully
+    // Either reject (already locked) or clean up and acquire
+    let result = sem.try_acquire();
+
+    // Should not panic - either error or success is acceptable
+    match result {
+        Ok(_guard) => {
+            // Managed to recover
+        }
+        Err(_) => {
+            // Couldn't recover - that's fine too
+        }
+    }
+
+    cleanup(&path);
+}
+
+#[test]
+fn test_security_stale_timeout_overflow() {
+    let path = temp_lock_path("timeout-overflow");
+    cleanup(&path);
+
+    // Use maximum possible timeout to check for overflow issues
+    let config = SemaphoreConfig {
+        stale_timeout: Some(Duration::from_secs(u64::MAX)),
+        ..Default::default()
+    };
+
+    let result = Semaphore::new(&path, config);
+
+    // Should handle extreme values without crashing
+    match result {
+        Ok(sem) => {
+            let _ = sem.try_acquire();
+        }
+        Err(_) => {
+            // Rejection is acceptable
+        }
+    }
+
+    cleanup(&path);
+}
