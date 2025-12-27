@@ -82,6 +82,37 @@ export interface MergeError {
 export type Result = MergeResult | MergeError;
 
 // ============================================================================
+// Security Helpers
+// ============================================================================
+
+/**
+ * Keys that could cause prototype pollution if used as object keys
+ */
+const DANGEROUS_KEYS = ['__proto__', 'constructor', 'prototype'];
+
+/**
+ * Check if a key is safe from prototype pollution attacks
+ *
+ * @param key - The key to validate
+ * @returns true if safe, false if dangerous
+ */
+export function isSafeKey(key: string): boolean {
+  return !DANGEROUS_KEYS.includes(key);
+}
+
+/**
+ * Validate a key is safe from prototype pollution
+ *
+ * @param key - The key to validate
+ * @throws Error if key could cause prototype pollution
+ */
+export function validateKey(key: string): void {
+  if (!isSafeKey(key)) {
+    throw new Error(`Invalid key "${key}": potential prototype pollution`);
+  }
+}
+
+// ============================================================================
 // Core Functions
 // ============================================================================
 
@@ -116,6 +147,9 @@ export function parseEnv(
     if (lowercase) {
       outputKey = outputKey.toLowerCase();
     }
+
+    // Security: prevent prototype pollution
+    if (!isSafeKey(outputKey)) continue;
 
     result[outputKey] = { value, source: 'env' };
   }
@@ -174,6 +208,9 @@ export function parseCliArgs(args: string): Record<string, ConfigValue> {
 
     if (!key) continue;
 
+    // Security: prevent prototype pollution
+    if (!isSafeKey(key)) continue;
+
     // Parse value type
     const value = parseValue(rawValue);
     result[key] = { value, source: 'cli' };
@@ -217,6 +254,8 @@ function toTrackedConfig(
   const result: Record<string, ConfigValue> = {};
 
   for (const [key, value] of Object.entries(obj)) {
+    // Security: prevent prototype pollution
+    if (!isSafeKey(key)) continue;
     result[key] = { value, source };
   }
 

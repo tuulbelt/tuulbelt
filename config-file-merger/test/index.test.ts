@@ -1307,3 +1307,128 @@ describe('Isolation and Determinism', () => {
     assert.deepStrictEqual(keys1, keys2);
   });
 });
+
+// ============================================================================
+// Security Tests - Prototype Pollution Prevention
+// ============================================================================
+
+describe('security - prototype pollution prevention', () => {
+  test('parseCliArgs ignores __proto__ key', () => {
+    const result = parseCliArgs('__proto__=evil,name=good');
+
+    // __proto__ should be silently ignored (use Object.hasOwn to check own properties)
+    assert.ok(!Object.hasOwn(result, '__proto__'));
+    assert.ok(Object.hasOwn(result, 'name'));
+    assert.strictEqual(result.name.value, 'good');
+  });
+
+  test('parseCliArgs ignores constructor key', () => {
+    const result = parseCliArgs('constructor=evil,name=good');
+
+    assert.ok(!Object.hasOwn(result, 'constructor'));
+    assert.ok(Object.hasOwn(result, 'name'));
+  });
+
+  test('parseCliArgs ignores prototype key', () => {
+    const result = parseCliArgs('prototype=evil,name=good');
+
+    assert.ok(!Object.hasOwn(result, 'prototype'));
+    assert.ok(Object.hasOwn(result, 'name'));
+  });
+
+  test('parseEnv ignores __proto__ key', () => {
+    const env = {
+      '__proto__': 'evil',
+      'NAME': 'good',
+    };
+    const result = parseEnv(env, undefined, true, true);
+
+    assert.ok(!Object.hasOwn(result, '__proto__'));
+    assert.ok(Object.hasOwn(result, 'name'));
+  });
+
+  test('parseEnv ignores constructor key', () => {
+    const env = {
+      'constructor': 'evil',
+      'NAME': 'good',
+    };
+    const result = parseEnv(env, undefined, true, true);
+
+    assert.ok(!Object.hasOwn(result, 'constructor'));
+    assert.ok(Object.hasOwn(result, 'name'));
+  });
+
+  test('mergeConfig ignores dangerous keys in defaults', () => {
+    const result = mergeConfig({
+      defaults: {
+        '__proto__': 'evil',
+        'constructor': 'evil',
+        'prototype': 'evil',
+        'safe': 'value',
+      },
+    });
+
+    assert.ok(result.ok);
+    const config = result.config as Record<string, unknown>;
+    assert.ok(!Object.hasOwn(config, '__proto__'));
+    assert.ok(!Object.hasOwn(config, 'constructor'));
+    assert.ok(!Object.hasOwn(config, 'prototype'));
+    assert.strictEqual(config.safe, 'value');
+  });
+
+  test('mergeConfig ignores dangerous keys in file config', () => {
+    const result = mergeConfig({
+      file: {
+        '__proto__': { 'polluted': true },
+        'safe': 'value',
+      },
+    });
+
+    assert.ok(result.ok);
+    const config = result.config as Record<string, unknown>;
+    assert.ok(!Object.hasOwn(config, '__proto__'));
+    assert.strictEqual(config.safe, 'value');
+
+    // Verify Object.prototype was not polluted
+    const testObj = {};
+    assert.strictEqual((testObj as { polluted?: boolean }).polluted, undefined);
+  });
+
+  test('mergeConfig ignores dangerous keys in cli config', () => {
+    const result = mergeConfig({
+      cli: {
+        '__proto__': 'evil',
+        'safe': 'value',
+      },
+    });
+
+    assert.ok(result.ok);
+    const config = result.config as Record<string, unknown>;
+    assert.ok(!Object.hasOwn(config, '__proto__'));
+    assert.strictEqual(config.safe, 'value');
+  });
+
+  test('all dangerous keys filtered across all sources', () => {
+    const result = mergeConfig({
+      defaults: { '__proto__': 'default-evil', 'a': 1 },
+      file: { 'constructor': 'file-evil', 'b': 2 },
+      env: { 'PROTOTYPE': 'env-evil', 'C': '3' },
+      envPrefix: undefined,
+      cli: { 'safe': 'cli-value' },
+    });
+
+    assert.ok(result.ok);
+    const config = result.config as Record<string, unknown>;
+
+    // Dangerous keys filtered (use Object.hasOwn for own property check)
+    assert.ok(!Object.hasOwn(config, '__proto__'));
+    assert.ok(!Object.hasOwn(config, 'constructor'));
+    assert.ok(!Object.hasOwn(config, 'prototype'));
+
+    // Safe keys preserved
+    assert.strictEqual(config.a, 1);
+    assert.strictEqual(config.b, 2);
+    assert.strictEqual(config.c, '3');
+    assert.strictEqual(config.safe, 'cli-value');
+  });
+});

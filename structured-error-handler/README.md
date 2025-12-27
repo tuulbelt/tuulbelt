@@ -313,6 +313,29 @@ try {
 }
 ```
 
+## Security Considerations
+
+### Production Logging
+
+**Always use `toSafeJSON()` in production:**
+- Excludes stack traces (prevents path disclosure)
+- Sanitizes sensitive metadata keys (password, secret, token, api_key, auth, credential, private, key)
+
+```typescript
+// Production (safe)
+console.log(error.toSafeJSON());
+console.log(error.toSafeJSON({ sanitizeMetadata: true })); // Also redacts sensitive keys
+
+// Development only (includes stack traces)
+console.log(error.toJSON());
+```
+
+### Sensitive Data
+
+- Use `toSafeJSON({ sanitizeMetadata: true })` when context may contain secrets
+- Stack traces are always excluded from safe serialization
+- Original error objects maintain full information for debugging
+
 ## Testing
 
 ```bash

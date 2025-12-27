@@ -982,3 +982,139 @@ describe('Input Validation', () => {
     assert(typeof error.message === 'string');
   });
 });
+
+// ============================================================================
+// Security Tests - Information Disclosure Prevention
+// ============================================================================
+
+describe('security - information disclosure prevention', () => {
+  test('toSafeJSON excludes stack traces', () => {
+    const error = new StructuredError('Test error', { code: 'TEST' });
+
+    const safe = error.toSafeJSON();
+    const full = error.toJSON();
+
+    // Safe version should not have stack
+    assert.strictEqual(safe.stack, undefined);
+    // Full version should have stack
+    assert.ok(full.stack && full.stack.length > 0);
+  });
+
+  test('toSafeJSON sanitizes password in metadata', () => {
+    const baseError = new StructuredError('Database error', { code: 'DB_ERR' });
+
+    // addContext returns a new error with context added
+    const error = baseError.addContext('connect', {
+      metadata: {
+        host: 'localhost',
+        password: 'secret123',
+        user: 'admin',
+      },
+    });
+
+    const safe = error.toSafeJSON({ sanitizeMetadata: true });
+
+    // Password should be redacted
+    const ctx = safe.context?.[0];
+    assert.ok(ctx);
+    assert.ok(ctx.metadata);
+    assert.strictEqual(ctx.metadata.password, '[REDACTED]');
+    // Non-sensitive fields preserved
+    assert.strictEqual(ctx.metadata.host, 'localhost');
+    assert.strictEqual(ctx.metadata.user, 'admin');
+  });
+
+  test('toSafeJSON sanitizes api_key in metadata', () => {
+    const baseError = new StructuredError('API error', { code: 'API_ERR' });
+
+    const error = baseError.addContext('fetch', {
+      metadata: {
+        api_key: 'sk-1234567890',
+        endpoint: '/users',
+      },
+    });
+
+    const safe = error.toSafeJSON({ sanitizeMetadata: true });
+
+    const ctx = safe.context?.[0];
+    assert.ok(ctx?.metadata);
+    assert.strictEqual(ctx.metadata.api_key, '[REDACTED]');
+    assert.strictEqual(ctx.metadata.endpoint, '/users');
+  });
+
+  test('toSafeJSON sanitizes token in metadata', () => {
+    const baseError = new StructuredError('Auth error', { code: 'AUTH_ERR' });
+
+    const error = baseError.addContext('auth', {
+      metadata: {
+        token: 'jwt.token.here',
+        userId: '123',
+      },
+    });
+
+    const safe = error.toSafeJSON({ sanitizeMetadata: true });
+
+    const ctx = safe.context?.[0];
+    assert.ok(ctx?.metadata);
+    assert.strictEqual(ctx.metadata.token, '[REDACTED]');
+    assert.strictEqual(ctx.metadata.userId, '123');
+  });
+
+  test('toSafeJSON sanitizes multiple sensitive keys', () => {
+    const baseError = new StructuredError('Multi-key error', { code: 'MULTI_ERR' });
+
+    const error = baseError.addContext('multi', {
+      metadata: {
+        password: 'p1',
+        secret: 's2',
+        token: 't3',
+        apikey: 'k4',
+        auth_token: 'a5',
+        safe_field: 'visible',
+      },
+    });
+
+    const safe = error.toSafeJSON({ sanitizeMetadata: true });
+
+    const ctx = safe.context?.[0];
+    assert.ok(ctx?.metadata);
+    assert.strictEqual(ctx.metadata.password, '[REDACTED]');
+    assert.strictEqual(ctx.metadata.secret, '[REDACTED]');
+    assert.strictEqual(ctx.metadata.token, '[REDACTED]');
+    assert.strictEqual(ctx.metadata.apikey, '[REDACTED]');
+    assert.strictEqual(ctx.metadata.auth_token, '[REDACTED]');
+    assert.strictEqual(ctx.metadata.safe_field, 'visible');
+  });
+
+  test('toSafeJSON without sanitizeMetadata preserves all metadata', () => {
+    const baseError = new StructuredError('Test', { code: 'TEST' });
+
+    const error = baseError.addContext('test', {
+      metadata: {
+        password: 'secret',
+      },
+    });
+
+    const safe = error.toSafeJSON(); // sanitizeMetadata defaults to false
+
+    const ctx = safe.context?.[0];
+    assert.ok(ctx?.metadata);
+    // Without sanitizeMetadata, password should be preserved
+    assert.strictEqual(ctx.metadata.password, 'secret');
+  });
+
+  test('cause errors also have stack excluded in safe serialization', () => {
+    const cause = new Error('Root cause');
+    const error = new StructuredError('Wrapped error', {
+      code: 'WRAP_ERR',
+      cause,
+    });
+
+    const safe = error.toSafeJSON();
+
+    // Neither the main error nor cause should have stack
+    assert.strictEqual(safe.stack, undefined);
+    assert.ok(safe.cause);
+    assert.strictEqual(safe.cause.stack, undefined);
+  });
+});
