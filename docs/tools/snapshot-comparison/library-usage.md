@@ -223,7 +223,11 @@ fn safe_check(store: &SnapshotStore, name: &str, content: &[u8]) {
 
 ### DiffOutput
 
-When a mismatch occurs, you get a `DiffOutput` with rich diff information:
+When a mismatch occurs, you get a `DiffOutput` with rich diff information. This is powered by [output-diffing-utility](/tools/output-diffing-utility/) which is integrated as a library dependency:
+
+- **Text**: LCS-based unified diff with context lines
+- **JSON**: Semantic structural comparison
+- **Binary**: Hex dump with byte-level highlighting
 
 ```rust
 use snapshot_comparison::{SnapshotStore, SnapshotConfig, CompareResult};

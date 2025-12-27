@@ -6,6 +6,10 @@ Snapshot testing utility for regression detection with integrated diff output.
 
 Snapshot Comparison (`snapcmp`) catches regressions by comparing current output against stored "golden" snapshots. It integrates with output-diffing-utility for rich, semantic diffs of text, JSON, and binary data.
 
+::: tip 📦 First Tool Using Library Composition
+This is the first Tuulbelt tool to use another Tuulbelt tool as a **library dependency** (not CLI). It imports `output-diffing-utility` via Cargo path dependency, demonstrating [PRINCIPLES.md Exception 2](/guide/principles#zero-external-dependencies): Tuulbelt tools can compose while maintaining zero external dependencies.
+:::
+
 **Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
 
 **Language:** Rust

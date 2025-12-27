@@ -199,6 +199,22 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
 - Optional: Tool-specific compositions (only if genuinely useful)
 - See existing tools for patterns: Test Flakiness Detector, CLI Progress, Path Normalizer, Semaphore, Output Diffing
 
+### Library Composition Documentation (PRINCIPLES.md Exception 2)
+
+**If your tool uses another Tuulbelt tool as a library dependency:**
+
+- [ ] **README section added**: "Library Composition" section explaining the integration
+- [ ] **VitePress index.md callout**: Add tip box highlighting library composition
+  ```markdown
+  ::: tip 📦 Uses [OtherTool] Library
+  This tool uses [other-tool](/tools/other-tool/) as a library dependency...
+  :::
+  ```
+- [ ] **VitePress library-usage.md updated**: Explain how the dependency is used
+- [ ] **Root README.md Dogfooding section**: Add example showing the integration
+- [ ] **docs/index.md card**: Add badge or note (e.g., "📦 Uses odiff")
+- [ ] **DOGFOODING_STRATEGY.md**: Document the library integration value
+
 ### GitHub Pages Documentation
 
 **This is where we failed - don't skip these:**
