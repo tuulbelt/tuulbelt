@@ -10,7 +10,7 @@ This document tracks pending work across the Tuulbelt project. Tasks are organiz
 
 All tools have short CLI names for better DX:
 
-### Implemented (7 tools)
+### Implemented (8 tools)
 
 | Tool | Short Name | Long Name |
 |------|------------|-----------|
@@ -21,12 +21,12 @@ All tools have short CLI names for better DX:
 | Output Diffing Utility | `odiff` | `output-diff` |
 | Structured Error Handler | `serr` | `structured-error-handler` |
 | Configuration File Merger | `cfgmerge` | `config-file-merger` |
+| Snapshot Comparison | `snapcmp` | `snapshot-comparison` |
 
-### Proposed (26 remaining tools)
+### Proposed (25 remaining tools)
 
 | Tool | Short Name | Rationale |
 |------|------------|-----------|
-| Snapshot Comparison | `snapcmp` | snapshot + compare |
 | Test Port Conflict Resolver | `portres` | port + resolver |
 | Component Prop Validator | `propval` | prop + validate |
 | Exhaustiveness Checker | `excheck` | exhaustive + check |
@@ -69,17 +69,17 @@ All 5 Phase 1 tools implemented!
 ✅ **File-Based Semaphore** (v0.1.0) - Rust
 ✅ **Output Diffing Utility** (v0.1.0) - Rust
 
-### Completed (Phase 2: 2/28) 🆕
+### Completed (Phase 2: 3/28) 🆕
 
 ✅ **Structured Error Handler** (v0.1.0) - TypeScript
-✅ **Configuration File Merger** (v0.1.0) - TypeScript 🆕
+✅ **Configuration File Merger** (v0.1.0) - TypeScript
+✅ **Snapshot Comparison** (v0.1.0) - Rust 🆕
 
 ### Phase 2: Next Up
 
-See `README.md` for complete roadmap (26 remaining tools).
+See `README.md` for complete roadmap (25 remaining tools).
 
 **Recommended Next Tools:**
-- **Snapshot Comparison** - Binary/structured data snapshots (Rust)
 - **Test Port Conflict Resolver** - Concurrent test port allocation (TypeScript)
 - **Component Prop Validator** - TypeScript runtime validation (TypeScript)
 - **Exhaustiveness Checker** - Union case coverage for TS/JS (TypeScript)
@@ -172,6 +172,21 @@ See `README.md` for complete roadmap (26 remaining tools).
 - Complete documentation (7 VitePress pages)
 - Clear precedence: CLI > ENV > File > Defaults
 - Source tracking for debugging config origins
+
+### Snapshot Comparison
+
+- ✅ v0.1.0 stable (Third Phase 2 tool!)
+- ✅ **First tool using Tuulbelt-to-Tuulbelt library composition** (PRINCIPLES.md Exception 2)
+- ✅ Integrates output-diffing-utility as path dependency
+- ✅ Dogfooding: 2 composition scripts implemented
+  - dogfood-flaky.sh: Validate determinism (42 tests × 10 runs)
+  - dogfood-diff.sh: Prove snapshot comparison produces identical outputs
+- ✅ DOGFOODING_STRATEGY.md: Complete strategy document
+- ✅ **Security:** Path traversal prevention in snapshot names
+- 42 tests passing (20 unit + 18 integration + 4 doc tests)
+- Complete documentation (6 VitePress pages + SPEC.md)
+- Hash-based fast comparison with detailed diff on mismatch
+- Semantic diffing for text, JSON, and binary via odiff
 
 ---
 
@@ -281,7 +296,8 @@ See `docs/KNOWN_ISSUES.md` for tracked issues.
 - ✅ File-Based Semaphore: 80%+ coverage ✅
 - ✅ Output Diffing Utility: 80%+ coverage ✅
 - ✅ Structured Error Handler: 80%+ coverage ✅
-- ✅ Configuration File Merger: 80%+ coverage ✅ 🆕
+- ✅ Configuration File Merger: 80%+ coverage ✅
+- ✅ Snapshot Comparison: 80%+ coverage ✅ 🆕
 - Target: All tools maintain 80%+ coverage
 
 ---
@@ -359,29 +375,32 @@ Priority: Cross-Platform Path Normalizer
 
 ## Session Notes (2025-12-27)
 
-**Configuration File Merger Complete!** Tool #7 implemented.
+**Snapshot Comparison Complete!** Tool #8 implemented.
 
-**Latest Session (Configuration File Merger):**
-- Implemented Configuration File Merger (`cfgmerge`) ✅
-  - 135 tests passing
-  - Clear precedence: CLI > ENV > File > Defaults
-  - Source tracking for debugging
-  - Type coercion for numbers, booleans, null
+**Latest Session (Snapshot Comparison):**
+- Implemented Snapshot Comparison (`snapcmp`) ✅
+  - 42 tests passing (20 unit + 18 integration + 4 doc tests)
+  - First tool using Tuulbelt-to-Tuulbelt library composition
+  - Integrates output-diffing-utility as path dependency
+  - Hash-based fast comparison with detailed diff on mismatch
 - Complete dogfooding setup ✅
   - DOGFOODING_STRATEGY.md customized
-  - dogfood-flaky.sh: Validate 135 tests × 10 runs
-  - dogfood-diff.sh: Prove deterministic output
+  - dogfood-flaky.sh: Validate 42 tests × 10 runs
+  - dogfood-diff.sh: Prove snapshot comparison produces identical outputs
 - GitHub Pages documentation ✅
-  - 7 VitePress pages
+  - 6 VitePress pages + SPEC.md
   - Demo recording script created
+- Updated PRINCIPLES.md with Exception 2 for tool composition
+
+**Previous Session (Configuration File Merger):**
+- Implemented Configuration File Merger (`cfgmerge`) ✅
+  - 144 tests passing
+  - Clear precedence: CLI > ENV > File > Defaults
+  - Source tracking for debugging
 
 **Previous Session (Demo & npm link Fixes):**
 - Fixed npm link support for TypeScript CLIs ✅
 - Fixed demo workflow race condition ✅
 - Updated scaffold template with bin entry + shebang requirements
 
-**Previous Session (Short CLI Names):**
-- Implemented short CLI names for all 6 tools ✅
-- Enhanced `/quality-check` with short name verification
-
-**Next Priority:** Snapshot Comparison (`snapcmp`) or Test Port Conflict Resolver (`portres`)
+**Next Priority:** Test Port Conflict Resolver (`portres`) or Component Prop Validator (`propval`)

@@ -1,59 +1,57 @@
 # Session Handoff
 
 **Last Updated:** 2025-12-27
-**Session:** Comprehensive Security Audit Complete
-**Status:** 🟢 All security issues resolved
+**Session:** Snapshot Comparison Implementation Complete
+**Status:** 🟢 Tool #8 implemented and ready for merge
 
 ---
 
 ## Current Session Summary
 
-**Comprehensive security audit of all 7 Tuulbelt tools completed!**
+**Snapshot Comparison (`snapcmp`) - Tool #8 - COMPLETE!**
 
-### Security Fixes Applied (CRITICAL/HIGH)
+This is the first tool to use Tuulbelt-to-Tuulbelt library composition (as documented in PRINCIPLES.md Exception 2).
 
-1. ✅ **Prototype Pollution Prevention** (config-file-merger)
-   - Added `DANGEROUS_KEYS` blacklist (`__proto__`, `constructor`, `prototype`)
-   - `isSafeKey()` validation in parseEnv, parseCliArgs, toTrackedConfig
-   - 9 security tests added
+### Implementation Complete
 
-2. ✅ **Path Traversal Prevention** (cli-progress-reporting)
-   - ID validation with safe character whitelist (`/^[a-zA-Z0-9_-]+$/`)
-   - Message length limit (10,000 chars) prevents DoS
-   - Null byte detection in file paths
-   - 10 security tests added
+1. ✅ **Core Library** (lib.rs - 700+ lines)
+   - SnapshotStore for CRUD operations
+   - Hash-based fast comparison with detailed diff on mismatch
+   - Integration with output-diffing-utility as path dependency
+   - 20 unit tests including security tests
 
-3. ✅ **Stack Trace Exclusion** (structured-error-handler)
-   - `toSafeJSON()` method excludes stack traces for production
-   - `sanitizeMetadataObject()` redacts sensitive keys (password, secret, token, api_key)
-   - 7 security tests added
+2. ✅ **CLI** (main.rs - 350 lines)
+   - Commands: create, check, update, list, delete, clean
+   - Options: --dir, --type, --color, --update, --context, --keep, --dry-run
+   - Both `snapcmp` and `snapshot-comparison` binaries
 
-4. ✅ **Tag Newline Injection Prevention** (file-based-semaphore)
-   - Sanitize `\n` and `\r` in tags before serialization
-   - Prevents injection of fake keys into lock file format
-   - 2 security tests added
+3. ✅ **Testing**
+   - 20 unit tests in lib.rs
+   - 18 integration tests in tests/integration.rs
+   - 4 doc tests
+   - Total: 42 tests passing
 
-### Security Tests Added to All Tools
+4. ✅ **Documentation**
+   - README.md with CLI and library usage
+   - SPEC.md defining snapshot file format
+   - DOGFOODING_STRATEGY.md
+   - 6 VitePress doc pages
+   - Demo recording script
 
-| Tool | Security Tests | Focus Area |
-|------|---------------|------------|
-| test-flakiness-detector | 6 | Resource limits (runs validation) |
-| cli-progress-reporting | 10 | Path traversal, input validation |
-| cross-platform-path-normalizer | 13 | Malicious input, edge cases |
-| config-file-merger | 9 | Prototype pollution prevention |
-| structured-error-handler | 7 | Information disclosure |
-| file-based-semaphore | 10 | Path/tag injection, concurrency |
-| output-diffing-utility | 10 | JSON bombs, unicode, binary |
+### Key Innovation: Library Composition
 
-**Total: 65 security tests across all 7 tools**
+Updated PRINCIPLES.md with Exception 2 allowing Tuulbelt tools to use each other:
 
-### Documentation Updates
+```toml
+# Cargo.toml
+[dependencies]
+output-diffing-utility = { path = "../output-diffing-utility" }
+```
 
-1. ✅ Added Security sections to 5 tool READMEs
-2. ✅ Updated docs/QUALITY_CHECKLIST.md with:
-   - 5 new security checks in Pre-Commit section
-   - Pre-Release Security Scan section with process and checklist
-   - Code patterns for security validation
+This enables:
+- Semantic text diffs (unified format)
+- JSON structural comparison
+- Binary hex diff
 
 ---
 
@@ -61,34 +59,22 @@
 
 | Tool | Tests | Status |
 |------|-------|--------|
-| Test Flakiness Detector | 132 | ✅ (+6 security) |
-| CLI Progress Reporting | 121 | ✅ (+10 security) |
-| Cross-Platform Path Normalizer | 141 | ✅ (+13 security) |
-| Config File Merger | 144 | ✅ (+9 security) |
-| Structured Error Handler | 88 | ✅ (+7 security) |
-| File-Based Semaphore | 95 | ✅ (+10 security) |
-| Output Diffing Utility | 108 | ✅ (+10 security) |
+| Test Flakiness Detector | 132 | ✅ |
+| CLI Progress Reporting | 121 | ✅ |
+| Cross-Platform Path Normalizer | 141 | ✅ |
+| Config File Merger | 144 | ✅ |
+| Structured Error Handler | 88 | ✅ |
+| File-Based Semaphore | 95 | ✅ |
+| Output Diffing Utility | 108 | ✅ |
+| **Snapshot Comparison** | **42** | ✅ **NEW** |
 
-**Total: 829 tests across all tools**
-
----
-
-## Security Scan Final Status
-
-| Severity | Count | Details |
-|----------|-------|---------|
-| CRITICAL | 0 | - |
-| HIGH | 0 | - |
-| MEDIUM | 0 | - |
-| LOW | 0 | All fixed |
-
-**All 7 tools have zero security issues.**
+**Total: 871 tests across all 8 tools**
 
 ---
 
 ## Current Status
 
-**7 of 33 tools completed (21% progress)**
+**8 of 33 tools completed (24% progress)**
 
 | Tool | Short Name | Language | Version | Tests | Status |
 |------|------------|----------|---------|-------|--------|
@@ -99,55 +85,64 @@
 | Output Diffing Utility | `odiff` | Rust | v0.1.0 | 108 | ✅ |
 | Structured Error Handler | `serr` | TypeScript | v0.1.0 | 88 | ✅ |
 | Configuration File Merger | `cfgmerge` | TypeScript | v0.1.0 | 144 | ✅ |
+| **Snapshot Comparison** | `snapcmp` | Rust | v0.1.0 | 42 | ✅ **NEW** |
+
+---
+
+## Files Created/Modified
+
+### New Files (snapshot-comparison/)
+- `src/lib.rs` - Core library implementation
+- `src/main.rs` - CLI implementation
+- `examples/basic.rs` - Basic usage examples
+- `examples/advanced.rs` - Advanced patterns
+- `tests/integration.rs` - Integration tests
+- `Cargo.toml` - With odiff path dependency
+- `README.md` - Full documentation
+- `SPEC.md` - Snapshot file format specification
+- `DOGFOODING_STRATEGY.md` - Composition strategy
+- `scripts/dogfood-flaky.sh` - Test validation script
+- `scripts/dogfood-diff.sh` - Output consistency script
+- `scripts/record-snapshot-comparison-demo.sh` - Demo recording
+
+### Modified Files
+- `PRINCIPLES.md` - Added Exception 2 for tool composition
+- `README.md` - Updated tool count and entries
+- `docs/.vitepress/config.ts` - Added snapshot-comparison sidebar
+- `docs/tools/index.md` - Added tool entry
+- `docs/public/snapshot-comparison/demo.gif` - Placeholder
+
+### New VitePress Docs (docs/tools/snapshot-comparison/)
+- `index.md` - Overview
+- `getting-started.md` - Installation
+- `cli-usage.md` - CLI reference
+- `library-usage.md` - Rust API
+- `examples.md` - Usage patterns
+- `api-reference.md` - Complete API
 
 ---
 
 ## Next Immediate Tasks
 
 **Priority 1: Merge current branch**
-- All security fixes committed and pushed
-- Create PR for review
+- All implementation complete
+- 42 tests passing
+- Documentation complete
+- VitePress build successful
 
 **Priority 2: Next tool**
-- **Snapshot Comparison** (`snapcmp`) - Rust - Binary/structured data snapshots
 - **Test Port Conflict Resolver** (`portres`) - TypeScript - Concurrent test port allocation
+- Or **Component Prop Validator** (`propval`) - TypeScript - Runtime validation
 
 ---
 
 ## Important References
 
-- **Security Checklist**: `docs/QUALITY_CHECKLIST.md` (Pre-Release Security Scan section)
+- **PRINCIPLES.md Exception 2**: Tool composition via path dependencies
+- **SPEC.md**: Snapshot file format specification
 - **Short Names Table**: `.claude/NEXT_TASKS.md`
 - **TypeScript Template**: `templates/tool-repo-template/`
 - **Rust Template**: `templates/rust-tool-template/`
-
----
-
-## Security Patterns Established
-
-### TypeScript - Prototype Pollution
-```typescript
-const DANGEROUS_KEYS = ['__proto__', 'constructor', 'prototype'];
-function isSafeKey(key: string): boolean {
-  return !DANGEROUS_KEYS.includes(key.toLowerCase());
-}
-```
-
-### TypeScript - Path Traversal
-```typescript
-const SAFE_ID_PATTERN = /^[a-zA-Z0-9_-]+$/;
-function validateId(id: string): Result<void> {
-  if (!SAFE_ID_PATTERN.test(id)) {
-    return { ok: false, error: 'Invalid ID' };
-  }
-  return { ok: true };
-}
-```
-
-### Rust - Tag Injection
-```rust
-let sanitized_tag = tag.replace('\n', " ").replace('\r', " ");
-```
 
 ---
 

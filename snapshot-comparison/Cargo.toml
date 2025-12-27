@@ -1,0 +1,35 @@
+[package]
+name = "snapshot-comparison"
+version = "0.1.0"
+edition = "2021"
+description = "Snapshot testing utility for regression detection with integrated diff output"
+license = "MIT"
+repository = "https://github.com/tuulbelt/snapshot-comparison"
+readme = "README.md"
+keywords = ["tuulbelt", "snapshot", "testing", "diff", "regression"]
+categories = ["command-line-utilities", "development-tools::testing"]
+
+[lib]
+name = "snapshot_comparison"
+path = "src/lib.rs"
+
+[[bin]]
+name = "snapcmp"
+path = "src/main.rs"
+
+[[bin]]
+name = "snapshot-comparison"
+path = "src/main.rs"
+
+[dependencies]
+# Tuulbelt tool composition - odiff for rich diff output
+output-diffing-utility = { path = "../output-diffing-utility" }
+
+[dev-dependencies]
+# None - uses built-in test framework
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true

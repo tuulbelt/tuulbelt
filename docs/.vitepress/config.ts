@@ -26,7 +26,8 @@ export default defineConfig({
             { text: 'File-Based Semaphore', link: '/tools/file-based-semaphore/' },
             { text: 'Output Diffing Utility', link: '/tools/output-diffing-utility/' },
             { text: 'Structured Error Handler', link: '/tools/structured-error-handler/' },
-            { text: 'Config File Merger', link: '/tools/config-file-merger/' }
+            { text: 'Config File Merger', link: '/tools/config-file-merger/' },
+            { text: 'Snapshot Comparison', link: '/tools/snapshot-comparison/' }
           ]
         }
       ],
@@ -140,6 +141,19 @@ export default defineConfig({
             { text: 'Library Usage', link: '/tools/config-file-merger/library-usage' },
             { text: 'Examples', link: '/tools/config-file-merger/examples' },
             { text: 'API Reference', link: '/tools/config-file-merger/api-reference' }
+          ]
+        }
+      ],
+      '/tools/snapshot-comparison/': [
+        {
+          text: 'Snapshot Comparison',
+          items: [
+            { text: 'Overview', link: '/tools/snapshot-comparison/' },
+            { text: 'Getting Started', link: '/tools/snapshot-comparison/getting-started' },
+            { text: 'CLI Usage', link: '/tools/snapshot-comparison/cli-usage' },
+            { text: 'Library Usage', link: '/tools/snapshot-comparison/library-usage' },
+            { text: 'Examples', link: '/tools/snapshot-comparison/examples' },
+            { text: 'API Reference', link: '/tools/snapshot-comparison/api-reference' }
           ]
         }
       ]

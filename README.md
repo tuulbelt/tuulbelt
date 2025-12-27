@@ -23,7 +23,7 @@ Each tool in Tuulbelt:
 ### Testing & Observability
 - **[Test Flakiness Detector](test-flakiness-detector/)** — Identify unreliable tests 🟢 v0.1.0 | [📖 Docs](test-flakiness-detector/docs/) | [🚀 Examples](test-flakiness-detector/examples/)
 - **[Output Diffing Utility](output-diffing-utility/)** — Semantic diff for JSON, text, binary files 🟢 v0.1.0 | [📖 Docs](output-diffing-utility/) | [🚀 Examples](output-diffing-utility/examples/)
-- **[Snapshot Comparison](https://github.com/tuulbelt/snapshot-comparison)** — Binary/structured data snapshots (TBD)
+- **[Snapshot Comparison](snapshot-comparison/)** — Snapshot testing with integrated diffs 🟢 v0.1.0 | [📖 Docs](snapshot-comparison/) | [🚀 Examples](snapshot-comparison/examples/)
 - **[Test Port Conflict Resolver](https://github.com/tuulbelt/test-port-resolver)** — Concurrent test port allocation (TBD)
 
 ### Frontend
@@ -155,15 +155,15 @@ This creates a **bidirectional validation network** where tools prove their reli
 
 ## Status
 
-🟢 = Implemented (7/33)
+🟢 = Implemented (8/33)
 🟡 = In progress (0/33)
-🔴 = TBD (26/33)
+🔴 = TBD (25/33)
 
-**Recently Completed:** Configuration File Merger v0.1.0 (2025-12-27)
+**Recently Completed:** Snapshot Comparison v0.1.0 (2025-12-27)
 
-**Next Up:** Snapshot Comparison 🎯
+**Next Up:** Test Port Conflict Resolver 🎯
 
-**Progress:** 7 of 33 tools implemented (21%) | Phase 1 Quick Tools: 5/5 (100% ✅) | Phase 2: 2/28
+**Progress:** 8 of 33 tools implemented (24%) | Phase 1 Quick Tools: 5/5 (100% ✅) | Phase 2: 3/28
 
 ## License
 
