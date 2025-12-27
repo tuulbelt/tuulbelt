@@ -8,40 +8,40 @@ Real-world examples of using Test Flakiness Detector.
 
 ```bash
 # Run your test suite 10 times
-npx tsx src/index.ts --test "npm test"
+flaky --test "npm test"
 ```
 
 ### High-Confidence Detection
 
 ```bash
 # Run 50 times for rare flaky tests
-npx tsx src/index.ts --test "npm test" --runs 50
+flaky --test "npm test" --runs 50
 ```
 
 ### Verbose Debugging
 
 ```bash
 # See output from each run
-npx tsx src/index.ts --test "npm test" --runs 10 --verbose
+flaky --test "npm test" --runs 10 --verbose
 ```
 
 ### Different Test Frameworks
 
 ```bash
 # Jest
-npx tsx src/index.ts --test "npm run test:jest" --runs 20
+flaky --test "npm run test:jest" --runs 20
 
 # Vitest
-npx tsx src/index.ts --test "vitest run" --runs 20
+flaky --test "vitest run" --runs 20
 
 # Rust
-npx tsx src/index.ts --test "cargo test" --runs 15
+flaky --test "cargo test" --runs 15
 
 # Python
-npx tsx src/index.ts --test "pytest tests/" --runs 20
+flaky --test "pytest tests/" --runs 20
 
 # Go
-npx tsx src/index.ts --test "go test ./..." --runs 15
+flaky --test "go test ./..." --runs 15
 ```
 
 ## CI/CD Integration
@@ -72,7 +72,7 @@ jobs:
       - name: Detect flaky tests
         run: |
           cd test-flakiness-detector
-          npx tsx src/index.ts --test "npm test" --runs 20
+          flaky --test "npm test" --runs 20
 
       - name: Check for flakiness
         run: |
@@ -100,7 +100,7 @@ jobs:
 echo "🔍 Checking for flaky tests..."
 
 cd test-flakiness-detector
-npx tsx src/index.ts --test "npm test" --runs 10
+flaky --test "npm test" --runs 10
 
 if grep -q '"isFlaky": true' flakiness-report.json; then
   echo "❌ Cannot commit: Flaky tests detected!"

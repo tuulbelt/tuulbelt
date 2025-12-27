@@ -158,8 +158,8 @@ echo ""
 
 # Normalize paths using the tool
 cd "$NORMALIZER_DIR"
-NORM1=$(npx tsx src/index.ts --format unix "$PATH1" 2>/dev/null | grep -oE '"path":\s*"[^"]+' | cut -d'"' -f4)
-NORM2=$(npx tsx src/index.ts --format unix "$PATH2" 2>/dev/null | grep -oE '"path":\s*"[^"]+' | cut -d'"' -f4)
+NORM1=$(npx flaky --format unix "$PATH1" 2>/dev/null | grep -oE '"path":\s*"[^"]+' | cut -d'"' -f4)
+NORM2=$(npx flaky --format unix "$PATH2" 2>/dev/null | grep -oE '"path":\s*"[^"]+' | cut -d'"' -f4)
 
 echo "  Normalized paths:"
 echo "    File 1: $NORM1"
@@ -176,7 +176,7 @@ echo "╚═══════════════════════�
 echo ""
 
 cd "$PROGRESS_DIR"
-npx tsx src/index.ts init \
+npx flaky init \
     --total 100 \
     --id "$PROGRESS_ID" \
     --message "Starting API diff pipeline" > /dev/null
@@ -186,7 +186,7 @@ echo "  📊 Tracker ID: $PROGRESS_ID"
 echo ""
 
 # Update progress: Step 1
-npx tsx src/index.ts set \
+npx flaky set \
     --current 20 \
     --total 100 \
     --id "$PROGRESS_ID" \
@@ -212,7 +212,7 @@ fi
 
 # Update progress: Step 2
 cd "$PROGRESS_DIR"
-npx tsx src/index.ts set \
+npx flaky set \
     --current 40 \
     --total 100 \
     --id "$PROGRESS_ID" \
@@ -237,7 +237,7 @@ else
 
     # Update progress: Computing
     cd "$PROGRESS_DIR"
-    npx tsx src/index.ts set \
+    npx flaky set \
         --current 60 \
         --total 100 \
         --id "$PROGRESS_ID" \
@@ -262,7 +262,7 @@ echo ""
 
 # Update progress: Complete
 cd "$PROGRESS_DIR"
-npx tsx src/index.ts set \
+npx flaky set \
     --current 80 \
     --total 100 \
     --id "$PROGRESS_ID" \
@@ -281,7 +281,7 @@ echo "╚═══════════════════════�
 echo ""
 
 cd "$PROGRESS_DIR"
-npx tsx src/index.ts finish \
+npx flaky finish \
     --id "$PROGRESS_ID" \
     --message "Pipeline complete: API diff generated" > /dev/null
 
@@ -290,7 +290,7 @@ echo ""
 
 # Show final progress
 echo "  📊 Final Progress State:"
-npx tsx src/index.ts get --id "$PROGRESS_ID" | sed 's/^/    /'
+npx flaky get --id "$PROGRESS_ID" | sed 's/^/    /'
 echo ""
 
 # Cleanup

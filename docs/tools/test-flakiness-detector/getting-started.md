@@ -28,7 +28,7 @@ Test Flakiness Detector has **zero runtime dependencies**. The `npm install` ste
 Run your test command 10 times to detect flaky tests:
 
 ```bash
-npx tsx src/index.ts --test "npm test"
+flaky --test "npm test"
 ```
 
 Output:
@@ -46,7 +46,7 @@ Output:
 ### With Custom Run Count
 
 ```bash
-npx tsx src/index.ts --test "npm test" --runs 20
+flaky --test "npm test" --runs 20
 ```
 
 ### Verbose Mode
@@ -54,7 +54,7 @@ npx tsx src/index.ts --test "npm test" --runs 20
 See detailed execution logs:
 
 ```bash
-npx tsx src/index.ts --test "npm test" --verbose
+flaky --test "npm test" --verbose
 ```
 
 ## CLI Options
@@ -111,7 +111,7 @@ Flaky tests detected! Your tests pass sometimes and fail sometimes.
 This is a classic sign of flakiness! Run the tool with a higher number of iterations:
 
 ```bash
-npx tsx src/index.ts --test "npm test" --runs 50
+flaky --test "npm test" --runs 50
 ```
 
 ### Permission Denied
@@ -128,5 +128,5 @@ npm test
 For very long-running test suites, limit the run count:
 
 ```bash
-npx tsx src/index.ts --test "npm test" --runs 5
+flaky --test "npm test" --runs 5
 ```

@@ -45,16 +45,16 @@ jobs:
           mkdir -p examples/outputs
 
           echo "Generating all-pass example..."
-          npx tsx src/index.ts --test "echo 'test passed'" --runs 5 > examples/outputs/all-pass.json 2>&1 || true
+          npx flaky --test "echo 'test passed'" --runs 5 > examples/outputs/all-pass.json 2>&1 || true
 
           echo "Generating all-fail example..."
-          npx tsx src/index.ts --test "exit 1" --runs 3 > examples/outputs/all-fail.json 2>&1 || true
+          npx flaky --test "exit 1" --runs 3 > examples/outputs/all-fail.json 2>&1 || true
 
           echo "Generating flaky test example..."
-          npx tsx src/index.ts --test 'node -e "process.exit(Math.random() > 0.5 ? 0 : 1)"' --runs 20 > examples/outputs/flaky-detected.json 2>&1 || true
+          npx flaky --test 'node -e "process.exit(Math.random() > 0.5 ? 0 : 1)"' --runs 20 > examples/outputs/flaky-detected.json 2>&1 || true
 
           echo "Generating verbose mode example..."
-          npx tsx src/index.ts --test "echo 'test'" --runs 3 --verbose > examples/outputs/verbose-mode.txt 2>&1 || true
+          npx flaky --test "echo 'test'" --runs 3 --verbose > examples/outputs/verbose-mode.txt 2>&1 || true
 
       - name: Verify outputs were generated
         working-directory: test-flakiness-detector

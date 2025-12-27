@@ -5,7 +5,7 @@ Complete command-line interface reference for Structured Error Handler.
 ## Basic Usage
 
 ```bash
-npx tsx src/index.ts <command> [options] [input]
+serr <command> [options] [input]
 ```
 
 ## Commands
@@ -16,13 +16,13 @@ Show a demonstration of structured errors with context chaining:
 
 ```bash
 # JSON output (default)
-npx tsx src/index.ts demo
+serr demo
 
 # Human-readable text output
-npx tsx src/index.ts demo --format text
+serr demo --format text
 
 # Include stack traces
-npx tsx src/index.ts demo --format text --stack
+serr demo --format text --stack
 ```
 
 **Output (JSON):**
@@ -73,15 +73,15 @@ Parse a JSON error and display it:
 
 ```bash
 # Parse and show as JSON
-npx tsx src/index.ts parse '{"message":"Error","code":"TEST","context":[]}'
+serr parse '{"message":"Error","code":"TEST","context":[]}'
 
 # Parse and show as text
-npx tsx src/index.ts parse '{"message":"Error","code":"TEST","context":[]}' --format text
+serr parse '{"message":"Error","code":"TEST","context":[]}' --format text
 ```
 
 **Example:**
 ```bash
-npx tsx src/index.ts parse '{"message":"File not found","code":"ENOENT","category":"io","context":[{"operation":"readConfig","metadata":{"path":"/etc/config"},"timestamp":"2025-12-26T12:00:00Z"}]}'
+serr parse '{"message":"File not found","code":"ENOENT","category":"io","context":[{"operation":"readConfig","metadata":{"path":"/etc/config"},"timestamp":"2025-12-26T12:00:00Z"}]}'
 ```
 
 ### validate
@@ -90,11 +90,11 @@ Validate that a JSON string matches the error format:
 
 ```bash
 # Valid error
-npx tsx src/index.ts validate '{"message":"Valid error"}'
+serr validate '{"message":"Valid error"}'
 # Output: Valid error format
 
 # Invalid error (missing message)
-npx tsx src/index.ts validate '{"code":"NO_MESSAGE"}'
+serr validate '{"code":"NO_MESSAGE"}'
 # Output: Invalid error format: missing required "message" field
 # Exit code: 1
 ```
@@ -107,11 +107,11 @@ Output format: `json` (default) or `text`
 
 ```bash
 # JSON output
-npx tsx src/index.ts demo --format json
+serr demo --format json
 
 # Human-readable text
-npx tsx src/index.ts demo --format text
-npx tsx src/index.ts demo -f text
+serr demo --format text
+serr demo -f text
 ```
 
 ### --stack, -s
@@ -119,7 +119,7 @@ npx tsx src/index.ts demo -f text
 Include stack traces in output (text format only):
 
 ```bash
-npx tsx src/index.ts demo --format text --stack
+serr demo --format text --stack
 ```
 
 **Output with stack:**
@@ -143,7 +143,7 @@ StructuredError: Failed to connect to database
 Show help message:
 
 ```bash
-npx tsx src/index.ts --help
+serr --help
 ```
 
 **Output:**
@@ -176,7 +176,7 @@ Options:
 ### Parse from stdin
 
 ```bash
-echo '{"message":"Piped error","context":[]}' | xargs -0 npx tsx src/index.ts parse
+echo '{"message":"Piped error","context":[]}' | xargs -0 serr parse
 ```
 
 ### Use in shell scripts
@@ -184,7 +184,7 @@ echo '{"message":"Piped error","context":[]}' | xargs -0 npx tsx src/index.ts pa
 ```bash
 #!/bin/bash
 # Check if error is valid
-if npx tsx src/index.ts validate "$ERROR_JSON" 2>/dev/null; then
+if serr validate "$ERROR_JSON" 2>/dev/null; then
   echo "Valid error format"
 else
   echo "Invalid error format"
@@ -196,7 +196,7 @@ fi
 
 ```bash
 ERROR_JSON='{"message":"Test","code":"MY_CODE","context":[]}'
-CODE=$(npx tsx src/index.ts parse "$ERROR_JSON" 2>/dev/null | jq -r '.code')
+CODE=$(serr parse "$ERROR_JSON" 2>/dev/null | jq -r '.code')
 echo "Error code: $CODE"
 ```
 
@@ -206,10 +206,10 @@ echo "Error code: $CODE"
 
 ```bash
 # Capture demo output for analysis
-npx tsx src/index.ts demo > error-sample.json
+serr demo > error-sample.json
 
 # Pretty-print with jq
-npx tsx src/index.ts demo | jq '.'
+serr demo | jq '.'
 ```
 
 ### Validate Multiple Errors
@@ -223,7 +223,7 @@ ERRORS=(
 )
 
 for error in "${ERRORS[@]}"; do
-  if npx tsx src/index.ts validate "$error" 2>/dev/null; then
+  if serr validate "$error" 2>/dev/null; then
     echo "✓ Valid: ${error:0:30}..."
   else
     echo "✗ Invalid: ${error:0:30}..."
@@ -236,7 +236,7 @@ done
 ```bash
 # Parse stored error and display nicely
 ERROR_LOG=$(cat /var/log/app/error.json)
-npx tsx src/index.ts parse "$ERROR_LOG" --format text
+serr parse "$ERROR_LOG" --format text
 ```
 
 ## Next Steps

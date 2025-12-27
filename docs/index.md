@@ -166,7 +166,7 @@ cd tuulbelt
 # Try Test Flakiness Detector
 cd test-flakiness-detector
 npm install
-npx tsx src/index.ts --test "npm test" --runs 10
+flaky --test "npm test" --runs 10
 ```
 
 ### Rust Tools

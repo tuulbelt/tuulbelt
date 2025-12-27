@@ -16,7 +16,7 @@ cd tuulbelt
 ```bash
 cd test-flakiness-detector
 npm install  # Dev dependencies only
-npx tsx src/index.ts --test "npm test" --runs 10
+flaky --test "npm test" --runs 10
 ```
 
 ### Try CLI Progress Reporting
@@ -26,13 +26,13 @@ cd cli-progress-reporting
 npm install  # Dev dependencies only
 
 # Initialize progress
-npx tsx src/index.ts init --total 100 --message "Processing files"
+flaky init --total 100 --message "Processing files"
 
 # Update progress
-npx tsx src/index.ts increment --amount 10
+flaky increment --amount 10
 
 # Check status
-npx tsx src/index.ts get
+flaky get
 ```
 
 ### Try Cross-Platform Path Normalizer
@@ -42,11 +42,11 @@ cd cross-platform-path-normalizer
 npm install  # Dev dependencies only
 
 # Convert Windows path to Unix format
-npx tsx src/index.ts --format unix "C:\Users\file.txt"
+flaky --format unix "C:\Users\file.txt"
 # Output: /c/Users/file.txt
 
 # Auto-detect format
-npx tsx src/index.ts "/home/user/file.txt"
+flaky "/home/user/file.txt"
 # Output: /home/user/file.txt (unix)
 ```
 
@@ -125,7 +125,7 @@ cargo test  # Rust tools
 
 ```bash
 # Run tool with example data
-npx tsx src/index.ts --test "echo test" --runs 5
+flaky --test "echo test" --runs 5
 ```
 
 ### 4. Integrate Into Your Project

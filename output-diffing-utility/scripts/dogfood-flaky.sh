@@ -49,7 +49,7 @@ START_TIME=$(date +%s)
 
 # Run the flakiness detector and save output
 cd "$DETECTOR_DIR"
-npx tsx src/index.ts \
+npx flaky \
     --test "cd '$TOOL_DIR' && cargo test 2>&1" \
     --runs "$RUNS" > "$TEMP_OUTPUT" 2>&1
 

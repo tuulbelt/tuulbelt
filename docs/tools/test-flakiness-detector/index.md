@@ -41,7 +41,7 @@ cd tuulbelt/test-flakiness-detector
 npm install
 
 # Detect flaky tests
-npx tsx src/index.ts --test "npm test" --runs 10
+flaky --test "npm test" --runs 10
 ```
 
 ## Use Cases

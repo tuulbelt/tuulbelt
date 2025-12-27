@@ -113,19 +113,19 @@ The tool includes a CLI for parsing and validating errors:
 
 ```bash
 # Show a demo with error chain
-npx tsx src/index.ts demo
+serr demo
 
 # Demo in text format
-npx tsx src/index.ts demo --format text
+serr demo --format text
 
 # Parse a JSON error
-npx tsx src/index.ts parse '{"message":"test","context":[]}'
+serr parse '{"message":"test","context":[]}'
 
 # Validate error format
-npx tsx src/index.ts validate '{"message":"hello"}'
+serr validate '{"message":"hello"}'
 
 # Show help
-npx tsx src/index.ts --help
+serr --help
 ```
 
 ## Next Steps

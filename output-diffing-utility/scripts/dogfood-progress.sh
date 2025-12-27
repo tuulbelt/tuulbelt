@@ -98,7 +98,7 @@ echo "🔧 Initializing progress tracker..."
 PROGRESS_ID="diff-demo-$$"
 
 cd "$PROGRESS_DIR"
-npx tsx src/index.ts init \
+npx flaky init \
     --total 100 \
     --id "$PROGRESS_ID" \
     --message "Comparing JSON files" > /dev/null
@@ -111,28 +111,28 @@ echo "🔄 Running diff with progress updates..."
 echo ""
 
 # Update: Starting
-npx tsx src/index.ts set \
+npx flaky set \
     --current 0 \
     --total 100 \
     --id "$PROGRESS_ID" \
     --message "Reading old.json" > /dev/null
 
 # Update: Reading files
-npx tsx src/index.ts set \
+npx flaky set \
     --current 25 \
     --total 100 \
     --id "$PROGRESS_ID" \
     --message "Reading new.json" > /dev/null
 
 # Update: Parsing
-npx tsx src/index.ts set \
+npx flaky set \
     --current 50 \
     --total 100 \
     --id "$PROGRESS_ID" \
     --message "Parsing JSON structures" > /dev/null
 
 # Update: Computing diff
-npx tsx src/index.ts set \
+npx flaky set \
     --current 75 \
     --total 100 \
     --id "$PROGRESS_ID" \
@@ -148,7 +148,7 @@ echo ""
 
 # Update: Complete
 cd "$PROGRESS_DIR"
-npx tsx src/index.ts finish \
+npx flaky finish \
     --id "$PROGRESS_ID" \
     --message "Diff complete" > /dev/null
 
@@ -157,7 +157,7 @@ echo ""
 
 # Show final progress state
 echo "📊 Final Progress State:"
-npx tsx src/index.ts get --id "$PROGRESS_ID"
+npx flaky get --id "$PROGRESS_ID"
 echo ""
 
 # Cleanup

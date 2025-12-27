@@ -52,6 +52,16 @@ cat package.json | grep -A10 '"dependencies"'
 
 # 5. Check for @types/node in devDependencies
 cat package.json | grep '@types/node'
+
+# 6. Verify short CLI name is configured (bin entry)
+echo "Checking for short CLI name (bin entry)..."
+if ! grep -q '"bin"' package.json; then
+  echo "⚠️  WARNING: No bin entry found in package.json"
+  echo "   Add a bin entry for the short CLI name, e.g.:"
+  echo '   "bin": { "short-name": "./src/index.ts" }'
+else
+  cat package.json | grep -A5 '"bin"'
+fi
 ```
 
 ### Rust Projects
@@ -74,6 +84,18 @@ cargo test 2>&1
 # 5. Verify zero runtime dependencies
 echo "Checking for runtime dependencies..."
 grep -A10 '^\[dependencies\]' Cargo.toml
+
+# 6. Verify short CLI name is configured ([[bin]] entry)
+echo "Checking for short CLI name ([[bin]] entry)..."
+if ! grep -q '\[\[bin\]\]' Cargo.toml; then
+  echo "⚠️  WARNING: No [[bin]] entry found in Cargo.toml"
+  echo "   Add [[bin]] entries for short and long CLI names, e.g.:"
+  echo '   [[bin]]'
+  echo '   name = "short-name"'
+  echo '   path = "src/main.rs"'
+else
+  grep -A3 '\[\[bin\]\]' Cargo.toml
+fi
 ```
 
 ### Documentation Checks (If at Root Level)
@@ -116,6 +138,7 @@ grep -r "Cross-Platform Path Normalizer\|Test Flakiness Detector\|CLI Progress R
 - [ ] No temporary test files or artifacts
 - [ ] No debug code (`console.log`, `println!`, etc.)
 - [ ] Code follows Tuulbelt principles (@PRINCIPLES.md)
+- [ ] **Short CLI name configured** (bin entry in package.json or [[bin]] in Cargo.toml)
 - [ ] **New tools added to VitePress config** (if adding a tool)
 - [ ] **New tools listed in docs/tools/index.md** (if adding a tool)
 

@@ -601,7 +601,7 @@ if [ ! -d "$DETECTOR_DIR" ]; then
 fi
 
 cd "$DETECTOR_DIR"
-npx tsx src/index.ts \
+flaky \
     --test "cd '$TOOL_DIR' && cargo test 2>&1" \
     --runs "$RUNS"
 ```
