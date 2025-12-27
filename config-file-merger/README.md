@@ -4,7 +4,7 @@
 ![Version](https://img.shields.io/badge/version-0.1.0-blue)
 ![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)
 ![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success)
-![Tests](https://img.shields.io/badge/tests-64%20passing-success)
+![Tests](https://img.shields.io/badge/tests-135%20passing-success)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Merge configuration from ENV variables, config files, and CLI arguments with clear precedence rules and source tracking.
@@ -212,7 +212,7 @@ CLI arguments are automatically parsed:
 ## Testing
 
 ```bash
-npm test              # Run all 64 tests
+npm test              # Run all tests
 npm test -- --watch   # Watch mode
 ```
 
