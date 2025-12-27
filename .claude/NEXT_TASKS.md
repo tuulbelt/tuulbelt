@@ -98,7 +98,8 @@ See `README.md` for complete roadmap (26 remaining tools).
   - dogfood-progress.sh: Bidirectional validation (125 tests × 20 runs)
   - dogfood-pipeline.sh: Validate all 5 Phase 1 tools (602 tests × 10 runs)
 - ✅ DOGFOODING_STRATEGY.md: Complete strategy document
-- 148 tests passing
+- ✅ **Security:** 6 resource limit tests added
+- 132 tests passing
 
 ### CLI Progress Reporting
 
@@ -108,7 +109,8 @@ See `README.md` for complete roadmap (26 remaining tools).
   - dogfood-flaky.sh: Validate concurrent safety (125 tests × 20 runs)
   - dogfood-diff.sh: Prove deterministic outputs
 - ✅ DOGFOODING_STRATEGY.md: Complete strategy document
-- 125 tests passing
+- ✅ **Security:** Path traversal prevention + 10 security tests
+- 121 tests passing
 
 ### Cross-Platform Path Normalizer
 
@@ -117,7 +119,8 @@ See `README.md` for complete roadmap (26 remaining tools).
   - dogfood-flaky.sh: Validate determinism (145 tests × 10 runs)
   - dogfood-diff.sh: Prove identical outputs
 - ✅ DOGFOODING_STRATEGY.md: Complete strategy document
-- 145 tests passing
+- ✅ **Security:** 13 malicious input handling tests
+- 141 tests passing
 
 ### File-Based Semaphore
 
@@ -127,7 +130,8 @@ See `README.md` for complete roadmap (26 remaining tools).
   - dogfood-diff.sh: Prove deterministic outputs
 - ✅ DOGFOODING_STRATEGY.md: Complete strategy document
 - ✅ Full CLI test coverage added
-- 85 tests passing (31 unit + 39 CLI + 11 integration + 4 doctests)
+- ✅ **Security:** Tag newline injection prevention + 10 security tests
+- 95 tests passing (33 unit + 39 CLI + 19 integration + 4 doctests)
 - Zero clippy warnings
 
 ### Output Diffing Utility
@@ -136,7 +140,8 @@ See `README.md` for complete roadmap (26 remaining tools).
 - ✅ Dogfooding: 1 composition script implemented
   - dogfood-flaky.sh: Validate determinism (99 tests × 10 runs)
 - ✅ DOGFOODING_STRATEGY.md: Complete strategy document
-- 99 tests passing (76 lib + 18 CLI + 5 doc)
+- ✅ **Security:** 10 tests (JSON bombs, unicode, binary patterns)
+- 108 tests passing (76 lib + 27 CLI + 5 doc)
 - Zero clippy warnings
 - Complete documentation (7 VitePress pages + SPEC.md)
 - File size safety (100MB default, --max-size override)
@@ -149,19 +154,21 @@ See `README.md` for complete roadmap (26 remaining tools).
   - dogfood-flaky.sh: Validate determinism (81 tests × 10 runs)
   - dogfood-diff.sh: Prove deterministic serialization
 - ✅ DOGFOODING_STRATEGY.md: Complete strategy document
-- 81 tests passing (core, serialization, edge cases, validation, CLI)
+- ✅ **Security:** Stack trace exclusion + metadata sanitization + 7 tests
+- 88 tests passing (core, serialization, edge cases, validation, CLI)
 - Complete documentation (6 VitePress pages + SPEC.md)
 - Context chain preservation through call stacks
 - Full JSON serialization/deserialization
 
-### Configuration File Merger 🆕
+### Configuration File Merger
 
 - ✅ v0.1.0 stable (Second Phase 2 tool!)
 - ✅ Dogfooding: 2 composition scripts implemented
   - dogfood-flaky.sh: Validate determinism (135 tests × 10 runs)
   - dogfood-diff.sh: Prove config merging produces identical output
 - ✅ DOGFOODING_STRATEGY.md: Complete strategy document
-- 135 tests passing (parsing, merging, CLI, type coercion, edge cases)
+- ✅ **Security:** Prototype pollution prevention + 9 tests
+- 144 tests passing (parsing, merging, CLI, type coercion, edge cases, security)
 - Complete documentation (7 VitePress pages)
 - Clear precedence: CLI > ENV > File > Defaults
 - Source tracking for debugging config origins

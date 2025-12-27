@@ -1,6 +1,6 @@
 # Known Issues
 
-**Last Updated:** 2025-12-26
+**Last Updated:** 2025-12-27
 
 This document tracks known bugs, limitations, and cosmetic issues across the Tuulbelt project. Issues are categorized by severity and area.
 
@@ -81,6 +81,33 @@ None currently. Badge is functional and mostly aligned, just not pixel-perfect.
 ---
 
 ## ✅ Resolved Issues
+
+### Tag Newline Injection in file-based-semaphore ✅
+
+**Resolved:** 2025-12-27
+**Severity:** Low (Security)
+**Area:** Core (file-based-semaphore)
+
+**Problem:** Tags containing newline characters (`\n` or `\r`) could be used to inject fake key-value pairs into lock files, potentially causing the parser to read attacker-controlled values.
+
+**Root Cause:** The `LockInfo::serialize()` method did not sanitize tag contents before writing to the lock file format.
+
+**Solution:** Updated `src/lib.rs` to sanitize newlines in tags before serialization:
+```rust
+pub fn serialize(&self) -> String {
+    let mut content = format!("pid={}\ntimestamp={}\n", self.pid, self.timestamp);
+    if let Some(ref tag) = self.tag {
+        // Sanitize newlines to prevent injection of fake keys
+        let sanitized_tag = tag.replace('\n', " ").replace('\r', " ");
+        content.push_str(&format!("tag={}\n", sanitized_tag));
+    }
+    content
+}
+```
+
+**Security Tests Added:** 2 tests in `src/lib.rs` verifying injection prevention.
+
+---
 
 ### VitePress Card Icons Not Theme-Adaptive ✅
 
@@ -188,11 +215,11 @@ git commit -m "fix: improve icon theming (partial fix for KNOWN_ISSUES.md #1)"
 **High:** 0
 **Medium:** 0
 **Low (Cosmetic):** 1
-**Resolved:** 1
+**Resolved:** 2
 
 **By Area:**
 - Documentation: 1
-- Core: 0
+- Core: 1 (resolved)
 - Testing: 0
 - CI/CD: 0
 
@@ -207,5 +234,5 @@ git commit -m "fix: improve icon theming (partial fix for KNOWN_ISSUES.md #1)"
 
 ---
 
-**Last Review:** 2025-12-26
+**Last Review:** 2025-12-27
 **Next Review:** When new issues discovered or existing issues resolved
