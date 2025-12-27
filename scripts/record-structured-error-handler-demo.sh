@@ -16,53 +16,53 @@ cd "$TOOL_DIR"
 npm install --silent 2>/dev/null || npm install
 
 # Record the demo
-asciinema rec "$DEMO_FILE" --overwrite --title "Structured Error Handler - Tuulbelt" --command "bash -c '
+asciinema rec "$DEMO_FILE" --overwrite --title "Structured Error Handler / serr - Tuulbelt" --command "bash -c '
 echo \"# Structured Error Handler Demo\"
 sleep 1
 
 echo \"\"
 echo \"# 1. Show demo with JSON output (default)\"
 sleep 0.5
-echo \"\$ npx tsx src/index.ts demo\"
+echo \"\$ serr demo\"
 sleep 0.5
 cd \"$TOOL_DIR\"
-npx tsx src/index.ts demo | head -30
+npx serr demo | head -30
 sleep 2
 
 echo \"\"
 echo \"# 2. Show demo with human-readable text format\"
 sleep 0.5
-echo \"\$ npx tsx src/index.ts demo --format text\"
+echo \"\$ serr demo --format text\"
 sleep 0.5
-npx tsx src/index.ts demo --format text
+npx serr demo --format text
 sleep 2
 
 echo \"\"
 echo \"# 3. Parse a JSON error\"
 sleep 0.5
-echo '\''$ npx tsx src/index.ts parse '\''\"'\"'{\"message\":\"Test error\",\"code\":\"TEST_CODE\",\"context\":[]}'\''\"'\"
+echo '\''$ serr parse '\''\"'\"'{\"message\":\"Test error\",\"code\":\"TEST_CODE\",\"context\":[]}'\''\"'\"
 sleep 0.5
-npx tsx src/index.ts parse '\''{\"message\":\"Test error\",\"code\":\"TEST_CODE\",\"context\":[]}'\'' --format text
+npx serr parse '\''{\"message\":\"Test error\",\"code\":\"TEST_CODE\",\"context\":[]}'\'' --format text
 sleep 2
 
 echo \"\"
 echo \"# 4. Validate JSON error format\"
 sleep 0.5
-echo '\''$ npx tsx src/index.ts validate '\''\"'\"'{\"message\":\"Hello\"}'\''\"'\"
+echo '\''$ serr validate '\''\"'\"'{\"message\":\"Hello\"}'\''\"'\"
 sleep 0.5
-npx tsx src/index.ts validate '\''{\"message\":\"Hello\"}'\''
+npx serr validate '\''{\"message\":\"Hello\"}'\''
 sleep 1
 
 echo \"\"
 echo \"# 5. Show help\"
 sleep 0.5
-echo \"\$ npx tsx src/index.ts --help\"
+echo \"\$ serr --help\"
 sleep 0.5
-npx tsx src/index.ts --help
+npx serr --help
 sleep 2
 
 echo \"\"
-echo \"# Done! Structured errors with context preservation.\"
+echo \"# Done! Handle structured errors with the serr command.\"
 sleep 1
 '"
 
