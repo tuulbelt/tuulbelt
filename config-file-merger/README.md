@@ -274,6 +274,14 @@ if (!result.ok) {
 }
 ```
 
+## Specification
+
+See [SPEC.md](SPEC.md) for detailed technical specification including:
+- Precedence rules and merge behavior
+- Type coercion rules
+- Environment variable handling
+- Error cases and exit codes
+
 ## License
 
 MIT — see [LICENSE](LICENSE)
