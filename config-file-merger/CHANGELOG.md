@@ -1,84 +1,72 @@
 # Changelog
 
-All notable changes to {{TOOL_NAME}} will be documented in this file.
+All notable changes to Config File Merger will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.1.0] - 2025-12-27
 
 ### Added
-- Initial project scaffolding
-- TypeScript configuration with strict mode
-- Node.js native test runner setup
-- Basic project structure
 
-## [0.1.0] - YYYY-MM-DD (Not Released)
+- **Core merging functionality**
+  - Merge configuration from multiple sources (ENV, files, CLI args, defaults)
+  - Clear precedence rules: CLI > ENV > File > Defaults
+  - Optional source tracking to know where each value came from
 
-### Added
-- Core functionality (TODO: describe main features)
-- Comprehensive test suite
-- API documentation
-- Usage examples
+- **Environment variable handling**
+  - Prefix filtering (`--prefix APP_`)
+  - Case normalization (`--no-lowercase` to preserve case)
+  - Prefix stripping (`--no-strip-prefix` to keep prefix)
+
+- **Type coercion**
+  - Automatic parsing of booleans (`true`, `false`)
+  - Automatic parsing of numbers (integers, floats, negative)
+  - Automatic parsing of null
+  - Quoted strings preserve string type
+
+- **CLI interface**
+  - Short name: `cfgmerge`
+  - Long name: `config-file-merger`
+  - All options have short flags (`-e`, `-f`, `-a`, `-t`, etc.)
+
+- **Library API**
+  - `mergeConfig()` - merge configuration from multiple sources
+  - `parseJsonFile()` - parse JSON config file with error handling
+  - `parseCliArgs()` - parse key=value,key2=value2 format
+  - `parseEnv()` - parse environment variables with filtering
+  - `getValue()` - typed value retrieval with defaults
+
+- **Documentation**
+  - Complete README with examples
+  - SPEC.md with full specification
+  - GitHub Pages documentation (7 pages)
+  - Basic and advanced usage examples
+
+- **Testing**
+  - 135 tests covering all functionality
+  - Edge case coverage (unicode, special characters, etc.)
+  - Determinism validation
+  - CLI integration tests
+
+- **Dogfooding**
+  - `scripts/dogfood-flaky.sh` - validate test determinism
+  - `scripts/dogfood-diff.sh` - validate output determinism
 
 ### Implementation Notes
+
 - Zero runtime dependencies
-- Uses Node.js built-in modules only
-- TypeScript with strict type checking
+- Uses only Node.js built-in modules (`fs`, `path`)
+- TypeScript with strict mode
+- Result pattern for error handling (no thrown exceptions)
+- Fully deterministic output
 
 ---
 
-## Template Instructions
+## [Unreleased]
 
-When releasing versions, follow this format:
+### Planned
 
-### Version 0.1.0 - Initial Release
-
-**Added:**
-- List new features
-- New functions or capabilities
-- New documentation
-
-**Changed:**
-- List modifications to existing features
-- API changes
-
-**Deprecated:**
-- List features marked for removal
-
-**Removed:**
-- List removed features
-- Breaking changes
-
-**Fixed:**
-- List bug fixes
-
-**Security:**
-- List security fixes or improvements
-
-### Version Numbering
-
-- **MAJOR (X.0.0)**: Breaking changes, incompatible API changes
-- **MINOR (0.X.0)**: New features, backwards-compatible
-- **PATCH (0.0.X)**: Bug fixes, backwards-compatible
-
-### Example Entry
-
-```markdown
-## [1.2.3] - 2025-01-15
-
-### Added
-- New `processData()` function with validation
-- Support for UTF-8 input (#42)
-
-### Fixed
-- Handle empty string input correctly (#38)
-- Memory leak in parsing loop (#40)
-
-### Security
-- Validate file paths to prevent traversal attacks
-```
-
----
-
-*Remove these instructions before the first release.*
+- YAML/TOML config file support (under consideration)
+- Deep merge for nested objects (under consideration)
+- Schema validation (under consideration)

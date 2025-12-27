@@ -1,164 +1,215 @@
-# Tool Name Specification
+# Config File Merger Specification
 
 ## Overview
 
-One sentence description of what this tool does and its primary use case.
+Config File Merger (`cfgmerge`) merges configuration from multiple sources (environment variables, JSON files, CLI arguments, and defaults) with explicit precedence rules and optional source tracking.
 
 ## Problem
 
-Describe the problem this tool solves:
-- What pain point does it address?
-- Why existing solutions don't work?
-- What specific scenarios benefit from this tool?
+Applications need to combine configuration from multiple sources:
+- Environment variables for deployment-specific settings
+- Config files for application defaults
+- CLI arguments for runtime overrides
+- Hardcoded defaults as fallbacks
+
+Existing solutions either require heavy dependencies (dotenv, convict, cosmiconfig), don't handle all sources, or have unclear precedence rules.
 
 ## Design Goals
 
 1. **Zero dependencies** — Uses only Node.js standard library
-2. **Type safe** — Full TypeScript support with strict mode
-3. **Composable** — Works as both library and CLI
-4. **Predictable** — Same input always produces same output
+2. **Clear precedence** — Explicit, documented merge order
+3. **Source tracking** — Know where each value came from
+4. **Type coercion** — Automatic parsing of primitives
+5. **Composable** — Works as both library and CLI
+
+## Precedence Rules
+
+Values are merged in this order (highest precedence first):
+
+```
+CLI arguments > Environment variables > Config file > Defaults
+```
+
+When the same key exists in multiple sources, the highest precedence source wins.
+
+### Example
+
+```
+Defaults:     { port: 8080, host: "localhost", debug: false }
+Config file:  { port: 3000, host: "0.0.0.0" }
+Environment:  { PORT: "4000" }
+CLI args:     { debug: true }
+
+Result:       { port: 4000, host: "0.0.0.0", debug: true }
+              (port from env, host from file, debug from CLI)
+```
 
 ## Interface
+
+### CLI
+
+```bash
+cfgmerge [options]
+
+Options:
+  -e, --env              Include environment variables
+  -p, --prefix PREFIX    Filter env vars by prefix (e.g., APP_)
+  --no-strip-prefix      Keep prefix in output keys
+  --no-lowercase         Keep original env var case
+  -f, --file FILE        Load config from JSON file
+  -d, --defaults FILE    Load default values from JSON file
+  -a, --args ARGS        CLI arguments as key=value,key2=value2
+  -t, --track-sources    Show source of each value in output
+  -h, --help             Show help message
+  -V, --version          Show version
+```
 
 ### Library API
 
 ```typescript
-import { process } from './src/index.js';
+import { mergeConfig, getValue, parseJsonFile } from 'config-file-merger';
 
-interface Config {
-  verbose?: boolean;
+interface MergeOptions {
+  env?: Record<string, string | undefined>;
+  envPrefix?: string;
+  stripPrefix?: boolean;      // default: true
+  lowercaseEnv?: boolean;     // default: true
+  file?: Record<string, unknown>;
+  cli?: Record<string, unknown>;
+  defaults?: Record<string, unknown>;
+  trackSources?: boolean;     // default: false
 }
 
-interface Result {
-  success: boolean;
-  data: string;
-  error?: string;
+interface MergeResult {
+  ok: true;
+  config: Record<string, unknown>;
+} | {
+  ok: false;
+  error: string;
 }
 
-function process(input: string, config?: Config): Result;
+function mergeConfig(options: MergeOptions): MergeResult;
+function getValue<T>(config: Record<string, unknown>, key: string, defaultValue?: T): T | undefined;
+function parseJsonFile(path: string): { ok: true; data: Record<string, unknown> } | { ok: false; error: string };
 ```
 
-### CLI Interface
+## Type Coercion
 
-```
-Usage: tool-name [options] <input>
+CLI arguments and environment variables are parsed as follows:
 
-Options:
-  -v, --verbose  Enable verbose output
-  -h, --help     Show help message
+| Input | Output | Type |
+|-------|--------|------|
+| `"true"` | `true` | boolean |
+| `"false"` | `false` | boolean |
+| `"null"` | `null` | null |
+| `"42"` | `42` | number |
+| `"3.14"` | `3.14` | number |
+| `"-5"` | `-5` | number |
+| `"hello"` | `"hello"` | string |
+| `'"42"'` | `"42"` | string (quoted) |
+| `"'text'"` | `"text"` | string (quoted) |
 
-Arguments:
-  input          The string to process
-```
+Quoted strings preserve their string type even if they look like numbers or booleans.
 
-### Input Format
+## Output Format
 
-The tool accepts:
-- Any valid UTF-8 string
-- Empty strings are valid input
-
-### Output Format
-
-JSON object on stdout:
+### Without Source Tracking
 
 ```json
 {
-  "success": true,
-  "data": "PROCESSED OUTPUT"
+  "port": 3000,
+  "host": "localhost",
+  "debug": true
 }
 ```
 
-On error:
+### With Source Tracking (`--track-sources`)
 
 ```json
 {
-  "success": false,
-  "data": "",
-  "error": "Error message describing what went wrong"
+  "port": { "value": 3000, "source": "cli" },
+  "host": { "value": "localhost", "source": "file" },
+  "debug": { "value": true, "source": "env" }
 }
 ```
 
-## Behavior
+Source values: `"cli"`, `"env"`, `"file"`, `"default"`
 
-### Normal Operation
+## Environment Variable Handling
 
-1. Accept input string
-2. Validate input is a string type
-3. Process input (convert to uppercase in template)
-4. Return success result with processed data
+### Prefix Filtering
+
+With `--prefix APP_`:
+- `APP_PORT=3000` → `{ "port": 3000 }`
+- `OTHER_VAR=x` → ignored
+
+### Case Normalization
+
+Default behavior (`--lowercase`):
+- `APP_DATABASE_URL` → `database_url`
+
+With `--no-lowercase`:
+- `APP_DATABASE_URL` → `DATABASE_URL`
+
+### Prefix Stripping
+
+Default behavior (`--strip-prefix`):
+- `APP_PORT` with prefix `APP_` → `port`
+
+With `--no-strip-prefix`:
+- `APP_PORT` with prefix `APP_` → `app_port`
+
+## Error Handling
+
+### Exit Codes
+
+- `0` — Success
+- `1` — Error (file not found, invalid JSON, etc.)
 
 ### Error Cases
 
-| Condition | Behavior |
-|-----------|----------|
-| Non-string input | Return error result |
-| Null/undefined | Return error result |
+| Condition | Error Message |
+|-----------|---------------|
+| File not found | `File not found: <path>` |
+| Invalid JSON | `Invalid JSON in file: <path>` |
+| JSON is not an object | `Config file must contain a JSON object` |
 
-### Edge Cases
+Errors are returned via Result pattern, not thrown:
 
-| Input | Output |
-|-------|--------|
-| Empty string `""` | Empty string `""` |
-| Whitespace `"   "` | Whitespace `"   "` |
-| Unicode `"café"` | Uppercase `"CAFÉ"` |
-
-## Examples
-
-### Example 1: Basic Usage
-
-Input:
-```
-hello world
-```
-
-Output:
-```json
-{
-  "success": true,
-  "data": "HELLO WORLD"
-}
-```
-
-### Example 2: Error Case
-
-Input:
 ```typescript
-process(123)  // Not a string
-```
-
-Output:
-```json
-{
-  "success": false,
-  "data": "",
-  "error": "Input must be a string"
+const result = parseJsonFile('config.json');
+if (!result.ok) {
+  console.error(result.error);
+  process.exit(1);
 }
 ```
 
-## Performance
+## Determinism
 
-- Time complexity: O(n) where n is input length
-- Space complexity: O(n) for output string
-- No async operations required
+The tool is fully deterministic:
+- Same inputs always produce same outputs
+- Key order is preserved from source objects
+- No randomness or timing-dependent behavior
 
-## Security Considerations
+This is validated by the `dogfood-diff.sh` script.
 
-- Input is treated as untrusted data
-- No shell command execution
-- No file system access
-- No network access
+## Limitations
 
-## Future Extensions
+1. **JSON only** — Config files must be valid JSON (no YAML, TOML, etc.)
+2. **Flat merging** — Nested objects are not deep-merged, they are replaced
+3. **No schema validation** — Values are not validated against a schema
+4. **CLI array limitation** — Arrays in `--args` are split by commas
 
-Potential additions (without breaking changes):
-- Additional configuration options
-- New output formats (text, etc.)
-- Streaming support for large inputs
+## Future Considerations
 
-## Changelog
+These are explicitly out of scope for v0.1.0 but may be considered later:
 
-### v0.1.0
+- YAML/TOML config file support
+- Deep merge for nested objects
+- Schema validation
+- Environment variable interpolation in config files
 
-- Initial release
-- Basic string processing
-- CLI and library interfaces
+---
+
+**Version:** 0.1.0
+**Last Updated:** 2025-12-27
