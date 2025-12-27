@@ -1,0 +1,38 @@
+{
+  "name": "@tuulbelt/config-file-merger",
+  "version": "0.1.0",
+  "description": "Merge configuration from ENV variables, config files, and CLI arguments with clear precedence",
+  "main": "src/index.ts",
+  "type": "module",
+  "bin": {
+    "cfgmerge": "./src/index.ts",
+    "config-file-merger": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "node --import tsx --test test/index.test.ts",
+    "test:watch": "node --import tsx --test --watch test/index.test.ts"
+  },
+  "keywords": [
+    "tuulbelt",
+    "config",
+    "configuration",
+    "merge",
+    "env",
+    "cli"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tuulbelt/config-file-merger.git"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  }
+}
