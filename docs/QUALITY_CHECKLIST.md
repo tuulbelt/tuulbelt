@@ -146,6 +146,10 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
   - The create-demos workflow will replace this with the real demo after merge
 - [ ] **Docs build succeeds**: Run `npm run docs:build` from root - must pass with no dead links
 - [ ] **Tools index updated**: `docs/tools/index.md` shows correct count (e.g., "3/33") and includes new tool card
+- [ ] **Home page updated**: `docs/index.md` updated with:
+  - "View All X Tools" link shows correct count
+  - "More Tools" section includes new tool card
+  - "Progress" section shows correct phase counts and tool list
 
 ### GitHub Workflows
 
@@ -187,11 +191,12 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
 7. [ ] Create docs/tools/{tool-name}/ directory
 8. [ ] Copy docs pages and fix links
 9. [ ] Create placeholder demo.gif in docs/public/{tool-name}/
-10. [ ] Update docs/tools/index.md
-11. [ ] Update root README.md
-12. [ ] Run npm run docs:build (verify - MUST PASS)
-13. [ ] Run /quality-check
-14. [ ] Update HANDOFF.md and NEXT_TASKS.md
+10. [ ] Update docs/tools/index.md (tool count, add tool card)
+11. [ ] Update docs/index.md (home page: tool count, More Tools, Progress)
+12. [ ] Update root README.md
+13. [ ] Run npm run docs:build (verify - MUST PASS)
+14. [ ] Run /quality-check
+15. [ ] Update HANDOFF.md and NEXT_TASKS.md
 ```
 
 ---

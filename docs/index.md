@@ -80,7 +80,7 @@ Cross-platform file-based semaphore for process coordination with stale lock det
 
 </div>
 
-[**View All 6 Tools →**](/tools/)
+[**View All 7 Tools →**](/tools/)
 
 ### More Tools
 
@@ -138,6 +138,20 @@ Structured error format with context preservation and serialization.
 
 </div>
 
+<div class="tool-card">
+
+#### [Config File Merger](/tools/config-file-merger/)
+
+Merge ENV, config files, and CLI arguments with clear precedence rules.
+
+- <img src="/icons/layers.svg" class="inline-icon" alt=""> Clear precedence: CLI > ENV > File > Defaults
+- <img src="/icons/search.svg" class="inline-icon" alt=""> Source tracking for debugging
+- <img src="/icons/code.svg" class="inline-icon" alt=""> Automatic type coercion
+
+[Get Started →](/tools/config-file-merger/getting-started)
+
+</div>
+
 ## Progress
 
 **Phase 1: Quick Tools** — 5 of 5 complete (100%) ✅
@@ -148,11 +162,12 @@ Structured error format with context preservation and serialization.
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> File-Based Semaphore (Rust)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Output Diffing Utility (Rust)
 
-**Phase 2: Started** — 1 of 28
+**Phase 2: Started** — 2 of 28
 
-- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Structured Error Handler (TypeScript) ✨ NEW
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Structured Error Handler (TypeScript)
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Config File Merger (TypeScript) ✨ NEW
 
-**Overall Progress:** 6 of 33 tools (18%)
+**Overall Progress:** 7 of 33 tools (21%)
 
 ## Quick Start
 
