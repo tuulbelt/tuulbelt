@@ -208,6 +208,48 @@ if (existsSync(rustToolPath)) {
 
 See [QUALITY_CHECKLIST.md](../docs/QUALITY_CHECKLIST.md) for dogfooding patterns.
 
+### Library Composition (PRINCIPLES.md Exception 2)
+
+<!--
+INCLUDE THIS SECTION if your tool uses another Tuulbelt tool as a library dependency.
+DELETE THIS SECTION if your tool has no Tuulbelt library dependencies.
+-->
+
+If this tool uses another Tuulbelt tool as a library dependency (not CLI), document it here:
+
+**Example:** A TypeScript tool using another TypeScript Tuulbelt tool:
+
+```json
+// package.json - NO runtime dependencies, use relative imports
+{
+  "dependencies": {}
+}
+```
+
+```typescript
+// src/index.ts - Import from sibling directory in monorepo
+import { someFunction } from '../../other-tool/src/index.js';
+
+// Or use dynamic import for optional integration
+const otherTool = await import('../../other-tool/src/index.js').catch(() => null);
+```
+
+**Why use library composition:**
+- Reuse proven algorithms (parsing, validation, formatting)
+- Reduce code duplication across tools
+- Maintain zero *external* dependencies (Tuulbelt tools have zero deps themselves)
+
+**When to use library composition:**
+- Another Tuulbelt tool solves a subproblem you need
+- The functionality is core to your tool (not optional)
+- CLI composition would add unnecessary overhead
+
+**Documentation requirements:**
+- Document the integration in README (this section)
+- Update DOGFOODING_STRATEGY.md to explain the value
+- Add to root README.md Dogfooding section
+- Ensure tool still works standalone (graceful fallback)
+
 ## Error Handling
 
 Exit codes:

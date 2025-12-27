@@ -154,17 +154,19 @@ Merge ENV, config files, and CLI arguments with clear precedence rules.
 
 <div class="tool-card">
 
-#### [Snapshot Comparison](/tools/snapshot-comparison/)
+#### [Snapshot Comparison](/tools/snapshot-comparison/) <span class="library-badge">📦 Uses odiff</span>
 
 Snapshot testing with integrated semantic diffs for regression detection.
 
 - <img src="/icons/target.svg" class="inline-icon" alt=""> Hash-based fast comparison
-- <img src="/icons/file-diff.svg" class="inline-icon" alt=""> Semantic diffs via odiff integration
+- <img src="/icons/file-diff.svg" class="inline-icon" alt=""> **Library composition**: Uses [odiff](/tools/output-diffing-utility/) internally
 - <img src="/icons/layers.svg" class="inline-icon" alt=""> Text, JSON, and binary support
 
 [Get Started →](/tools/snapshot-comparison/getting-started)
 
 </div>
+
+> 💡 **Tool Composition**: Snapshot Comparison is the first tool to use library-level composition ([PRINCIPLES.md Exception 2](/guide/principles#zero-external-dependencies)). It imports output-diffing-utility as a path dependency, demonstrating how Tuulbelt tools can build on each other while maintaining zero external dependencies.
 
 ## Progress
 

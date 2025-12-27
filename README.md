@@ -125,6 +125,19 @@ _[See all 33 tools →](#current-tools)_
 
 Tuulbelt tools validate and enhance each other through real-world composition:
 
+**Snapshot Comparison** uses **Output Diffing Utility** as a library dependency for semantic diffs:
+```rust
+// First tool using library-level composition (PRINCIPLES.md Exception 2)
+use output_diffing_utility::{diff_text, diff_json, diff_binary};
+
+// When snapshots don't match, odiff provides rich diff output
+let diff = match file_type {
+    FileType::Text => diff_text(expected, actual, &config),
+    FileType::Json => diff_json(expected, actual, &config),
+    FileType::Binary => diff_binary(expected, actual, &config),
+};
+```
+
 **Test Flakiness Detector** integrates **CLI Progress Reporting** for real-time progress tracking:
 ```bash
 cd test-flakiness-detector
