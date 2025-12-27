@@ -338,9 +338,20 @@ Priority: Cross-Platform Path Normalizer
 
 ## Session Notes (2025-12-27)
 
-**Short CLI Names Implemented!** All 6 tools now have memorable short names.
+**npm link and Demo Fixes Complete!** Short CLI names now work correctly.
 
-**Latest Session (Short CLI Names):**
+**Latest Session (Demo & npm link Fixes):**
+- Fixed npm link support for TypeScript CLIs ✅
+  - Added shebang `#!/usr/bin/env -S npx tsx` to all 5 TypeScript entry points
+  - Without shebang, `npm link` symlinks fail with "import: command not found"
+- Fixed demo workflow race condition ✅
+  - Added cleanup before `git pull --rebase` (build artifacts caused conflicts)
+- Updated demo recording scripts to use `npm link --force` + actual short names
+- Reset all broken demo content (GIFs, asciinema URLs) to placeholders
+- Updated scaffold template with bin entry + shebang requirements
+- Added shebang requirement to QUALITY_CHECKLIST.md
+
+**Previous Session (Short CLI Names):**
 - Implemented short CLI names for all 6 tools ✅
   - `flaky`, `prog`, `normpath`, `sema`, `odiff`, `serr`
 - Updated 69 files with documentation changes
@@ -348,7 +359,6 @@ Priority: Cross-Platform Path Normalizer
 - Added [[bin]] entries to Rust Cargo.toml files
 - Updated all dogfooding scripts
 - Enhanced `/quality-check` with short name verification
-- Demo recordings will be regenerated on merge
 - Proposed short names for all 27 remaining tools
 
 **Previous Session (Structured Error Handler):**
@@ -356,4 +366,4 @@ Priority: Cross-Platform Path Normalizer
 - 81 tests passing, complete documentation
 - Demo recording script created
 
-**Next Priority:** Configuration File Merger (`cfgmerge`) or Snapshot Comparison (`snapcmp`)
+**Next Priority:** Merge branch, then Configuration File Merger (`cfgmerge`) or Snapshot Comparison (`snapcmp`)

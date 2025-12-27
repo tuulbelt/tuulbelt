@@ -1,9 +1,9 @@
 # Tuulbelt Project Status
 
-**Last Updated:** 2025-12-26
+**Last Updated:** 2025-12-27
 **Current Phase:** Phase 2 - Medium Tools Development
-**Active Session:** claude/implement-output-diffing-utility-fX3Z3
-**Progress:** 5/33 Tools Complete (15%) | Phase 1 Quick Tools: 5/5 (100% ✅)
+**Active Session:** claude/resume-work-assessment-87UDw
+**Progress:** 6/33 Tools Complete (18%) | Phase 1 Quick Tools: 5/5 (100% ✅) | Phase 2: 1/28
 
 ---
 
@@ -76,26 +76,45 @@
 - Full VitePress documentation (7 pages + SPEC)
 - v0.1.0 complete ✅
 
+**Structured Error Handler (2025-12-27)**
+- First Phase 2 tool in Tuulbelt
+- Error format + serialization with context preservation
+- 81 tests (core, serialization, edge cases, validation, CLI)
+- Zero runtime dependencies
+- Full JSON serialization/deserialization
+- Context chain preservation through call stacks
+- Full VitePress documentation (6 pages + SPEC)
+- v0.1.0 complete ✅
+
+**Short CLI Names (2025-12-27)**
+- All 6 tools have short memorable CLI names
+- `flaky`, `prog`, `normpath`, `sema`, `odiff`, `serr`
+- npm link support with proper shebang
+- Scaffold template updated for future tools
+
 **Infrastructure Improvements (2025-12-26)**
 - Demo workflow optimization (75-80% CI time savings via smart detection)
-- Path filters for all 5 tools in create-demos.yml
+- Path filters for all 6 tools in create-demos.yml
 - Template enhancements (performance patterns, SPEC.md guidance, advanced examples)
 
 ### 🔄 In Progress
 
-**Nothing** - Phase 1 COMPLETE! Ready for Phase 2!
+**Nothing** - Ready for next Phase 2 tool!
 
 ### 📋 Next Steps
 
-1. **Start Phase 2: Medium Tools** 🎯
-   - **Recommended:** Structured Error Handler (TypeScript)
-   - Alternative options: Configuration File Merger, Snapshot Comparison, Test Port Resolver
+1. **Merge Current Branch** ⭐
+   - Merge `claude/resume-work-assessment-87UDw` to trigger demo regeneration
+   - Verify all 6 demos are regenerated with short CLI names
+
+2. **Choose Next Tool (Phase 2)** 🎯
+   - **Options:** Configuration File Merger, Snapshot Comparison, Test Port Resolver
    - Continue dogfooding validation practice
    - Maintain 80%+ test coverage standard
 
 ## Active Branches
 
-- `claude/implement-output-diffing-utility-fX3Z3` - Output Diffing Utility + workflow optimizations (current)
+- `claude/resume-work-assessment-87UDw` - Demo & npm link fixes for short CLI names (current)
 - `main` - Stable base
 
 ## Blockers / Decisions Needed
@@ -104,21 +123,19 @@
 
 ## Tools Status
 
-### Implemented (5/33) ✅ Phase 1 Complete
-- **Test Flakiness Detector** (TypeScript) - v0.1.0, 148 tests, VitePress docs
-- **CLI Progress Reporting** (TypeScript) - v0.1.0, 125 tests, dogfooding validated
-- **Cross-Platform Path Normalizer** (TypeScript) - v0.1.0, 145 tests, VitePress docs
-- **File-Based Semaphore** (Rust) - v0.1.0, 85 tests, SPEC.md, VitePress docs
-- **Output Diffing Utility** (Rust) - v0.1.0, 99 tests, SPEC.md, VitePress docs
+### Implemented (6/33) ✅ Phase 1 Complete + 1 Phase 2
+- **Test Flakiness Detector** / `flaky` (TypeScript) - v0.1.0, 148 tests, VitePress docs
+- **CLI Progress Reporting** / `prog` (TypeScript) - v0.1.0, 125 tests, dogfooding validated
+- **Cross-Platform Path Normalizer** / `normpath` (TypeScript) - v0.1.0, 145 tests, VitePress docs
+- **File-Based Semaphore** / `sema` (Rust) - v0.1.0, 85 tests, SPEC.md, VitePress docs
+- **Output Diffing Utility** / `odiff` (Rust) - v0.1.0, 99 tests, SPEC.md, VitePress docs
+- **Structured Error Handler** / `serr` (TypeScript) - v0.1.0, 81 tests, VitePress docs 🆕
 
 ### In Planning (0/33)
 - None
 
-### Not Started (28/33)
-- **Next:** Structured Error Handler 🎯 (Phase 2 recommended)
-- Configuration File Merger
-- Snapshot Comparison
-- Test Port Conflict Resolver
+### Not Started (27/33)
+- **Candidates:** Configuration File Merger (`cfgmerge`), Snapshot Comparison (`snapcmp`), Test Port Resolver (`portres`)
 - All remaining Medium/Complex tools
 
 ## Infrastructure Status
@@ -134,6 +151,26 @@
 | CI/CD | ✅ Ready | GitHub Actions configured |
 
 ## Recent Activity
+
+**2025-12-27** - npm link and Demo Fixes - COMPLETE ✅
+- **Issue**: Demo recordings showed "import: command not found" errors
+- **Root Cause**: npm link symlinks need shebang `#!/usr/bin/env -S npx tsx`
+- **Fix**: Added shebang to all 5 TypeScript entry points (4 tools + template)
+- **Fix**: Updated demo scripts to use `npm link --force` + actual short names
+- **Fix**: Fixed create-demos.yml race condition (git rebase conflicts)
+- **Result**: All demos will regenerate correctly on merge
+
+**2025-12-27** - Structured Error Handler - COMPLETE ✅
+- **Implementation**: Error format + serialization with context preservation (TypeScript)
+- **Testing**: 81 tests (core, serialization, edge cases, validation, CLI)
+- **Documentation**: Full VitePress docs (6 pages + SPEC)
+- **Result**: First Phase 2 tool complete! 6/33 total
+
+**2025-12-27** - Short CLI Names - COMPLETE ✅
+- **Feature**: All 6 tools have short memorable CLI names
+- **Names**: `flaky`, `prog`, `normpath`, `sema`, `odiff`, `serr`
+- **Documentation**: Updated 69 files across all tools
+- **Result**: Better DX for all CLI tools
 
 **2025-12-26** - Output Diffing Utility + Infrastructure - COMPLETE ✅
 - **Implementation**: Rust tool for semantic diffs (text, JSON, binary)
@@ -196,14 +233,15 @@
 
 **For Next Session:**
 
-**Current Status:** 5/33 tools complete (15%) | Phase 1 COMPLETE ✅ | Phase 2 Ready
+**Current Status:** 6/33 tools complete (18%) | Phase 1 COMPLETE ✅ | Phase 2: 1 tool done
 
 **Completed Tools:**
-1. Test Flakiness Detector (TypeScript) - 148 tests, VitePress docs, gold standard
-2. CLI Progress Reporting (TypeScript) - 125 tests, dogfooding validated
-3. Cross-Platform Path Normalizer (TypeScript) - 145 tests, VitePress docs
-4. File-Based Semaphore (Rust) - 85 tests, SPEC.md, VitePress docs
-5. Output Diffing Utility (Rust) - 99 tests, SPEC.md, VitePress docs
+1. Test Flakiness Detector / `flaky` (TypeScript) - 148 tests, VitePress docs
+2. CLI Progress Reporting / `prog` (TypeScript) - 125 tests, dogfooding validated
+3. Cross-Platform Path Normalizer / `normpath` (TypeScript) - 145 tests, VitePress docs
+4. File-Based Semaphore / `sema` (Rust) - 85 tests, SPEC.md, VitePress docs
+5. Output Diffing Utility / `odiff` (Rust) - 99 tests, SPEC.md, VitePress docs
+6. Structured Error Handler / `serr` (TypeScript) - 81 tests, VitePress docs 🆕
 
 **Established Practices:**
 - Comprehensive test coverage (80%+ minimum)
@@ -213,23 +251,25 @@
 - Full VitePress documentation with examples
 - Zero runtime dependencies (both languages)
 - Multiple test categories (unit, CLI, integration, doctests)
+- **Short CLI names** for all tools (`flaky`, `prog`, etc.)
+- **Shebang required** for TypeScript entry points (`#!/usr/bin/env -S npx tsx`)
 
 **Infrastructure Improvements:**
 - Demo workflow with smart detection (75-80% CI time savings)
 - Template enhancements (performance patterns, advanced examples)
 - Path filters for efficient CI runs
+- npm link support for short CLI names
 
-**Recommended Next Action:** Start Phase 2 - Build Structured Error Handler
-- **Tool:** Structured Error Handler (TypeScript)
-- **Why:** Most foundational, enables better error handling across all tools
-- **Alternatives:** Configuration File Merger, Snapshot Comparison, Test Port Resolver
+**Recommended Next Action:** Merge branch, then choose next Phase 2 tool
+- **Merge:** `claude/resume-work-assessment-87UDw` to trigger demo regeneration
+- **Options:** Configuration File Merger (`cfgmerge`), Snapshot Comparison (`snapcmp`), Test Port Resolver (`portres`)
 - Continue established practices (dogfooding, SPEC if needed, 80%+ coverage)
 
 **Reference Documents:**
 - See .claude/HANDOFF.md for latest session details
 - See ROADMAP.md for Phase 2 tool list and priorities
 - See CHANGELOG.md for historical context
-- See docs/QUALITY_CHECKLIST.md for pre-commit requirements
+- See docs/QUALITY_CHECKLIST.md for pre-commit requirements (includes shebang + bin entry)
 - See templates/ for performance patterns and SPEC.md guidance
 
 ---

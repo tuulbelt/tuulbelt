@@ -1,3 +1,4 @@
+#!/usr/bin/env -S npx tsx
 /**
  * Structured Error Handler
  *

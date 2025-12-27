@@ -29,6 +29,7 @@ Run these checks **before committing any code**:
 - [ ] **tsconfig.json valid**: Proper `lib`, `target`, `module` settings
 - [ ] **No `any` types**: All types explicitly defined (strict mode)
 - [ ] **Import paths correct**: Relative paths use `.js` extension for ES modules
+- [ ] **CLI shebang present**: Entry point has `#!/usr/bin/env -S npx tsx` for `npm link` to work
 
 ### Rust Specific
 
@@ -205,6 +206,39 @@ npm install --save-dev @types/node@20
 ```bash
 npx tsc --noEmit  # Must pass with no errors
 npm run build     # Must succeed
+```
+
+---
+
+#### Missing Shebang for npm link (2025-12-27)
+
+**Symptom:**
+```
+/opt/hostedtoolcache/node/20.19.6/x64/bin/prog: line 9: import: command not found
+/opt/hostedtoolcache/node/20.19.6/x64/bin/prog: line 10: import: command not found
+```
+
+**Root Cause:**
+The `bin` entry in package.json points to a TypeScript file, but without a shebang, `npm link` creates a symlink that tries to execute the file directly as a shell script.
+
+**Prevention:**
+```typescript
+#!/usr/bin/env -S npx tsx
+/**
+ * Tool Name
+ * ...
+ */
+import { something } from 'node:module';
+```
+
+Add `#!/usr/bin/env -S npx tsx` as the **first line** of your TypeScript entry point.
+
+**Verification:**
+```bash
+cd your-tool
+npm install
+npm link
+your-short-name --help  # Should work, not show "import: command not found"
 ```
 
 ---
