@@ -163,7 +163,7 @@ impl LockInfo {
         let mut content = format!("pid={}\ntimestamp={}\n", self.pid, self.timestamp);
         if let Some(ref tag) = self.tag {
             // Sanitize newlines to prevent injection of fake keys
-            let sanitized_tag = tag.replace('\n', " ").replace('\r', " ");
+            let sanitized_tag = tag.replace(['\n', '\r'], " ");
             content.push_str(&format!("tag={}\n", sanitized_tag));
         }
         content
