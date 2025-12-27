@@ -100,36 +100,19 @@ fi
 
 ### Security Checks (All Projects)
 
-Run security scans to detect potential issues:
+Run the `/security-scan` command to perform comprehensive security analysis:
 
+- Secret detection (staged changes and source files)
+- Protected file check (.env files tracked by git)
+- Dependency vulnerability scan (npm audit, cargo audit)
+- Zero-dependency validation
+
+See @.claude/commands/security-scan.md for full details.
+
+**Quick verification:**
 ```bash
-# 1. Secret detection in staged changes
-echo "Checking for secrets in staged changes..."
-git diff --cached | grep -iE '(password|api_key|secret|token|private_key|credentials)' && echo "⚠️  Potential secrets detected in staged files" || echo "✓ No obvious secrets in staged changes"
-
-# 2. Secret detection in source files
-echo "Checking for hardcoded secrets in source..."
-grep -r -iE '(password.*=|api_key.*=|secret.*=|token.*=)' src/ 2>/dev/null | grep -v 'test' | grep -v '.md' && echo "⚠️  Potential secrets in source files" || echo "✓ No hardcoded secrets detected"
-
-# 3. Protected file check (.env files)
-echo "Checking for tracked .env files..."
-find . -name ".env*" -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/target/*" 2>/dev/null | while read file; do
-  if git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
-    echo "⚠️  WARNING: $file is tracked by git - remove immediately"
-  fi
-done
-
-# 4. Dependency vulnerability scan (TypeScript)
-if [ -f package.json ]; then
-  echo "Running npm audit..."
-  npm audit --audit-level=high 2>&1 || echo "⚠️  Vulnerabilities found - review above"
-fi
-
-# 5. Dependency vulnerability scan (Rust)
-if [ -f Cargo.toml ]; then
-  echo "Running cargo audit (if available)..."
-  cargo audit 2>&1 || echo "ℹ️  cargo-audit not installed, skipping"
-fi
+# Minimal secret check (full scan via /security-scan)
+git diff --cached | grep -iE '(password|api_key|secret|token)' && echo "⚠️  Review staged changes for secrets"
 ```
 
 ### Documentation Checks (If at Root Level)
