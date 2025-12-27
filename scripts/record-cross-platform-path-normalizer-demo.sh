@@ -10,10 +10,14 @@ UPLOAD_URL=""
 export PS1="\$ "
 export TERM=xterm-256color
 
-# Ensure dependencies are installed
+# Ensure dependencies are installed and CLI is linked
 echo "Installing dependencies..."
 cd "$TOOL_DIR"
 npm install --silent 2>/dev/null || npm install
+
+# Link the CLI globally so short name works
+echo "Linking CLI globally..."
+npm link --force 2>/dev/null || npm link
 
 # Record the demo
 asciinema rec "$DEMO_FILE" --overwrite --title "Cross-Platform Path Normalizer / normpath - Tuulbelt" --command "bash -c '
@@ -26,7 +30,7 @@ sleep 0.5
 echo \"\$ normpath \\\"C:\\\\Users\\\\Documents\\\\file.txt\\\"\"
 sleep 0.5
 cd \"$TOOL_DIR\"
-npx tsx src/index.ts \"C:\\Users\\Documents\\file.txt\"
+normpath \"C:\\Users\\Documents\\file.txt\"
 sleep 1.5
 
 echo \"\"
@@ -34,7 +38,7 @@ echo \"# Convert Windows path to Unix format\"
 sleep 0.5
 echo \"\$ normpath --format unix \\\"C:\\\\Users\\\\Documents\\\\file.txt\\\"\"
 sleep 0.5
-npx tsx src/index.ts --format unix \"C:\\Users\\Documents\\file.txt\"
+normpath --format unix \"C:\\Users\\Documents\\file.txt\"
 sleep 1.5
 
 echo \"\"
@@ -42,7 +46,7 @@ echo \"# Convert Unix path to Windows format\"
 sleep 0.5
 echo \"\$ normpath --format windows \\\"/home/user/project/src\\\"\"
 sleep 0.5
-npx tsx src/index.ts --format windows \"/home/user/project/src\"
+normpath --format windows \"/home/user/project/src\"
 sleep 1.5
 
 echo \"\"
@@ -50,7 +54,7 @@ echo \"# Handle UNC network paths\"
 sleep 0.5
 echo \"\$ normpath --format unix \\\"\\\\\\\\\\\\\\\\server\\\\\\\\share\\\\\\\\folder\\\"\"
 sleep 0.5
-npx tsx src/index.ts --format unix \"\\\\\\\\server\\\\share\\\\folder\"
+normpath --format unix \"\\\\\\\\server\\\\share\\\\folder\"
 sleep 1.5
 
 echo \"\"
@@ -58,7 +62,7 @@ echo \"# Show help\"
 sleep 0.5
 echo \"\$ normpath --help\"
 sleep 0.5
-npx tsx src/index.ts --help
+normpath --help
 sleep 2
 
 echo \"\"

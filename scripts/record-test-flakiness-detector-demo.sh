@@ -10,10 +10,14 @@ UPLOAD_URL=""
 export PS1="\$ "
 export TERM=xterm-256color
 
-# Ensure dependencies are installed
+# Ensure dependencies are installed and CLI is linked
 echo "Installing dependencies..."
 cd "$TOOL_DIR"
 npm install --silent 2>/dev/null || npm install
+
+# Link the CLI globally so short name works
+echo "Linking CLI globally..."
+npm link --force 2>/dev/null || npm link
 
 # Record the demo
 asciinema rec "$DEMO_FILE" --overwrite --title "Test Flakiness Detector / flaky - Tuulbelt" --command "bash -c '
@@ -26,7 +30,7 @@ sleep 0.5
 echo \"\$ flaky --test \\\"echo test\\\" --runs 5\"
 sleep 0.5
 cd \"$TOOL_DIR\"
-npx tsx src/index.ts --test \"echo test\" --runs 5
+flaky --test \"echo test\" --runs 5
 sleep 2
 
 echo \"\"
@@ -54,7 +58,7 @@ echo \"# Show help\"
 sleep 0.5
 echo \"\$ flaky --help\"
 sleep 0.5
-npx tsx src/index.ts --help
+flaky --help
 sleep 2
 
 echo \"\"

@@ -10,10 +10,14 @@ UPLOAD_URL=""
 export PS1="\$ "
 export TERM=xterm-256color
 
-# Ensure dependencies are installed
+# Ensure dependencies are installed and CLI is linked
 echo "Installing dependencies..."
 cd "$TOOL_DIR"
 npm install --silent 2>/dev/null || npm install
+
+# Link the CLI globally so short name works
+echo "Linking CLI globally..."
+npm link --force 2>/dev/null || npm link
 
 # Record the demo
 asciinema rec "$DEMO_FILE" --overwrite --title "Structured Error Handler / serr - Tuulbelt" --command "bash -c '
@@ -26,7 +30,7 @@ sleep 0.5
 echo \"\$ serr demo\"
 sleep 0.5
 cd \"$TOOL_DIR\"
-npx tsx src/index.ts demo | head -30
+serr demo | head -30
 sleep 2
 
 echo \"\"
@@ -34,7 +38,7 @@ echo \"# 2. Show demo with human-readable text format\"
 sleep 0.5
 echo \"\$ serr demo --format text\"
 sleep 0.5
-npx tsx src/index.ts demo --format text
+serr demo --format text
 sleep 2
 
 echo \"\"
@@ -42,7 +46,7 @@ echo \"# 3. Parse a JSON error\"
 sleep 0.5
 echo '\''$ serr parse '\''\"'\"'{\"message\":\"Test error\",\"code\":\"TEST_CODE\",\"context\":[]}'\''\"'\"
 sleep 0.5
-npx tsx src/index.ts parse '\''{\"message\":\"Test error\",\"code\":\"TEST_CODE\",\"context\":[]}'\'' --format text
+serr parse '\''{\"message\":\"Test error\",\"code\":\"TEST_CODE\",\"context\":[]}'\'' --format text
 sleep 2
 
 echo \"\"
@@ -50,7 +54,7 @@ echo \"# 4. Validate JSON error format\"
 sleep 0.5
 echo '\''$ serr validate '\''\"'\"'{\"message\":\"Hello\"}'\''\"'\"
 sleep 0.5
-npx tsx src/index.ts validate '\''{\"message\":\"Hello\"}'\''
+serr validate '\''{\"message\":\"Hello\"}'\''
 sleep 1
 
 echo \"\"
@@ -58,7 +62,7 @@ echo \"# 5. Show help\"
 sleep 0.5
 echo \"\$ serr --help\"
 sleep 0.5
-npx tsx src/index.ts --help
+serr --help
 sleep 2
 
 echo \"\"
