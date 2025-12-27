@@ -10,10 +10,14 @@ UPLOAD_URL=""
 export PS1="\$ "
 export TERM=xterm-256color
 
-# Ensure dependencies are installed
+# Ensure dependencies are installed and CLI is linked
 echo "Installing dependencies..."
 cd "$TOOL_DIR"
 npm install --silent 2>/dev/null || npm install
+
+# Link the CLI globally so short name works
+echo "Linking CLI globally..."
+npm link --force 2>/dev/null || npm link
 
 # Record the demo
 asciinema rec "$DEMO_FILE" --overwrite --title "CLI Progress Reporting / prog - Tuulbelt" --command "bash -c '
@@ -26,7 +30,7 @@ sleep 0.5
 echo \"\$ prog init --total 100 --message \\\"Processing files\\\"\"
 sleep 0.5
 cd \"$TOOL_DIR\"
-npx prog init --total 100 --message \"Processing files\"
+prog init --total 100 --message \"Processing files\"
 sleep 1
 
 echo \"\"
@@ -34,7 +38,7 @@ echo \"# Update progress in a loop\"
 sleep 0.5
 for i in {1..5}; do
   echo \"\$ prog increment --amount 20\"
-  npx prog increment --amount 20
+  prog increment --amount 20
   sleep 0.8
 done
 sleep 1
@@ -44,7 +48,7 @@ echo \"# Finish with completion message\"
 sleep 0.5
 echo \"\$ prog finish --message \\\"Complete!\\\"\"
 sleep 0.5
-npx prog finish --message \"Complete!\"
+prog finish --message \"Complete!\"
 sleep 2
 
 echo \"\"
@@ -52,7 +56,7 @@ echo \"# Show help\"
 sleep 0.5
 echo \"\$ prog --help\"
 sleep 0.5
-npx prog --help
+prog --help
 sleep 2
 
 echo \"\"

@@ -29,6 +29,7 @@ Clone the repository:
 git clone https://github.com/tuulbelt/tool-name.git
 cd tool-name
 npm install  # Install dev dependencies only
+npm link     # Enable the 'short-name' command globally
 ```
 
 No runtime dependencies — this tool uses only Node.js standard library.

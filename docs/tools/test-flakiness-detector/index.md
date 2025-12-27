@@ -70,7 +70,7 @@ See the tool in action:
 
 ![Test Flakiness Detector Demo](/test-flakiness-detector/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/UIffkWr0M2OBjw9Y0Xq5UPBoX)**
+**[▶ View interactive recording on asciinema.org](#)**
 
 <div style="margin: 20px 0;">
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">

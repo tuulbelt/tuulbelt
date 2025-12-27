@@ -15,10 +15,11 @@ cd tuulbelt/test-flakiness-detector
 
 ```bash
 npm install
+npm link     # Enable the 'flaky' command globally
 ```
 
 :::tip Zero Runtime Dependencies
-Test Flakiness Detector has **zero runtime dependencies**. The `npm install` step only installs development tools (TypeScript compiler, test runner). The tool itself uses only Node.js built-in modules.
+Test Flakiness Detector has **zero runtime dependencies**. The `npm install` step only installs development tools (TypeScript compiler, test runner). The tool itself uses only Node.js built-in modules. The `npm link` command creates a global symlink so you can use the `flaky` command from anywhere.
 :::
 
 ## Quick Example

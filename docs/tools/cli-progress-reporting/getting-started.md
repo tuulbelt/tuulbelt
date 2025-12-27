@@ -15,10 +15,11 @@ cd tuulbelt/cli-progress-reporting
 
 ```bash
 npm install
+npm link     # Enable the 'prog' command globally
 ```
 
 :::tip Zero Runtime Dependencies
-CLI Progress Reporting has **zero runtime dependencies**. The `npm install` step only installs development tools (TypeScript compiler, test runner). The tool itself uses only Node.js built-in modules.
+CLI Progress Reporting has **zero runtime dependencies**. The `npm install` step only installs development tools (TypeScript compiler, test runner). The tool itself uses only Node.js built-in modules. The `npm link` command creates a global symlink so you can use the `prog` command from anywhere.
 :::
 
 ## Quick Example

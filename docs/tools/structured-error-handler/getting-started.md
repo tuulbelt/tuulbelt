@@ -16,13 +16,14 @@ git clone https://github.com/tuulbelt/tuulbelt.git
 cd tuulbelt/structured-error-handler
 ```
 
-Install dev dependencies:
+Install dev dependencies and link CLI:
 
 ```bash
 npm install
+npm link     # Enable the 'serr' command globally
 ```
 
-That's it! No runtime dependencies are required.
+That's it! No runtime dependencies are required. The `npm link` command creates a global symlink so you can use the `serr` command from anywhere.
 
 ## Verify Installation
 

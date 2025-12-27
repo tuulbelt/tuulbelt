@@ -255,7 +255,7 @@ See `examples/` directory for real-world usage patterns.
 
 ![Demo](docs/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/D06dl3yWJ0NvfhXSQSytKRaGW)**
+**[▶ View interactive recording on asciinema.org](#)**
 
 > Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/output-diffing-utility)
 

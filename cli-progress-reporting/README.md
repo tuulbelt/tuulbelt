@@ -37,6 +37,7 @@ Clone the repository:
 git clone https://github.com/tuulbelt/cli-progress-reporting.git
 cd cli-progress-reporting
 npm install  # Install dev dependencies only
+npm link     # Enable the 'prog' command globally
 ```
 
 No runtime dependencies — this tool uses only Node.js standard library.
@@ -424,7 +425,7 @@ Potential improvements for future versions:
 
 ![Demo](docs/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/svj7nPSINerf2xZOK3yAaLSCe)**
+**[▶ View interactive recording on asciinema.org](#)**
 
 > Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/cli-progress-reporting)
 
