@@ -1,14 +1,42 @@
 # Session Handoff
 
 **Last Updated:** 2025-12-28
-**Session:** File-Based Semaphore (TypeScript) Implementation
-**Status:** 🟢 Tool #9 complete, documentation pushed
+**Session:** Dogfood CI Integration + File-Based Semaphore (TypeScript)
+**Status:** 🟢 Dogfood CI workflow complete, semats verification done
 
 ---
 
 ## Current Session Summary
 
-### File-Based Semaphore (TypeScript) - Tool #9 Complete! (2025-12-28)
+### Dogfood CI Integration (2025-12-28)
+
+1. ✅ **New CI Workflow** (`.github/workflows/dogfood-validation.yml`)
+   - Triggers after `Test All Tools` workflow succeeds
+   - Auto-discovers tools with `scripts/dogfood*.sh` patterns
+   - Builds all tools first (cross-tool dependencies)
+   - Runs each dogfood script with 5-minute timeout
+   - Generates summary with pass/fail/skip counts
+
+2. ✅ **Root README Updates**
+   - Added 🐕 badges to all 9 dogfooded tools
+   - Badge indicates tool has CI-validated dogfood scripts
+
+3. ✅ **Template Updates**
+   - TypeScript: Added `scripts/dogfood-flaky.sh` and `scripts/dogfood-diff.sh`
+   - Rust: Renamed `dogfood.sh` → `dogfood-flaky.sh`, added `dogfood-diff.sh`
+   - Both templates have placeholders for customization
+
+4. ✅ **Documentation Updates**
+   - `scaffold-tool.md`: Added dogfood setup in post-scaffolding steps
+   - `quality-check.md`: Added dogfood verification checks
+   - `QUALITY_CHECKLIST.md`: Added CI integration documentation
+
+5. ✅ **semats dogfood-diff.sh** (cross-language composition)
+   - TypeScript semats uses Rust odiff for output comparison
+   - Fixed odiff CLI syntax (`odiff file1 file2 --type text`)
+   - Added output normalization for async test ordering
+
+### File-Based Semaphore (TypeScript) - Tool #9 (Earlier in Session)
 
 1. ✅ **Core Implementation** (`src/index.ts` - ~900 lines)
    - Semaphore class with tryAcquire, acquire, release, status, cleanStale
@@ -35,31 +63,51 @@
    - SPEC.md (same lock file format as Rust sema)
    - 7 VitePress docs pages
    - Demo recording script
-   - Added missing icons (shield.svg, globe.svg)
-
-5. ✅ **VitePress Integration**
-   - Added to sidebar config
-   - Updated tool counts (8→9)
-   - Placeholder demo.gif created
-   - Build verified
 
 ---
 
-## Updated Test Counts
+## Commits This Session
+
+1. `69b75e8` - feat(ci): add dogfood validation CI workflow and tooling
+2. Earlier commits for semats implementation and docs
+
+---
+
+## Files Created/Modified (Dogfood CI)
+
+### New Files
+- `.github/workflows/dogfood-validation.yml` - Dogfood CI workflow
+- `templates/tool-repo-template/scripts/dogfood-flaky.sh` - TS template
+- `templates/tool-repo-template/scripts/dogfood-diff.sh` - TS template
+- `templates/rust-tool-template/scripts/dogfood-diff.sh` - Rust template
+
+### Modified Files
+- `README.md` - Added 🐕 badges to all 9 tools
+- `templates/rust-tool-template/scripts/dogfood.sh` → `dogfood-flaky.sh` (renamed)
+- `templates/rust-tool-template/README.md` - Updated dogfooding section
+- `templates/tool-repo-template/README.md` - Updated dogfooding section
+- `.claude/commands/scaffold-tool.md` - Added dogfood setup steps
+- `.claude/commands/quality-check.md` - Added dogfood verification
+- `docs/QUALITY_CHECKLIST.md` - Added CI integration docs
+- `file-based-semaphore-ts/scripts/dogfood-diff.sh` - Cross-language composition
+
+---
+
+## Test Counts (All Tools)
 
 | Tool | Tests | Status |
 |------|-------|--------|
-| Test Flakiness Detector | 132 | ✅ |
-| CLI Progress Reporting | 121 | ✅ |
-| Cross-Platform Path Normalizer | 141 | ✅ |
-| Config File Merger | 144 | ✅ |
-| Structured Error Handler | 88 | ✅ |
-| File-Based Semaphore (Rust) | 95 | ✅ |
-| Output Diffing Utility | 108 | ✅ |
-| Snapshot Comparison | 96 | ✅ |
-| **File-Based Semaphore (TS)** | **160** | ✅ **NEW** |
+| Test Flakiness Detector | 132 | ✅ 🐕 |
+| CLI Progress Reporting | 121 | ✅ 🐕 |
+| Cross-Platform Path Normalizer | 141 | ✅ 🐕 |
+| Config File Merger | 144 | ✅ 🐕 |
+| Structured Error Handler | 88 | ✅ 🐕 |
+| File-Based Semaphore (Rust) | 95 | ✅ 🐕 |
+| Output Diffing Utility | 108 | ✅ 🐕 |
+| Snapshot Comparison | 96 | ✅ 🐕 |
+| File-Based Semaphore (TS) | 160 | ✅ 🐕 |
 
-**Total: 1,085 tests across 9 tools**
+**Total: 1,085 tests across 9 tools (all dogfooded)**
 
 ---
 
@@ -67,68 +115,49 @@
 
 **9 of 33 tools completed (27% progress)**
 
-| Tool | Short Name | Language | Version | Tests | Status |
-|------|------------|----------|---------|-------|--------|
-| Test Flakiness Detector | `flaky` | TypeScript | v0.1.0 | 132 | ✅ |
-| CLI Progress Reporting | `prog` | TypeScript | v0.1.0 | 121 | ✅ |
-| Cross-Platform Path Normalizer | `normpath` | TypeScript | v0.1.0 | 141 | ✅ |
-| File-Based Semaphore (Rust) | `sema` | Rust | v0.1.0 | 95 | ✅ |
-| Output Diffing Utility | `odiff` | Rust | v0.1.0 | 108 | ✅ |
-| Structured Error Handler | `serr` | TypeScript | v0.1.0 | 88 | ✅ |
-| Configuration File Merger | `cfgmerge` | TypeScript | v0.1.0 | 144 | ✅ |
-| Snapshot Comparison | `snapcmp` | Rust | v0.1.0 | 96 | ✅ |
-| **File-Based Semaphore (TS)** | `semats` | TypeScript | v0.1.0 | 160 | ✅ **NEW** |
+| Tool | Short Name | Language | Version | Tests | Dogfood |
+|------|------------|----------|---------|-------|---------|
+| Test Flakiness Detector | `flaky` | TypeScript | v0.1.0 | 132 | 🐕 |
+| CLI Progress Reporting | `prog` | TypeScript | v0.1.0 | 121 | 🐕 |
+| Cross-Platform Path Normalizer | `normpath` | TypeScript | v0.1.0 | 141 | 🐕 |
+| File-Based Semaphore (Rust) | `sema` | Rust | v0.1.0 | 95 | 🐕 |
+| Output Diffing Utility | `odiff` | Rust | v0.1.0 | 108 | 🐕 |
+| Structured Error Handler | `serr` | TypeScript | v0.1.0 | 88 | 🐕 |
+| Configuration File Merger | `cfgmerge` | TypeScript | v0.1.0 | 144 | 🐕 |
+| Snapshot Comparison | `snapcmp` | Rust | v0.1.0 | 96 | 🐕 |
+| File-Based Semaphore (TS) | `semats` | TypeScript | v0.1.0 | 160 | 🐕 |
 
 ---
 
-## Files Created/Modified
+## Dogfood CI Architecture
 
-### New Files (file-based-semaphore-ts/)
-- `src/index.ts` - Core library + CLI implementation
-- `test/index.test.ts` - Unit tests (52)
-- `test/security.test.ts` - Security tests (26)
-- `test/integration.test.ts` - CLI tests (31)
-- `test/edge-cases.test.ts` - Edge case tests (36)
-- `test/stress.test.ts` - Stress tests (15)
-- `examples/basic.ts` - Basic usage examples
-- `examples/advanced.ts` - Advanced patterns
-- `README.md` - Full documentation
-- `SPEC.md` - Lock file format specification
-- `DOGFOODING_STRATEGY.md` - Composition strategy
-- `package.json`, `tsconfig.json` - Project config
+```
+Test All Tools (test-all-tools.yml)
+        │
+        ▼ workflow_run (on success)
+        │
+Dogfood Validation (dogfood-validation.yml)
+        │
+        ├── Build All Tools (TypeScript + Rust)
+        │
+        ├── Discover tools with scripts/dogfood*.sh
+        │
+        └── Run dogfood scripts (5-min timeout each)
+                ├── dogfood-flaky.sh (test reliability)
+                └── dogfood-diff.sh (output determinism)
+```
 
-### New VitePress Docs (docs/tools/file-based-semaphore-ts/)
-- `index.md` - Overview
-- `getting-started.md` - Installation
-- `cli-usage.md` - CLI reference
-- `library-usage.md` - TypeScript API
-- `examples.md` - Usage patterns
-- `protocol-spec.md` - Lock file format
-- `api-reference.md` - Complete API
-
-### Modified Files
-- `README.md` - Updated tool count and entries
-- `docs/.vitepress/config.ts` - Added semats sidebar
-- `docs/index.md` - Updated home page (9 tools)
-- `docs/tools/index.md` - Added tool entry
-- `docs/public/icons/` - Added shield.svg, globe.svg
-
----
-
-## Commits
-
-1. `46becd0` - feat(semats): add file-based-semaphore-ts tool #9
-2. `637f2e5` - docs(semats): add VitePress documentation for file-based-semaphore-ts
+**Discovery:** Scripts auto-discovered by pattern `scripts/dogfood*.sh`
+**No manual CI config needed** - just create the scripts
 
 ---
 
 ## Next Immediate Tasks
 
-**Priority 1: Merge current branch**
-- All implementation complete
-- 160 tests passing
-- Documentation complete
-- VitePress build successful
+**Priority 1: Create PR**
+- Branch: `claude/analyze-resume-work-command-9R3Sj`
+- All work committed and pushed
+- Ready for review
 
 **Priority 2: Next tool**
 - **Test Port Conflict Resolver** (`portres`) - TypeScript - Concurrent test port allocation
@@ -137,29 +166,31 @@
 
 ---
 
-## Key Innovation: Cross-Language Compatibility
+## Key Innovations This Session
 
-The TypeScript `semats` uses the exact same lock file format as Rust `sema`:
+### 1. Cross-Language Dogfooding
+- TypeScript `semats` uses Rust `odiff` for output comparison
+- Scripts work via CLI, enabling language-agnostic composition
+- Graceful fallback when tools unavailable
 
-```
-pid=12345
-timestamp=1735420800
-tag=my-process
-```
+### 2. Automated Dogfood CI
+- No manual workflow configuration needed
+- Scripts auto-discovered by pattern
+- Runs after tests pass (not before)
 
-This enables cross-language process coordination:
-- TypeScript process acquires lock with `semats`
-- Rust process can check status with `sema`
-- Lock files are human-readable for debugging
+### 3. Test Output Normalization
+- Async tests run in different order between runs
+- Solution: Sort test results before comparison
+- Ensures determinism validation works correctly
 
 ---
 
 ## Important References
 
-- **SPEC.md**: Lock file format specification (shared with Rust sema)
+- **Dogfood Workflow**: `.github/workflows/dogfood-validation.yml`
+- **Template Scripts**: `templates/*/scripts/dogfood-*.sh`
+- **Quality Checklist**: `docs/QUALITY_CHECKLIST.md` (CI integration section)
 - **Short Names Table**: `.claude/NEXT_TASKS.md`
-- **TypeScript Template**: `templates/tool-repo-template/`
-- **Rust Template**: `templates/rust-tool-template/`
 
 ---
 

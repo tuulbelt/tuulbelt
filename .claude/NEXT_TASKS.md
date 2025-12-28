@@ -293,7 +293,12 @@ See `docs/KNOWN_ISSUES.md` for tracked issues.
 - ✅ **CI Optimization Phase 2** - Artifact-based dashboard (no re-testing)
 - ✅ **docs/CI_GUIDE.md** - Comprehensive CI documentation as single source of truth
 - ✅ **Demo workflow smart detection** - 75-80% CI time savings on recordings
-- ✅ **VitePress demo integration** - Workflow handles 3 placeholder patterns correctly 🆕
+- ✅ **VitePress demo integration** - Workflow handles 3 placeholder patterns correctly
+- ✅ **Dogfood validation CI** - `dogfood-validation.yml` runs after tests pass 🆕
+  - Auto-discovers scripts by pattern `scripts/dogfood*.sh`
+  - Triggers after `Test All Tools` succeeds (workflow_run)
+  - All 9 tools have 🐕 badges in root README
+  - Templates updated with dogfood script templates
 - [ ] Consider adding performance benchmarks to CI
 
 ### Workflows
@@ -394,7 +399,40 @@ Priority: Cross-Platform Path Normalizer
 
 ---
 
-## Session Notes (2025-12-28)
+## Session Notes (2025-12-28) - Dogfood CI Integration
+
+**Dogfood Validation CI Workflow** - Major infrastructure improvement:
+
+- ✅ **New workflow: `dogfood-validation.yml`**
+  - Triggers after `Test All Tools` succeeds (workflow_run)
+  - Auto-discovers tools with `scripts/dogfood*.sh` patterns
+  - Builds all tools first (cross-tool dependencies)
+  - Runs each dogfood script with 5-minute timeout
+  - No manual CI config needed per tool
+
+- ✅ **Root README 🐕 badges** - All 9 tools marked as dogfooded
+
+- ✅ **Template updates** (TypeScript + Rust)
+  - Added `scripts/dogfood-flaky.sh` and `scripts/dogfood-diff.sh`
+  - Renamed Rust `dogfood.sh` → `dogfood-flaky.sh` for consistency
+  - Scripts have `[TOOL_NAME]` placeholders for customization
+
+- ✅ **Documentation updates**
+  - `scaffold-tool.md`: Dogfood setup in post-scaffolding
+  - `quality-check.md`: Dogfood verification checks
+  - `QUALITY_CHECKLIST.md`: CI integration documentation
+
+- ✅ **semats dogfood-diff.sh** - Cross-language composition
+  - TypeScript semats uses Rust odiff for output comparison
+  - Fixed odiff CLI syntax (`odiff file1 file2 --type text`)
+  - Added output normalization for async test ordering
+
+**Commits:**
+- `69b75e8` - feat(ci): add dogfood validation CI workflow and tooling
+
+---
+
+## Session Notes (2025-12-28) - Earlier
 
 **Documentation & Infrastructure Fixes** after snapcmp merge:
 
