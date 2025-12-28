@@ -260,6 +260,16 @@ The tool prevents path traversal attacks:
 - Snapshot names cannot contain null bytes
 - Snapshots are stored in a single directory
 
+## Demo
+
+![Demo](docs/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](#)**
+
+> Demo recording will be generated automatically after merge via GitHub Actions.
+
+> Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/snapshot-comparison)
+
 ## License
 
 MIT — see [LICENSE](LICENSE)
