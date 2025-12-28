@@ -115,6 +115,51 @@ See @.claude/commands/security-scan.md for full details.
 git diff --cached | grep -iE '(password|api_key|secret|token)' && echo "⚠️  Review staged changes for secrets"
 ```
 
+### Dogfood Checks (All Tool Projects)
+
+Verify dogfood scripts exist and are properly configured:
+
+```bash
+# 1. Check for dogfood scripts
+echo "Checking for dogfood scripts..."
+if [ -d "scripts" ]; then
+  FLAKY_SCRIPT=$(find scripts -name "dogfood-flaky.sh" -o -name "dogfood.sh" 2>/dev/null | head -1)
+  DIFF_SCRIPT=$(find scripts -name "dogfood-diff.sh" 2>/dev/null | head -1)
+
+  if [ -n "$FLAKY_SCRIPT" ]; then
+    echo "  ✓ Flakiness script: $FLAKY_SCRIPT"
+  else
+    echo "  ⚠️  No dogfood-flaky.sh found - create scripts/dogfood-flaky.sh"
+  fi
+
+  if [ -n "$DIFF_SCRIPT" ]; then
+    echo "  ✓ Diff script: $DIFF_SCRIPT"
+  else
+    echo "  ⚠️  No dogfood-diff.sh found - create scripts/dogfood-diff.sh"
+  fi
+else
+  echo "  ⚠️  No scripts directory - create scripts/dogfood-*.sh for CI validation"
+fi
+
+# 2. Check for DOGFOODING_STRATEGY.md
+if [ -f "DOGFOODING_STRATEGY.md" ]; then
+  if grep -q "Template" DOGFOODING_STRATEGY.md; then
+    echo "  ⚠️  DOGFOODING_STRATEGY.md still has template content - customize it"
+  else
+    echo "  ✓ DOGFOODING_STRATEGY.md exists and is customized"
+  fi
+else
+  echo "  ⚠️  No DOGFOODING_STRATEGY.md found - copy from template"
+fi
+
+# 3. Verify dogfood scripts are executable
+for script in scripts/dogfood*.sh; do
+  if [ -f "$script" ] && [ ! -x "$script" ]; then
+    echo "  ⚠️  $script is not executable - run chmod +x $script"
+  fi
+done
+```
+
 ### Documentation Checks (If at Root Level)
 
 If you're at the root of the Tuulbelt repo (contains `docs/.vitepress/`), also run:
@@ -159,8 +204,12 @@ grep -r "Cross-Platform Path Normalizer\|Test Flakiness Detector\|CLI Progress R
 - [ ] No debug code (`console.log`, `println!`, etc.)
 - [ ] Code follows Tuulbelt principles (@PRINCIPLES.md)
 - [ ] **Short CLI name configured** (bin entry in package.json or [[bin]] in Cargo.toml)
+- [ ] **Dogfood scripts exist** (scripts/dogfood-flaky.sh, scripts/dogfood-diff.sh)
+- [ ] **DOGFOODING_STRATEGY.md customized** (not still template content)
+- [ ] **Dogfood scripts are executable** (chmod +x scripts/dogfood*.sh)
 - [ ] **New tools added to VitePress config** (if adding a tool)
 - [ ] **New tools listed in docs/tools/index.md** (if adding a tool)
+- [ ] **Root README has 🐕 badge** for dogfooded tools
 
 ## Common Pitfalls to Check
 

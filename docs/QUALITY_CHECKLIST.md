@@ -192,6 +192,13 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
 - [ ] **GH Pages dogfooding section**: Mirrors README documentation
 - [ ] **Graceful fallback tested**: Tool works standalone when dependencies unavailable
 - [ ] **Scripts executable**: All `scripts/dogfood-*.sh` have execute permissions
+- [ ] **Root README 🐕 badge**: Add dogfood emoji badge next to version for dogfooded tools
+
+**CI Integration:**
+- Dogfood scripts run automatically via `dogfood-validation.yml` workflow
+- Triggers: After `Test All Tools` workflow succeeds, on push/PR with dogfood changes
+- Scripts are auto-discovered by pattern: `scripts/dogfood*.sh`
+- No manual CI configuration needed - just create the scripts
 
 **Guidelines:**
 - Don't dogfood just to dogfood - focus on REAL utility

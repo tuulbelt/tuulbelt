@@ -150,22 +150,29 @@ See existing tools for examples (file-based-semaphore, output-diffing-utility).
 
 ### Dogfooding
 
-Tuulbelt tools validate each other via CLI-based dogfooding.
+Tuulbelt tools validate each other via CLI-based dogfooding. This tool includes
+dogfood scripts that run in CI to catch regressions.
 
-**Validate This Tool's Tests:**
-
-Run the dogfood script to use Test Flakiness Detector against this tool:
+**Dogfood Scripts (run in CI):**
 
 ```bash
-./scripts/dogfood.sh        # Default: 10 runs
-./scripts/dogfood.sh 20     # Custom: 20 runs
+# Validate test reliability (runs tests N times)
+./scripts/dogfood-flaky.sh 10
+
+# Validate output determinism (compares two test runs)
+./scripts/dogfood-diff.sh
 ```
 
-This validates that all tests are deterministic and non-flaky.
+**CI Integration:**
+
+Dogfood scripts run automatically after all tests pass via the
+`dogfood-validation.yml` workflow. See [DOGFOODING_STRATEGY.md](./DOGFOODING_STRATEGY.md)
+for the full composition strategy.
 
 **How It Works:**
 - TypeScript tools (test-flakiness-detector) validate Rust tools via CLI
-- The script runs `cargo test` multiple times and checks for inconsistent results
+- Rust tools (odiff) can validate TypeScript tool outputs
+- Scripts run `cargo test` multiple times and check for inconsistent results
 - Works only in monorepo context (exits gracefully when standalone)
 
 **Using Rust CLI in TypeScript Tools (Reverse Dogfooding):**

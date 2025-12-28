@@ -114,7 +114,27 @@ After creating the tool:
    - TypeScript: `cd $1 && npm install && npm test`
    - Rust: `cd $1 && cargo test`
 
-2. Create demo recording script:
+2. **Customize dogfood scripts:**
+   The template includes `scripts/dogfood-flaky.sh` and `scripts/dogfood-diff.sh`.
+   Update these scripts to replace `[TOOL_NAME]` placeholder with actual tool name.
+
+   Also customize `DOGFOODING_STRATEGY.md`:
+   - Replace `[Tool Name]` with actual tool name
+   - Document why each composition provides value
+   - Add tool-specific dogfood scripts if needed
+
+   **Verify dogfood scripts work:**
+   ```bash
+   cd $1
+   ./scripts/dogfood-flaky.sh 5  # Quick validation
+   ./scripts/dogfood-diff.sh     # Output determinism
+   ```
+
+   **CI Integration:**
+   Dogfood scripts are automatically discovered and run by `dogfood-validation.yml`.
+   No additional CI configuration needed.
+
+3. Create demo recording script:
    ```bash
    # Create demo script in scripts/record-$1-demo.sh
    # This enables automatic demo recording via GitHub Actions workflow
@@ -173,17 +193,20 @@ After creating the tool:
    - Add tool card to `docs/index.md` landing page
    - Add tool to `docs/tools/index.md` tools list
 
-4. Display next steps to the user:
+5. Display next steps to the user:
    - Update README.md with tool description (include ## Demo section)
    - Implement core functionality in src/
    - Add comprehensive tests (80%+ coverage)
+   - **Customize dogfood scripts** (replace [TOOL_NAME] placeholder)
+   - **Update DOGFOODING_STRATEGY.md** with tool-specific composition strategy
    - **Create documentation in docs/tools/$1/**
    - **Create demo recording script in scripts/record-$1-demo.sh**
    - Update STATUS.md as you progress
    - Update CHANGELOG.md when releasing versions
-   - Update root README.md and ROADMAP.md
+   - Update root README.md and ROADMAP.md (add 🐕 badge if dogfooded)
    - Run `/security-scan` before first commit
    - **Demo will auto-appear in workflows** (no config needed)
+   - **Dogfood scripts run automatically** after tests pass (dogfood-validation.yml)
 
 ## Output
 
