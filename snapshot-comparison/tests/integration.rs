@@ -482,7 +482,9 @@ fn test_config_with_file_type() {
     };
 
     // Even text content should be stored as binary
-    let snapshot = store.create("force-binary", b"text content", &config).unwrap();
+    let snapshot = store
+        .create("force-binary", b"text content", &config)
+        .unwrap();
     assert_eq!(snapshot.metadata.file_type, FileType::Binary);
 
     cleanup(&temp_dir);
