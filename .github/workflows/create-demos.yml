@@ -20,6 +20,7 @@ on:
       - 'output-diffing-utility/src/**'
       - 'structured-error-handler/src/**'
       - 'config-file-merger/src/**'
+      - 'snapshot-comparison/src/**'
 
   workflow_dispatch:  # Manual trigger
     inputs:

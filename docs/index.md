@@ -80,7 +80,7 @@ Cross-platform file-based semaphore for process coordination with stale lock det
 
 </div>
 
-[**View All 7 Tools →**](/tools/)
+[**View All 8 Tools →**](/tools/)
 
 ### More Tools
 
@@ -152,6 +152,22 @@ Merge ENV, config files, and CLI arguments with clear precedence rules.
 
 </div>
 
+<div class="tool-card">
+
+#### [Snapshot Comparison](/tools/snapshot-comparison/) <span class="library-badge">📦 Uses odiff</span>
+
+Snapshot testing with integrated semantic diffs for regression detection.
+
+- <img src="/icons/target.svg" class="inline-icon" alt=""> Hash-based fast comparison
+- <img src="/icons/file-diff.svg" class="inline-icon" alt=""> **Library composition**: Uses [odiff](/tools/output-diffing-utility/) internally
+- <img src="/icons/layers.svg" class="inline-icon" alt=""> Text, JSON, and binary support
+
+[Get Started →](/tools/snapshot-comparison/getting-started)
+
+</div>
+
+> 💡 **Tool Composition**: Snapshot Comparison is the first tool to use library-level composition ([PRINCIPLES.md Exception 2](/guide/principles#zero-external-dependencies)). It imports output-diffing-utility as a path dependency, demonstrating how Tuulbelt tools can build on each other while maintaining zero external dependencies.
+
 ## Progress
 
 **Phase 1: Quick Tools** — 5 of 5 complete (100%) ✅
@@ -162,12 +178,13 @@ Merge ENV, config files, and CLI arguments with clear precedence rules.
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> File-Based Semaphore (Rust)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Output Diffing Utility (Rust)
 
-**Phase 2: Started** — 2 of 28
+**Phase 2: Started** — 3 of 28
 
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Structured Error Handler (TypeScript)
-- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Config File Merger (TypeScript) ✨ NEW
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Config File Merger (TypeScript)
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Snapshot Comparison (Rust) ✨ NEW
 
-**Overall Progress:** 7 of 33 tools (21%)
+**Overall Progress:** 8 of 33 tools (24%)
 
 ## Quick Start
 

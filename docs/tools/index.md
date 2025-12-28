@@ -2,7 +2,7 @@
 
 Tuulbelt provides a curated collection of focused, zero-dependency tools for modern software development.
 
-## Completed Tools (7/33)
+## Completed Tools (8/33)
 
 ### Test Flakiness Detector
 
@@ -140,6 +140,27 @@ Merge configuration from ENV variables, config files, and CLI arguments with cle
 - Zero runtime dependencies
 
 [View Documentation →](/tools/config-file-merger/)
+
+---
+
+### Snapshot Comparison
+
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
+**Language:** Rust
+**Tests:** 42 tests
+
+Snapshot testing utility for regression detection with integrated diff output. Compare current output against stored "golden" snapshots.
+
+**Features:**
+- Integrated with output-diffing-utility for semantic diffs
+- Text, JSON, and binary snapshot support
+- Hash-based fast comparison with detailed diff on mismatch
+- Update mode for development workflows
+- Orphan cleanup for snapshot management
+- CLI and library API
+- Zero runtime dependencies (uses odiff as path dependency)
+
+[View Documentation →](/tools/snapshot-comparison/)
 
 ---
 
