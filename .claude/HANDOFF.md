@@ -1,40 +1,36 @@
 # Session Handoff
 
 **Last Updated:** 2025-12-28
-**Session:** Dogfood CI Integration + File-Based Semaphore (TypeScript)
-**Status:** 🟢 Dogfood CI workflow complete, semats verification done
+**Session:** Dogfood Strategy Rethink + File-Based Semaphore (TypeScript)
+**Status:** 🟢 Dogfood is now local-only (removed CI workflow), semats complete
 
 ---
 
 ## Current Session Summary
 
-### Dogfood CI Integration (2025-12-28)
+### Dogfood Strategy Rethink (2025-12-28)
 
-1. ✅ **New CI Workflow** (`.github/workflows/dogfood-validation.yml`)
-   - Triggers after `Test All Tools` workflow succeeds
-   - Auto-discovers tools with `scripts/dogfood*.sh` patterns
-   - Builds all tools first (cross-tool dependencies)
-   - Runs each dogfood script with 5-minute timeout
-   - Generates summary with pass/fail/skip counts
+After multiple CI failures, we identified a fundamental issue: dogfood scripts depend on the monorepo development environment (sibling tools, npm symlinks, global packages). This state cannot be preserved in CI artifacts.
 
-2. ✅ **Root README Updates**
-   - Added 🐕 badges to all 9 dogfooded tools
-   - Badge indicates tool has CI-validated dogfood scripts
+**Decision:** Remove dogfood-validation.yml workflow. Dogfood is local-only.
 
-3. ✅ **Template Updates**
-   - TypeScript: Added `scripts/dogfood-flaky.sh` and `scripts/dogfood-diff.sh`
-   - Rust: Renamed `dogfood.sh` → `dogfood-flaky.sh`, added `dogfood-diff.sh`
-   - Both templates have placeholders for customization
+1. ✅ **Removed CI Workflow** (`.github/workflows/dogfood-validation.yml`)
+   - Deleted the workflow entirely
+   - Tests are validated by `test-all-tools.yml`
+   - Dogfood scripts remain for local development
 
-4. ✅ **Documentation Updates**
-   - `scaffold-tool.md`: Added dogfood setup in post-scaffolding steps
-   - `quality-check.md`: Added dogfood verification checks
-   - `QUALITY_CHECKLIST.md`: Added CI integration documentation
+2. ✅ **Updated Documentation**
+   - `CI_GUIDE.md`: Removed dogfood-validation section, updated diagram
+   - `QUALITY_CHECKLIST.md`: Changed "CI Integration" → "Local Development Only"
+   - Template READMEs: Clarified dogfood is local-only
+   - `scaffold-tool.md`: Removed CI automation references
 
-5. ✅ **semats dogfood-diff.sh** (cross-language composition)
-   - TypeScript semats uses Rust odiff for output comparison
-   - Fixed odiff CLI syntax (`odiff file1 file2 --type text`)
-   - Added output normalization for async test ordering
+3. ✅ **Enhanced quality-check Command**
+   - `/quality-check` now runs dogfood scripts during local verification
+   - Gracefully handles missing sibling tools
+   - Scripts execute with exit code capture
+
+4. ✅ **Root README** - 🐕 badges remain (indicate local dogfood scripts exist)
 
 ### File-Based Semaphore (TypeScript) - Tool #9 (Earlier in Session)
 
@@ -73,21 +69,18 @@
 
 ---
 
-## Files Created/Modified (Dogfood CI)
+## Files Modified (Dogfood Strategy Rethink)
 
-### New Files
-- `.github/workflows/dogfood-validation.yml` - Dogfood CI workflow
-- `templates/tool-repo-template/scripts/dogfood-flaky.sh` - TS template
-- `templates/tool-repo-template/scripts/dogfood-diff.sh` - TS template
-- `templates/rust-tool-template/scripts/dogfood-diff.sh` - Rust template
+### Deleted Files
+- `.github/workflows/dogfood-validation.yml` - Removed (dogfood is local-only now)
 
 ### Modified Files
-- `README.md` - Added 🐕 badges to all 9 tools
-- `templates/rust-tool-template/scripts/dogfood.sh` → `dogfood-flaky.sh` (renamed)
-- `templates/rust-tool-template/README.md` - Updated dogfooding section
-- `templates/tool-repo-template/README.md` - Updated dogfooding section
-- `.claude/commands/scaffold-tool.md` - Added dogfood setup steps
-- `.claude/commands/quality-check.md` - Added dogfood verification
+- `docs/CI_GUIDE.md` - Removed dogfood-validation section, updated diagram
+- `docs/QUALITY_CHECKLIST.md` - Changed CI Integration → Local Development Only
+- `templates/tool-repo-template/README.md` - Clarified dogfood is local-only
+- `templates/rust-tool-template/README.md` - Clarified dogfood is local-only
+- `.claude/commands/scaffold-tool.md` - Removed CI automation references
+- `.claude/commands/quality-check.md` - Now runs dogfood scripts during local check
 - `docs/QUALITY_CHECKLIST.md` - Added CI integration docs
 - `file-based-semaphore-ts/scripts/dogfood-diff.sh` - Cross-language composition
 
@@ -129,35 +122,32 @@
 
 ---
 
-## Dogfood CI Architecture
+## Dogfood Strategy (Local Only)
 
 ```
-Test All Tools (test-all-tools.yml)
+/quality-check (local development)
         │
-        ▼ workflow_run (on success)
+        ├── Build & Test
         │
-Dogfood Validation (dogfood-validation.yml)
+        ├── Run dogfood scripts (if in monorepo)
+        │       ├── dogfood-flaky.sh (test reliability)
+        │       └── dogfood-diff.sh (output determinism)
         │
-        ├── Build All Tools (TypeScript + Rust)
-        │
-        ├── Discover tools with scripts/dogfood*.sh
-        │
-        └── Run dogfood scripts (5-min timeout each)
-                ├── dogfood-flaky.sh (test reliability)
-                └── dogfood-diff.sh (output determinism)
+        └── Graceful skip if sibling tools unavailable
 ```
 
-**Discovery:** Scripts auto-discovered by pattern `scripts/dogfood*.sh`
-**No manual CI config needed** - just create the scripts
+**Why local-only:** CI artifacts cannot preserve npm symlinks, PATH, or sibling tool state.
+**Tests are validated:** By `test-all-tools.yml` workflow in CI.
+**Dogfood scripts:** Remain available for local development verification.
 
 ---
 
 ## Next Immediate Tasks
 
-**Priority 1: Create PR**
+**Priority 1: Commit and push changes**
 - Branch: `claude/analyze-resume-work-command-9R3Sj`
-- All work committed and pushed
-- Ready for review
+- Remove dogfood-validation.yml
+- Update documentation for local-only dogfood
 
 **Priority 2: Next tool**
 - **Test Port Conflict Resolver** (`portres`) - TypeScript - Concurrent test port allocation
@@ -166,30 +156,30 @@ Dogfood Validation (dogfood-validation.yml)
 
 ---
 
-## Key Innovations This Session
+## Key Learnings This Session
 
-### 1. Cross-Language Dogfooding
+### 1. Dogfood CI Limitations
+- CI artifacts don't preserve development environment state
+- npm symlinks, global packages, PATH not available across jobs
+- Solution: Keep dogfood for local development, rely on unit tests for CI
+
+### 2. Cross-Language Dogfooding Works Locally
 - TypeScript `semats` uses Rust `odiff` for output comparison
 - Scripts work via CLI, enabling language-agnostic composition
 - Graceful fallback when tools unavailable
 
-### 2. Automated Dogfood CI
-- No manual workflow configuration needed
-- Scripts auto-discovered by pattern
-- Runs after tests pass (not before)
-
-### 3. Test Output Normalization
-- Async tests run in different order between runs
-- Solution: Sort test results before comparison
-- Ensures determinism validation works correctly
+### 3. Quality-Check Integration
+- `/quality-check` command now runs dogfood scripts
+- Provides local verification before commit
+- Handles missing sibling tools gracefully
 
 ---
 
 ## Important References
 
-- **Dogfood Workflow**: `.github/workflows/dogfood-validation.yml`
 - **Template Scripts**: `templates/*/scripts/dogfood-*.sh`
-- **Quality Checklist**: `docs/QUALITY_CHECKLIST.md` (CI integration section)
+- **Quality Checklist**: `docs/QUALITY_CHECKLIST.md` (Local Development Only section)
+- **CI Guide**: `docs/CI_GUIDE.md` (no dogfood workflow)
 - **Short Names Table**: `.claude/NEXT_TASKS.md`
 
 ---

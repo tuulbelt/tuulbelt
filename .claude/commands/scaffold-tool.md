@@ -123,16 +123,15 @@ After creating the tool:
    - Document why each composition provides value
    - Add tool-specific dogfood scripts if needed
 
-   **Verify dogfood scripts work:**
+   **Verify dogfood scripts work (local development):**
    ```bash
    cd $1
    ./scripts/dogfood-flaky.sh 5  # Quick validation
    ./scripts/dogfood-diff.sh     # Output determinism
    ```
 
-   **CI Integration:**
-   Dogfood scripts are automatically discovered and run by `dogfood-validation.yml`.
-   No additional CI configuration needed.
+   **Note:** Dogfood scripts are for local development verification in the monorepo.
+   Tests are validated by `test-all-tools.yml` in CI.
 
 3. Create demo recording script:
    ```bash
@@ -206,7 +205,7 @@ After creating the tool:
    - Update root README.md and ROADMAP.md (add 🐕 badge if dogfooded)
    - Run `/security-scan` before first commit
    - **Demo will auto-appear in workflows** (no config needed)
-   - **Dogfood scripts run automatically** after tests pass (dogfood-validation.yml)
+   - **Dogfood scripts available** for local development verification
 
 ## Output
 

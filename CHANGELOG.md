@@ -9,28 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added - Dogfood Validation CI (2025-12-28)
+### Changed - Dogfood Strategy Rethink (2025-12-28)
 
-**New CI Workflow:**
-- Added `dogfood-validation.yml` workflow that runs after `test-all-tools.yml` succeeds
-- Auto-discovers tools with `scripts/dogfood*.sh` patterns (no manual config needed)
-- Builds all tools first for cross-tool dependencies
-- Runs each dogfood script with 5-minute timeout
-- Generates summary with pass/fail/skip counts
+**Dogfood is now local-only:**
+- Removed `dogfood-validation.yml` workflow (CI artifacts can't preserve dev environment)
+- Tests are validated by `test-all-tools.yml` in CI
+- `/quality-check` command now runs dogfood scripts during local verification
+- Dogfood scripts remain for local development in monorepo context
 
-**Root README Updates:**
-- Added 🐕 badges to all 9 dogfooded tools
-- Badge indicates tool has CI-validated dogfood scripts
-
-**Template Updates:**
-- TypeScript: Added `scripts/dogfood-flaky.sh` and `scripts/dogfood-diff.sh`
-- Rust: Renamed `dogfood.sh` → `dogfood-flaky.sh`, added `dogfood-diff.sh`
-- Scripts have `[TOOL_NAME]` placeholders for customization
+**Root README:**
+- 🐕 badges remain (now indicate local dogfood scripts exist)
 
 **Documentation Updates:**
-- `scaffold-tool.md`: Dogfood setup in post-scaffolding steps
-- `quality-check.md`: Dogfood verification checks
-- `QUALITY_CHECKLIST.md`: CI integration documentation
+- `CI_GUIDE.md`: Removed dogfood-validation section, updated architecture diagram
+- `QUALITY_CHECKLIST.md`: Changed "CI Integration" → "Local Development Only"
+- Template READMEs: Clarified dogfood is local-only
+- `scaffold-tool.md`: Removed CI automation references
 
 ### Added - File-Based Semaphore (TypeScript) v0.1.0 (2025-12-28)
 

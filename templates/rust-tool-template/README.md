@@ -163,10 +163,10 @@ dogfood scripts that run in CI to catch regressions.
 ./scripts/dogfood-diff.sh
 ```
 
-**CI Integration:**
+**Local Development Only:**
 
-Dogfood scripts run automatically after all tests pass via the
-`dogfood-validation.yml` workflow. See [DOGFOODING_STRATEGY.md](./DOGFOODING_STRATEGY.md)
+Dogfood scripts are for local development verification in the monorepo context.
+Tests are validated by `test-all-tools.yml` in CI. See [DOGFOODING_STRATEGY.md](./DOGFOODING_STRATEGY.md)
 for the full composition strategy.
 
 **How It Works:**

@@ -11,7 +11,6 @@ This document is the single source of truth for all CI/CD workflows in Tuulbelt.
 | Workflow | Trigger | Purpose | Runtime |
 |----------|---------|---------|---------|
 | `test-all-tools.yml` | push, PR, nightly, manual | Test all tools | ~4 min |
-| `dogfood-validation.yml` | after test-all-tools, dogfood changes, weekly, manual | Run dogfood scripts | ~5 min |
 | `update-dashboard.yml` | after test-all-tools, nightly, manual | Generate quality dashboard | ~30 sec |
 | `deploy-docs.yml` | push to docs/*, manual | Build & deploy VitePress | ~2 min |
 | `create-demos.yml` | push to tool/*, scripts/record-*, manual | Smart demo recording (only changed tools) | 0-5 min* |
@@ -39,14 +38,14 @@ This document is the single source of truth for all CI/CD workflows in Tuulbelt.
          │
          │ workflow_run (on success)
          │
-    ┌────┴────┐
-    │         │
-    ▼         ▼
-┌─────────────────┐  ┌─────────────────┐
-│update-dashboard │  │dogfood-validation│
-│ (reads artifact)│  │ (runs dogfoods) │
-└─────────────────┘  └─────────────────┘
+         ▼
+┌─────────────────┐
+│update-dashboard │
+│ (reads artifact)│
+└─────────────────┘
 ```
+
+> **Note:** Dogfood scripts (`scripts/dogfood-*.sh`) are for local development only. They verify cross-tool composition in the monorepo but are not run in CI. Tests are validated by `test-all-tools.yml`.
 
 ---
 
@@ -99,43 +98,6 @@ This document is the single source of truth for all CI/CD workflows in Tuulbelt.
 - Does NOT run any tests
 - Downloads `test-results` artifact from test-all-tools
 - Parses JSON to generate `docs/TOOL_DASHBOARD.md`
-
----
-
-### dogfood-validation.yml
-
-**Purpose:** Run dogfood scripts to validate tools using other Tuulbelt tools.
-
-**Triggers:**
-- `workflow_run`: After `test-all-tools` completes successfully
-- `push` to `main` with paths:
-  - `**/scripts/dogfood*.sh`
-  - `**/DOGFOODING_STRATEGY.md`
-- `schedule`: Weekly on Sundays at 3 AM UTC
-- `workflow_dispatch`: Manual trigger (can specify single tool)
-
-**Features:**
-- ✅ Auto-discovers tools with `scripts/dogfood*.sh` patterns
-- ✅ Builds all tools first (for cross-tool dependencies)
-- ✅ Runs each dogfood script with 5-minute timeout
-- ✅ Generates summary with pass/fail/skip counts
-- ✅ Concurrency controls
-
-**Jobs:**
-1. `build-tools` - Build all TypeScript and Rust tools
-2. `discover-dogfood` - Find tools with dogfood scripts
-3. `validate-dogfood` - Run dogfood scripts for each tool
-4. `summary` - Aggregate results and create summary
-
-**Key Behavior:**
-- Only runs if `test-all-tools` succeeds (via workflow_run condition)
-- No manual CI configuration needed per tool
-- Just create `scripts/dogfood-flaky.sh` and `scripts/dogfood-diff.sh`
-
-**Scripts auto-discovered:**
-- `scripts/dogfood-flaky.sh` - Test reliability validation
-- `scripts/dogfood-diff.sh` - Output determinism validation
-- `scripts/dogfood-*.sh` - Any custom dogfood scripts
 
 ---
 
@@ -449,7 +411,7 @@ When adding a new tool, ensure:
 
 | Date | Change |
 |------|--------|
-| 2025-12-28 | Added dogfood-validation.yml workflow |
+| 2025-12-28 | Removed dogfood-validation.yml (dogfood is local-only) |
 | 2025-12-25 | Phase 2: Artifact-based dashboard |
 | 2025-12-25 | Phase 1: Path filters, concurrency, caching |
 | 2025-12-25 | Initial documentation |

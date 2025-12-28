@@ -194,11 +194,11 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
 - [ ] **Scripts executable**: All `scripts/dogfood-*.sh` have execute permissions
 - [ ] **Root README 🐕 badge**: Add dogfood emoji badge next to version for dogfooded tools
 
-**CI Integration:**
-- Dogfood scripts run automatically via `dogfood-validation.yml` workflow
-- Triggers: After `Test All Tools` workflow succeeds, on push/PR with dogfood changes
-- Scripts are auto-discovered by pattern: `scripts/dogfood*.sh`
-- No manual CI configuration needed - just create the scripts
+**Local Development Only:**
+- Dogfood scripts are for local development verification, not CI
+- Tests are validated by `test-all-tools.yml` workflow
+- Dogfood scripts verify cross-tool composition in monorepo context
+- Run manually: `./scripts/dogfood-flaky.sh` or `./scripts/dogfood-diff.sh`
 
 **Guidelines:**
 - Don't dogfood just to dogfood - focus on REAL utility
