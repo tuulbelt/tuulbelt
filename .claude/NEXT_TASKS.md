@@ -1,6 +1,6 @@
 # Next Tasks
 
-**Last Updated:** 2025-12-27
+**Last Updated:** 2025-12-28
 
 This document tracks pending work across the Tuulbelt project. Tasks are organized by type and priority.
 
@@ -240,12 +240,14 @@ See `docs/KNOWN_ISSUES.md` for tracked issues.
   - Updated all tool documentation (README + GH Pages)
   - Created templates for future tools (TypeScript + Rust)
   - Updated QUALITY_CHECKLIST.md with dogfooding requirements
-- ✅ **Short CLI names documentation** - All 6 tools updated 🆕
+- ✅ **Short CLI names documentation** - All 6 tools updated
   - All READMEs show `# Tool Name / \`short-name\`` format
   - All VitePress docs use short names in examples
   - All dogfooding scripts use short names
   - Proposed names for 27 remaining tools documented
   - /quality-check verifies short name configuration
+- ✅ **VitePress demo workflow fix** - create-demos.yml handles all placeholder patterns 🆕
+- ✅ **Library badge styling** - SVG icons instead of emojis, theme-adaptive CSS 🆕
 
 ### Pending
 - [ ] Add "Contributing" guide page to VitePress (currently just links to CONTRIBUTING.md)
@@ -272,7 +274,8 @@ See `docs/KNOWN_ISSUES.md` for tracked issues.
 - ✅ **CI Optimization Phase 1** - Path filters, concurrency controls, modern actions, caching
 - ✅ **CI Optimization Phase 2** - Artifact-based dashboard (no re-testing)
 - ✅ **docs/CI_GUIDE.md** - Comprehensive CI documentation as single source of truth
-- ✅ **Demo workflow smart detection** - 75-80% CI time savings on recordings 🆕
+- ✅ **Demo workflow smart detection** - 75-80% CI time savings on recordings
+- ✅ **VitePress demo integration** - Workflow handles 3 placeholder patterns correctly 🆕
 - [ ] Consider adding performance benchmarks to CI
 
 ### Workflows
@@ -368,8 +371,27 @@ Priority: Cross-Platform Path Normalizer
 
 ---
 
-**Last Review:** 2025-12-27
+**Last Review:** 2025-12-28
 **Next Review:** When starting next session
+
+---
+
+## Session Notes (2025-12-28)
+
+**Documentation & Infrastructure Fixes** after snapcmp merge:
+
+- ✅ **Icon Cleanup** - Replaced emoji badges (📦) with SVG icons (package.svg)
+  - Added `.library-badge` CSS class for consistent styling
+  - Icons work in both light and dark mode
+- ✅ **VitePress Demo Integration Fixed** - Fixed create-demos.yml workflow
+  - Now handles 3 patterns: existing URLs, placeholder `(#)` links, placeholder text
+  - Updated QUALITY_CHECKLIST.md with correct VitePress Demo template
+- ✅ **Test Count Fixed** - Updated from 42 → 96 in docs/tools/index.md
+- ✅ **snapcmp Demo Section** - Added proper demo.gif reference and asciinema link
+
+**Commits:**
+- `b7a679b` - fix(docs): clean up snapcmp documentation and demo integration
+- `98a2d63` - fix(ci): improve VitePress demo integration in create-demos workflow
 
 ---
 
