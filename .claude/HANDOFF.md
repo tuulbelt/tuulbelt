@@ -26,10 +26,10 @@ This is the first tool to use Tuulbelt-to-Tuulbelt library composition (as docum
    - Both `snapcmp` and `snapshot-comparison` binaries
 
 3. ✅ **Testing**
-   - 20 unit tests in lib.rs
-   - 18 integration tests in tests/integration.rs
+   - 33 unit tests in lib.rs (including 13 security tests)
+   - 59 integration tests in tests/integration.rs
    - 4 doc tests
-   - Total: 42 tests passing
+   - Total: 96 tests passing
 
 4. ✅ **Documentation**
    - README.md with CLI and library usage
@@ -66,9 +66,9 @@ This enables:
 | Structured Error Handler | 88 | ✅ |
 | File-Based Semaphore | 95 | ✅ |
 | Output Diffing Utility | 108 | ✅ |
-| **Snapshot Comparison** | **42** | ✅ **NEW** |
+| **Snapshot Comparison** | **96** | ✅ **NEW** |
 
-**Total: 871 tests across all 8 tools**
+**Total: 925 tests across all 8 tools**
 
 ---
 
@@ -85,7 +85,7 @@ This enables:
 | Output Diffing Utility | `odiff` | Rust | v0.1.0 | 108 | ✅ |
 | Structured Error Handler | `serr` | TypeScript | v0.1.0 | 88 | ✅ |
 | Configuration File Merger | `cfgmerge` | TypeScript | v0.1.0 | 144 | ✅ |
-| **Snapshot Comparison** | `snapcmp` | Rust | v0.1.0 | 42 | ✅ **NEW** |
+| **Snapshot Comparison** | `snapcmp` | Rust | v0.1.0 | 96 | ✅ **NEW** |
 
 ---
 

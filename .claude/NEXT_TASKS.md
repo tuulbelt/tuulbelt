@@ -179,12 +179,12 @@ See `README.md` for complete roadmap (25 remaining tools).
 - ✅ **First tool using Tuulbelt-to-Tuulbelt library composition** (PRINCIPLES.md Exception 2)
 - ✅ Integrates output-diffing-utility as path dependency
 - ✅ Dogfooding: 2 composition scripts implemented
-  - dogfood-flaky.sh: Validate determinism (42 tests × 10 runs)
+  - dogfood-flaky.sh: Validate determinism (96 tests × 10 runs)
   - dogfood-sema.sh: Concurrent snapshot safety with file-based-semaphore
 - ✅ DOGFOODING_STRATEGY.md: Complete strategy document
-- ✅ **Security:** Path traversal prevention in snapshot names
-- 42 tests passing (20 unit + 18 integration + 4 doc tests)
-- Complete documentation (6 VitePress pages + SPEC.md)
+- ✅ **Security:** Path traversal, Unicode homoglyph, resource exhaustion prevention + 13 security tests
+- 96 tests passing (33 unit + 59 integration + 4 doc tests)
+- Complete documentation (7 VitePress pages + SPEC.md)
 - Hash-based fast comparison with detailed diff on mismatch
 - Semantic diffing for text, JSON, and binary via odiff
 
@@ -379,17 +379,21 @@ Priority: Cross-Platform Path Normalizer
 
 **Latest Session (Snapshot Comparison):**
 - Implemented Snapshot Comparison (`snapcmp`) ✅
-  - 42 tests passing (20 unit + 18 integration + 4 doc tests)
+  - 96 tests passing (33 unit + 59 integration + 4 doc tests)
   - First tool using Tuulbelt-to-Tuulbelt library composition
   - Integrates output-diffing-utility as path dependency
   - Hash-based fast comparison with detailed diff on mismatch
 - Complete dogfooding setup ✅
   - DOGFOODING_STRATEGY.md customized
-  - dogfood-flaky.sh: Validate 42 tests × 10 runs
+  - dogfood-flaky.sh: Validate 96 tests × 10 runs
   - dogfood-sema.sh: Concurrent snapshot safety with sema
 - GitHub Pages documentation ✅
-  - 6 VitePress pages + SPEC.md
+  - 7 VitePress pages + SPEC.md
   - Demo recording script created
+- Security hardening ✅
+  - Resource exhaustion prevention (stdin, context lines, header limits)
+  - Unicode homoglyph attack prevention (ASCII-only names)
+  - 13 security tests added
 - Updated PRINCIPLES.md with Exception 2 for tool composition
 
 **Previous Session (Configuration File Merger):**

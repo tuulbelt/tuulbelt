@@ -77,7 +77,7 @@ sema release /tmp/snapshot.lock
 
 ## Expected Outcomes
 
-1. **Proves Reliability:** 42 tests × 10 runs = 420 deterministic executions
+1. **Proves Reliability:** 96 tests × 10 runs = 960 deterministic executions
 2. **Proves Concurrency Safety:** N workers × serialized access = no corruption
 3. **Demonstrates Composability:** Library (odiff) + CLI (sema, flaky) integration
 4. **Real Value:** Both compositions solve actual problems in snapshot testing

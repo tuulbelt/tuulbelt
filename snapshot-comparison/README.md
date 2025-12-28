@@ -241,7 +241,7 @@ This tool uses other Tuulbelt tools:
 Validate test determinism and concurrency:
 
 ```bash
-./scripts/dogfood-flaky.sh    # Validate tests are deterministic (42 tests × 10 runs)
+./scripts/dogfood-flaky.sh    # Validate tests are deterministic (96 tests × 10 runs)
 ./scripts/dogfood-sema.sh     # Prove concurrent snapshot safety with sema
 ```
 
