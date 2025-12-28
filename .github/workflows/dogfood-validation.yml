@@ -158,6 +158,10 @@ jobs:
         with:
           node-version: '20'
 
+      # Install tsx globally for TypeScript CLI shebangs (#!/usr/bin/env -S npx tsx)
+      - name: Install tsx globally
+        run: npm install -g tsx
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
