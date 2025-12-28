@@ -38,13 +38,13 @@ if [ ! -f "$SEMA_BIN" ]; then
     cd "$TOOL_DIR"
 fi
 
-# Ensure semats CLI is available
-if ! command -v semats &> /dev/null; then
-    echo "Installing semats..."
+# Ensure semats dependencies are installed
+if [ ! -d "$TOOL_DIR/node_modules" ]; then
+    echo "Installing semats dependencies..."
     cd "$TOOL_DIR"
     npm install --silent
-    npm link --silent
 fi
+cd "$TOOL_DIR"
 
 cleanup() {
     rm -f "$LOCK_FILE"
@@ -55,7 +55,7 @@ echo "Test 1: TypeScript creates lock, Rust reads it"
 echo "-----------------------------------------------"
 
 # TypeScript creates lock
-semats try-acquire "$LOCK_FILE" --tag "typescript-process" --json > /dev/null
+npx semats try-acquire "$LOCK_FILE" --tag "typescript-process" --json > /dev/null
 echo "✅ semats: Lock acquired"
 
 # Rust reads lock status
@@ -64,7 +64,7 @@ echo "✅ sema: Lock status read"
 echo "   $RUST_STATUS"
 
 # TypeScript releases
-semats release "$LOCK_FILE" > /dev/null
+npx semats release "$LOCK_FILE" > /dev/null
 echo "✅ semats: Lock released"
 
 echo
@@ -77,7 +77,7 @@ echo "-----------------------------------------------"
 echo "✅ sema: Lock acquired"
 
 # TypeScript reads lock status
-TS_STATUS=$(semats status "$LOCK_FILE" --json)
+TS_STATUS=$(npx semats status "$LOCK_FILE" --json)
 echo "✅ semats: Lock status read"
 echo "   $TS_STATUS"
 
@@ -91,14 +91,14 @@ echo "Test 3: Verify lock file format compatibility"
 echo "----------------------------------------------"
 
 # Create lock and inspect raw content
-semats try-acquire "$LOCK_FILE" --tag "format-test" > /dev/null
+npx semats try-acquire "$LOCK_FILE" --tag "format-test" > /dev/null
 echo "Lock file content:"
 echo "---"
 cat "$LOCK_FILE"
 echo "---"
 echo "✅ Format matches: pid=X, timestamp=Y, tag=Z"
 
-semats release "$LOCK_FILE" > /dev/null
+npx semats release "$LOCK_FILE" > /dev/null
 
 echo
 echo "=========================================="
