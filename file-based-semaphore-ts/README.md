@@ -241,6 +241,44 @@ npm run test:edge     # Edge cases (36 tests)
 npm run test:stress   # Stress tests (15 tests)
 ```
 
+## Demo
+
+See the tool in action:
+
+![File-Based Semaphore (TS) Demo](/file-based-semaphore-ts/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](#)**
+
+<div>
+  <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
+    <strong>Try it online:</strong>
+  </span>
+  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/file-based-semaphore-ts" style="display: inline-block; vertical-align: middle;">
+    <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
+  </a>
+</div>
+
+> Demo recordings are automatically generated via GitHub Actions.
+
+## Dogfooding
+
+This tool validates itself using other Tuulbelt tools:
+
+**[Test Flakiness Detector](../test-flakiness-detector/)** - Validates that all 160 tests are deterministic:
+```bash
+./scripts/dogfood-flaky.sh 10
+# ✅ NO FLAKINESS DETECTED (160 tests × 10 runs = 1,600 executions)
+```
+
+**Cross-language validation with Rust sema:**
+```bash
+./scripts/dogfood-sema.sh
+# Creates lock with semats, verifies with Rust sema
+# Creates lock with Rust sema, verifies with semats
+```
+
+See [DOGFOODING_STRATEGY.md](DOGFOODING_STRATEGY.md) for details.
+
 ## Related Tools
 
 - **[file-based-semaphore](../file-based-semaphore/)** - Rust implementation (same lock file format)
