@@ -154,7 +154,7 @@ See [`DOGFOODING_STRATEGY.md`](https://github.com/tuulbelt/tuulbelt/blob/main/ou
 
 ![Output Diffing Utility Demo](/output-diffing-utility/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/VDemzhm6IskDSQLga47UgHx04)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/9UQJJxawaw62IWMoiBo2Z0Uf1)**
 
 ### Try it Locally
 

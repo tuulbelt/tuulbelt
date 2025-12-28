@@ -241,25 +241,6 @@ npm run test:edge     # Edge cases (36 tests)
 npm run test:stress   # Stress tests (15 tests)
 ```
 
-## Demo
-
-See the tool in action:
-
-![File-Based Semaphore (TS) Demo](/file-based-semaphore-ts/demo.gif)
-
-**[▶ View interactive recording on asciinema.org](#)**
-
-<div>
-  <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
-    <strong>Try it online:</strong>
-  </span>
-  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/file-based-semaphore-ts" style="display: inline-block; vertical-align: middle;">
-    <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
-  </a>
-</div>
-
-> Demo recordings are automatically generated via GitHub Actions.
-
 ## Dogfooding
 
 This tool validates itself using other Tuulbelt tools:
@@ -291,6 +272,15 @@ See [DOGFOODING_STRATEGY.md](DOGFOODING_STRATEGY.md) for details.
 - **[port-conflict-resolver](../port-conflict-resolver/)** - Uses this semaphore for port allocation (coming soon)
 
 Part of the [Tuulbelt](https://github.com/tuulbelt/tuulbelt) collection.
+
+
+## Demo
+
+![Demo](docs/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/NooCDeMJ5s1KjVvjgoCtCsXw0)**
+
+> Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/file-based-semaphore-ts)
 
 ## License
 

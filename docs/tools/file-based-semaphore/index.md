@@ -159,7 +159,7 @@ See [`DOGFOODING_STRATEGY.md`](https://github.com/tuulbelt/tuulbelt/blob/main/fi
 
 ![File-Based Semaphore Demo](/file-based-semaphore/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/Dr8jLejxdGNwoqe1uCni7yoce)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/cXPn7H1GRZqczgjy7q79Uc8JY)**
 
 ### Try it Locally
 
