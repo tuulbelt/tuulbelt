@@ -406,11 +406,12 @@ Potential improvements for future versions:
 
 
 
+
 ## Demo
 
 ![Demo](docs/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/ZQJQQEUWc5kTfPLCQ9ECtp5ua)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/wy9Mw3jk91UxPeKlJblV87CXG)**
 
 > Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/structured-error-handler)
 
