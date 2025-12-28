@@ -15,15 +15,15 @@ Each tool in Tuulbelt:
 ## Current Tools
 
 ### CLI/DevTools
-- **[Structured Error Handler](structured-error-handler/)** — Error format + serialization with context preservation 🟢 v0.1.0 | [📖 Docs](structured-error-handler/) | [🚀 Examples](structured-error-handler/examples/)
-- **[CLI Progress Reporting](cli-progress-reporting/)** — Concurrent-safe progress updates 🟢 v0.1.0 | [📖 Docs](cli-progress-reporting/) | [🚀 Examples](cli-progress-reporting/examples/)
-- **[Configuration File Merger](config-file-merger/)** — ENV + config + CLI arg merging 🟢 v0.1.0 | [📖 Docs](config-file-merger/) | [🚀 Examples](config-file-merger/examples/)
-- **[Cross-Platform Path Normalizer](cross-platform-path-normalizer/)** — Windows/Unix path consistency 🟢 v0.1.0 | [📖 Docs](cross-platform-path-normalizer/) | [🚀 Examples](cross-platform-path-normalizer/examples/)
+- **[Structured Error Handler](structured-error-handler/)** — Error format + serialization with context preservation 🟢 v0.1.0 🐕 | [📖 Docs](structured-error-handler/) | [🚀 Examples](structured-error-handler/examples/)
+- **[CLI Progress Reporting](cli-progress-reporting/)** — Concurrent-safe progress updates 🟢 v0.1.0 🐕 | [📖 Docs](cli-progress-reporting/) | [🚀 Examples](cli-progress-reporting/examples/)
+- **[Configuration File Merger](config-file-merger/)** — ENV + config + CLI arg merging 🟢 v0.1.0 🐕 | [📖 Docs](config-file-merger/) | [🚀 Examples](config-file-merger/examples/)
+- **[Cross-Platform Path Normalizer](cross-platform-path-normalizer/)** — Windows/Unix path consistency 🟢 v0.1.0 🐕 | [📖 Docs](cross-platform-path-normalizer/) | [🚀 Examples](cross-platform-path-normalizer/examples/)
 
 ### Testing & Observability
-- **[Test Flakiness Detector](test-flakiness-detector/)** — Identify unreliable tests 🟢 v0.1.0 | [📖 Docs](test-flakiness-detector/docs/) | [🚀 Examples](test-flakiness-detector/examples/)
-- **[Output Diffing Utility](output-diffing-utility/)** — Semantic diff for JSON, text, binary files 🟢 v0.1.0 | [📖 Docs](output-diffing-utility/) | [🚀 Examples](output-diffing-utility/examples/)
-- **[Snapshot Comparison](snapshot-comparison/)** — Snapshot testing with integrated diffs 🟢 v0.1.0 | [📖 Docs](snapshot-comparison/) | [🚀 Examples](snapshot-comparison/examples/)
+- **[Test Flakiness Detector](test-flakiness-detector/)** — Identify unreliable tests 🟢 v0.1.0 🐕 | [📖 Docs](test-flakiness-detector/docs/) | [🚀 Examples](test-flakiness-detector/examples/)
+- **[Output Diffing Utility](output-diffing-utility/)** — Semantic diff for JSON, text, binary files 🟢 v0.1.0 🐕 | [📖 Docs](output-diffing-utility/) | [🚀 Examples](output-diffing-utility/examples/)
+- **[Snapshot Comparison](snapshot-comparison/)** — Snapshot testing with integrated diffs 🟢 v0.1.0 🐕 | [📖 Docs](snapshot-comparison/) | [🚀 Examples](snapshot-comparison/examples/)
 - **[Test Port Conflict Resolver](https://github.com/tuulbelt/test-port-resolver)** — Concurrent test port allocation (TBD)
 
 ### Frontend
@@ -50,7 +50,8 @@ Each tool in Tuulbelt:
 
 ### Utilities & Infrastructure
 - **[Universal Log Normalizer](https://github.com/tuulbelt/log-normalizer)** — Structured log standardization (TBD)
-- **[File-Based Semaphore](file-based-semaphore/)** — Cross-platform process locking 🟢 v0.1.0 | [📖 Docs](file-based-semaphore/) | [🚀 Examples](file-based-semaphore/examples/)
+- **[File-Based Semaphore](file-based-semaphore/)** — Cross-platform process locking (Rust) 🟢 v0.1.0 🐕 | [📖 Docs](file-based-semaphore/) | [🚀 Examples](file-based-semaphore/examples/)
+- **[File-Based Semaphore (TS)](file-based-semaphore-ts/)** — Cross-platform process locking (TypeScript) 🟢 v0.1.0 🐕 | [📖 Docs](file-based-semaphore-ts/) | [🚀 Examples](file-based-semaphore-ts/examples/)
 - **[Manifest-First Sync Tool](https://github.com/tuulbelt/manifest-sync)** — Directory sync via manifest diffs (TBD)
 - **[Universal Health-Check Probe](https://github.com/tuulbelt/health-check-probe)** — Multi-check abstraction (TBD)
 - **[Secret Injector](https://github.com/tuulbelt/secret-injector)** — Encrypted secret injection (TBD)
@@ -168,15 +169,15 @@ This creates a **bidirectional validation network** where tools prove their reli
 
 ## Status
 
-🟢 = Implemented (8/33)
+🟢 = Implemented (9/33)
 🟡 = In progress (0/33)
-🔴 = TBD (25/33)
+🔴 = TBD (24/33)
 
-**Recently Completed:** Snapshot Comparison v0.1.0 (2025-12-27)
+**Recently Completed:** File-Based Semaphore (TypeScript) v0.1.0 (2025-12-28)
 
 **Next Up:** Test Port Conflict Resolver 🎯
 
-**Progress:** 8 of 33 tools implemented (24%) | Phase 1 Quick Tools: 5/5 (100% ✅) | Phase 2: 3/28
+**Progress:** 9 of 33 tools implemented (27%) | Phase 1 Quick Tools: 5/5 (100% ✅) | Phase 2: 4/28
 
 ## License
 

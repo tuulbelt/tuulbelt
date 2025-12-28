@@ -22,7 +22,7 @@ echo "   Tool directory: $TOOL_DIR"
 echo ""
 
 # Check if Output Diffing Utility is available
-if [ ! -d "$DIFFER_DIR" ] || [ ! -f "$DIFFER_DIR/target/release/output-diffing-utility" ]; then
+if [ ! -d "$DIFFER_DIR" ] || [ ! -f "$DIFFER_DIR/target/release/odiff" ]; then
     echo "⚠️  Output Diffing Utility not found (standalone mode)"
     echo "   Running basic determinism check instead..."
     echo ""
@@ -55,7 +55,7 @@ echo ""
 
 # Use output-diffing-utility to compare
 cd "$DIFFER_DIR"
-./target/release/output-diffing-utility "$TMP_DIR/run1.json" "$TMP_DIR/run2.json" --format summary
+./target/release/odiff "$TMP_DIR/run1.json" "$TMP_DIR/run2.json" --type json --quiet
 
 if [ $? -eq 0 ]; then
     echo ""
@@ -63,6 +63,6 @@ if [ $? -eq 0 ]; then
 else
     echo ""
     echo "❌ Serialization differs between runs!"
-    ./target/release/output-diffing-utility "$TMP_DIR/run1.json" "$TMP_DIR/run2.json" --format unified
+    ./target/release/odiff "$TMP_DIR/run1.json" "$TMP_DIR/run2.json" --type json
     exit 1
 fi

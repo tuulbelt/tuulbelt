@@ -10,18 +10,19 @@ This document tracks pending work across the Tuulbelt project. Tasks are organiz
 
 All tools have short CLI names for better DX:
 
-### Implemented (8 tools)
+### Implemented (9 tools)
 
 | Tool | Short Name | Long Name |
 |------|------------|-----------|
 | Test Flakiness Detector | `flaky` | `test-flakiness-detector` |
 | CLI Progress Reporting | `prog` | `cli-progress-reporting` |
 | Cross-Platform Path Normalizer | `normpath` | `cross-platform-path-normalizer` |
-| File-Based Semaphore | `sema` | `file-semaphore` |
+| File-Based Semaphore (Rust) | `sema` | `file-semaphore` |
 | Output Diffing Utility | `odiff` | `output-diff` |
 | Structured Error Handler | `serr` | `structured-error-handler` |
 | Configuration File Merger | `cfgmerge` | `config-file-merger` |
 | Snapshot Comparison | `snapcmp` | `snapshot-comparison` |
+| File-Based Semaphore (TS) | `semats` | `file-semaphore-ts` |
 
 ### Proposed (25 remaining tools)
 
@@ -69,11 +70,12 @@ All 5 Phase 1 tools implemented!
 ✅ **File-Based Semaphore** (v0.1.0) - Rust
 ✅ **Output Diffing Utility** (v0.1.0) - Rust
 
-### Completed (Phase 2: 3/28) 🆕
+### Completed (Phase 2: 4/28) 🆕
 
 ✅ **Structured Error Handler** (v0.1.0) - TypeScript
 ✅ **Configuration File Merger** (v0.1.0) - TypeScript
-✅ **Snapshot Comparison** (v0.1.0) - Rust 🆕
+✅ **Snapshot Comparison** (v0.1.0) - Rust
+✅ **File-Based Semaphore (TS)** (v0.1.0) - TypeScript 🆕
 
 ### Phase 2: Next Up
 
@@ -188,6 +190,21 @@ See `README.md` for complete roadmap (25 remaining tools).
 - Hash-based fast comparison with detailed diff on mismatch
 - Semantic diffing for text, JSON, and binary via odiff
 
+### File-Based Semaphore (TypeScript)
+
+- ✅ v0.1.0 stable (Fourth Phase 2 tool!)
+- ✅ **Cross-language compatibility** - Same lock file format as Rust `sema`
+- ✅ Atomic locking (temp file + rename pattern)
+- ✅ **Security hardening:**
+  - Path traversal prevention (check `..` before normalization)
+  - Symlink resolution (including dangling symlinks)
+  - Tag sanitization (remove all control characters)
+  - Cryptographic randomness for temp file names
+  - Orphaned temp file cleanup
+- ✅ 160 tests passing (52 unit + 26 security + 31 CLI + 36 edge + 15 stress)
+- ✅ Complete documentation (README, SPEC.md, 7 VitePress pages)
+- ✅ Demo recording script
+
 ---
 
 ## 🐛 Bug Fixes
@@ -227,8 +244,9 @@ See `docs/KNOWN_ISSUES.md` for tracked issues.
 - ✅ **Local VitePress Demo sections** - Added to test-flakiness-detector and cross-platform-path-normalizer local docs
 - ✅ **Asciinema placeholders** - Added placeholder link for cross-platform-path-normalizer (GitHub Actions will populate)
 - ✅ **Documentation consistency achieved** - All tools have matching structure, quality, and Demo sections
-- ✅ **File-Based Semaphore docs** - README, SPEC.md, 7 VitePress pages, 2 examples
-- ✅ **File-Based Semaphore CLI tests** - 39 CLI tests added, docs updated (85 total tests)
+- ✅ **File-Based Semaphore (Rust) docs** - README, SPEC.md, 7 VitePress pages, 2 examples
+- ✅ **File-Based Semaphore (Rust) CLI tests** - 39 CLI tests added, docs updated (85 total tests)
+- ✅ **File-Based Semaphore (TypeScript) docs** - README, SPEC.md, 7 VitePress pages 🆕
 - ✅ **Output Diffing Utility docs** - README, SPEC.md, 7 VitePress pages, 2 examples 🆕
 - ✅ **Demo workflow optimization** - Smart detection, path filters, proper titles 🆕
 - ✅ **Template performance patterns** - Added to both Rust and TypeScript templates 🆕
@@ -275,7 +293,12 @@ See `docs/KNOWN_ISSUES.md` for tracked issues.
 - ✅ **CI Optimization Phase 2** - Artifact-based dashboard (no re-testing)
 - ✅ **docs/CI_GUIDE.md** - Comprehensive CI documentation as single source of truth
 - ✅ **Demo workflow smart detection** - 75-80% CI time savings on recordings
-- ✅ **VitePress demo integration** - Workflow handles 3 placeholder patterns correctly 🆕
+- ✅ **VitePress demo integration** - Workflow handles 3 placeholder patterns correctly
+- ✅ **Dogfood strategy rethink** - Dogfood is now local-only 🆕
+  - Removed `dogfood-validation.yml` (CI artifacts can't preserve dev environment)
+  - `/quality-check` now runs dogfood scripts locally
+  - All 9 tools have 🐕 badges (indicate local dogfood scripts exist)
+  - Tests validated by `test-all-tools.yml` in CI
 - [ ] Consider adding performance benchmarks to CI
 
 ### Workflows
@@ -376,7 +399,33 @@ Priority: Cross-Platform Path Normalizer
 
 ---
 
-## Session Notes (2025-12-28)
+## Session Notes (2025-12-28) - Dogfood Strategy Rethink
+
+**Dogfood CI workflow removed** - After multiple CI failures, identified fundamental issue:
+
+- ❌ **Removed `dogfood-validation.yml`**
+  - CI artifacts cannot preserve npm symlinks, PATH, sibling tool state
+  - Tests are already validated by `test-all-tools.yml`
+  - Dogfood scripts remain for local development verification
+
+- ✅ **Enhanced `/quality-check` command**
+  - Now runs dogfood scripts during local verification
+  - Gracefully handles missing sibling tools
+  - Provides local validation before commit
+
+- ✅ **Updated documentation**
+  - `CI_GUIDE.md`: Removed dogfood-validation section
+  - `QUALITY_CHECKLIST.md`: Changed "CI Integration" → "Local Development Only"
+  - Template READMEs: Clarified dogfood is local-only
+  - `scaffold-tool.md`: Removed CI automation references
+
+- ✅ **Root README 🐕 badges remain** - Now indicate local dogfood scripts exist
+
+**Key learning:** CI artifacts don't preserve development environment state. Dogfood scripts work locally but CI would need full rebuilds (too expensive).
+
+---
+
+## Session Notes (2025-12-28) - Earlier
 
 **Documentation & Infrastructure Fixes** after snapcmp merge:
 

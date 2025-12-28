@@ -12,7 +12,7 @@ TEMP_DIR="/tmp/semaphore-diff-$$"
 echo "🔬 Validating Semaphore output determinism"
 echo ""
 
-[ ! -d "$DIFF_DIR" ] || [ ! -f "$DIFF_DIR/target/release/output-diff" ] && echo "⚠️  Using standard diff" && USE_STANDARD=1
+[ ! -d "$DIFF_DIR" ] || [ ! -f "$DIFF_DIR/target/release/odiff" ] && echo "⚠️  Using standard diff" && USE_STANDARD=1
 
 mkdir -p "$TEMP_DIR"
 cd "$TOOL_DIR"
@@ -24,7 +24,7 @@ if [ "$USE_STANDARD" = "1" ]; then
   diff "$TEMP_DIR/run1.txt" "$TEMP_DIR/run2.txt" && echo "✅ IDENTICAL!" || echo "⚠️  Differences"
 else
   cd "$DIFF_DIR"
-  ./target/release/output-diff "$TEMP_DIR/run1.txt" "$TEMP_DIR/run2.txt" && echo "✅ IDENTICAL!" || echo "⚠️  Differences"
+  ./target/release/odiff "$TEMP_DIR/run1.txt" "$TEMP_DIR/run2.txt" --type text && echo "✅ IDENTICAL!" || echo "⚠️  Differences"
 fi
 
 rm -rf "$TEMP_DIR"

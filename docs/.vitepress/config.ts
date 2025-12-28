@@ -27,7 +27,8 @@ export default defineConfig({
             { text: 'Output Diffing Utility', link: '/tools/output-diffing-utility/' },
             { text: 'Structured Error Handler', link: '/tools/structured-error-handler/' },
             { text: 'Config File Merger', link: '/tools/config-file-merger/' },
-            { text: 'Snapshot Comparison', link: '/tools/snapshot-comparison/' }
+            { text: 'Snapshot Comparison', link: '/tools/snapshot-comparison/' },
+            { text: 'File-Based Semaphore (TS)', link: '/tools/file-based-semaphore-ts/' }
           ]
         }
       ],
@@ -155,6 +156,20 @@ export default defineConfig({
             { text: 'Examples', link: '/tools/snapshot-comparison/examples' },
             { text: 'API Reference', link: '/tools/snapshot-comparison/api-reference' },
             { text: 'Snapshot Format', link: '/tools/snapshot-comparison/snapshot-format' }
+          ]
+        }
+      ],
+      '/tools/file-based-semaphore-ts/': [
+        {
+          text: 'File-Based Semaphore (TS)',
+          items: [
+            { text: 'Overview', link: '/tools/file-based-semaphore-ts/' },
+            { text: 'Getting Started', link: '/tools/file-based-semaphore-ts/getting-started' },
+            { text: 'CLI Usage', link: '/tools/file-based-semaphore-ts/cli-usage' },
+            { text: 'Library Usage', link: '/tools/file-based-semaphore-ts/library-usage' },
+            { text: 'Examples', link: '/tools/file-based-semaphore-ts/examples' },
+            { text: 'Protocol Spec', link: '/tools/file-based-semaphore-ts/protocol-spec' },
+            { text: 'API Reference', link: '/tools/file-based-semaphore-ts/api-reference' }
           ]
         }
       ]

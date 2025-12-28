@@ -49,9 +49,11 @@ START_TIME=$(date +%s)
 
 # Run the flakiness detector and save output
 cd "$DETECTOR_DIR"
+set +e  # Temporarily disable exit on error to capture output
 npx flaky \
     --test "cd '$TOOL_DIR' && cargo test 2>&1" \
     --runs "$RUNS" > "$TEMP_OUTPUT" 2>&1
+set -e  # Re-enable exit on error
 
 END_TIME=$(date +%s)
 ELAPSED=$((END_TIME - START_TIME))

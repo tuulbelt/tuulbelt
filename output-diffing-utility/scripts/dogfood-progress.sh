@@ -41,7 +41,7 @@ if [ ! -d "$PROGRESS_DIR" ]; then
     echo '{"name": "Bob", "age": 25, "city": "San Francisco"}' > "$TEMP_DIR/v2.json"
 
     cd "$TOOL_DIR"
-    cargo run --release --quiet "$TEMP_DIR/v1.json" "$TEMP_DIR/v2.json"
+    cargo run --release --quiet --bin odiff -- "$TEMP_DIR/v1.json" "$TEMP_DIR/v2.json"
 
     rm -rf "$TEMP_DIR"
     exit 0
@@ -98,7 +98,7 @@ echo "🔧 Initializing progress tracker..."
 PROGRESS_ID="diff-demo-$$"
 
 cd "$PROGRESS_DIR"
-npx flaky init \
+npx prog init \
     --total 100 \
     --id "$PROGRESS_ID" \
     --message "Comparing JSON files" > /dev/null
@@ -111,28 +111,28 @@ echo "🔄 Running diff with progress updates..."
 echo ""
 
 # Update: Starting
-npx flaky set \
+npx prog set \
     --current 0 \
     --total 100 \
     --id "$PROGRESS_ID" \
     --message "Reading old.json" > /dev/null
 
 # Update: Reading files
-npx flaky set \
+npx prog set \
     --current 25 \
     --total 100 \
     --id "$PROGRESS_ID" \
     --message "Reading new.json" > /dev/null
 
 # Update: Parsing
-npx flaky set \
+npx prog set \
     --current 50 \
     --total 100 \
     --id "$PROGRESS_ID" \
     --message "Parsing JSON structures" > /dev/null
 
 # Update: Computing diff
-npx flaky set \
+npx prog set \
     --current 75 \
     --total 100 \
     --id "$PROGRESS_ID" \
@@ -142,13 +142,13 @@ npx flaky set \
 cd "$TOOL_DIR"
 echo "📊 Diff Results:"
 echo "---"
-cargo run --release --quiet -- "$TEMP_DIR/old.json" "$TEMP_DIR/new.json"
+cargo run --release --quiet --bin odiff -- "$TEMP_DIR/old.json" "$TEMP_DIR/new.json"
 echo "---"
 echo ""
 
 # Update: Complete
 cd "$PROGRESS_DIR"
-npx flaky finish \
+npx prog finish \
     --id "$PROGRESS_ID" \
     --message "Diff complete" > /dev/null
 
@@ -157,7 +157,7 @@ echo ""
 
 # Show final progress state
 echo "📊 Final Progress State:"
-npx flaky get --id "$PROGRESS_ID"
+npx prog get --id "$PROGRESS_ID"
 echo ""
 
 # Cleanup

@@ -80,7 +80,7 @@ Cross-platform file-based semaphore for process coordination with stale lock det
 
 </div>
 
-[**View All 8 Tools →**](/tools/)
+[**View All 9 Tools →**](/tools/)
 
 ### More Tools
 
@@ -166,6 +166,20 @@ Snapshot testing with integrated semantic diffs for regression detection.
 
 </div>
 
+<div class="tool-card">
+
+#### [File-Based Semaphore (TS)](/tools/file-based-semaphore-ts/) <span class="library-badge"><img src="/icons/lock.svg" class="badge-icon" alt=""><span>sema compatible</span></span>
+
+Cross-platform file-based semaphore for Node.js process synchronization.
+
+- <img src="/icons/lock.svg" class="inline-icon" alt=""> Atomic locking (temp file + rename)
+- <img src="/icons/link.svg" class="inline-icon" alt=""> **Cross-language**: Compatible with Rust [sema](/tools/file-based-semaphore/)
+- <img src="/icons/shield.svg" class="inline-icon" alt=""> Security: path traversal, symlink, tag sanitization
+
+[Get Started →](/tools/file-based-semaphore-ts/getting-started)
+
+</div>
+
 > <img src="/icons/sparkles.svg" class="inline-icon" alt=""> **Tool Composition**: Snapshot Comparison is the first tool to use library-level composition ([PRINCIPLES.md Exception 2](/guide/principles#zero-external-dependencies)). It imports output-diffing-utility as a path dependency, demonstrating how Tuulbelt tools can build on each other while maintaining zero external dependencies.
 
 ## Progress
@@ -178,13 +192,14 @@ Snapshot testing with integrated semantic diffs for regression detection.
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> File-Based Semaphore (Rust)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Output Diffing Utility (Rust)
 
-**Phase 2: Started** — 3 of 28
+**Phase 2: Started** — 4 of 28
 
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Structured Error Handler (TypeScript)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Config File Merger (TypeScript)
-- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Snapshot Comparison (Rust) ✨ NEW
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Snapshot Comparison (Rust)
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> File-Based Semaphore (TypeScript) ✨ NEW
 
-**Overall Progress:** 8 of 33 tools (24%)
+**Overall Progress:** 9 of 33 tools (27%)
 
 ## Quick Start
 

@@ -1,6 +1,6 @@
 # CI/CD Guide
 
-**Last Updated:** 2025-12-25
+**Last Updated:** 2025-12-28
 
 This document is the single source of truth for all CI/CD workflows in Tuulbelt. Reference this when adding new tools, debugging CI issues, or optimizing workflows.
 
@@ -36,13 +36,16 @@ This document is the single source of truth for all CI/CD workflows in Tuulbelt.
 │ (if any tool)   │        │ (if docs/*)     │        │ (if templates/) │
 └────────┬────────┘        └─────────────────┘        └─────────────────┘
          │
-         │ uploads artifact
+         │ workflow_run (on success)
+         │
          ▼
 ┌─────────────────┐
 │update-dashboard │
 │ (reads artifact)│
 └─────────────────┘
 ```
+
+> **Note:** Dogfood scripts (`scripts/dogfood-*.sh`) are for local development only. They verify cross-tool composition in the monorepo but are not run in CI. Tests are validated by `test-all-tools.yml`.
 
 ---
 
@@ -408,6 +411,7 @@ When adding a new tool, ensure:
 
 | Date | Change |
 |------|--------|
+| 2025-12-28 | Removed dogfood-validation.yml (dogfood is local-only) |
 | 2025-12-25 | Phase 2: Artifact-based dashboard |
 | 2025-12-25 | Phase 1: Path filters, concurrency, caching |
 | 2025-12-25 | Initial documentation |

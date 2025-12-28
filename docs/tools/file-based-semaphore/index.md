@@ -100,6 +100,40 @@ File-based semaphores solve these by using simple lock files that:
 - Need no running daemons or services
 - Use atomic filesystem operations
 
+## Cross-Language Compatibility
+
+::: tip <img src="/icons/globe.svg" class="inline-icon" alt=""> TypeScript Implementation Available
+A TypeScript implementation is available: [File-Based Semaphore (TS)](/tools/file-based-semaphore-ts/)
+Both implementations use the same lock file format and can coordinate across languages.
+:::
+
+Lock files use a simple text format compatible with any language:
+
+```
+pid=12345
+timestamp=1735420800
+tag=optional-description
+```
+
+**Mixed-language coordination example:**
+
+```bash
+# Rust acquires the lock
+sema try /tmp/shared.lock --tag "rust-service"
+
+# TypeScript checks status (reads the same lock file)
+semats status /tmp/shared.lock
+# Output: Locked by PID 12345 (rust-service)
+
+# TypeScript waits for lock
+semats acquire /tmp/shared.lock --timeout 5000
+```
+
+This enables:
+- Rust backend services coordinating with Node.js workers
+- Shell scripts checking locks created by any language
+- Gradual migration between language implementations
+
 ## Dogfooding
 
 This tool demonstrates composability by being VALIDATED BY other Tuulbelt tools:

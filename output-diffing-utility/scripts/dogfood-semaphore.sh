@@ -44,7 +44,7 @@ if [ ! -d "$SEMAPHORE_DIR" ]; then
     echo '{"status": "new"}' > "$TEMP_DIR/data2.json"
 
     cd "$TOOL_DIR"
-    cargo run --release --quiet "$TEMP_DIR/data1.json" "$TEMP_DIR/data2.json"
+    cargo run --release --quiet --bin odiff -- "$TEMP_DIR/data1.json" "$TEMP_DIR/data2.json"
 
     rm -rf "$TEMP_DIR"
     exit 0
@@ -100,7 +100,7 @@ run_diff_with_lock() {
 
             # Run actual diff
             cd "$TOOL_DIR"
-            DIFF_OUTPUT=$(cargo run --release --quiet -- --format json "$TEMP_DIR/stats-old.json" "$TEMP_DIR/stats-new.json")
+            DIFF_OUTPUT=$(cargo run --release --quiet --bin odiff -- --format json "$TEMP_DIR/stats-old.json" "$TEMP_DIR/stats-new.json")
 
             # Save to cache
             echo "$DIFF_OUTPUT" > "$CACHE_FILE"

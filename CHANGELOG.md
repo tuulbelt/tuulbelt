@@ -9,6 +9,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - Dogfood Strategy Rethink (2025-12-28)
+
+**Dogfood is now local-only:**
+- Removed `dogfood-validation.yml` workflow (CI artifacts can't preserve dev environment)
+- Tests are validated by `test-all-tools.yml` in CI
+- `/quality-check` command now runs dogfood scripts during local verification
+- Dogfood scripts remain for local development in monorepo context
+
+**Root README:**
+- 🐕 badges remain (now indicate local dogfood scripts exist)
+
+**Documentation Updates:**
+- `CI_GUIDE.md`: Removed dogfood-validation section, updated architecture diagram
+- `QUALITY_CHECKLIST.md`: Changed "CI Integration" → "Local Development Only"
+- Template READMEs: Clarified dogfood is local-only
+- `scaffold-tool.md`: Removed CI automation references
+
+### Added - File-Based Semaphore (TypeScript) v0.1.0 (2025-12-28)
+
+**Tool Features:**
+- Cross-platform process locking (TypeScript port of Rust `sema`)
+- Atomic locking via temp file + rename pattern
+- Compatible with Rust `sema` lock file format (cross-language interop)
+- CLI commands: acquire, release, status, clean-stale
+- Timeout support with configurable wait intervals
+- Stale lock detection and automatic cleanup
+
+**Security Hardening:**
+- Path traversal prevention (check `..` before normalization)
+- Symlink resolution (including dangling symlinks)
+- Tag sanitization (remove all control characters)
+- Cryptographic randomness for temp file names
+- Orphaned temp file cleanup
+
+**Testing Excellence:**
+- 160 tests passing (52 unit + 26 security + 31 CLI + 36 edge + 15 stress)
+- Comprehensive security test coverage
+- Cross-language dogfood validation with Rust `odiff`
+
+**Documentation:**
+- Complete README with CLI and library usage
+- SPEC.md (same lock file format as Rust sema)
+- 7 VitePress pages + demo recording script
+
+**Impact:**
+- 9th Tuulbelt tool complete (27% of 33 total)
+- First TypeScript tool with cross-language interop
+- Demonstrates security hardening patterns
+
 ### Fixed - npm link and Demo Recording (2025-12-27)
 
 **npm link Support for Short CLI Names:**

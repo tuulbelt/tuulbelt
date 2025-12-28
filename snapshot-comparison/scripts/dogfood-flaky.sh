@@ -18,32 +18,30 @@ if [ ! -d "$DETECTOR_DIR" ]; then
     exit 0
 fi
 
-# Check if flaky command is available
-if ! command -v flaky &> /dev/null; then
-    # Try to use npx
-    if command -v npx &> /dev/null && [ -f "$DETECTOR_DIR/package.json" ]; then
-        cd "$DETECTOR_DIR"
-        npm install --silent 2>/dev/null
-        FLAKY_CMD="npx tsx src/index.ts"
-    else
-        echo "Test flakiness detector not installed"
-        echo "Run 'npm install' in $DETECTOR_DIR first"
-        exit 0
-    fi
-else
-    FLAKY_CMD="flaky"
+# Check if detector has node_modules
+if [ ! -d "$DETECTOR_DIR/node_modules" ]; then
+    echo "📦 Installing Test Flakiness Detector dependencies..."
+    (cd "$DETECTOR_DIR" && npm install --silent)
 fi
 
-echo "Validating snapshot-comparison test determinism..."
+echo "🔬 Validating snapshot-comparison test determinism..."
 echo "Running cargo test $RUNS times..."
 echo ""
 
-cd "$TOOL_DIR"
-
-$FLAKY_CMD \
-    --test "cargo test 2>&1" \
+cd "$DETECTOR_DIR"
+set +e  # Temporarily disable exit on error to capture exit code
+npx flaky \
+    --test "cd '$TOOL_DIR' && cargo test 2>&1" \
     --runs "$RUNS" \
     --verbose
 
+EXIT_CODE=$?
+set -e  # Re-enable exit on error
+
 echo ""
-echo "Dogfooding validation complete!"
+if [ $EXIT_CODE -eq 0 ]; then
+    echo "✅ Dogfooding validation complete - no flaky tests!"
+else
+    echo "❌ Flakiness detected or tests failed!"
+    exit $EXIT_CODE
+fi

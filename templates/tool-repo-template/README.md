@@ -149,25 +149,30 @@ See existing tools for examples (test-flakiness-detector, cli-progress-reporting
 
 ### Dogfooding
 
-Tuulbelt tools validate and enhance each other via dogfooding.
+Tuulbelt tools validate and enhance each other via dogfooding. This tool includes
+dogfood scripts that run in CI to catch regressions.
 
-**Validate This Tool's Tests:**
-
-Run the flakiness detection test to validate test reliability:
+**Dogfood Scripts (run in CI):**
 
 ```bash
-npx tsx test/flakiness-detection.test.ts
+# Validate test reliability (runs tests N times)
+./scripts/dogfood-flaky.sh 10
+
+# Validate output determinism (compares two test runs)
+./scripts/dogfood-diff.sh
 ```
 
-Or add to package.json:
+**Quick Validation (npm script):**
 
-```json
-{
-  "scripts": {
-    "test:dogfood": "npx tsx test/flakiness-detection.test.ts"
-  }
-}
+```bash
+npm run test:dogfood
 ```
+
+**Local Development Only:**
+
+Dogfood scripts are for local development verification in the monorepo context.
+Tests are validated by `test-all-tools.yml` in CI. See [DOGFOODING_STRATEGY.md](./DOGFOODING_STRATEGY.md)
+for the full composition strategy.
 
 **Using Other TypeScript Tools (Dynamic Import):**
 

@@ -1,182 +1,186 @@
 # Session Handoff
 
 **Last Updated:** 2025-12-28
-**Session:** Documentation Cleanup & VitePress Demo Fix
-**Status:** 🟢 All issues fixed, ready for merge
+**Session:** Dogfood Strategy Rethink + File-Based Semaphore (TypeScript)
+**Status:** 🟢 Dogfood is now local-only (removed CI workflow), semats complete
 
 ---
 
 ## Current Session Summary
 
-### Documentation & Infrastructure Fixes (2025-12-28)
+### Dogfood Strategy Rethink (2025-12-28)
 
-1. ✅ **Icon Cleanup**
-   - Replaced emoji badges (📦) with SVG icons (package.svg)
-   - Added `.library-badge` CSS class for consistent styling
-   - Icons now work in both light and dark mode
+After multiple CI failures, we identified a fundamental issue: dogfood scripts depend on the monorepo development environment (sibling tools, npm symlinks, global packages). This state cannot be preserved in CI artifacts.
 
-2. ✅ **VitePress Demo Integration Fixed**
-   - Fixed `create-demos.yml` workflow to handle 3 patterns:
-     - Existing asciinema URLs → Updates to new URL
-     - Placeholder `(#)` links → Replaces with actual URL
-     - Placeholder text → Replaces entire section with proper structure
-   - Updated QUALITY_CHECKLIST with correct VitePress Demo template
+**Decision:** Remove dogfood-validation.yml workflow. Dogfood is local-only.
 
-3. ✅ **Test Count Fixed**
-   - Updated from 42 → 96 tests in all documentation
-   - Files: docs/tools/index.md, HANDOFF.md
+1. ✅ **Removed CI Workflow** (`.github/workflows/dogfood-validation.yml`)
+   - Deleted the workflow entirely
+   - Tests are validated by `test-all-tools.yml`
+   - Dogfood scripts remain for local development
 
-4. ✅ **snapcmp Demo Section**
-   - Added proper demo.gif reference
-   - Added asciinema link with actual URL
-   - Proper StackBlitz button structure
+2. ✅ **Updated Documentation**
+   - `CI_GUIDE.md`: Removed dogfood-validation section, updated diagram
+   - `QUALITY_CHECKLIST.md`: Changed "CI Integration" → "Local Development Only"
+   - Template READMEs: Clarified dogfood is local-only
+   - `scaffold-tool.md`: Removed CI automation references
 
----
+3. ✅ **Enhanced quality-check Command**
+   - `/quality-check` now runs dogfood scripts during local verification
+   - Gracefully handles missing sibling tools
+   - Scripts execute with exit code capture
 
-## Previous Session: Snapshot Comparison Implementation
+4. ✅ **Root README** - 🐕 badges remain (indicate local dogfood scripts exist)
 
-**Snapshot Comparison (`snapcmp`) - Tool #8 - COMPLETE!**
+### File-Based Semaphore (TypeScript) - Tool #9 (Earlier in Session)
 
-This is the first tool to use Tuulbelt-to-Tuulbelt library composition (as documented in PRINCIPLES.md Exception 2).
+1. ✅ **Core Implementation** (`src/index.ts` - ~900 lines)
+   - Semaphore class with tryAcquire, acquire, release, status, cleanStale
+   - Atomic locking (temp file + rename pattern)
+   - Result pattern for all operations
+   - Compatible with Rust `sema` lock file format
 
-### Implementation Complete
+2. ✅ **Security Hardening**
+   - Path traversal prevention (check `..` before normalization)
+   - Symlink resolution (including dangling symlinks)
+   - Tag sanitization (remove all control characters)
+   - Cryptographic randomness for temp file names
+   - Orphaned temp file cleanup
 
-1. ✅ **Core Library** (lib.rs - 700+ lines)
-   - SnapshotStore for CRUD operations
-   - Hash-based fast comparison with detailed diff on mismatch
-   - Integration with output-diffing-utility as path dependency
-   - 33 unit tests including 13 security tests
-
-2. ✅ **CLI** (main.rs - 350 lines)
-   - Commands: create, check, update, list, delete, clean
-   - Options: --dir, --type, --color, --update, --context, --keep, --dry-run
-   - Both `snapcmp` and `snapshot-comparison` binaries
-
-3. ✅ **Testing**
-   - 33 unit tests in lib.rs (including 13 security tests)
-   - 59 integration tests in tests/integration.rs
-   - 4 doc tests
-   - Total: 96 tests passing
+3. ✅ **Testing** (160 tests passing)
+   - 52 unit tests (core functionality)
+   - 26 security tests (path traversal, injection, symlinks)
+   - 31 CLI integration tests
+   - 36 edge case tests
+   - 15 stress tests
 
 4. ✅ **Documentation**
    - README.md with CLI and library usage
-   - SPEC.md defining snapshot file format
-   - DOGFOODING_STRATEGY.md
-   - 7 VitePress doc pages (including snapshot-format.md)
+   - SPEC.md (same lock file format as Rust sema)
+   - 7 VitePress docs pages
    - Demo recording script
-
-5. ✅ **Quality Verified** (2025-12-28)
-   - Fixed flaky concurrent test (changed to read-only concurrent access)
-   - All 96 tests pass consistently (verified 5 runs)
-   - VitePress docs build successfully
-   - Demo recording script syntax verified
-   - Fixed TypeScript tsconfig for structured-error-handler and config-file-merger
-
-### Key Innovation: Library Composition
-
-Updated PRINCIPLES.md with Exception 2 allowing Tuulbelt tools to use each other:
-
-```toml
-# Cargo.toml
-[dependencies]
-output-diffing-utility = { path = "../output-diffing-utility" }
-```
-
-This enables:
-- Semantic text diffs (unified format)
-- JSON structural comparison
-- Binary hex diff
 
 ---
 
-## Updated Test Counts
+## Commits This Session
+
+1. `69b75e8` - feat(ci): add dogfood validation CI workflow and tooling
+2. Earlier commits for semats implementation and docs
+
+---
+
+## Files Modified (Dogfood Strategy Rethink)
+
+### Deleted Files
+- `.github/workflows/dogfood-validation.yml` - Removed (dogfood is local-only now)
+
+### Modified Files
+- `docs/CI_GUIDE.md` - Removed dogfood-validation section, updated diagram
+- `docs/QUALITY_CHECKLIST.md` - Changed CI Integration → Local Development Only
+- `templates/tool-repo-template/README.md` - Clarified dogfood is local-only
+- `templates/rust-tool-template/README.md` - Clarified dogfood is local-only
+- `.claude/commands/scaffold-tool.md` - Removed CI automation references
+- `.claude/commands/quality-check.md` - Now runs dogfood scripts during local check
+- `docs/QUALITY_CHECKLIST.md` - Added CI integration docs
+- `file-based-semaphore-ts/scripts/dogfood-diff.sh` - Cross-language composition
+
+---
+
+## Test Counts (All Tools)
 
 | Tool | Tests | Status |
 |------|-------|--------|
-| Test Flakiness Detector | 132 | ✅ |
-| CLI Progress Reporting | 121 | ✅ |
-| Cross-Platform Path Normalizer | 141 | ✅ |
-| Config File Merger | 144 | ✅ |
-| Structured Error Handler | 88 | ✅ |
-| File-Based Semaphore | 95 | ✅ |
-| Output Diffing Utility | 108 | ✅ |
-| **Snapshot Comparison** | **96** | ✅ **NEW** |
+| Test Flakiness Detector | 132 | ✅ 🐕 |
+| CLI Progress Reporting | 121 | ✅ 🐕 |
+| Cross-Platform Path Normalizer | 141 | ✅ 🐕 |
+| Config File Merger | 144 | ✅ 🐕 |
+| Structured Error Handler | 88 | ✅ 🐕 |
+| File-Based Semaphore (Rust) | 95 | ✅ 🐕 |
+| Output Diffing Utility | 108 | ✅ 🐕 |
+| Snapshot Comparison | 96 | ✅ 🐕 |
+| File-Based Semaphore (TS) | 160 | ✅ 🐕 |
 
-**Total: 925 tests across all 8 tools**
+**Total: 1,085 tests across 9 tools (all dogfooded)**
 
 ---
 
 ## Current Status
 
-**8 of 33 tools completed (24% progress)**
+**9 of 33 tools completed (27% progress)**
 
-| Tool | Short Name | Language | Version | Tests | Status |
-|------|------------|----------|---------|-------|--------|
-| Test Flakiness Detector | `flaky` | TypeScript | v0.1.0 | 132 | ✅ |
-| CLI Progress Reporting | `prog` | TypeScript | v0.1.0 | 121 | ✅ |
-| Cross-Platform Path Normalizer | `normpath` | TypeScript | v0.1.0 | 141 | ✅ |
-| File-Based Semaphore | `sema` | Rust | v0.1.0 | 95 | ✅ |
-| Output Diffing Utility | `odiff` | Rust | v0.1.0 | 108 | ✅ |
-| Structured Error Handler | `serr` | TypeScript | v0.1.0 | 88 | ✅ |
-| Configuration File Merger | `cfgmerge` | TypeScript | v0.1.0 | 144 | ✅ |
-| **Snapshot Comparison** | `snapcmp` | Rust | v0.1.0 | 96 | ✅ **NEW** |
+| Tool | Short Name | Language | Version | Tests | Dogfood |
+|------|------------|----------|---------|-------|---------|
+| Test Flakiness Detector | `flaky` | TypeScript | v0.1.0 | 132 | 🐕 |
+| CLI Progress Reporting | `prog` | TypeScript | v0.1.0 | 121 | 🐕 |
+| Cross-Platform Path Normalizer | `normpath` | TypeScript | v0.1.0 | 141 | 🐕 |
+| File-Based Semaphore (Rust) | `sema` | Rust | v0.1.0 | 95 | 🐕 |
+| Output Diffing Utility | `odiff` | Rust | v0.1.0 | 108 | 🐕 |
+| Structured Error Handler | `serr` | TypeScript | v0.1.0 | 88 | 🐕 |
+| Configuration File Merger | `cfgmerge` | TypeScript | v0.1.0 | 144 | 🐕 |
+| Snapshot Comparison | `snapcmp` | Rust | v0.1.0 | 96 | 🐕 |
+| File-Based Semaphore (TS) | `semats` | TypeScript | v0.1.0 | 160 | 🐕 |
 
 ---
 
-## Files Created/Modified
+## Dogfood Strategy (Local Only)
 
-### New Files (snapshot-comparison/)
-- `src/lib.rs` - Core library implementation
-- `src/main.rs` - CLI implementation
-- `examples/basic.rs` - Basic usage examples
-- `examples/advanced.rs` - Advanced patterns
-- `tests/integration.rs` - Integration tests
-- `Cargo.toml` - With odiff path dependency
-- `README.md` - Full documentation
-- `SPEC.md` - Snapshot file format specification
-- `DOGFOODING_STRATEGY.md` - Composition strategy
-- `scripts/dogfood-flaky.sh` - Test validation script
-- `scripts/dogfood-sema.sh` - Concurrent snapshot safety with sema
-- `scripts/record-snapshot-comparison-demo.sh` - Demo recording
+```
+/quality-check (local development)
+        │
+        ├── Build & Test
+        │
+        ├── Run dogfood scripts (if in monorepo)
+        │       ├── dogfood-flaky.sh (test reliability)
+        │       └── dogfood-diff.sh (output determinism)
+        │
+        └── Graceful skip if sibling tools unavailable
+```
 
-### Modified Files
-- `PRINCIPLES.md` - Added Exception 2 for tool composition
-- `README.md` - Updated tool count and entries
-- `docs/.vitepress/config.ts` - Added snapshot-comparison sidebar
-- `docs/tools/index.md` - Added tool entry
-- `docs/public/snapshot-comparison/demo.gif` - Placeholder
-
-### New VitePress Docs (docs/tools/snapshot-comparison/)
-- `index.md` - Overview
-- `getting-started.md` - Installation
-- `cli-usage.md` - CLI reference
-- `library-usage.md` - Rust API
-- `examples.md` - Usage patterns
-- `api-reference.md` - Complete API
+**Why local-only:** CI artifacts cannot preserve npm symlinks, PATH, or sibling tool state.
+**Tests are validated:** By `test-all-tools.yml` workflow in CI.
+**Dogfood scripts:** Remain available for local development verification.
 
 ---
 
 ## Next Immediate Tasks
 
-**Priority 1: Merge current branch**
-- All implementation complete
-- 96 tests passing
-- Documentation complete
-- VitePress build successful
+**Priority 1: Commit and push changes**
+- Branch: `claude/analyze-resume-work-command-9R3Sj`
+- Remove dogfood-validation.yml
+- Update documentation for local-only dogfood
 
 **Priority 2: Next tool**
 - **Test Port Conflict Resolver** (`portres`) - TypeScript - Concurrent test port allocation
+  - Could use `semats` for port locking!
 - Or **Component Prop Validator** (`propval`) - TypeScript - Runtime validation
+
+---
+
+## Key Learnings This Session
+
+### 1. Dogfood CI Limitations
+- CI artifacts don't preserve development environment state
+- npm symlinks, global packages, PATH not available across jobs
+- Solution: Keep dogfood for local development, rely on unit tests for CI
+
+### 2. Cross-Language Dogfooding Works Locally
+- TypeScript `semats` uses Rust `odiff` for output comparison
+- Scripts work via CLI, enabling language-agnostic composition
+- Graceful fallback when tools unavailable
+
+### 3. Quality-Check Integration
+- `/quality-check` command now runs dogfood scripts
+- Provides local verification before commit
+- Handles missing sibling tools gracefully
 
 ---
 
 ## Important References
 
-- **PRINCIPLES.md Exception 2**: Tool composition via path dependencies
-- **SPEC.md**: Snapshot file format specification
+- **Template Scripts**: `templates/*/scripts/dogfood-*.sh`
+- **Quality Checklist**: `docs/QUALITY_CHECKLIST.md` (Local Development Only section)
+- **CI Guide**: `docs/CI_GUIDE.md` (no dogfood workflow)
 - **Short Names Table**: `.claude/NEXT_TASKS.md`
-- **TypeScript Template**: `templates/tool-repo-template/`
-- **Rust Template**: `templates/rust-tool-template/`
 
 ---
 
