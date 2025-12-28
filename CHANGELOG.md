@@ -9,6 +9,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Dogfood Validation CI (2025-12-28)
+
+**New CI Workflow:**
+- Added `dogfood-validation.yml` workflow that runs after `test-all-tools.yml` succeeds
+- Auto-discovers tools with `scripts/dogfood*.sh` patterns (no manual config needed)
+- Builds all tools first for cross-tool dependencies
+- Runs each dogfood script with 5-minute timeout
+- Generates summary with pass/fail/skip counts
+
+**Root README Updates:**
+- Added 🐕 badges to all 9 dogfooded tools
+- Badge indicates tool has CI-validated dogfood scripts
+
+**Template Updates:**
+- TypeScript: Added `scripts/dogfood-flaky.sh` and `scripts/dogfood-diff.sh`
+- Rust: Renamed `dogfood.sh` → `dogfood-flaky.sh`, added `dogfood-diff.sh`
+- Scripts have `[TOOL_NAME]` placeholders for customization
+
+**Documentation Updates:**
+- `scaffold-tool.md`: Dogfood setup in post-scaffolding steps
+- `quality-check.md`: Dogfood verification checks
+- `QUALITY_CHECKLIST.md`: CI integration documentation
+
+### Added - File-Based Semaphore (TypeScript) v0.1.0 (2025-12-28)
+
+**Tool Features:**
+- Cross-platform process locking (TypeScript port of Rust `sema`)
+- Atomic locking via temp file + rename pattern
+- Compatible with Rust `sema` lock file format (cross-language interop)
+- CLI commands: acquire, release, status, clean-stale
+- Timeout support with configurable wait intervals
+- Stale lock detection and automatic cleanup
+
+**Security Hardening:**
+- Path traversal prevention (check `..` before normalization)
+- Symlink resolution (including dangling symlinks)
+- Tag sanitization (remove all control characters)
+- Cryptographic randomness for temp file names
+- Orphaned temp file cleanup
+
+**Testing Excellence:**
+- 160 tests passing (52 unit + 26 security + 31 CLI + 36 edge + 15 stress)
+- Comprehensive security test coverage
+- Cross-language dogfood validation with Rust `odiff`
+
+**Documentation:**
+- Complete README with CLI and library usage
+- SPEC.md (same lock file format as Rust sema)
+- 7 VitePress pages + demo recording script
+
+**Impact:**
+- 9th Tuulbelt tool complete (27% of 33 total)
+- First TypeScript tool with cross-language interop
+- Demonstrates security hardening patterns
+
 ### Fixed - npm link and Demo Recording (2025-12-27)
 
 **npm link Support for Short CLI Names:**
