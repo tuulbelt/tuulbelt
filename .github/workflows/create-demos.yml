@@ -294,9 +294,24 @@ jobs:
 
             # Get asciinema URL
             ASCIINEMA_URL=$(cat "$tool_dir/demo-url.txt" | tr -d '\n')
+            INDEX_FILE="docs/tools/$tool_dir/index.md"
 
-            # Update the asciinema link in VitePress docs (replace any existing URL)
-            sed -i "s|\*\*\[▶ View interactive recording on asciinema\.org\](https://asciinema\.org/a/[^)]*)\*\*|\*\*[▶ View interactive recording on asciinema.org]($ASCIINEMA_URL)\*\*|g" "docs/tools/$tool_dir/index.md"
+            # Pattern 1: Update existing asciinema.org URL
+            sed -i "s|\*\*\[▶ View interactive recording on asciinema\.org\](https://asciinema\.org/a/[^)]*)\*\*|\*\*[▶ View interactive recording on asciinema.org]($ASCIINEMA_URL)\*\*|g" "$INDEX_FILE"
+
+            # Pattern 2: Update placeholder (#) links
+            sed -i "s|\*\*\[▶ View interactive recording on asciinema\.org\](#)\*\*|\*\*[▶ View interactive recording on asciinema.org]($ASCIINEMA_URL)\*\*|g" "$INDEX_FILE"
+
+            # Pattern 3: Replace placeholder text with proper demo structure
+            # This handles "Demo recording will be generated automatically..."
+            if grep -q "Demo recording will be generated automatically" "$INDEX_FILE"; then
+              # Create the proper demo section content
+              DEMO_SECTION="See the tool in action:\n\n![${tool_dir} Demo](/${tool_dir}/demo.gif)\n\n**[▶ View interactive recording on asciinema.org]($ASCIINEMA_URL)**"
+
+              # Replace the placeholder line
+              sed -i "s|Demo recording will be generated automatically after merge via GitHub Actions\.|$DEMO_SECTION|g" "$INDEX_FILE"
+              sed -i "s|Demo recording will be generated automatically after merge via GitHub Actions|$DEMO_SECTION|g" "$INDEX_FILE"
+            fi
 
             echo "✓ Updated VitePress docs for $tool_dir"
           done

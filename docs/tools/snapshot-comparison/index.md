@@ -6,7 +6,7 @@ Snapshot testing utility for regression detection with integrated diff output.
 
 Snapshot Comparison (`snapcmp`) catches regressions by comparing current output against stored "golden" snapshots. It integrates with output-diffing-utility for rich, semantic diffs of text, JSON, and binary data.
 
-::: tip 📦 First Tool Using Library Composition
+::: tip <img src="/icons/package.svg" class="inline-icon" alt=""> First Tool Using Library Composition
 This is the first Tuulbelt tool to use another Tuulbelt tool as a **library dependency** (not CLI). It imports `output-diffing-utility` via Cargo path dependency, demonstrating [PRINCIPLES.md Exception 2](/guide/principles#zero-external-dependencies): Tuulbelt tools can compose while maintaining zero external dependencies.
 :::
 
@@ -63,11 +63,17 @@ my-program | snapcmp check my-test
 
 ## Demo
 
-Demo recording will be generated automatically after merge via GitHub Actions.
+See the tool in action:
 
-<div style="margin-top: 16px;">
-  <strong>Try it online:</strong>
-  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/snapshot-comparison?file=examples/basic.rs">
+![Snapshot Comparison Demo](/snapshot-comparison/demo.gif)
+
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/xst2CP1AFXk7Jy4cjBRHzotP4)**
+
+<div style="margin: 20px 0;">
+  <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
+    <strong>Try it online:</strong>
+  </span>
+  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/snapshot-comparison?file=examples/basic.rs" style="display: inline-block; vertical-align: middle;">
     <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
   </a>
 </div>
