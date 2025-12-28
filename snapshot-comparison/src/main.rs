@@ -6,6 +6,12 @@ use std::io::{self, Read};
 use std::path::PathBuf;
 use std::process::ExitCode;
 
+/// Maximum size for stdin input (100 MB)
+const MAX_STDIN_SIZE: u64 = 100 * 1024 * 1024;
+
+/// Maximum context lines for diff output
+const MAX_CONTEXT_LINES: usize = 100;
+
 fn print_help() {
     println!(
         r#"Usage: snapcmp <COMMAND> [OPTIONS]
@@ -142,6 +148,12 @@ fn parse_args() -> Result<Args, String> {
                 context_lines = args[i]
                     .parse()
                     .map_err(|_| format!("Invalid context lines: {}", args[i]))?;
+                if context_lines > MAX_CONTEXT_LINES {
+                    return Err(format!(
+                        "Context lines too large: {} (max: {})",
+                        context_lines, MAX_CONTEXT_LINES
+                    ));
+                }
             }
             "--keep" => {
                 i += 1;
@@ -217,9 +229,21 @@ fn parse_args() -> Result<Args, String> {
 
 fn read_stdin() -> Result<Vec<u8>, String> {
     let mut buffer = Vec::new();
+
+    // Limit stdin to prevent DoS from unbounded input
     io::stdin()
+        .take(MAX_STDIN_SIZE + 1)
         .read_to_end(&mut buffer)
         .map_err(|e| format!("Failed to read stdin: {}", e))?;
+
+    if buffer.len() as u64 > MAX_STDIN_SIZE {
+        return Err(format!(
+            "Input too large: {} bytes (max: {} bytes)",
+            buffer.len(),
+            MAX_STDIN_SIZE
+        ));
+    }
+
     Ok(buffer)
 }
 

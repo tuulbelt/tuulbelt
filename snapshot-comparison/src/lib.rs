@@ -44,6 +44,19 @@ use std::time::{SystemTime, UNIX_EPOCH};
 // Re-export FileType for convenience
 pub use output_diffing_utility::FileType;
 
+// ============================================================================
+// Security Limits
+// ============================================================================
+
+/// Maximum number of header lines to prevent DoS from malformed snapshots
+const MAX_HEADER_LINES: usize = 100;
+
+/// Maximum length of a single header line (1 KB)
+const MAX_HEADER_LINE_LENGTH: usize = 1024;
+
+/// Maximum snapshot content size (100 MB)
+const MAX_CONTENT_SIZE: usize = 100 * 1024 * 1024;
+
 /// Configuration for snapshot operations
 #[derive(Debug, Clone)]
 pub struct SnapshotConfig {
@@ -262,10 +275,10 @@ impl SnapshotStore {
             ));
         }
 
-        // Only allow safe characters
+        // Only allow safe ASCII characters (prevents Unicode homoglyph attacks)
         let valid = name
             .chars()
-            .all(|c| c.is_alphanumeric() || c == '-' || c == '_' || c == '.');
+            .all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_' || c == '.');
 
         if !valid {
             return Err(SnapshotError::InvalidName(format!(
@@ -414,8 +427,11 @@ impl SnapshotStore {
         let mut reader = BufReader::new(file);
         let mut header = HashMap::new();
         let mut content = Vec::new();
+        let mut header_line_count = 0;
+        let mut found_separator = false;
 
         // Parse header lines until we hit the separator
+        // Security: Limit header lines and line length to prevent DoS
         loop {
             let mut line = String::new();
             let bytes_read = reader
@@ -426,17 +442,54 @@ impl SnapshotStore {
                 break;
             }
 
+            // Security: Check line length
+            if line.len() > MAX_HEADER_LINE_LENGTH {
+                return Err(SnapshotError::CorruptedSnapshot(format!(
+                    "Header line too long: {} bytes (max: {})",
+                    line.len(),
+                    MAX_HEADER_LINE_LENGTH
+                )));
+            }
+
+            // Security: Check header line count
+            header_line_count += 1;
+            if header_line_count > MAX_HEADER_LINES {
+                return Err(SnapshotError::CorruptedSnapshot(format!(
+                    "Too many header lines: {} (max: {})",
+                    header_line_count,
+                    MAX_HEADER_LINES
+                )));
+            }
+
             if line.trim() == "---" {
-                // Read all remaining content after the separator
-                reader
+                found_separator = true;
+                // Read content with size limit
+                let mut limited_reader = (&mut reader).take(MAX_CONTENT_SIZE as u64 + 1);
+                limited_reader
                     .read_to_end(&mut content)
                     .map_err(|e| SnapshotError::IoError(e.to_string()))?;
+
+                // Security: Check content size
+                if content.len() > MAX_CONTENT_SIZE {
+                    return Err(SnapshotError::CorruptedSnapshot(format!(
+                        "Content too large: {} bytes (max: {})",
+                        content.len(),
+                        MAX_CONTENT_SIZE
+                    )));
+                }
                 break;
             } else if let Some(stripped) = line.strip_prefix("# ") {
                 if let Some((key, value)) = stripped.trim().split_once(": ") {
                     header.insert(key.to_string(), value.to_string());
                 }
             }
+        }
+
+        // Security: Reject snapshots without separator
+        if !found_separator {
+            return Err(SnapshotError::CorruptedSnapshot(
+                "Missing --- separator in snapshot file".to_string(),
+            ));
         }
 
         // Parse metadata
@@ -1118,6 +1171,309 @@ mod tests {
         assert!(store.create("test name", b"content", &config).is_err());
         assert!(store.create("test@name", b"content", &config).is_err());
         assert!(store.create("test#name", b"content", &config).is_err());
+
+        fs::remove_dir_all(dir).unwrap();
+    }
+
+    // ========================================================================
+    // Security Tests
+    // ========================================================================
+
+    #[test]
+    fn test_security_path_traversal_variants() {
+        let dir = temp_dir();
+        let store = SnapshotStore::new(dir.clone());
+        let config = SnapshotConfig::default();
+
+        // Various path traversal attempts
+        let attacks = [
+            "../etc/passwd",
+            "..\\windows\\system32",
+            "foo/../bar",
+            "foo/bar",
+            "foo\\bar",
+            "..",
+            "...",
+            "....//",
+            "%2e%2e/",
+            "..%2f",
+            "..%5c",
+        ];
+
+        for attack in &attacks {
+            let result = store.create(attack, b"malicious", &config);
+            assert!(
+                result.is_err(),
+                "Path traversal should be blocked: {}",
+                attack
+            );
+        }
+
+        fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn test_security_null_byte_injection() {
+        let dir = temp_dir();
+        let store = SnapshotStore::new(dir.clone());
+        let config = SnapshotConfig::default();
+
+        // Null byte injection attempts
+        let attacks = [
+            "test\0.txt",
+            "\0hidden",
+            "visible\0hidden",
+            "test\x00suffix",
+        ];
+
+        for attack in &attacks {
+            let result = store.create(attack, b"content", &config);
+            assert!(
+                result.is_err(),
+                "Null byte injection should be blocked: {:?}",
+                attack
+            );
+        }
+
+        fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn test_security_malformed_snapshot_missing_separator() {
+        let dir = temp_dir();
+        let store = SnapshotStore::new(dir.clone());
+
+        // Create a malformed snapshot file without separator
+        let path = dir.join("malformed.snap");
+        fs::write(&path, "# Snapshot: malformed\n# Created: 0\nno separator here").unwrap();
+
+        let result = store.read("malformed");
+        assert!(result.is_err());
+        if let Err(SnapshotError::CorruptedSnapshot(msg)) = result {
+            assert!(msg.contains("separator"), "Error should mention missing separator");
+        }
+
+        fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn test_security_header_line_too_long() {
+        let dir = temp_dir();
+        let store = SnapshotStore::new(dir.clone());
+
+        // Create a snapshot with extremely long header line
+        let long_value = "x".repeat(2000); // Exceeds MAX_HEADER_LINE_LENGTH (1024)
+        let content = format!("# Snapshot: test\n# LongField: {}\n---\ncontent", long_value);
+        let path = dir.join("longheader.snap");
+        fs::write(&path, content).unwrap();
+
+        let result = store.read("longheader");
+        assert!(result.is_err());
+        if let Err(SnapshotError::CorruptedSnapshot(msg)) = result {
+            assert!(msg.contains("too long"), "Error should mention line too long");
+        }
+
+        fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn test_security_too_many_header_lines() {
+        let dir = temp_dir();
+        let store = SnapshotStore::new(dir.clone());
+
+        // Create a snapshot with too many header lines
+        let mut content = String::new();
+        for i in 0..150 {
+            // Exceeds MAX_HEADER_LINES (100)
+            content.push_str(&format!("# Field{}: value\n", i));
+        }
+        content.push_str("---\ncontent");
+
+        let path = dir.join("manyheaders.snap");
+        fs::write(&path, content).unwrap();
+
+        let result = store.read("manyheaders");
+        assert!(result.is_err());
+        if let Err(SnapshotError::CorruptedSnapshot(msg)) = result {
+            assert!(
+                msg.contains("Too many header lines"),
+                "Error should mention too many headers"
+            );
+        }
+
+        fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn test_security_empty_snapshot_name() {
+        let dir = temp_dir();
+        let store = SnapshotStore::new(dir.clone());
+        let config = SnapshotConfig::default();
+
+        assert!(store.create("", b"content", &config).is_err());
+        assert!(store.read("").is_err());
+        assert!(store.delete("").is_err());
+
+        fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn test_security_whitespace_only_name() {
+        let dir = temp_dir();
+        let store = SnapshotStore::new(dir.clone());
+        let config = SnapshotConfig::default();
+
+        let whitespace_names = ["   ", "\t", "\n", " \t\n ", "\r\n"];
+
+        for name in &whitespace_names {
+            let result = store.create(name, b"content", &config);
+            assert!(
+                result.is_err(),
+                "Whitespace-only name should be rejected: {:?}",
+                name
+            );
+        }
+
+        fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn test_security_binary_content_preserved() {
+        let dir = temp_dir();
+        let store = SnapshotStore::new(dir.clone());
+        let config = SnapshotConfig::default();
+
+        // Binary content with null bytes, control chars, etc.
+        let binary_content: Vec<u8> = (0..=255).collect();
+        store.create("binary", &binary_content, &config).unwrap();
+
+        let snapshot = store.read("binary").unwrap();
+        assert_eq!(snapshot.content, binary_content);
+
+        fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn test_security_unicode_name_validation() {
+        let dir = temp_dir();
+        let store = SnapshotStore::new(dir.clone());
+        let config = SnapshotConfig::default();
+
+        // Unicode that looks like ASCII but isn't
+        let tricky_names = [
+            "test\u{200B}name", // Zero-width space
+            "test\u{00AD}name", // Soft hyphen
+            "test\u{FEFF}name", // BOM
+            "tеst",             // Cyrillic 'е' instead of Latin 'e'
+        ];
+
+        for name in &tricky_names {
+            let result = store.create(name, b"content", &config);
+            assert!(
+                result.is_err(),
+                "Tricky unicode should be rejected: {:?}",
+                name
+            );
+        }
+
+        fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn test_security_very_long_name() {
+        let dir = temp_dir();
+        let store = SnapshotStore::new(dir.clone());
+        let config = SnapshotConfig::default();
+
+        // Very long but valid name (only alphanumeric)
+        let long_name = "a".repeat(1000);
+        let result = store.create(&long_name, b"content", &config);
+        // Should either work or fail gracefully (filesystem limits)
+        // The important thing is it doesn't crash or cause security issues
+        if result.is_ok() {
+            let _ = store.delete(&long_name);
+        }
+
+        fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn test_security_concurrent_read_write() {
+        use std::thread;
+
+        let dir = temp_dir();
+        let store = SnapshotStore::new(dir.clone());
+        let config = SnapshotConfig::default();
+
+        // Create initial snapshot
+        store.create("concurrent", b"initial", &config).unwrap();
+
+        // Spawn multiple threads to read/write
+        let handles: Vec<_> = (0..10)
+            .map(|i| {
+                let d = dir.clone();
+                thread::spawn(move || {
+                    let s = SnapshotStore::new(d);
+                    let c = SnapshotConfig::default();
+                    for j in 0..10 {
+                        let content = format!("content-{}-{}", i, j);
+                        let _ = s.update("concurrent", content.as_bytes(), &c);
+                        let _ = s.read("concurrent");
+                    }
+                })
+            })
+            .collect();
+
+        for handle in handles {
+            handle.join().unwrap();
+        }
+
+        // Verify snapshot is still readable
+        let result = store.read("concurrent");
+        assert!(result.is_ok(), "Snapshot should still be readable after concurrent access");
+
+        fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn test_security_hash_consistency() {
+        let dir = temp_dir();
+        let store = SnapshotStore::new(dir.clone());
+        let config = SnapshotConfig::default();
+
+        let content = b"deterministic content for hash test";
+
+        // Create and read multiple times
+        store.create("hash-test", content, &config).unwrap();
+        let snap1 = store.read("hash-test").unwrap();
+
+        store.update("hash-test", content, &config).unwrap();
+        let snap2 = store.read("hash-test").unwrap();
+
+        // Hashes should be identical for same content
+        assert_eq!(
+            snap1.metadata.content_hash, snap2.metadata.content_hash,
+            "Hash should be deterministic"
+        );
+
+        fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn test_security_error_messages_no_sensitive_info() {
+        let dir = temp_dir();
+        let store = SnapshotStore::new(dir.clone());
+
+        // Try to read non-existent snapshot
+        let result = store.read("does-not-exist");
+        assert!(result.is_err());
+
+        // Error message should not leak internal paths
+        let err_msg = format!("{}", result.unwrap_err());
+        assert!(
+            !err_msg.contains(&dir.to_string_lossy().to_string()),
+            "Error should not contain internal path"
+        );
 
         fs::remove_dir_all(dir).unwrap();
     }
