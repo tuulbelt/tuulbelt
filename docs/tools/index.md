@@ -2,7 +2,7 @@
 
 Tuulbelt provides a curated collection of focused, zero-dependency tools for modern software development.
 
-## Completed Tools (8/33)
+## Completed Tools (9/33)
 
 ### Test Flakiness Detector
 
@@ -161,6 +161,27 @@ Snapshot testing utility for regression detection with integrated diff output. C
 - Zero runtime dependencies (uses odiff as path dependency)
 
 [View Documentation →](/tools/snapshot-comparison/)
+
+---
+
+### File-Based Semaphore (TypeScript)
+
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
+**Language:** TypeScript
+**Tests:** 160 tests
+
+Cross-platform file-based semaphore for process synchronization in Node.js. Compatible with Rust `sema` tool.
+
+**Features:**
+- Atomic lock operations (temp file + rename)
+- Stale lock detection with configurable timeout
+- Symlink resolution and path security
+- Cryptographic randomness for temp files
+- CLI and library API
+- Zero runtime dependencies
+- Compatible with Rust `sema` lock format
+
+[View Documentation →](/tools/file-based-semaphore-ts/)
 
 ---
 

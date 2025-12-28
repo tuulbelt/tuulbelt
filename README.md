@@ -50,7 +50,8 @@ Each tool in Tuulbelt:
 
 ### Utilities & Infrastructure
 - **[Universal Log Normalizer](https://github.com/tuulbelt/log-normalizer)** — Structured log standardization (TBD)
-- **[File-Based Semaphore](file-based-semaphore/)** — Cross-platform process locking 🟢 v0.1.0 | [📖 Docs](file-based-semaphore/) | [🚀 Examples](file-based-semaphore/examples/)
+- **[File-Based Semaphore](file-based-semaphore/)** — Cross-platform process locking (Rust) 🟢 v0.1.0 | [📖 Docs](file-based-semaphore/) | [🚀 Examples](file-based-semaphore/examples/)
+- **[File-Based Semaphore (TS)](file-based-semaphore-ts/)** — Cross-platform process locking (TypeScript) 🟢 v0.1.0 | [📖 Docs](file-based-semaphore-ts/) | [🚀 Examples](file-based-semaphore-ts/examples/)
 - **[Manifest-First Sync Tool](https://github.com/tuulbelt/manifest-sync)** — Directory sync via manifest diffs (TBD)
 - **[Universal Health-Check Probe](https://github.com/tuulbelt/health-check-probe)** — Multi-check abstraction (TBD)
 - **[Secret Injector](https://github.com/tuulbelt/secret-injector)** — Encrypted secret injection (TBD)
@@ -168,15 +169,15 @@ This creates a **bidirectional validation network** where tools prove their reli
 
 ## Status
 
-🟢 = Implemented (8/33)
+🟢 = Implemented (9/33)
 🟡 = In progress (0/33)
-🔴 = TBD (25/33)
+🔴 = TBD (24/33)
 
-**Recently Completed:** Snapshot Comparison v0.1.0 (2025-12-27)
+**Recently Completed:** File-Based Semaphore (TypeScript) v0.1.0 (2025-12-28)
 
 **Next Up:** Test Port Conflict Resolver 🎯
 
-**Progress:** 8 of 33 tools implemented (24%) | Phase 1 Quick Tools: 5/5 (100% ✅) | Phase 2: 3/28
+**Progress:** 9 of 33 tools implemented (27%) | Phase 1 Quick Tools: 5/5 (100% ✅) | Phase 2: 4/28
 
 ## License
 
