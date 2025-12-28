@@ -154,7 +154,7 @@ Merge ENV, config files, and CLI arguments with clear precedence rules.
 
 <div class="tool-card">
 
-#### [Snapshot Comparison](/tools/snapshot-comparison/) <span class="library-badge"><img src="/icons/package.svg" class="badge-icon" alt=""> Uses odiff</span>
+#### [Snapshot Comparison](/tools/snapshot-comparison/) <span class="library-badge"><img src="/icons/package.svg" class="badge-icon" alt=""><span>Uses odiff</span></span>
 
 Snapshot testing with integrated semantic diffs for regression detection.
 
