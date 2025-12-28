@@ -171,6 +171,15 @@ jobs:
           name: built-tools
           path: .
 
+      # Fix Rust binary permissions (artifacts don't preserve execute bits)
+      - name: Fix Rust binary permissions
+        run: |
+          for dir in file-based-semaphore output-diffing-utility snapshot-comparison; do
+            if [ -d "$dir/target/release" ]; then
+              chmod +x "$dir/target/release/"* 2>/dev/null || true
+            fi
+          done
+
       # Rebuild and link CLIs (artifacts don't preserve symlinks)
       - name: Setup CLI tools
         run: |

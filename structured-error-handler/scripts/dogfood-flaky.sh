@@ -40,7 +40,7 @@ echo "🚀 Starting flakiness detection..."
 echo ""
 
 cd "$DETECTOR_DIR"
-npx serr \
+npx flaky \
     --test "cd '$TOOL_DIR' && npm test 2>&1" \
     --runs "$RUNS" \
     --verbose
