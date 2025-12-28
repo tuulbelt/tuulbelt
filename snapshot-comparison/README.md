@@ -236,12 +236,13 @@ cargo test -- --nocapture  # Show output
 This tool uses other Tuulbelt tools:
 
 - **output-diffing-utility** - Provides semantic diff rendering (library dependency)
+- **file-based-semaphore** - Validates concurrent snapshot safety (CLI composition)
 
-Validate test determinism:
+Validate test determinism and concurrency:
 
 ```bash
-./scripts/dogfood-flaky.sh    # Validate tests are deterministic
-./scripts/dogfood-diff.sh     # Verify consistent output
+./scripts/dogfood-flaky.sh    # Validate tests are deterministic (42 tests × 10 runs)
+./scripts/dogfood-sema.sh     # Prove concurrent snapshot safety with sema
 ```
 
 ## Error Handling

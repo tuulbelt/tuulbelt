@@ -153,7 +153,8 @@ export default defineConfig({
             { text: 'CLI Usage', link: '/tools/snapshot-comparison/cli-usage' },
             { text: 'Library Usage', link: '/tools/snapshot-comparison/library-usage' },
             { text: 'Examples', link: '/tools/snapshot-comparison/examples' },
-            { text: 'API Reference', link: '/tools/snapshot-comparison/api-reference' }
+            { text: 'API Reference', link: '/tools/snapshot-comparison/api-reference' },
+            { text: 'Snapshot Format', link: '/tools/snapshot-comparison/snapshot-format' }
           ]
         }
       ]
