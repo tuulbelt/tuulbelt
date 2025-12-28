@@ -98,7 +98,7 @@ echo "🔧 Initializing progress tracker..."
 PROGRESS_ID="diff-demo-$$"
 
 cd "$PROGRESS_DIR"
-npx flaky init \
+npx prog init \
     --total 100 \
     --id "$PROGRESS_ID" \
     --message "Comparing JSON files" > /dev/null
@@ -111,28 +111,28 @@ echo "🔄 Running diff with progress updates..."
 echo ""
 
 # Update: Starting
-npx flaky set \
+npx prog set \
     --current 0 \
     --total 100 \
     --id "$PROGRESS_ID" \
     --message "Reading old.json" > /dev/null
 
 # Update: Reading files
-npx flaky set \
+npx prog set \
     --current 25 \
     --total 100 \
     --id "$PROGRESS_ID" \
     --message "Reading new.json" > /dev/null
 
 # Update: Parsing
-npx flaky set \
+npx prog set \
     --current 50 \
     --total 100 \
     --id "$PROGRESS_ID" \
     --message "Parsing JSON structures" > /dev/null
 
 # Update: Computing diff
-npx flaky set \
+npx prog set \
     --current 75 \
     --total 100 \
     --id "$PROGRESS_ID" \
@@ -148,7 +148,7 @@ echo ""
 
 # Update: Complete
 cd "$PROGRESS_DIR"
-npx flaky finish \
+npx prog finish \
     --id "$PROGRESS_ID" \
     --message "Diff complete" > /dev/null
 
@@ -157,7 +157,7 @@ echo ""
 
 # Show final progress state
 echo "📊 Final Progress State:"
-npx flaky get --id "$PROGRESS_ID"
+npx prog get --id "$PROGRESS_ID"
 echo ""
 
 # Cleanup

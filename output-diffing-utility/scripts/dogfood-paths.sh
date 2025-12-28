@@ -71,7 +71,7 @@ echo ""
 normalize_path() {
     local input_path="$1"
     cd "$NORMALIZER_DIR"
-    local result=$(npx flaky --format unix "$input_path" 2>/dev/null)
+    local result=$(npx normpath --format unix "$input_path" 2>/dev/null)
     local normalized=$(echo "$result" | grep -oE '"path":\s*"[^"]+' | cut -d'"' -f4)
     echo "$normalized"
 }
