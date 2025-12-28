@@ -16,7 +16,19 @@ This document outlines how `semats` leverages other Tuulbelt tools to demonstrat
 # ✅ NO FLAKINESS DETECTED (160 tests × 10 runs = 1,600 executions)
 ```
 
-### 2. Cross-Language Validation with Rust sema
+### 2. Output Diffing Utility - Prove deterministic outputs
+
+**Why:** Test outputs must be identical between runs. Any variation indicates non-determinism that could hide bugs. Uses Rust `odiff` for semantic diffing.
+
+**Script:** `scripts/dogfood-diff.sh`
+
+```bash
+./scripts/dogfood-diff.sh
+# Runs tests twice, compares normalized output
+# ✅ IDENTICAL (verified by odiff)
+```
+
+### 3. Cross-Language Validation with Rust sema
 
 **Why:** `semats` is designed to be compatible with the Rust `sema` tool. Both use the same lock file format. This composition validates that locks created by TypeScript can be read by Rust and vice versa.
 

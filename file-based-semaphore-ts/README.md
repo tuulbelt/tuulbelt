@@ -264,17 +264,23 @@ See the tool in action:
 
 This tool validates itself using other Tuulbelt tools:
 
-**[Test Flakiness Detector](../test-flakiness-detector/)** - Validates that all 160 tests are deterministic:
+**[Test Flakiness Detector](../test-flakiness-detector/)** - Validates test determinism:
 ```bash
 ./scripts/dogfood-flaky.sh 10
 # ✅ NO FLAKINESS DETECTED (160 tests × 10 runs = 1,600 executions)
 ```
 
-**Cross-language validation with Rust sema:**
+**[Output Diffing Utility](../output-diffing-utility/)** - Proves identical outputs:
+```bash
+./scripts/dogfood-diff.sh
+# ✅ IDENTICAL (verified by odiff)
+```
+
+**Cross-language validation with Rust [sema](../file-based-semaphore/):**
 ```bash
 ./scripts/dogfood-sema.sh
-# Creates lock with semats, verifies with Rust sema
-# Creates lock with Rust sema, verifies with semats
+# TypeScript creates lock → Rust reads it ✅
+# Rust creates lock → TypeScript reads it ✅
 ```
 
 See [DOGFOODING_STRATEGY.md](DOGFOODING_STRATEGY.md) for details.
