@@ -229,11 +229,27 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
   - VitePress validates image imports at build time - missing images FAIL the build
   - Run: `mkdir -p docs/public/{tool-name} && echo "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" | base64 -d > docs/public/{tool-name}/demo.gif`
   - The create-demos workflow will replace this with the real demo after merge
-- [ ] **Demo section has no broken links**: Until workflow generates demos:
-  - Do NOT use `[text](#)` links - `#` reloads the page in VitePress
-  - Remove demo.gif reference and asciinema link from Demo section
-  - Add note: "Demo recording will be generated automatically after merge via GitHub Actions"
-  - Keep StackBlitz button (works without demo recording)
+- [ ] **Demo section uses correct structure**: Use this template in VitePress index.md:
+  ```markdown
+  ## Demo
+
+  See the tool in action:
+
+  ![{Tool Name} Demo](/{tool-name}/demo.gif)
+
+  **[▶ View interactive recording on asciinema.org](#)**
+
+  <div style="margin: 20px 0;">
+    <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
+      <strong>Try it online:</strong>
+    </span>
+    <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/{tool-name}" style="display: inline-block; vertical-align: middle;">
+      <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
+    </a>
+  </div>
+  ```
+  - The `(#)` placeholder link will be auto-updated by create-demos workflow
+  - The placeholder demo.gif will be replaced with the real recording
 - [ ] **Docs build succeeds**: Run `npm run docs:build` from root - must pass with no dead links
 - [ ] **Tools index updated**: `docs/tools/index.md` shows correct count (e.g., "3/33") and includes new tool card
 - [ ] **Home page updated**: `docs/index.md` updated with:
@@ -274,14 +290,14 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
 ```
 1. [x] Implement tool functionality
 2. [x] Write tests (80%+ coverage)
-3. [x] Create tool README (with placeholder demo section - no broken links!)
+3. [x] Create tool README with demo section structure
 4. [ ] Create demo recording script (scripts/record-{tool-name}-demo.sh)
 5. [ ] Add path filter to create-demos.yml workflow
 6. [ ] Add to VitePress config (docs/.vitepress/config.ts)
 7. [ ] Create docs/tools/{tool-name}/ directory
 8. [ ] Copy docs pages and fix links
 9. [ ] Create placeholder demo.gif in docs/public/{tool-name}/
-10. [ ] Verify Demo sections have no broken # links (use "Coming after merge" note)
+10. [ ] Add Demo section with correct structure (gif reference + (#) placeholder link)
 11. [ ] Update docs/tools/index.md (tool count, add tool card)
 12. [ ] Update docs/index.md (home page: tool count, More Tools, Progress)
 13. [ ] Update root README.md
