@@ -44,12 +44,14 @@ echo "🎯 Running flakiness detection..."
 echo ""
 
 cd "$DETECTOR_DIR"
+set +e  # Temporarily disable exit on error to capture exit code
 npx flaky \
     --test "cd '$TOOL_DIR' && npm test 2>&1" \
     --runs "$RUNS" \
     --verbose
 
 EXIT_CODE=$?
+set -e  # Re-enable exit on error
 
 echo ""
 if [ $EXIT_CODE -eq 0 ]; then
@@ -61,6 +63,7 @@ else
     echo "❌ FLAKINESS DETECTED!"
     echo ""
     echo "   ⚠️  Fix flaky tests before using in production"
+    exit 1
 fi
 
 echo ""

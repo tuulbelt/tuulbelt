@@ -245,7 +245,7 @@ else
 
     # Run diff
     cd "$TOOL_DIR"
-    DIFF_RESULT=$(cargo run --release --quiet -- --format json "$NORM1" "$NORM2")
+    DIFF_RESULT=$(cargo run --release --quiet --bin odiff -- --format json "$NORM1" "$NORM2")
 
     # Save to cache
     echo "$DIFF_RESULT" > "$CACHE_FILE"

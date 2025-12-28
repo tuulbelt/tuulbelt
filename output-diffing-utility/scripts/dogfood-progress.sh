@@ -142,7 +142,7 @@ npx prog set \
 cd "$TOOL_DIR"
 echo "📊 Diff Results:"
 echo "---"
-cargo run --release --quiet -- "$TEMP_DIR/old.json" "$TEMP_DIR/new.json"
+cargo run --release --quiet --bin odiff -- "$TEMP_DIR/old.json" "$TEMP_DIR/new.json"
 echo "---"
 echo ""
 
