@@ -261,6 +261,7 @@ The tool prevents path traversal attacks:
 - Snapshots are stored in a single directory
 
 
+
 ## Demo
 
 ![Demo](docs/demo.gif)
