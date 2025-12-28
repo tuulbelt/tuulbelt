@@ -147,7 +147,7 @@ Merge configuration from ENV variables, config files, and CLI arguments with cle
 
 **Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
 **Language:** Rust
-**Tests:** 42 tests
+**Tests:** 96 tests
 
 Snapshot testing utility for regression detection with integrated diff output. Compare current output against stored "golden" snapshots.
 

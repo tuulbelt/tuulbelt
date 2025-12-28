@@ -206,13 +206,13 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
 - [ ] **README section added**: "Library Composition" section explaining the integration
 - [ ] **VitePress index.md callout**: Add tip box highlighting library composition
   ```markdown
-  ::: tip 📦 Uses [OtherTool] Library
+  ::: tip <img src="/icons/package.svg" class="inline-icon" alt=""> Uses [OtherTool] Library
   This tool uses [other-tool](/tools/other-tool/) as a library dependency...
   :::
   ```
 - [ ] **VitePress library-usage.md updated**: Explain how the dependency is used
 - [ ] **Root README.md Dogfooding section**: Add example showing the integration
-- [ ] **docs/index.md card**: Add badge or note (e.g., "📦 Uses odiff")
+- [ ] **docs/index.md card**: Add badge with icon (use `.library-badge` class with package.svg icon)
 - [ ] **DOGFOODING_STRATEGY.md**: Document the library integration value
 
 ### GitHub Pages Documentation
