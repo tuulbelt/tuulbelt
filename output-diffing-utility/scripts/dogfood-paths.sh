@@ -42,7 +42,7 @@ if [ ! -d "$NORMALIZER_DIR" ]; then
     echo '{"version": 2}' > "$TEMP_DIR/file2.json"
 
     cd "$TOOL_DIR"
-    cargo run --release --quiet "$TEMP_DIR/file1.json" "$TEMP_DIR/file2.json"
+    cargo run --release --quiet --bin odiff -- "$TEMP_DIR/file1.json" "$TEMP_DIR/file2.json"
 
     rm -rf "$TEMP_DIR"
     exit 0
@@ -111,7 +111,7 @@ echo ""
 cd "$TOOL_DIR"
 echo "📊 Diff Results:"
 echo "---"
-cargo run --release --quiet -- "$NORM_PATH1" "$TEMP_DIR/config-new.json"
+cargo run --release --quiet --bin odiff -- "$NORM_PATH1" "$TEMP_DIR/config-new.json"
 echo "---"
 echo ""
 

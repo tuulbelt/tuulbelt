@@ -41,7 +41,7 @@ if [ ! -d "$PROGRESS_DIR" ]; then
     echo '{"name": "Bob", "age": 25, "city": "San Francisco"}' > "$TEMP_DIR/v2.json"
 
     cd "$TOOL_DIR"
-    cargo run --release --quiet "$TEMP_DIR/v1.json" "$TEMP_DIR/v2.json"
+    cargo run --release --quiet --bin odiff -- "$TEMP_DIR/v1.json" "$TEMP_DIR/v2.json"
 
     rm -rf "$TEMP_DIR"
     exit 0
