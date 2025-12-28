@@ -21,6 +21,7 @@ on:
       - 'structured-error-handler/src/**'
       - 'config-file-merger/src/**'
       - 'snapshot-comparison/src/**'
+      - 'file-based-semaphore-ts/src/**'
 
   workflow_dispatch:  # Manual trigger
     inputs:

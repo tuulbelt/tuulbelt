@@ -1,186 +1,226 @@
+#!/usr/bin/env -S npx tsx
 /**
- * Advanced usage patterns for tool-name
+ * Advanced usage patterns for File-Based Semaphore (TypeScript)
  *
  * This example demonstrates:
- * - Performance optimization patterns
- * - Resource limit handling
- * - Batch processing with pre-allocation
- * - Streaming patterns for large data
+ * - Stale lock detection and recovery
+ * - Cross-process coordination patterns
+ * - Concurrent worker protection
+ * - Custom configuration options
  * - Error handling strategies
  *
  * Run this example:
  *   npx tsx examples/advanced.ts
  */
 
-import { process, type Config, type Result } from '../src/index.js';
+import {
+  Semaphore,
+  type SemaphoreConfig,
+  type SemaphoreResult,
+  type LockInfo,
+} from '../src/index.js';
+import { mkdtempSync, rmSync, writeFileSync, readFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { spawn } from 'node:child_process';
 
-/**
- * Example: Pre-allocate arrays when size is known
- *
- * Performance pattern:
- * - new Array(size) pre-allocates memory
- * - Avoids dynamic resizing and copying
- * - Improves performance for known-size collections
- */
-function batchProcessOptimized(inputs: string[], config: Config): Result[] {
-  // Pre-allocate: we know we'll have exactly inputs.length results
-  const results = new Array<Result>(inputs.length);
+// Create temporary directory for examples
+const tmpDir = mkdtempSync(join(tmpdir(), 'semats-advanced-'));
 
-  for (let i = 0; i < inputs.length; i++) {
-    results[i] = process(inputs[i], config);
-  }
+console.log('File-Based Semaphore (TypeScript) - Advanced Patterns\n');
 
-  return results;
+// Example 1: Custom configuration with short stale timeout
+console.log('Example 1: Custom stale timeout configuration');
+console.log('=' .repeat(50));
+
+const config: SemaphoreConfig = {
+  staleTimeout: 5000,      // 5 seconds (very short for demo)
+  retryInterval: 100,      // 100ms between retries
+  maxTagLength: 1000,      // Maximum tag length
+};
+
+const sem1 = new Semaphore(join(tmpDir, 'custom.lock'), config);
+sem1.tryAcquire('short-stale-timeout');
+const status1 = sem1.status();
+console.log(`Stale timeout: ${config.staleTimeout}ms`);
+console.log(`Lock is stale: ${status1.isStale}`);
+sem1.release();
+
+console.log();
+
+// Example 2: Stale lock detection and cleanup
+console.log('Example 2: Stale lock detection');
+console.log('=' .repeat(50));
+
+const staleLockPath = join(tmpDir, 'stale.lock');
+
+// Simulate a stale lock by writing an old timestamp
+const oldTimestamp = Math.floor(Date.now() / 1000) - 7200; // 2 hours ago
+writeFileSync(staleLockPath, `pid=99999\ntimestamp=${oldTimestamp}\ntag=crashed-process\n`);
+
+const sem2 = new Semaphore(staleLockPath, { staleTimeout: 3600000 }); // 1 hour
+const status2 = sem2.status();
+console.log(`Lock exists: ${status2.locked}`);
+console.log(`Is stale: ${status2.isStale}`);
+console.log(`Original holder: PID ${status2.info?.pid}`);
+
+// Clean the stale lock
+if (sem2.cleanStale()) {
+  console.log('✅ Stale lock cleaned');
 }
 
-/**
- * Example: Resource limit pattern
- *
- * Pattern used in tools that handle large inputs:
- * - Define constants for resource limits
- * - Check limits before processing
- * - Provide clear error messages
- */
-const MAX_INPUT_LENGTH = 1_000_000; // 1 million characters
-
-function processWithLimit(input: string, config: Config): Result {
-  // Check resource limit before processing
-  if (input.length > MAX_INPUT_LENGTH) {
-    return {
-      success: false,
-      data: '',
-      error: `Input length ${input.length} exceeds maximum ${MAX_INPUT_LENGTH} characters`,
-    };
-  }
-
-  return process(input, config);
+// Now we can acquire
+const result2 = sem2.tryAcquire('new-process');
+if (result2.ok) {
+  console.log(`✅ Acquired after cleaning: PID ${result2.value.pid}`);
+  sem2.release();
 }
 
-/**
- * Example: Streaming pattern for large inputs
- *
- * Use when input is too large to process all at once
- * Generator functions enable lazy evaluation
- */
-function* processChunks(
-  input: string,
-  chunkSize: number,
-  config: Config,
-): Generator<Result, void, undefined> {
-  for (let i = 0; i < input.length; i += chunkSize) {
-    const chunk = input.slice(i, i + chunkSize);
-    yield process(chunk, config);
+console.log();
+
+// Example 3: Concurrent worker protection pattern
+console.log('Example 3: Concurrent worker protection');
+console.log('=' .repeat(50));
+
+async function protectedWorker(
+  workerId: number,
+  sem: Semaphore,
+  sharedResourcePath: string,
+): Promise<void> {
+  console.log(`Worker ${workerId}: Requesting lock...`);
+
+  const result = await sem.acquire({ timeout: 10000, tag: `worker-${workerId}` });
+  if (!result.ok) {
+    console.log(`Worker ${workerId}: Failed to acquire - ${result.error.message}`);
+    return;
+  }
+
+  try {
+    console.log(`Worker ${workerId}: Lock acquired, working...`);
+
+    // Simulate reading, modifying, writing shared resource
+    const current = parseInt(readFileSync(sharedResourcePath, 'utf-8') || '0', 10);
+    await new Promise((r) => setTimeout(r, 50)); // Simulate work
+    writeFileSync(sharedResourcePath, String(current + 1));
+
+    console.log(`Worker ${workerId}: Incremented counter to ${current + 1}`);
+  } finally {
+    sem.release();
+    console.log(`Worker ${workerId}: Lock released`);
   }
 }
 
-/**
- * Example: Async batch processing with concurrency limit
- *
- * Useful for I/O-bound operations
- */
-async function processBatchAsync(
-  inputs: string[],
-  config: Config,
-  concurrency: number = 5,
-): Promise<Result[]> {
-  const results = new Array<Result>(inputs.length);
-  const executing: Promise<void>[] = [];
+const workerLockPath = join(tmpDir, 'worker.lock');
+const counterPath = join(tmpDir, 'counter.txt');
+writeFileSync(counterPath, '0');
 
-  for (let i = 0; i < inputs.length; i++) {
-    const promise = Promise.resolve().then(() => {
-      results[i] = process(inputs[i], config);
-    });
+const workerSem = new Semaphore(workerLockPath);
 
-    executing.push(promise);
+// Run 3 workers concurrently
+await Promise.all([
+  protectedWorker(1, workerSem, counterPath),
+  protectedWorker(2, workerSem, counterPath),
+  protectedWorker(3, workerSem, counterPath),
+]);
 
-    if (executing.length >= concurrency) {
-      await Promise.race(executing);
-      executing.splice(
-        executing.findIndex((p) => p === promise),
-        1,
-      );
-    }
+const finalCount = readFileSync(counterPath, 'utf-8');
+console.log(`Final counter value: ${finalCount} (expected: 3)`);
+
+console.log();
+
+// Example 4: Error handling with result pattern
+console.log('Example 4: Comprehensive error handling');
+console.log('=' .repeat(50));
+
+function handleResult<T>(result: SemaphoreResult<T>, operation: string): boolean {
+  if (result.ok) {
+    console.log(`✅ ${operation}: Success`);
+    return true;
   }
 
-  await Promise.all(executing);
-  return results;
-}
-
-/**
- * Example: Pre-sizing Sets and Maps
- *
- * Performance pattern for collections with known size
- */
-function deduplicateWithPresize(inputs: string[]): string[] {
-  // Note: JavaScript Set doesn't have capacity constructor
-  // But we can pre-allocate the result array
-  const unique = new Set(inputs);
-  return Array.from(unique);
-}
-
-// Main execution
-async function main() {
-  console.log('Tool Name - Advanced Usage Patterns\n');
-
-  const config: Config = { verbose: false };
-
-  // Example 1: Batch processing with pre-allocation
-  console.log('Example 1: Batch processing (optimized)');
-  const inputs = ['hello', 'world', 'typescript', 'performance'];
-  const results = batchProcessOptimized(inputs, config);
-  console.log(`  Processed ${results.length} inputs:`);
-  results.forEach((r, i) => {
-    if (r.success) {
-      console.log(`    [${i}] ${r.data}`);
-    }
-  });
-  console.log();
-
-  // Example 2: Resource limit handling
-  console.log('Example 2: Resource limit');
-  const largeInput = 'x'.repeat(2_000_000); // Exceeds MAX_INPUT_LENGTH
-  const limitResult = processWithLimit(largeInput, config);
-  if (!limitResult.success) {
-    console.log(`  Error (expected): ${limitResult.error}`);
+  switch (result.error.type) {
+    case 'ALREADY_LOCKED':
+      console.log(`⏳ ${operation}: Already locked by PID ${result.error.holderPid}`);
+      if (result.error.holderTag) {
+        console.log(`   Tag: ${result.error.holderTag}`);
+      }
+      break;
+    case 'NOT_LOCKED':
+      console.log(`⚠️ ${operation}: Lock doesn't exist`);
+      break;
+    case 'TIMEOUT':
+      console.log(`⏱️ ${operation}: Timed out waiting for lock`);
+      break;
+    case 'PERMISSION_DENIED':
+      console.log(`🚫 ${operation}: Permission denied`);
+      break;
+    case 'PATH_TRAVERSAL':
+      console.log(`🔒 ${operation}: Security violation - path traversal`);
+      break;
+    case 'IO_ERROR':
+      console.log(`💥 ${operation}: I/O error - ${result.error.message}`);
+      break;
+    default:
+      console.log(`❌ ${operation}: ${result.error.message}`);
   }
-  console.log();
-
-  // Example 3: Streaming with generators
-  console.log('Example 3: Streaming with generators');
-  const largeText = 'hello world '.repeat(100); // 1200 chars
-  let chunkCount = 0;
-  for (const result of processChunks(largeText, 100, config)) {
-    if (result.success) chunkCount++;
-  }
-  console.log(`  Processed ${chunkCount} chunks`);
-  console.log();
-
-  // Example 4: Async batch with concurrency limit
-  console.log('Example 4: Async batch processing (concurrency: 3)');
-  const asyncInputs = ['one', 'two', 'three', 'four', 'five'];
-  const asyncResults = await processBatchAsync(asyncInputs, config, 3);
-  console.log(`  Processed ${asyncResults.filter((r) => r.success).length} successfully`);
-  console.log();
-
-  // Example 5: Deduplication
-  console.log('Example 5: Deduplication');
-  const duplicates = ['hello', 'world', 'hello', 'typescript', 'world'];
-  const unique = deduplicateWithPresize(duplicates);
-  console.log(`  Input: ${duplicates.length} items, Unique: ${unique.length} items`);
-  console.log();
-
-  console.log('Performance Tips:');
-  console.log('  - Pre-allocate arrays with new Array(size) when size is known');
-  console.log('  - Check resource limits before processing large inputs');
-  console.log('  - Use generators for lazy/streaming evaluation');
-  console.log('  - Use async concurrency limits for I/O-bound operations');
-  console.log('  - Profile with: node --prof your-script.js && node --prof-process isolate-*.log');
-  console.log();
-
-  console.log('Done!');
+  return false;
 }
 
-main().catch((err) => {
-  console.error('Error:', err);
-  process.exit(1);
+const sem4 = new Semaphore(join(tmpDir, 'error-demo.lock'));
+
+handleResult(sem4.tryAcquire('test'), 'First acquire');
+handleResult(sem4.tryAcquire('test2'), 'Second acquire (should fail)');
+handleResult(sem4.release(), 'Release');
+handleResult(sem4.release(), 'Double release (should fail)');
+
+console.log();
+
+// Example 5: Cross-language compatibility check
+console.log('Example 5: Cross-language lock format');
+console.log('=' .repeat(50));
+
+const crossLangPath = join(tmpDir, 'cross-lang.lock');
+const sem5 = new Semaphore(crossLangPath);
+sem5.tryAcquire('typescript-process');
+
+// Read the raw lock file content
+const lockContent = readFileSync(crossLangPath, 'utf-8');
+console.log('Lock file content (compatible with Rust sema):');
+console.log('---');
+console.log(lockContent);
+console.log('---');
+console.log('This format can be read by: Rust sema, shell scripts, other languages');
+
+sem5.release();
+
+console.log();
+
+// Example 6: Disable stale timeout (infinite lock)
+console.log('Example 6: Infinite lock (no stale timeout)');
+console.log('=' .repeat(50));
+
+const infiniteSem = new Semaphore(join(tmpDir, 'infinite.lock'), {
+  staleTimeout: null, // Disable stale detection
 });
+
+infiniteSem.tryAcquire('permanent-lock');
+const infiniteStatus = infiniteSem.status();
+console.log(`Stale detection disabled: ${!infiniteStatus.isStale}`);
+console.log('Lock will never be considered stale (manual cleanup required)');
+infiniteSem.release();
+
+console.log();
+
+// Cleanup
+console.log('Cleanup');
+console.log('=' .repeat(50));
+rmSync(tmpDir, { recursive: true });
+console.log('Temporary directory removed');
+
+console.log('\nAdvanced Examples Complete!');
+console.log('\nKey Takeaways:');
+console.log('  - Use short stale timeouts for quick recovery');
+console.log('  - Always use try/finally or Result pattern for cleanup');
+console.log('  - The lock format is cross-language compatible');
+console.log('  - cleanStale() recovers from crashed processes');
+console.log('  - Disable stale timeout for permanent locks');

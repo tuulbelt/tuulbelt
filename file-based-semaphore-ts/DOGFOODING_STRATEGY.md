@@ -1,66 +1,60 @@
-# Dogfooding Strategy: [Tool Name]
+# Dogfooding Strategy: File-Based Semaphore (TypeScript)
 
-This document outlines how this tool leverages other Tuulbelt tools to demonstrate composability.
+This document outlines how `semats` leverages other Tuulbelt tools to demonstrate composability.
 
 ## High-Value Compositions
 
-### 1. Test Flakiness Detector - Validate test reliability
+### 1. Test Flakiness Detector - Validate concurrent test reliability
 
-**Why:** [Explain why test reliability matters for this tool]
+**Why:** File-based semaphores are inherently about concurrency and timing. Flaky tests could hide race conditions that would cause issues in production. Running tests multiple times validates that our concurrent lock acquisition is truly deterministic.
 
 **Script:** `scripts/dogfood-flaky.sh`
 
 ```bash
-./scripts/dogfood-flaky.sh [runs]
-# Validates all tests are deterministic
+./scripts/dogfood-flaky.sh 10
+# Validates all 160 tests are deterministic across 10 runs
+# ✅ NO FLAKINESS DETECTED (160 tests × 10 runs = 1,600 executions)
 ```
 
-### 2. Output Diffing Utility - Prove deterministic outputs
+### 2. Cross-Language Validation with Rust sema
 
-**Why:** [Explain why output consistency matters]
+**Why:** `semats` is designed to be compatible with the Rust `sema` tool. Both use the same lock file format. This composition validates that locks created by TypeScript can be read by Rust and vice versa.
 
-**Script:** `scripts/dogfood-diff.sh`
-
-```bash
-./scripts/dogfood-diff.sh
-# Compares outputs between runs
-```
-
-### 3. [Other Relevant Tool] - [Purpose]
-
-**Why:** [Explain the value this composition provides]
-
-**Script:** `scripts/dogfood-[name].sh`
+**Script:** `scripts/dogfood-sema.sh`
 
 ```bash
-./scripts/dogfood-[name].sh
-# Description
+./scripts/dogfood-sema.sh
+# Creates lock with semats, verifies with Rust sema
+# Creates lock with Rust sema, verifies with semats
 ```
 
 ## Implementation Checklist
 
-- [ ] Identify high-value compositions (focus on REAL utility, not checkboxes)
-- [ ] Create composition scripts (`scripts/dogfood-*.sh`)
-- [ ] Update README with dogfooding section
-- [ ] Update GH Pages docs (if applicable)
-  - Use GitHub links: `[DOGFOODING_STRATEGY.md](https://github.com/tuulbelt/tuulbelt/blob/main/[tool-name]/DOGFOODING_STRATEGY.md)`
-  - Not relative paths: `See DOGFOODING_STRATEGY.md in the repository`
-- [ ] Test graceful fallback when tools not available
-- [ ] Document in this file
+- [x] Identify high-value compositions (focus on REAL utility)
+- [x] Create composition scripts (`scripts/dogfood-*.sh`)
+- [x] Update README with dogfooding section
+- [x] Update GH Pages docs
+- [x] Test graceful fallback when tools not available
+- [x] Document in this file
 
 ## Expected Outcomes
 
-1. **Proves Reliability:** Tests and outputs are deterministic
-2. **Demonstrates Composability:** Shows tools working together via CLI
-3. **Real Value:** Each composition solves an actual problem
+1. **Proves Reliability:** 160 concurrent-safety tests run deterministically
+2. **Proves Compatibility:** Lock files work across TypeScript and Rust
+3. **Demonstrates Composability:** Shows Tuulbelt tools validating each other
+
+## Cross-Language Lock Format
+
+Both `semats` (TypeScript) and `sema` (Rust) use this format:
+
+```
+pid=12345
+timestamp=1735420800
+tag=optional-description
+```
+
+This enables mixed-language deployments where Node.js and Rust services coordinate via shared lock files.
 
 ---
 
-**Guidelines:**
-- Only implement compositions that provide REAL value
-- Don't dogfood just for the sake of dogfooding
-- Focus on 2-4 high-impact compositions
-- Keep tools standalone (graceful fallback)
-- Prioritize: Test validation > Output consistency > Domain-specific needs
-
-**Status:** Template - customize for your tool
+**Status:** Complete
