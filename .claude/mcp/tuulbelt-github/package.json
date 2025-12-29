@@ -1,0 +1,17 @@
+{
+  "name": "tuulbelt-github-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for GitHub API operations in Tuulbelt meta repository",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": ["mcp", "github", "tuulbelt", "automation"],
+  "author": "Tuulbelt Contributors",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "octokit": "^4.0.2"
+  }
+}

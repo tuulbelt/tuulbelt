@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "tuulbelt-github": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["./.claude/mcp/tuulbelt-github/index.js"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}",
+        "GITHUB_ORG": "tuulbelt"
+      }
+    }
+  }
+}
