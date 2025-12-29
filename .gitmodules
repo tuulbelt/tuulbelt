@@ -1,0 +1,3 @@
+[submodule "tools/cli-progress-reporting"]
+	path = tools/cli-progress-reporting
+	url = https://github.com/tuulbelt/cli-progress-reporting.git
