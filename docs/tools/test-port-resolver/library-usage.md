@@ -249,17 +249,19 @@ if (result.ok) {
 }
 ```
 
-## Semaphore Integration
+## Library Composition
 
-When `file-based-semaphore-ts` is available (in monorepo context), `portres` uses it for atomic registry operations:
+`portres` uses [file-based-semaphore-ts](/tools/file-based-semaphore-ts/) (`semats`) as a library dependency for atomic registry operations. This follows [PRINCIPLES.md Exception 2](/guide/principles#zero-external-dependencies).
 
 ```typescript
-// Automatic detection - no code changes needed
+// Semaphore is used internally - no configuration needed
 const resolver = new PortResolver();
 
-// If semats is available, registry operations are atomic
-// If not available, falls back to basic file operations
+// All registry operations are atomic via semats
+const result = await resolver.get({ tag: 'my-server' });
 ```
+
+The semaphore ensures concurrent port allocations from multiple processes never corrupt the registry file.
 
 ## Error Handling Patterns
 

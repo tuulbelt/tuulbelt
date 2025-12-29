@@ -374,10 +374,10 @@ Common error scenarios:
 
 ## Thread Safety
 
-The PortResolver uses atomic file operations (temp file + rename) for thread safety. When `file-based-semaphore-ts` is available in the monorepo, it's used for additional locking guarantees.
+The PortResolver uses [file-based-semaphore-ts](/tools/file-based-semaphore-ts/) (`semats`) for atomic registry access. This ensures that concurrent port allocations from multiple processes never corrupt the registry file.
 
 ```typescript
-// Automatic - no configuration needed
+// Semaphore is used internally - no configuration needed
 const resolver = new PortResolver();
-// Uses semaphore if available, falls back to atomic file ops
+// All registry operations are protected by semats
 ```

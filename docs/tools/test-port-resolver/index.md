@@ -30,13 +30,17 @@ if (result.ok) {
 }
 ```
 
+::: tip <img src="/icons/link.svg" class="inline-icon" alt=""> Uses semats Library
+This tool uses [file-based-semaphore-ts](/tools/file-based-semaphore-ts/) as a library dependency for atomic registry access. See [PRINCIPLES.md Exception 2](/guide/principles#zero-external-dependencies) for details on Tuulbelt tool composition.
+:::
+
 ## Features
 
 - **Concurrent-safe** - File-based registry with atomic operations
 - **Port verification** - Confirms ports are actually available via TCP bind test
 - **Automatic cleanup** - Stale entries from crashed processes are detected
-- **Semaphore integration** - Uses file-based-semaphore-ts when available
-- **Zero dependencies** - Pure Node.js implementation
+- **Semaphore-protected** - Atomic registry access via [semats](/tools/file-based-semaphore-ts/)
+- **Zero external dependencies** - Node.js + Tuulbelt tools only
 
 ## Quick Start
 

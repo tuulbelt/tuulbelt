@@ -12,12 +12,12 @@
 
 Implemented concurrent test port allocation tool to avoid EADDRINUSE errors in parallel tests.
 
-1. ✅ **Core Implementation** (`src/index.ts` - ~990 lines)
+1. ✅ **Core Implementation** (`src/index.ts` - ~950 lines)
    - PortResolver class with get, getMultiple, release, releaseAll, list, clean, status, clear
    - File-based port registry with atomic operations (temp file + rename)
    - TCP bind test for actual port availability
    - Result pattern for all operations
-   - Optional semaphore integration with graceful fallback
+   - Required semats integration (library composition, PRINCIPLES.md Exception 2)
 
 2. ✅ **Security Hardening**
    - Path traversal prevention
@@ -50,7 +50,8 @@ Implemented concurrent test port allocation tool to avoid EADDRINUSE errors in p
 ## Commits This Session
 
 1. `a4e24c9` - feat(test-port-resolver): implement concurrent test port allocation (Tool #10)
-2. (pending) - docs: update home page and NEXT_TASKS.md for portres
+2. `b6daa79` - docs: update home page and NEXT_TASKS.md for portres
+3. (pending) - refactor(portres): make semats a required library dependency
 
 ---
 
