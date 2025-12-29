@@ -1296,13 +1296,39 @@ jobs:
 Current behavior: Creates tool as subdirectory in monorepo.
 New behavior: Creates GitHub repo + adds as submodule.
 
+> ⚠️ **CRITICAL: Claude Code Web Limitation**
+>
+> The `gh` CLI has known bugs in Claude Code Web that cause "Permission denied" errors.
+> Repository creation via `gh repo create` only works reliably in **Claude Code CLI**.
+>
+> **Workaround:** The scaffold command should detect environment and provide fallback.
+
 ```markdown
 ## New Scaffolding Process
 
 1. **Create GitHub Repository:**
+
+   **Option A: Via gh CLI (CLI version only)**
    ```bash
-   gh repo create tuulbelt/$TOOL_NAME --public --clone
+   # Check if gh is available and authenticated
+   if gh auth status &>/dev/null; then
+     gh repo create tuulbelt/$TOOL_NAME --public --clone
+   else
+     echo "⚠️  gh CLI not authenticated. Create repository manually:"
+     echo "   https://github.com/organizations/tuulbelt/repositories/new"
+     echo "   Repository name: $TOOL_NAME"
+     echo "   Visibility: Public"
+     echo ""
+     echo "Then clone it:"
+     echo "   git clone https://github.com/tuulbelt/$TOOL_NAME.git"
+     exit 1
+   fi
    ```
+
+   **Option B: Manual creation (required for Web version)**
+   - Go to https://github.com/organizations/tuulbelt/repositories/new
+   - Create public repository named `$TOOL_NAME`
+   - Clone locally: `git clone https://github.com/tuulbelt/$TOOL_NAME.git`
 
 2. **Initialize from Template:**
    ```bash
@@ -1323,6 +1349,40 @@ New behavior: Creates GitHub repo + adds as submodule.
 4. **Update VitePress Config:**
    - Add to sidebar in `docs/.vitepress/config.ts`
    - Add to tools index
+```
+
+**Environment Detection for Scaffold Command:**
+
+```bash
+#!/bin/bash
+# Detect if running in Claude Code Web vs CLI
+
+detect_environment() {
+  # Check for web-specific environment markers
+  if [ -n "$CLAUDE_CODE_WEB" ] || [ ! -t 0 ]; then
+    echo "web"
+  else
+    echo "cli"
+  fi
+}
+
+ENV=$(detect_environment)
+
+if [ "$ENV" = "web" ]; then
+  echo "⚠️  Running in Claude Code Web - manual repo creation required"
+  echo "   gh CLI may not work due to known permission issues"
+  echo ""
+  echo "Please create the repository manually at:"
+  echo "   https://github.com/organizations/tuulbelt/repositories/new"
+else
+  # CLI version - can use gh
+  if gh auth status &>/dev/null; then
+    gh repo create tuulbelt/$TOOL_NAME --public --clone
+  else
+    echo "Run: gh auth login"
+    exit 1
+  fi
+fi
 ```
 
 #### `/test-all` - UPDATE
@@ -2121,6 +2181,7 @@ updates:
 | 2025-12-29 | Claude | Initial migration plan created |
 | 2025-12-29 | Claude | Added Addendum A with detailed component updates |
 | 2025-12-29 | Claude | Added Addendum B with second review findings |
+| 2025-12-29 | Claude | Added Claude Code Web limitation warning (gh CLI bug) |
 
 ---
 
