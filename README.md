@@ -24,7 +24,7 @@ Each tool in Tuulbelt:
 - **[Test Flakiness Detector](test-flakiness-detector/)** — Identify unreliable tests 🟢 v0.1.0 🐕 | [📖 Docs](test-flakiness-detector/docs/) | [🚀 Examples](test-flakiness-detector/examples/)
 - **[Output Diffing Utility](output-diffing-utility/)** — Semantic diff for JSON, text, binary files 🟢 v0.1.0 🐕 | [📖 Docs](output-diffing-utility/) | [🚀 Examples](output-diffing-utility/examples/)
 - **[Snapshot Comparison](snapshot-comparison/)** — Snapshot testing with integrated diffs 🟢 v0.1.0 🐕 | [📖 Docs](snapshot-comparison/) | [🚀 Examples](snapshot-comparison/examples/)
-- **[Test Port Conflict Resolver](https://github.com/tuulbelt/test-port-resolver)** — Concurrent test port allocation (TBD)
+- **[Test Port Resolver](test-port-resolver/)** — Concurrent test port allocation 🟢 v0.1.0 🐕 | [📖 Docs](test-port-resolver/) | [🚀 Examples](test-port-resolver/examples/)
 
 ### Frontend
 - **[Component Prop Validator](https://github.com/tuulbelt/component-prop-validator)** — TypeScript runtime validation (TBD)
@@ -120,6 +120,18 @@ cfgmerge --file config.json --env --prefix APP_ --args "port=3000"
 
 [📖 Docs](config-file-merger/) | [🚀 Examples](config-file-merger/examples/)
 
+---
+
+### Test Port Resolver
+
+```bash
+cd test-port-resolver && npm install
+portres get --tag "api-server"
+# Output: 54321
+```
+
+[📖 Docs](test-port-resolver/) | [🚀 Examples](test-port-resolver/examples/)
+
 _[See all 33 tools →](#current-tools)_
 
 ## Dogfooding: Tools Working Together
@@ -169,15 +181,15 @@ This creates a **bidirectional validation network** where tools prove their reli
 
 ## Status
 
-🟢 = Implemented (9/33)
+🟢 = Implemented (10/33)
 🟡 = In progress (0/33)
-🔴 = TBD (24/33)
+🔴 = TBD (23/33)
 
-**Recently Completed:** File-Based Semaphore (TypeScript) v0.1.0 (2025-12-28)
+**Recently Completed:** Test Port Resolver v0.1.0 (2025-12-29)
 
-**Next Up:** Test Port Conflict Resolver 🎯
+**Next Up:** Component Prop Validator 🎯
 
-**Progress:** 9 of 33 tools implemented (27%) | Phase 1 Quick Tools: 5/5 (100% ✅) | Phase 2: 4/28
+**Progress:** 10 of 33 tools implemented (30%) | Phase 1 Quick Tools: 5/5 (100% ✅) | Phase 2: 5/28
 
 ## License
 

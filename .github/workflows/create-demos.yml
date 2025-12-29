@@ -22,6 +22,7 @@ on:
       - 'config-file-merger/src/**'
       - 'snapshot-comparison/src/**'
       - 'file-based-semaphore-ts/src/**'
+      - 'test-port-resolver/src/**'
 
   workflow_dispatch:  # Manual trigger
     inputs:

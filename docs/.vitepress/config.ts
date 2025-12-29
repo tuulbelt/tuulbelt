@@ -28,7 +28,8 @@ export default defineConfig({
             { text: 'Structured Error Handler', link: '/tools/structured-error-handler/' },
             { text: 'Config File Merger', link: '/tools/config-file-merger/' },
             { text: 'Snapshot Comparison', link: '/tools/snapshot-comparison/' },
-            { text: 'File-Based Semaphore (TS)', link: '/tools/file-based-semaphore-ts/' }
+            { text: 'File-Based Semaphore (TS)', link: '/tools/file-based-semaphore-ts/' },
+            { text: 'Test Port Resolver', link: '/tools/test-port-resolver/' }
           ]
         }
       ],
@@ -170,6 +171,19 @@ export default defineConfig({
             { text: 'Examples', link: '/tools/file-based-semaphore-ts/examples' },
             { text: 'Protocol Spec', link: '/tools/file-based-semaphore-ts/protocol-spec' },
             { text: 'API Reference', link: '/tools/file-based-semaphore-ts/api-reference' }
+          ]
+        }
+      ],
+      '/tools/test-port-resolver/': [
+        {
+          text: 'Test Port Resolver',
+          items: [
+            { text: 'Overview', link: '/tools/test-port-resolver/' },
+            { text: 'Getting Started', link: '/tools/test-port-resolver/getting-started' },
+            { text: 'CLI Usage', link: '/tools/test-port-resolver/cli-usage' },
+            { text: 'Library Usage', link: '/tools/test-port-resolver/library-usage' },
+            { text: 'Examples', link: '/tools/test-port-resolver/examples' },
+            { text: 'API Reference', link: '/tools/test-port-resolver/api-reference' }
           ]
         }
       ]
