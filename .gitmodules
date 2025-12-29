@@ -1,3 +1,6 @@
 [submodule "tools/cli-progress-reporting"]
 	path = tools/cli-progress-reporting
 	url = https://github.com/tuulbelt/cli-progress-reporting.git
+[submodule "tools/cross-platform-path-normalizer"]
+	path = tools/cross-platform-path-normalizer
+	url = https://github.com/tuulbelt/cross-platform-path-normalizer.git
