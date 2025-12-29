@@ -233,6 +233,9 @@ source scripts/setup-github-auth.sh
 The command implementation should:
 
 1. **Use existing scripts** - Leverage `scripts/commit.sh` and `scripts/push.sh`
+   - **Alternative commit method**: Using `git commit` with `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL`, `GIT_COMMITTER_NAME`, and `GIT_COMMITTER_EMAIL` environment variables is acceptable and produces identical results
+   - Example: `GIT_AUTHOR_NAME="koficodedat" GIT_AUTHOR_EMAIL="koficodedat@gmail.com" GIT_COMMITTER_NAME="koficodedat" GIT_COMMITTER_EMAIL="koficodedat@gmail.com" git commit -m "message"`
+   - Both methods ensure correct author attribution; prefer scripts for consistency
 2. **Be idempotent** - Safe to re-run if it fails partway through
 3. **Validate inputs** - Check tool exists, .env configured, gh authenticated
 4. **Provide clear progress** - Show what's happening at each step
@@ -264,6 +267,10 @@ The command implementation should:
 - **Fresh clone required**: Don't trust local state - always verify with fresh clone from GitHub
 - **Full test suite**: Run complete test suite (unit + integration + CLI) in standalone context
 - **Build verification**: Verify TypeScript compilation and build succeed standalone
+
+**Cleanup:**
+- **Delete temporary branch**: After successful push, delete the temporary history branch (e.g., `git branch -D {tool-name}-history`)
+- **Verify description consistency**: GitHub repository description should match package.json/Cargo.toml description field
 
 **Rust-Specific CI:**
 - **Zero-dep check template fixed**: Rust template now includes working awk-based pattern

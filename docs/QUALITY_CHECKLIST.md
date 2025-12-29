@@ -408,9 +408,12 @@ Use this checklist when running `/migrate-tool` to ensure complete migration. Re
   - [ ] CI workflow runs and passes
   - [ ] Topics visible
   - [ ] Issues disabled message shows
+  - [ ] **Description matches package.json/Cargo.toml** (not leftover text)
 - [ ] **Meta repo submodule**: `cd tools/{tool-name} && git log --oneline -5`
 - [ ] **Clean git status**: `git status` in meta repo shows clean
 - [ ] **All 4 tracking docs updated**: HANDOFF, STATUS, CHANGELOG, NEXT_TASKS
+- [ ] **Temporary branch deleted**: `git branch | grep {tool-name}-history` returns nothing
+- [ ] **CLI functionality tested** (if applicable): Both short and long CLI names work via `npm link`
 
 ### Authentication Checklist
 
