@@ -8,7 +8,7 @@ This document tracks pending work across the Tuulbelt project. Tasks are organiz
 
 ## 🚨 CRITICAL: Meta Repository Migration
 
-**Status:** Phase 2 Wave 1 In Progress (1/7 complete)
+**Status:** Phase 2 Wave 1 In Progress (3/7 complete)
 **Priority:** HIGHEST - Architectural Correction
 **Document:** [MIGRATION_TO_META_REPO.md](/docs/MIGRATION_TO_META_REPO.md)
 
@@ -90,7 +90,7 @@ tuulbelt/test-port-resolver/      # Independent repo
 
 ### Phase 2 Wave 1 In Progress 🔄 (2025-12-29)
 
-**Completed Tools (2/7):**
+**Completed Tools (3/7):**
 - ✅ **cli-progress-reporting** - FULLY MIGRATED
   - Standalone repo: https://github.com/tuulbelt/cli-progress-reporting
   - 58 commits extracted, v0.1.0 tagged, 121/121 tests passing standalone
@@ -106,15 +106,21 @@ tuulbelt/test-port-resolver/      # Independent repo
   - Added as git submodule: tools/cross-platform-path-normalizer
   - Tracking documents updated
 
-**Remaining Tools (5/7):**
-- [ ] config-file-merger
+- ✅ **config-file-merger** - FULLY MIGRATED
+  - Standalone repo: https://github.com/tuulbelt/config-file-merger
+  - 469 commits processed, v0.1.0 tagged, 144/144 tests passing standalone
+  - CI workflow updated (Node 18, 20, 22, zero-dep check)
+  - Added as git submodule: tools/config-file-merger
+  - Tracking documents updated
+
+**Remaining Tools (4/7):**
 - [ ] structured-error-handler
 - [ ] file-based-semaphore (Rust)
 - [ ] file-based-semaphore-ts (TypeScript)
 - [ ] output-diffing-utility (Rust)
 
 **Next Steps:**
-1. Continue migrating remaining 5 tools using `/migrate-tool` command
+1. Continue migrating remaining 4 tools using `/migrate-tool` command
 2. Each tool gets fresh session to avoid context overload
 3. Update tracking documents after each tool
 

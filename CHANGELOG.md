@@ -9,6 +9,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Phase 2 Wave 1: config-file-merger Migration Complete ✅ (2025-12-29)
+
+**Migrated config-file-merger to standalone repository:**
+- Repository: https://github.com/tuulbelt/config-file-merger
+- Extracted git history: 469 commits processed
+- Tagged v0.1.0 and pushed to GitHub
+- Verified standalone: 144/144 tests passing
+- TypeScript compiles cleanly (`npx tsc --noEmit`)
+- Build succeeds (`npm run build`)
+- Added as git submodule: `tools/config-file-merger`
+
+**Repository Configuration:**
+- Issues DISABLED (centralized in meta repo)
+- Wiki DISABLED (docs in README + VitePress)
+- Projects DISABLED (tracking in meta repo)
+- Topics added: tuulbelt, typescript, zero-dependencies, configuration, config-merger, env-variables, cli-args, precedence
+
+**Standalone Metadata Updates:**
+- `package.json`: homepage, bugs URLs
+- `CI workflow`: Node 18/20/22 matrix + zero-dependency check
+- `README.md`: Badge URLs → standalone repo (not monorepo test-all-tools.yml)
+- `CLAUDE.md`: Tool-specific development context created
+
+**Wave 1 Progress:** 3/7 complete (42%)
+- ✅ cli-progress-reporting
+- ✅ cross-platform-path-normalizer
+- ✅ config-file-merger
+- 🔄 structured-error-handler (next)
+- ⏭️  file-based-semaphore (Rust)
+- ⏭️  file-based-semaphore-ts (TypeScript)
+- ⏭️  output-diffing-utility (Rust)
+
+**Commits:**
+- `ba3215e` - chore: prepare for standalone repository (config-file-merger)
+- Meta repo: Submodule addition + tracking doc updates
+
 ### Added - Authentication Workflow Improvements ✅ (2025-12-29)
 
 **Implemented direnv support for automatic credential loading:**

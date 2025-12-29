@@ -4,3 +4,6 @@
 [submodule "tools/cross-platform-path-normalizer"]
 	path = tools/cross-platform-path-normalizer
 	url = https://github.com/tuulbelt/cross-platform-path-normalizer.git
+[submodule "tools/config-file-merger"]
+	path = tools/config-file-merger
+	url = https://github.com/tuulbelt/config-file-merger.git
