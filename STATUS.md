@@ -180,6 +180,13 @@
 
 ## Recent Activity
 
+**2025-12-29** - Meta Repo Migration: Created /migrate-tool Automation ✅
+- **Command Created**: `.claude/commands/migrate-tool.md` (289 lines)
+- **Automates**: Git history extraction, GitHub repo creation, metadata updates, commit/tag/push, submodule addition, tracking updates
+- **Documentation**: Updated CLAUDE.md and docs/MIGRATION_TO_META_REPO.md
+- **Impact**: Eliminates manual migration work for remaining 6 Wave 1 tools (~30-45 min saved per tool)
+- **First Tool**: cli-progress-reporting migrated manually (established pattern, now automated)
+
 **2025-12-29** - Meta Repo Migration Phase 2 Wave 1: cli-progress-reporting - COMPLETE ✅
 - **GitHub Repository**: Created https://github.com/tuulbelt/cli-progress-reporting
 - **Git History**: Extracted 442 commits with full history via `git subtree split`

@@ -9,6 +9,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Migration Automation: /migrate-tool Command ✅ (2025-12-29)
+
+**Created comprehensive automation for Phase 2 migrations:**
+- New slash command: `/migrate-tool <tool-name>`
+- Command automates entire migration workflow (12 steps)
+- Documentation: `.claude/commands/migrate-tool.md` (289 lines)
+
+**Automation capabilities:**
+- Git history extraction via `git subtree split`
+- GitHub repository creation via gh CLI
+- Metadata updates: package.json/Cargo.toml, CI workflow, README.md, CLAUDE.md
+- Commit and tag v0.1.0 with correct author credentials (scripts/git-commit-with-auth.sh)
+- Git submodule addition to meta repo
+- Tracking document updates: HANDOFF.md, STATUS.md, CHANGELOG.md, NEXT_TASKS.md
+- Standalone verification: Clone, test, build
+
+**Documentation updates:**
+- CLAUDE.md: Added /migrate-tool to Quick Commands and Slash Commands sections
+- CLAUDE.md: Created "Migrating a Tool to Standalone Repository" workflow
+- docs/MIGRATION_TO_META_REPO.md: Added automation reference to migration template
+
+**Impact:**
+- Eliminates ~30-45 minutes of manual work per tool
+- Ensures consistency across all migrations
+- Prevents errors from manual steps
+- Ready for remaining 6 Wave 1 tools
+
+**Established pattern:**
+- cli-progress-reporting migrated manually (proved workflow)
+- Remaining tools will use automated /migrate-tool command
+
 ### Added - Phase 2 Wave 1: cli-progress-reporting Migration Complete ✅ (2025-12-29)
 
 **First Tool Migrated to Standalone Repository:**

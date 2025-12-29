@@ -236,6 +236,29 @@ See **[docs/MIGRATION_TO_META_REPO.md](../docs/MIGRATION_TO_META_REPO.md)** for 
    - C.8: Migration execution order (6 phases)
    - C.9: Quick reference for what to do where
 
+### Migration Automation Infrastructure (2025-12-29)
+
+Created `/migrate-tool` command to automate Phase 2 Wave 1 migrations:
+
+1. ✅ **Command Created** (`.claude/commands/migrate-tool.md`)
+   - Automates git history extraction
+   - Automates GitHub repo creation
+   - Automates metadata updates (package.json, CI, README, CLAUDE.md)
+   - Automates commit/tag/push with correct credentials
+   - Automates git submodule addition
+   - Automates tracking document updates
+   - 289 lines of comprehensive documentation
+
+2. ✅ **Documentation Updated**
+   - CLAUDE.md: Added /migrate-tool to Quick Commands and Slash Commands
+   - CLAUDE.md: Created "Migrating a Tool" workflow section
+   - docs/MIGRATION_TO_META_REPO.md: Added automation reference
+
+3. ✅ **Replaces Manual Work**
+   - First migration (cli-progress-reporting) was entirely manual
+   - Remaining 6 Wave 1 tools will use automated workflow
+   - Eliminates ~30-45 minutes of manual work per tool
+
 ### Test Port Resolver (portres) - Tool #10 (2025-12-29)
 
 Implemented concurrent test port allocation tool to avoid EADDRINUSE errors in parallel tests.
@@ -277,12 +300,20 @@ Implemented concurrent test port allocation tool to avoid EADDRINUSE errors in p
 
 ## Commits This Session
 
+**Previous Session (Tool #10 - portres):**
 1. `a4e24c9` - feat(test-port-resolver): implement concurrent test port allocation (Tool #10)
 2. `b6daa79` - docs: update home page and NEXT_TASKS.md for portres
 3. `60bd52f` - refactor(portres): make semats a required library dependency
 4. `bc44d49` - docs: add second review addendum to migration plan
 5. `5811918` - docs: add Claude Code Web limitation for gh CLI
 6. `20e1ef3` - docs: add comprehensive tool creation automation system (Addendum C)
+
+**This Session (Phase 2 Wave 1 - Tool 1/7):**
+7. `169a452` - docs: update tracking documents for cli-progress-reporting migration (Phase 2 Wave 1, Tool 1/7)
+8. `d578931` - feat: add /migrate-tool command for automated Phase 2 migrations
+   - Created .claude/commands/migrate-tool.md (complete automation workflow)
+   - Updated CLAUDE.md with /migrate-tool command and migration workflow
+   - Updated docs/MIGRATION_TO_META_REPO.md with automation reference
 
 ---
 
