@@ -90,26 +90,34 @@
 
 ---
 
-## 🎯 NEXT SESSION: Begin Wave 2 - test-flakiness-detector (Optional Dependencies)
+## 🎯 NEXT SESSION: Begin Wave 2 - snapshot-comparison (Required Dependencies)
 
 **Environment:** ⚠️ REQUIRES Claude Code CLI (for GitHub operations)
 
 **Priority Task:**
-Migrate test-flakiness-detector (TypeScript) - has optional dependency on cli-progress-reporting
+Migrate snapshot-comparison (Rust) - requires output-diffing-utility (already migrated)
+
+**Why This Order:**
+Wave 2 ordered lightest → heaviest:
+1. **snapshot-comparison** (straightforward, single dependency) 👈 START HERE
+2. **test-flakiness-detector** (needs implementation review to make cli-progress dependency required)
+3. **test-port-resolver** (most complex, needs comprehensive /new-tool standards audit)
 
 **CRITICAL: GitHub Authentication Pattern**
 ```bash
 # EVERY gh command must be chained with source in SAME command
-source scripts/setup-github-auth.sh && gh repo create tuulbelt/test-flakiness-detector --public
-source scripts/setup-github-auth.sh && gh repo edit tuulbelt/test-flakiness-detector --add-topic typescript
-source scripts/setup-github-auth.sh && gh repo edit tuulbelt/test-flakiness-detector --disable-issues
+source scripts/setup-github-auth.sh && gh repo create tuulbelt/snapshot-comparison --public
+source scripts/setup-github-auth.sh && gh repo edit tuulbelt/snapshot-comparison --add-topic rust
+source scripts/setup-github-auth.sh && gh repo edit tuulbelt/snapshot-comparison --disable-issues
 ```
 **Why**: Claude Code runs each Bash command in separate shell - env vars don't persist between commands
 
 **Expected Outcome:**
-- GitHub repo: https://github.com/tuulbelt/test-flakiness-detector
-- Git submodule: tools/test-flakiness-detector
-- Wave 2 COMPLETE: 1/1 (100%)
+- GitHub repo: https://github.com/tuulbelt/snapshot-comparison
+- Git submodule: tools/snapshot-comparison
+- Dependency updated: `output_diffing_utility = { git = "https://github.com/tuulbelt/output-diffing-utility" }`
+- 96/96 tests passing standalone
+- Wave 2 Progress: 1/3 (33%)
 
 **Critical References:**
 1. `docs/GH_CLI_AUTH_GUIDE.md` - Authentication pattern with examples ⭐ NEW

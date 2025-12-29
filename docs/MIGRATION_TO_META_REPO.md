@@ -68,21 +68,39 @@ tuulbelt/tuulbelt/                # Meta repo - coordination only
 
 ## Migration Order (Dependency-Aware)
 
-**Wave 1: Independent Tools (7 tools)**
+**Wave 1: Independent Tools (7 tools)** ✅ COMPLETE
 1. ✅ cli-progress-reporting
-2. cross-platform-path-normalizer
-3. config-file-merger
-4. structured-error-handler
-5. file-based-semaphore (Rust)
-6. file-based-semaphore-ts
-7. output-diffing-utility
+2. ✅ cross-platform-path-normalizer
+3. ✅ config-file-merger
+4. ✅ structured-error-handler
+5. ✅ file-based-semaphore (Rust)
+6. ✅ file-based-semaphore-ts
+7. ✅ output-diffing-utility
 
-**Wave 2: Optional Dependencies (1 tool)**
-8. test-flakiness-detector (optional: cli-progress-reporting)
+**Wave 2: Required Dependencies (3 tools)**
 
-**Wave 3: Required Dependencies (2 tools)**
-9. snapshot-comparison (requires: output-diffing-utility)
-10. test-port-resolver (requires: file-based-semaphore-ts)
+Ordered from lightest to heaviest for incremental learning:
+
+8. **snapshot-comparison** (requires: output-diffing-utility)
+   - Rust tool with single dependency
+   - Straightforward migration pattern
+   - Good warm-up for dependency handling
+
+9. **test-flakiness-detector** (requires: cli-progress-reporting)
+   - TypeScript tool with required dependency
+   - **NEEDS IMPLEMENTATION REVIEW**: Make cli-progress dependency required
+   - Review implementation, tests, spec, architecture to enforce required dependency
+   - Update integration and documentation
+
+10. **test-port-resolver** (requires: file-based-semaphore-ts)
+    - TypeScript tool with required dependency
+    - **NEEDS COMPREHENSIVE REVIEW**: Full audit against /new-tool standards
+    - Verify: implementation, testing, code quality, security
+    - Verify: expanded testing categories (unit, CLI, integration, performance)
+    - Verify: documentation (GitHub README + VitePress full site)
+    - Verify: demos (asciinema recordings + StackBlitz links)
+    - Verify: templates and scaffolding adherence
+    - Most complex - saved for last with full pattern knowledge
 
 ---
 
@@ -201,11 +219,12 @@ When running `npm install` or `cargo build`, dependencies are automatically clon
 5. Update tracking documents (automated by `/migrate-tool`)
 6. Commit and push
 
-**After Wave 1 completes:**
-- Migrate Wave 2 tool (test-flakiness-detector)
-- Migrate Wave 3 tools (snapshot-comparison, test-port-resolver)
-  - Update dependencies to git URLs
-  - Test standalone with auto-fetched dependencies
+**After Wave 1 completes (DONE ✅):**
+- Migrate Wave 2 tools in order: snapshot-comparison, test-flakiness-detector, test-port-resolver
+- Update dependencies to git URLs
+- Test standalone with auto-fetched dependencies
+- For test-flakiness-detector: Review and update to make cli-progress dependency required
+- For test-port-resolver: Comprehensive review against /new-tool standards
 
 ---
 
