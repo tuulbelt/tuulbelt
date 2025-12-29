@@ -13,3 +13,6 @@
 [submodule "tools/file-based-semaphore"]
 	path = tools/file-based-semaphore
 	url = https://github.com/tuulbelt/file-based-semaphore.git
+[submodule "tools/file-based-semaphore-ts"]
+	path = tools/file-based-semaphore-ts
+	url = https://github.com/tuulbelt/file-based-semaphore-ts.git
