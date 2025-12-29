@@ -11,6 +11,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Phase 2 Wave 1: file-based-semaphore (Rust) Migration Complete ✅ (2025-12-29)
+
+**Migrated file-based-semaphore to standalone repository:**
+- Repository: https://github.com/tuulbelt/file-based-semaphore
+- Extracted git history: 53 commits processed
+- Tagged v0.1.0 and pushed to GitHub
+- Verified standalone: 95/95 tests passing (33 + 39 + 19 integration tests + 4 doc tests)
+- Added as git submodule: `tools/file-based-semaphore`
+
+**Repository Configuration:**
+- Issues/Wiki/Projects DISABLED (centralized in meta repo)
+- Topics: tuulbelt, rust, zero-dependencies, file-locking, semaphore, cross-platform, process-synchronization, concurrency (8 total)
+- Homepage: https://tuulbelt.github.io/tuulbelt/tools/file-based-semaphore/
+
+**Technical Details:**
+- CI workflow: Removed monorepo paths, added zero-dependency verification
+- README badges: Updated to point to standalone repository workflows
+- Created tool-specific CLAUDE.md for development guidance
+- Build verified: cargo build --release successful
+
+**Wave 1 Progress:** 5/7 complete (71%)
+
+---
+
 ### Added - Phase 2 Wave 1: structured-error-handler Migration Complete ✅ (2025-12-29)
 
 **Migrated structured-error-handler to standalone repository:**
