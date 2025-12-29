@@ -715,6 +715,29 @@ vim Cargo.lock  # Never manually edit
 
 ---
 
+#### CI Zero-Dependency Check Failing (False Positives)
+
+**Symptom:**
+CI fails with "Runtime dependencies found!" but Cargo.toml has no dependencies.
+
+**Root Cause:**
+Grep patterns using `-A 10` capture lines from subsequent TOML sections like `[profile.release]`, causing false matches.
+
+**Prevention:**
+```bash
+# Correct - uses awk to properly handle TOML sections
+COUNT=$(awk '/^\[dependencies\]/,/^\[/ {if (!/^\[/ && !/^#/ && NF > 0) print}' Cargo.toml | wc -l)
+
+# Wrong - captures too many lines
+grep -A 10 '^\[dependencies\]' Cargo.toml | grep -q '^[a-z]'
+```
+
+**Verification:**
+- Rust template now includes correct pattern
+- Test locally: Check if awk command returns empty output for zero-dep tools
+
+---
+
 ### General Issues
 
 #### Probabilistic Tests

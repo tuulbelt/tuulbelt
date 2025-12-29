@@ -46,6 +46,17 @@ jobs:
       - name: Build release
         run: cargo build --release
 
+      - name: Verify zero runtime dependencies
+        run: |
+          # Check if [dependencies] section has any non-comment, non-empty lines
+          COUNT=$(awk '/^\[dependencies\]/,/^\[/ {if (!/^\[/ && !/^#/ && NF > 0) print}' Cargo.toml | wc -l)
+          if [ "$COUNT" -gt 0 ]; then
+            echo "ERROR: Runtime dependencies found!"
+            awk '/^\[dependencies\]/,/^\[/ {if (!/^\[/ && !/^#/ && NF > 0) print}' Cargo.toml
+            exit 1
+          fi
+          echo "✓ Zero runtime dependencies confirmed"
+
   # Cross-platform testing (optional - enable for releases)
   # Uncomment for comprehensive testing across platforms
   # cross-platform:

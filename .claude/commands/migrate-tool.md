@@ -265,6 +265,11 @@ The command implementation should:
 - **Full test suite**: Run complete test suite (unit + integration + CLI) in standalone context
 - **Build verification**: Verify TypeScript compilation and build succeed standalone
 
+**Rust-Specific CI:**
+- **Zero-dep check template fixed**: Rust template now includes working awk-based pattern
+- **TOML parsing fragile**: Avoid grep patterns on `[dependencies]`; use awk to properly handle TOML sections
+- **False positives**: Early patterns incorrectly matched `[profile.release]` section lines as dependencies
+
 ## Future Enhancements
 
 Potential improvements:
