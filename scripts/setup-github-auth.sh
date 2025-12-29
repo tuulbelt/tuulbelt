@@ -32,8 +32,10 @@ if [ -z "$GITHUB_EMAIL" ] || [ "$GITHUB_EMAIL" = "your_github_email@example.com"
   exit 1
 fi
 
-# Export GITHUB_TOKEN so gh CLI uses it
+# Export credentials for gh CLI
+# CRITICAL: gh CLI prefers GH_TOKEN over GITHUB_TOKEN, and both override keyring cache
 export GITHUB_TOKEN
+export GH_TOKEN="$GITHUB_TOKEN"  # gh CLI respects this more than GITHUB_TOKEN
 export GITHUB_ORG
 
 # Set local git config (not global)

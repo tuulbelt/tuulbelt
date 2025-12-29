@@ -1,0 +1,35 @@
+# direnv configuration for Tuulbelt
+# Auto-loads project-specific credentials when entering directory
+#
+# Setup:
+#   1. Install direnv: brew install direnv
+#   2. Add to ~/.zshrc: eval "$(direnv hook zsh)"
+#   3. Copy .env.example to .env and fill in credentials
+#   4. Run: direnv allow .
+#
+# This file is safe to commit (no secrets, just references .env)
+
+# Load credentials from .env
+if [ -f .env ]; then
+  source .env
+
+  # Export for gh CLI (GH_TOKEN takes precedence over keyring)
+  export GITHUB_TOKEN
+  export GH_TOKEN="$GITHUB_TOKEN"
+  export GITHUB_ORG
+
+  # Export for git operations (used by commit.sh)
+  export GIT_AUTHOR_NAME="$GITHUB_USERNAME"
+  export GIT_AUTHOR_EMAIL="$GITHUB_EMAIL"
+  export GIT_COMMITTER_NAME="$GITHUB_USERNAME"
+  export GIT_COMMITTER_EMAIL="$GITHUB_EMAIL"
+
+  # Optional: Use project-specific gh config directory
+  # Uncomment to isolate gh config from global settings
+  # mkdir -p .gh-config
+  # export GH_CONFIG_DIR="$PWD/.gh-config"
+
+  echo "✓ Tuulbelt environment loaded: $GITHUB_USERNAME"
+else
+  echo "⚠️  .env file not found - create from .env.example"
+fi
