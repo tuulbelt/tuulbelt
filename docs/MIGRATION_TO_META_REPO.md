@@ -1231,11 +1231,481 @@ fi
 
 ---
 
+## Addendum: Detailed Component Updates
+
+After cross-checking against the current codebase, the following detailed updates are required.
+
+### A.1 Workflow Updates (Complete List)
+
+**Current Workflows in `.github/workflows/`:**
+
+| Workflow | Current Purpose | Migration Action |
+|----------|-----------------|------------------|
+| `test-all-tools.yml` | Auto-discovers and tests all tools | **SPLIT**: Move to individual tool repos; keep simplified cross-repo version in meta |
+| `deploy-docs.yml` | Deploys VitePress to GitHub Pages | **UPDATE**: Change paths to reference `tools/` submodules |
+| `create-demos.yml` | Records and embeds demo GIFs | **UPDATE**: Change hardcoded paths; may need per-tool approach |
+| `update-demos.yml` | (Appears to be duplicate) | **REVIEW**: Consolidate with create-demos.yml |
+| `meta-validation.yml` | Validates meta repo structure | **UPDATE**: Validate submodules instead of subdirectories |
+| `update-dashboard.yml` | Updates status dashboard | **UPDATE**: Aggregate from individual tool repos |
+
+**Per-Tool Workflow (Standard Template):**
+
+Each individual tool repo should have `.github/workflows/test.yml`:
+
+```yaml
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]  # Or rust versions for Rust tools
+    steps:
+      - uses: actions/checkout@v4
+
+      # For tools with Tuulbelt dependencies, they auto-fetch via git URL
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm test
+      - run: npm run build
+```
+
+### A.2 Slash Commands Updates
+
+**Commands Requiring Complete Rewrite:**
+
+#### `/scaffold-tool` - MAJOR REWRITE
+
+Current behavior: Creates tool as subdirectory in monorepo.
+New behavior: Creates GitHub repo + adds as submodule.
+
+```markdown
+## New Scaffolding Process
+
+1. **Create GitHub Repository:**
+   ```bash
+   gh repo create tuulbelt/$TOOL_NAME --public --clone
+   ```
+
+2. **Initialize from Template:**
+   ```bash
+   cd $TOOL_NAME
+   cp -r ../templates/tool-repo-template/* .  # or rust template
+   # Customize files...
+   git add . && git commit -m "feat: initialize from template"
+   git push origin main
+   ```
+
+3. **Add as Submodule to Meta Repo:**
+   ```bash
+   cd /path/to/tuulbelt
+   git submodule add https://github.com/tuulbelt/$TOOL_NAME.git tools/$TOOL_NAME
+   git commit -m "chore: add $TOOL_NAME submodule"
+   ```
+
+4. **Update VitePress Config:**
+   - Add to sidebar in `docs/.vitepress/config.ts`
+   - Add to tools index
+```
+
+#### `/test-all` - UPDATE
+
+Current behavior: Tests only templates.
+New behavior: Tests all submodules.
+
+```markdown
+## Updated Test Execution
+
+\`\`\`bash
+# Initialize submodules if needed
+git submodule update --init --recursive
+
+# Test all tools
+for tool in tools/*/; do
+  echo "Testing $(basename $tool)..."
+  cd "$tool"
+  if [ -f "package.json" ]; then
+    npm ci && npm test
+  elif [ -f "Cargo.toml" ]; then
+    cargo test
+  fi
+  cd ../..
+done
+\`\`\`
+```
+
+#### `/quality-check` - UPDATE
+
+Current behavior: References monorepo structure, runs dogfood scripts.
+New behavior: Works in both meta repo and individual tool repo contexts.
+
+**Changes needed:**
+- Detect if running in meta repo (`tools/` exists) or individual tool repo
+- In meta repo: iterate over submodules
+- In tool repo: run checks directly
+- Update dogfood script paths
+
+#### `/handoff` and `/resume-work` - MINOR UPDATE
+
+- Update references from tool subdirectories to `tools/` submodule paths
+- Update HANDOFF.md location references
+
+### A.3 Agent Updates
+
+#### `scaffold-assistant` - MAJOR REWRITE
+
+The entire workflow changes:
+
+```markdown
+## New Responsibilities
+
+1. **GitHub Repository Creation**: Use `gh` CLI to create new repo
+2. **Template Initialization**: Clone template into new repo
+3. **Submodule Addition**: Add to meta repo as submodule
+4. **VitePress Integration**: Update config.ts for new tool
+5. **CI Setup**: Ensure tool has standalone CI workflow
+```
+
+Key changes to agent:
+- Remove references to `cp -r templates/... "$TOOL_NAME"`
+- Add `gh repo create` commands
+- Add `git submodule add` commands
+- Update directory references from `$TOOL_NAME/` to `tools/$TOOL_NAME/`
+
+#### `test-runner` - MINOR UPDATE
+
+- Update working directory references
+- Add submodule initialization step
+
+#### `security-reviewer` - MINOR UPDATE
+
+- Update paths for submodule structure
+
+#### `session-manager` - MINOR UPDATE
+
+- Update HANDOFF.md references
+
+### A.4 Skills Updates
+
+**Current Skills in `.claude/skills/`:**
+
+| Skill | Purpose | Migration Action |
+|-------|---------|------------------|
+| `typescript-patterns` | TS best practices | **COPY**: Include in each TS tool repo's CLAUDE.md |
+| `rust-idioms` | Rust best practices | **COPY**: Include in each Rust tool repo's CLAUDE.md |
+| `zero-deps-checker` | Validates zero deps | **UPDATE**: Check for git URL deps (allowed) vs external deps (forbidden) |
+
+**Zero-Deps Checker Update:**
+
+```markdown
+## Updated Validation Logic
+
+**Allowed dependencies:**
+- Git URLs to other Tuulbelt tools: `git+https://github.com/tuulbelt/*`
+- Path dependencies in development: `file:../sibling` (for local dev only)
+
+**Forbidden dependencies:**
+- npm packages: Any package without `@tuulbelt/` scope
+- crates.io packages: Any external crate
+
+**Validation script:**
+\`\`\`bash
+# TypeScript
+deps=$(jq -r '.dependencies // {} | keys[]' package.json 2>/dev/null)
+for dep in $deps; do
+  if [[ ! "$dep" =~ ^@tuulbelt/ ]]; then
+    echo "ERROR: External dependency found: $dep"
+    exit 1
+  fi
+done
+
+# Rust
+if grep -A20 '^\[dependencies\]' Cargo.toml | grep -v '^#' | grep -v 'git = "https://github.com/tuulbelt' | grep -qE '^[a-z]'; then
+  echo "ERROR: External dependency found"
+  exit 1
+fi
+\`\`\`
+```
+
+### A.5 Template Updates
+
+**Both templates need these updates:**
+
+1. **Remove monorepo path comments:**
+   ```yaml
+   # OLD (monorepo)
+   # paths: ['<tool-name>/**']
+
+   # NEW (standalone) - remove these comments entirely
+   ```
+
+2. **Update package.json repository field:**
+   ```json
+   {
+     "repository": {
+       "type": "git",
+       "url": "https://github.com/tuulbelt/TOOL_NAME.git"
+     }
+   }
+   ```
+
+3. **Update Cargo.toml repository field:**
+   ```toml
+   repository = "https://github.com/tuulbelt/TOOL_NAME"
+   ```
+
+4. **Add standalone CLAUDE.md template:**
+   ```markdown
+   # Tool Name
+
+   Part of [Tuulbelt](https://github.com/tuulbelt/tuulbelt).
+
+   ## Development
+
+   - Tests: `npm test` / `cargo test`
+   - Build: `npm run build` / `cargo build`
+
+   ## Principles
+
+   - Zero external dependencies
+   - Single problem focus
+   - See [PRINCIPLES.md](https://github.com/tuulbelt/tuulbelt/blob/main/PRINCIPLES.md)
+   ```
+
+5. **Update dogfood scripts for standalone:**
+
+   Since tools are now independent, dogfood scripts that require sibling tools should use git URLs:
+
+   ```bash
+   # OLD (monorepo - path access)
+   DETECTOR_DIR="$TOOL_DIR/../test-flakiness-detector"
+
+   # NEW (standalone - clone if needed)
+   DETECTOR_DIR="/tmp/tuulbelt-flaky"
+   if [ ! -d "$DETECTOR_DIR" ]; then
+     git clone --depth 1 https://github.com/tuulbelt/test-flakiness-detector.git "$DETECTOR_DIR"
+     cd "$DETECTOR_DIR" && npm install && cd -
+   fi
+   ```
+
+### A.6 VitePress Strategy (Decision Required)
+
+**Recommended Approach: Hybrid with Build-Time Copy**
+
+1. **Tool repos contain their own docs** in `docs/` directory
+2. **Meta repo build script copies** docs from submodules before VitePress build
+3. **VitePress config stays in meta repo** - single source of navigation
+
+**Implementation:**
+
+```bash
+#!/bin/bash
+# scripts/prepare-docs.sh - Run before npm run docs:build
+
+# Ensure submodules are updated
+git submodule update --init --recursive
+
+# Copy tool docs to VitePress structure
+for tool in tools/*/; do
+  tool_name=$(basename "$tool")
+
+  # Copy tool's VitePress docs if they exist
+  if [ -d "$tool/docs" ]; then
+    mkdir -p "docs/tools/$tool_name"
+    cp -r "$tool/docs/"* "docs/tools/$tool_name/"
+  fi
+
+  # Copy demo.gif if it exists
+  if [ -f "$tool/docs/demo.gif" ]; then
+    mkdir -p "docs/public/$tool_name"
+    cp "$tool/docs/demo.gif" "docs/public/$tool_name/"
+  fi
+done
+```
+
+**Update package.json:**
+```json
+{
+  "scripts": {
+    "docs:prepare": "./scripts/prepare-docs.sh",
+    "docs:build": "npm run docs:prepare && vitepress build docs",
+    "docs:dev": "npm run docs:prepare && vitepress dev docs"
+  }
+}
+```
+
+### A.7 Demo Workflow Strategy
+
+**Option A: Per-Tool Demo Workflows (Recommended)**
+
+Each tool repo has its own demo workflow:
+
+```yaml
+# In each tool repo: .github/workflows/demo.yml
+name: Record Demo
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'scripts/record-demo.sh'
+  workflow_dispatch:
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # ... record demo ...
+      - name: Commit demo
+        run: |
+          git add docs/demo.gif demo.cast
+          git commit -m "docs: update demo recording" || true
+          git push
+```
+
+**Option B: Centralized Demo Workflow**
+
+Meta repo pulls latest from all submodules and records demos centrally. More complex but keeps all demos in sync.
+
+**Recommendation:** Option A - simpler, each tool owns its demo.
+
+### A.8 Root package.json
+
+The root `package.json` is used for VitePress docs. After migration:
+
+```json
+{
+  "name": "@tuulbelt/meta",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tuulbelt meta repository - documentation and orchestration",
+  "scripts": {
+    "docs:prepare": "./scripts/prepare-docs.sh",
+    "docs:dev": "npm run docs:prepare && vitepress dev docs",
+    "docs:build": "npm run docs:prepare && vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "submodules:init": "./scripts/init-submodules.sh",
+    "submodules:update": "./scripts/update-all-tools.sh",
+    "test:all": "./scripts/test-all-tools.sh"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}
+```
+
+### A.9 Individual Tool CLAUDE.md
+
+Each tool repo should have a CLAUDE.md that provides context without requiring the meta repo:
+
+```markdown
+# [Tool Name] / `short-name`
+
+Part of the [Tuulbelt](https://github.com/tuulbelt/tuulbelt) collection.
+
+## Quick Reference
+
+- **Language:** TypeScript / Rust
+- **CLI Short Name:** `short-name`
+- **Tests:** `npm test` / `cargo test`
+- **Build:** `npm run build` / `cargo build`
+
+## Development Commands
+
+\`\`\`bash
+npm install      # Install dependencies
+npm test         # Run tests
+npm run build    # Build for distribution
+npx tsc --noEmit # Type check only
+\`\`\`
+
+## Code Conventions
+
+- Zero external dependencies (Tuulbelt tools allowed via git URL)
+- Result pattern for error handling
+- 80%+ test coverage
+- See main repo for full [PRINCIPLES.md](https://github.com/tuulbelt/tuulbelt/blob/main/PRINCIPLES.md)
+
+## Dependencies
+
+This tool [uses/does not use] other Tuulbelt tools:
+- `@tuulbelt/sibling-tool` - Purpose (if applicable)
+
+Dependencies are fetched automatically via git URL during `npm install`.
+
+## Testing
+
+\`\`\`bash
+npm test                    # Run all tests
+npm test -- --watch         # Watch mode
+./scripts/dogfood-flaky.sh  # Validate test reliability (optional)
+\`\`\`
+
+## Security
+
+- No hardcoded secrets
+- Input validation on all public APIs
+- Run security scan: See main repo `/security-scan` command
+
+## Related
+
+- [Main Tuulbelt Repository](https://github.com/tuulbelt/tuulbelt)
+- [Documentation](https://tuulbelt.github.io/tuulbelt/tools/[tool-name]/)
+- [Contributing Guide](https://github.com/tuulbelt/tuulbelt/blob/main/CONTRIBUTING.md)
+```
+
+### A.10 Migration Task Updates
+
+Add these tasks to Phase 5 (Meta Repo Restructure):
+
+```markdown
+### Phase 5: Meta Repo Restructure (EXPANDED)
+
+- [ ] Remove tool directories from meta repo root
+- [ ] Create `tools/` directory for submodules
+- [ ] Add git submodules for all 10 tools
+- [ ] Create `scripts/prepare-docs.sh` for VitePress
+- [ ] Update `package.json` with new scripts
+- [ ] **UPDATE: `.claude/commands/scaffold-tool.md`** - Complete rewrite
+- [ ] **UPDATE: `.claude/commands/test-all.md`** - Submodule iteration
+- [ ] **UPDATE: `.claude/commands/quality-check.md`** - Dual context support
+- [ ] **UPDATE: `.claude/agents/scaffold-assistant.md`** - Complete rewrite
+- [ ] **UPDATE: `.claude/skills/zero-deps-checker/SKILL.md`** - Git URL validation
+- [ ] **UPDATE: `templates/tool-repo-template/`** - Standalone CI, CLAUDE.md
+- [ ] **UPDATE: `templates/rust-tool-template/`** - Standalone CI, CLAUDE.md
+- [ ] Update main CLAUDE.md for submodule structure
+- [ ] Update all workflows for submodule paths
+- [ ] Test `npm run docs:build` with submodule structure
+- [ ] Verify all 10 tool repos have working CI
+```
+
+---
+
 ## Document History
 
 | Date | Author | Changes |
 |------|--------|---------|
 | 2025-12-29 | Claude | Initial migration plan created |
+| 2025-12-29 | Claude | Added Addendum with detailed component updates |
 
 ---
 
