@@ -7,3 +7,6 @@
 [submodule "tools/config-file-merger"]
 	path = tools/config-file-merger
 	url = https://github.com/tuulbelt/config-file-merger.git
+[submodule "tools/structured-error-handler"]
+	path = tools/structured-error-handler
+	url = https://github.com/tuulbelt/structured-error-handler.git
