@@ -6,7 +6,7 @@
 
 ## 🚨 CRITICAL: Meta Repository Migration
 
-**Status:** Phase 2 Wave 1 COMPLETE (7/7) ✅ - Moving to Wave 2!
+**Status:** Phase 2 Wave 2 IN PROGRESS (1/3) 🎯
 **Priority:** HIGHEST - Architectural Correction
 
 ### Phase 2 Wave 1: Independent Tools Migration ✅ COMPLETE
@@ -31,17 +31,18 @@
 
 **Migration Order:** Lightest → Heaviest for incremental learning
 
-**Remaining Tools (3/3):**
-1. [ ] **snapshot-comparison** (Rust) - requires: output-diffing-utility 🎯 NEXT
-   - Straightforward migration, single dependency
-   - Good warm-up for dependency handling pattern
+**Completed Tools (1/3):**
+1. ✅ **snapshot-comparison** - https://github.com/tuulbelt/snapshot-comparison
+   - 12 commits, v0.1.0, 96/96 tests passing, CI green
+   - Dependency: output-diffing-utility (git URL working)
 
-2. [ ] **test-flakiness-detector** (TypeScript) - requires: cli-progress-reporting
+**Remaining Tools (2/3):**
+1. [ ] **test-flakiness-detector** (TypeScript) - requires: cli-progress-reporting 🎯 NEXT
    - **NEEDS IMPLEMENTATION REVIEW**: Make cli-progress dependency REQUIRED
    - Review: implementation, tests, spec, architecture
    - Update: integration and documentation to enforce required dependency
 
-3. [ ] **test-port-resolver** (TypeScript) - requires: file-based-semaphore-ts
+2. [ ] **test-port-resolver** (TypeScript) - requires: file-based-semaphore-ts
    - **NEEDS COMPREHENSIVE REVIEW**: Full audit against /new-tool standards
    - Verify: implementation, testing, code quality, security
    - Verify: expanded testing (unit, CLI, integration, performance)
@@ -59,10 +60,9 @@ source scripts/setup-github-auth.sh && gh repo edit tuulbelt/test-flakiness-dete
 **Why**: Claude Code runs each Bash command in separate shell - env vars don't persist
 
 **Next Steps:**
-1. Migrate snapshot-comparison (Rust) - lightest dependency pattern 🎯
-2. Migrate test-flakiness-detector - review to make cli-progress dependency required
-3. Migrate test-port-resolver - comprehensive /new-tool standards audit
-4. Update tracking documents after each migration
+1. Migrate test-flakiness-detector (TypeScript) - review to make cli-progress dependency required 🎯
+2. Migrate test-port-resolver - comprehensive /new-tool standards audit
+3. Update tracking documents after each migration
 
 **Key Resources:**
 - **Authentication guide**: `docs/GH_CLI_AUTH_GUIDE.md` ⭐ NEW - Complete chaining pattern

@@ -11,6 +11,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Phase 2 Wave 2: snapshot-comparison Migration Complete ✅ (2025-12-29)
+
+**First Wave 2 tool with git URL dependency migrated to standalone repository!**
+- Repository: https://github.com/tuulbelt/snapshot-comparison
+- Extracted git history: 12 commits processed
+- **Updated dependency**: Changed from `path = "../output-diffing-utility"` to `git = "https://github.com/tuulbelt/output-diffing-utility"`
+- Tagged v0.1.0 and pushed to GitHub with koficodedat credentials
+- Verified standalone: 96/96 tests passing (33 lib + 59 integration + 4 doc tests)
+- **Git URL dependency verified**: Cargo automatically fetched output-diffing-utility from GitHub
+- Added as git submodule: `tools/snapshot-comparison`
+- **Wave 2 Progress**: 1/3 complete (33%)
+
+**GitHub Repository Configuration:**
+- Issues disabled (centralized to meta repo)
+- Wiki disabled
+- Projects disabled
+- Topics: tuulbelt, rust, zero-dependencies, snapshot-testing, testing, diff
+- Description: "Snapshot testing with integrated diffs - Part of Tuulbelt"
+
+**Key Achievements:**
+- First tool to use git URL dependency pattern successfully
+- Proves dependency resolution works for standalone tools
+- Establishes pattern for remaining Wave 2 migrations
+- CI workflow correctly configured (no zero-dep check for Wave 2 tools)
+
+**Next**: test-flakiness-detector migration (TypeScript, requires cli-progress-reporting)
+
+---
+
 ### Fixed - Documentation Cleanup & Authentication Pattern Finalized ✅ (2025-12-29)
 
 **Removed real credentials from all documentation:**

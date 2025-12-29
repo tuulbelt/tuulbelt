@@ -1,129 +1,100 @@
 # Session Handoff
 
 **Last Updated:** 2025-12-29
-**Session:** Phase 2 Wave 1 - Documentation Cleanup & Authentication Fixes
-**Status:** 🟢 Wave 1 COMPLETE (7/7) - Ready for Wave 2
+**Session:** Phase 2 Wave 2 - snapshot-comparison Migration
+**Status:** 🟢 Wave 2 Progress: 1/3 Complete
 
 ---
 
-## ✅ THIS SESSION: Wave 1 Complete + Documentation Cleanup
+## ✅ THIS SESSION: snapshot-comparison Migration (Wave 2, Tool 1/3)
 
 **Environment:** Completed in Claude Code CLI
 
 **What Was Accomplished:**
 
-### Part 1: output-diffing-utility Migration (Tool 7/7)
-
 ### 1. ✅ Extracted Git History
-- Used `git subtree split` to extract 56 commits
-- Created temporary branch `output-diffing-utility-history`
+- Used `git subtree split` to extract 12 commits
+- Created temporary branch `snapshot-comparison-history`
 - Preserved all commit history, authors, and dates
 
 ### 2. ✅ Created and Configured GitHub Repository
-- Repository: https://github.com/tuulbelt/output-diffing-utility (already existed)
-- Description: "Semantic diff for JSON, text, binary files - Part of Tuulbelt"
-- Repository URL already correct in Cargo.toml
+- Repository: https://github.com/tuulbelt/snapshot-comparison
+- Description: "Snapshot testing with integrated diffs - Part of Tuulbelt"
+- Configuration: Disabled issues, wiki, projects
+- Topics: tuulbelt, rust, zero-dependencies, snapshot-testing, testing, diff
 
 ### 3. ✅ Updated Metadata for Standalone
-- **CI workflow**: Removed monorepo path filters, added zero-dep verification
+- **Cargo.toml**: Updated dependency from `path = "../output-diffing-utility"` to `git = "https://github.com/tuulbelt/output-diffing-utility"`
+- **CI workflow**: Removed monorepo path filters
 - **CLAUDE.md**: Created tool-specific development guide
 
 ### 4. ✅ Committed and Released
-- Committed changes with correct author (from .env) ✅
+- Committed changes with correct author (koficodedat) ✅
 - Tagged v0.1.0
 - Pushed to GitHub successfully
 
 ### 5. ✅ Verified Standalone Functionality
 - Fresh clone from GitHub
-- 108/108 tests passing (76 lib + 27 integration + 5 doc tests)
+- 96/96 tests passing (33 lib + 59 integration + 4 doc tests)
 - Build successful (cargo build --release)
+- **Git URL dependency working**: Cargo automatically fetched output-diffing-utility
 
 ### 6. ✅ Added Git Submodule
-- Added to meta repo: `tools/output-diffing-utility`
+- Added to meta repo: `tools/snapshot-comparison`
 - Committed submodule addition
 - Deleted temporary branch
+- Pushed to meta repo
 
 ### 7. ✅ Updated All Tracking Documents
 - HANDOFF.md, STATUS.md, CHANGELOG.md, NEXT_TASKS.md
 
-### Part 2: Documentation Cleanup & Authentication Fixes
-
-### 8. ✅ Removed Real Credentials from Documentation
-- **Files cleaned (10 total):**
-  - `docs/GH_CLI_AUTH_GUIDE.md` - Removed usernames, replaced with placeholders
-  - `CHANGELOG.md` - Genericized account references
-  - `.claude/HANDOFF.md` - Changed to "from .env" pattern
-  - `.claude/MIGRATION_REVIEW.md` - Removed specific usernames
-  - `.claude/commands/migrate-tool.md` - Removed paths and email addresses
-  - `docs/KNOWN_ISSUES.md` - Removed specific paths
-  - `docs/MIGRATION_TO_META_REPO.md` - Genericized authentication docs
-  - `docs/QUALITY_CHECKLIST.md` - Changed to environment variable references
-  - `STATUS.md` - Updated session status
-- **Replacements:** Real usernames → generic placeholders, specific paths → `/path/to/tuulbelt`
-
-### 9. ✅ Finalized Authentication Pattern for Future Migrations
-- **CRITICAL Discovery**: Claude Code Bash commands run in separate shells - env vars don't persist
-- **Solution**: Chain `source scripts/setup-github-auth.sh && gh ...` for EVERY gh command
-- **Pattern documented** in:
-  - `docs/GH_CLI_AUTH_GUIDE.md` - Complete usage guide with examples
-  - `.claude/commands/migrate-tool.md` - Lessons learned section updated
-- **Why it works**: `&&` keeps environment in same shell session, `gh` respects exported `GH_TOKEN`
-- **Verified working**: `source scripts/setup-github-auth.sh && gh api user --jq '.login'` returns correct account
-
 **Commits This Session:**
-- `40a6817` - fix: correct CI zero-dependency check and README links (standalone repo)
-- `44d7bc6` - fix: update output-diffing-utility submodule with CI and README fixes (meta repo)
-- `3562260` - fix: improve gh CLI authentication for project credentials
-- `36ca213` - fix: remove real usernames from authentication guide
-- `11655ed` - docs: remove all real usernames and paths from documentation
-- `98c3791` - docs: update migration docs with authentication chaining pattern (this commit)
+- `c198aac` - chore: add snapshot-comparison as git submodule (meta repo)
+- `1d31a84` - chore: prepare for standalone release (standalone repo)
 
 **Migration Progress:**
 - **Wave 1: 7/7 complete (100%) ✅✅✅**
-  - ✅ cli-progress-reporting
-  - ✅ cross-platform-path-normalizer
-  - ✅ config-file-merger
-  - ✅ structured-error-handler
-  - ✅ file-based-semaphore (Rust)
-  - ✅ file-based-semaphore-ts (TypeScript)
-  - ✅ output-diffing-utility (Rust)
+- **Wave 2: 1/3 complete (33%) 🎯**
+  - ✅ snapshot-comparison (Rust, depends on output-diffing-utility)
+  - ⏳ test-flakiness-detector (TypeScript, depends on cli-progress-reporting)
+  - ⏳ test-port-resolver (TypeScript, depends on file-based-semaphore-ts)
 
 ---
 
-## 🎯 NEXT SESSION: Begin Wave 2 - snapshot-comparison (Required Dependencies)
+## 🎯 NEXT SESSION: test-flakiness-detector Migration (Wave 2, Tool 2/3)
 
 **Environment:** ⚠️ REQUIRES Claude Code CLI (for GitHub operations)
 
 **Priority Task:**
-Migrate snapshot-comparison (Rust) - requires output-diffing-utility (already migrated)
+Migrate test-flakiness-detector (TypeScript) - depends on cli-progress-reporting
 
-**Why This Order:**
-Wave 2 ordered lightest → heaviest:
-1. **snapshot-comparison** (straightforward, single dependency) 👈 START HERE
-2. **test-flakiness-detector** (needs implementation review to make cli-progress dependency required)
-3. **test-port-resolver** (most complex, needs comprehensive /new-tool standards audit)
+**IMPORTANT: Implementation Review Required**
+This tool currently has cli-progress as an OPTIONAL dependency. Before migration:
+1. **Review implementation** to determine if cli-progress should be REQUIRED
+2. **Review tests, spec, architecture** for dependency usage
+3. **Update integration** if needed to enforce required dependency
+4. **Update documentation** to reflect dependency status
 
 **CRITICAL: GitHub Authentication Pattern**
 ```bash
 # EVERY gh command must be chained with source in SAME command
-source scripts/setup-github-auth.sh && gh repo create tuulbelt/snapshot-comparison --public
-source scripts/setup-github-auth.sh && gh repo edit tuulbelt/snapshot-comparison --add-topic rust
-source scripts/setup-github-auth.sh && gh repo edit tuulbelt/snapshot-comparison --disable-issues
+source scripts/setup-github-auth.sh && gh repo create tuulbelt/test-flakiness-detector --public
+source scripts/setup-github-auth.sh && gh repo edit tuulbelt/test-flakiness-detector --add-topic typescript
 ```
 **Why**: Claude Code runs each Bash command in separate shell - env vars don't persist between commands
 
 **Expected Outcome:**
-- GitHub repo: https://github.com/tuulbelt/snapshot-comparison
-- Git submodule: tools/snapshot-comparison
-- Dependency updated: `output_diffing_utility = { git = "https://github.com/tuulbelt/output-diffing-utility" }`
-- 96/96 tests passing standalone
-- Wave 2 Progress: 1/3 (33%)
+- GitHub repo: https://github.com/tuulbelt/test-flakiness-detector
+- Git submodule: tools/test-flakiness-detector
+- Dependency updated: `"@tuulbelt/cli-progress-reporting": "git+https://github.com/tuulbelt/cli-progress-reporting.git"`
+- 132/132 tests passing standalone
+- Wave 2 Progress: 2/3 (67%)
 
 **Critical References:**
-1. `docs/GH_CLI_AUTH_GUIDE.md` - Authentication pattern with examples ⭐ NEW
+1. `docs/GH_CLI_AUTH_GUIDE.md` - Authentication pattern with examples
 2. `.claude/commands/migrate-tool.md` - Complete spec with lessons learned
 3. `docs/QUALITY_CHECKLIST.md` - 100+ item verification checklist
-3. `docs/MIGRATION_TO_META_REPO.md` - Strategic lessons and patterns
+4. `docs/MIGRATION_TO_META_REPO.md` - Strategic lessons and patterns
 
 **Authentication:**
 - With direnv: Just `cd` to project, credentials auto-load
