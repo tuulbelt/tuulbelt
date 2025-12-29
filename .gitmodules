@@ -10,3 +10,6 @@
 [submodule "tools/structured-error-handler"]
 	path = tools/structured-error-handler
 	url = https://github.com/tuulbelt/structured-error-handler.git
+[submodule "tools/file-based-semaphore"]
+	path = tools/file-based-semaphore
+	url = https://github.com/tuulbelt/file-based-semaphore.git
