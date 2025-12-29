@@ -17,7 +17,7 @@ Each tool in Tuulbelt:
 ### CLI/DevTools
 - **[Structured Error Handler](structured-error-handler/)** — Error format + serialization with context preservation 🟢 v0.1.0 🐕 | [📖 Docs](structured-error-handler/) | [🚀 Examples](structured-error-handler/examples/)
 - **[CLI Progress Reporting](https://github.com/tuulbelt/cli-progress-reporting)** — Concurrent-safe progress updates 🟢 v0.1.0 🐕 | [📖 Docs](https://github.com/tuulbelt/cli-progress-reporting#readme) | [🚀 Examples](https://github.com/tuulbelt/cli-progress-reporting/tree/main/examples/)
-- **[Configuration File Merger](config-file-merger/)** — ENV + config + CLI arg merging 🟢 v0.1.0 🐕 | [📖 Docs](config-file-merger/) | [🚀 Examples](config-file-merger/examples/)
+- **[Configuration File Merger](https://github.com/tuulbelt/config-file-merger)** — ENV + config + CLI arg merging 🟢 v0.1.0 🐕 | [📖 Docs](https://github.com/tuulbelt/config-file-merger#readme) | [🚀 Examples](https://github.com/tuulbelt/config-file-merger/tree/main/examples/)
 - **[Cross-Platform Path Normalizer](https://github.com/tuulbelt/cross-platform-path-normalizer)** — Windows/Unix path consistency 🟢 v0.1.0 🐕 | [📖 Docs](https://github.com/tuulbelt/cross-platform-path-normalizer#readme) | [🚀 Examples](https://github.com/tuulbelt/cross-platform-path-normalizer/tree/main/examples/)
 
 ### Testing & Observability
@@ -118,7 +118,7 @@ cd config-file-merger && npm install
 cfgmerge --file config.json --env --prefix APP_ --args "port=3000"
 ```
 
-[📖 Docs](config-file-merger/) | [🚀 Examples](config-file-merger/examples/)
+[📖 Docs](https://github.com/tuulbelt/config-file-merger#readme) | [🚀 Examples](https://github.com/tuulbelt/config-file-merger/tree/main/examples/)
 
 ---
 

@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Repository: https://github.com/tuulbelt/config-file-merger
 - Extracted git history: 469 commits processed
 - Tagged v0.1.0 and pushed to GitHub
-- Verified standalone: 144/144 tests passing
+- Verified standalone: 144/144 tests passing on Node 18, 20, 22
 - TypeScript compiles cleanly (`npx tsc --noEmit`)
 - Build succeeds (`npm run build`)
 - Added as git submodule: `tools/config-file-merger`
@@ -24,13 +24,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Issues DISABLED (centralized in meta repo)
 - Wiki DISABLED (docs in README + VitePress)
 - Projects DISABLED (tracking in meta repo)
-- Topics added: tuulbelt, typescript, zero-dependencies, configuration, config-merger, env-variables, cli-args, precedence
+- Description: "Merge configuration from ENV variables, config files, and CLI arguments with clear precedence"
+- Topics added: tuulbelt, typescript, zero-dependencies, config, cli, env-vars, configuration, config-management (8 total)
+- Homepage: https://tuulbelt.github.io/tuulbelt/tools/config-file-merger/
 
 **Standalone Metadata Updates:**
-- `package.json`: homepage, bugs URLs
+- `package.json`: homepage, bugs, repository URLs
 - `CI workflow`: Node 18/20/22 matrix + zero-dependency check
-- `README.md`: Badge URLs → standalone repo (not monorepo test-all-tools.yml)
+- `README.md`: Badge URLs → standalone repo (not meta repo test-all-tools.yml)
 - `CLAUDE.md`: Tool-specific development context created
+
+**Node 18 Compatibility Fix:**
+- Fixed `import.meta.dirname` usage (undefined in Node 18)
+- Replaced with `dirname(fileURLToPath(import.meta.url))`
+- Fixed in both meta repo and standalone repo
+- All 144 tests now pass on Node 18, 20, and 22
 
 **Wave 1 Progress:** 3/7 complete (42%)
 - ✅ cli-progress-reporting
@@ -43,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Commits:**
 - `ba3215e` - chore: prepare for standalone repository (config-file-merger)
+- `[pending]` - fix(config-file-merger): use Node 18-compatible __dirname
 - Meta repo: Submodule addition + tracking doc updates
 
 ### Added - Authentication Workflow Improvements ✅ (2025-12-29)
