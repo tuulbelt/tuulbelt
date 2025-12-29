@@ -2,7 +2,7 @@
 
 ## The Problem
 
-The global `gh` CLI is authenticated as `kofirc`, but this project needs to use `koficodedat` with different permissions.
+The global `gh` CLI is authenticated as one user account, but this project needs to use a different account with different permissions.
 
 ## The Solution
 
@@ -13,10 +13,10 @@ The global `gh` CLI is authenticated as `kofirc`, but this project needs to use 
 ### In Bash Tool Calls (Claude Code)
 
 ```bash
-# WRONG - uses global auth (kofirc)
+# WRONG - uses global auth (wrong account)
 gh repo edit tuulbelt/tool-name --add-topic rust
 
-# CORRECT - uses project auth (koficodedat)
+# CORRECT - uses project auth (correct account)
 source .env  # Load GITHUB_TOKEN from .env
 export GH_TOKEN="$GITHUB_TOKEN"
 GH_TOKEN=$GITHUB_TOKEN gh repo edit tuulbelt/tool-name --add-topic rust
@@ -37,9 +37,9 @@ gh repo edit tuulbelt/tool-name --enable-issues=false
 
 ```bash
 # direnv automatically loads .envrc when you cd into the project
-cd /Users/kofi/_/tuulbelt
+cd /path/to/tuulbelt
 
-# GH_TOKEN is now set, gh commands will use koficodedat
+# GH_TOKEN is now set, gh commands will use project account
 gh repo list tuulbelt
 ```
 
@@ -49,14 +49,14 @@ Check which account `gh` is using:
 
 ```bash
 GH_TOKEN=$GITHUB_TOKEN gh api user --jq '.login'
-# Should output: koficodedat
+# Should output: your-project-username
 ```
 
 ## Why This Works
 
 1. `gh` CLI prioritizes authentication in this order:
    1. `GH_TOKEN` environment variable ✅ **We use this**
-   2. Stored credentials in `~/.config/gh/hosts.yml` (kofirc - we avoid this)
+   2. Stored credentials in `~/.config/gh/hosts.yml` (global account - we avoid this)
 
 2. Setting `GH_TOKEN` before EACH command ensures it overrides stored auth
 
@@ -90,7 +90,7 @@ GH_TOKEN=$GITHUB_TOKEN gh repo view tuulbelt/output-diffing-utility --json repos
    gh api user --jq '.login'
    ```
 
-2. If it says `kofirc`, you forgot to set `GH_TOKEN`:
+2. If it shows the wrong account, you forgot to set `GH_TOKEN`:
    ```bash
    export GH_TOKEN="$GITHUB_TOKEN"
    ```
