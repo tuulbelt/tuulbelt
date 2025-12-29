@@ -2,7 +2,7 @@
 
 Tuulbelt provides a curated collection of focused, zero-dependency tools for modern software development.
 
-## Completed Tools (9/33)
+## Completed Tools (10/33)
 
 ### Test Flakiness Detector
 
@@ -182,6 +182,26 @@ Cross-platform file-based semaphore for process synchronization in Node.js. Comp
 - Compatible with Rust `sema` lock format
 
 [View Documentation →](/tools/file-based-semaphore-ts/)
+
+---
+
+### Test Port Resolver
+
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
+**Language:** TypeScript
+**Tests:** 56 tests
+
+Concurrent test port allocation to avoid port conflicts in parallel tests. File-based registry ensures multiple test workers don't compete for the same ports.
+
+**Features:**
+- File-based port registry with atomic operations
+- TCP bind test for actual port availability
+- Automatic stale entry cleanup (crashed processes)
+- Optional semaphore integration for enhanced atomicity
+- CLI and library API
+- Zero runtime dependencies
+
+[View Documentation →](/tools/test-port-resolver/)
 
 ---
 

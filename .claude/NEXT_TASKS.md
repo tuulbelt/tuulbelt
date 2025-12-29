@@ -1,8 +1,63 @@
 # Next Tasks
 
-**Last Updated:** 2025-12-28
+**Last Updated:** 2025-12-29
 
 This document tracks pending work across the Tuulbelt project. Tasks are organized by type and priority.
+
+---
+
+## 🚨 CRITICAL: Meta Repository Migration
+
+**Status:** Planning Complete
+**Priority:** HIGHEST - Architectural Correction
+**Document:** [MIGRATION_TO_META_REPO.md](/docs/MIGRATION_TO_META_REPO.md)
+
+### Background
+
+Tuulbelt was incorrectly implemented as a **monorepo** (all tools in subdirectories) when it should be a **meta repository** (coordination layer referencing independent tool repos).
+
+This violates PRINCIPLES.md:
+> "Each tool is its own GitHub repository... Without needing the meta repo or any other tool."
+
+### Why This Matters
+
+1. **Independence Violated**: Users must clone entire repo to use any single tool
+2. **Path Dependencies Broken**: `file:../sibling` fails for standalone clones
+3. **PRINCIPLES.md Exception 2 Broken**: Tool composition requires monorepo context
+
+### Migration Phases
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| 0 | Preparation (create repos, backup) | Pending |
+| 1 | Wave 1: Migrate 7 independent tools | Pending |
+| 2 | Wave 2: Migrate tools with optional deps | Pending |
+| 3 | Wave 3: Migrate tools with required deps | Pending |
+| 4 | Restructure meta repo (submodules) | Pending |
+| 5 | Verification & cleanup | Pending |
+
+### Key Changes
+
+**Before (Monorepo - WRONG):**
+```
+tuulbelt/tuulbelt/
+├── test-port-resolver/           # Tool code here
+└── file-based-semaphore-ts/      # Tool code here
+    # Dependency: file:../file-based-semaphore-ts (BROKEN standalone)
+```
+
+**After (Meta Repo - CORRECT):**
+```
+tuulbelt/tuulbelt/                # Meta repo
+└── tools/                        # Git submodules
+    ├── test-port-resolver/       -> github.com/tuulbelt/test-port-resolver
+    └── file-based-semaphore-ts/  -> github.com/tuulbelt/file-based-semaphore-ts
+
+tuulbelt/test-port-resolver/      # Independent repo
+    # Dependency: git+https://github.com/tuulbelt/file-based-semaphore-ts.git (WORKS everywhere)
+```
+
+**See [MIGRATION_TO_META_REPO.md](/docs/MIGRATION_TO_META_REPO.md) for complete plan.**
 
 ---
 
@@ -10,7 +65,7 @@ This document tracks pending work across the Tuulbelt project. Tasks are organiz
 
 All tools have short CLI names for better DX:
 
-### Implemented (9 tools)
+### Implemented (10 tools)
 
 | Tool | Short Name | Long Name |
 |------|------------|-----------|
@@ -23,12 +78,12 @@ All tools have short CLI names for better DX:
 | Configuration File Merger | `cfgmerge` | `config-file-merger` |
 | Snapshot Comparison | `snapcmp` | `snapshot-comparison` |
 | File-Based Semaphore (TS) | `semats` | `file-semaphore-ts` |
+| Test Port Resolver | `portres` | `test-port-resolver` |
 
-### Proposed (25 remaining tools)
+### Proposed (23 remaining tools)
 
 | Tool | Short Name | Rationale |
 |------|------------|-----------|
-| Test Port Conflict Resolver | `portres` | port + resolver |
 | Component Prop Validator | `propval` | prop + validate |
 | Exhaustiveness Checker | `excheck` | exhaustive + check |
 | Content-Addressable Blob Store | `blobstore` | self-explanatory |
@@ -70,21 +125,22 @@ All 5 Phase 1 tools implemented!
 ✅ **File-Based Semaphore** (v0.1.0) - Rust
 ✅ **Output Diffing Utility** (v0.1.0) - Rust
 
-### Completed (Phase 2: 4/28) 🆕
+### Completed (Phase 2: 5/28) 🆕
 
 ✅ **Structured Error Handler** (v0.1.0) - TypeScript
 ✅ **Configuration File Merger** (v0.1.0) - TypeScript
 ✅ **Snapshot Comparison** (v0.1.0) - Rust
-✅ **File-Based Semaphore (TS)** (v0.1.0) - TypeScript 🆕
+✅ **File-Based Semaphore (TS)** (v0.1.0) - TypeScript
+✅ **Test Port Resolver** (v0.1.0) - TypeScript 🆕
 
 ### Phase 2: Next Up
 
-See `README.md` for complete roadmap (25 remaining tools).
+See `README.md` for complete roadmap (23 remaining tools).
 
 **Recommended Next Tools:**
-- **Test Port Conflict Resolver** - Concurrent test port allocation (TypeScript)
 - **Component Prop Validator** - TypeScript runtime validation (TypeScript)
 - **Exhaustiveness Checker** - Union case coverage for TS/JS (TypeScript)
+- **Content-Addressable Blob Store** - SHA-256 hash-based storage (TypeScript)
 
 ---
 
@@ -204,6 +260,23 @@ See `README.md` for complete roadmap (25 remaining tools).
 - ✅ 160 tests passing (52 unit + 26 security + 31 CLI + 36 edge + 15 stress)
 - ✅ Complete documentation (README, SPEC.md, 7 VitePress pages)
 - ✅ Demo recording script
+
+### Test Port Resolver
+
+- ✅ v0.1.0 stable (Fifth Phase 2 tool!)
+- ✅ **Optional semaphore integration** - Uses `semats` when available
+- ✅ File-based port registry with atomic operations
+- ✅ TCP bind test for actual port availability
+- ✅ **Security hardening:**
+  - Path traversal prevention
+  - Tag sanitization (control characters removed)
+  - Registry size limits (10k entries)
+  - Ports per request limits (100)
+  - Privileged port restriction (< 1024)
+- ✅ 56 tests passing (unit + CLI + security + edge + stress)
+- ✅ Complete documentation (README, SPEC.md, 6 VitePress pages)
+- ✅ Demo recording script
+- ✅ Dogfooding: 2 composition scripts
 
 ---
 
