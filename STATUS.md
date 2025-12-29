@@ -117,18 +117,21 @@
 
 ### 🔄 In Progress
 
-**Phase 2 Wave 1: Tool Migration (3/7 complete - 42%)**
+**Phase 2 Wave 1: Tool Migration (5/7 complete - 71%)**
 - ✅ cli-progress-reporting migrated to standalone repo (+ gap fixes: topics, repo settings)
 - ✅ cross-platform-path-normalizer migrated to standalone repo
 - ✅ config-file-merger migrated to standalone repo (+ Node 18 compatibility fix)
+- ✅ structured-error-handler migrated to standalone repo
+- ✅ file-based-semaphore migrated to standalone repo (+ CI zero-dep check fixes)
 - ✅ Migration learnings documented for session continuity:
   - Enhanced migrate-tool.md with explicit steps and lessons learned
   - Added 100+ item migration checklist to QUALITY_CHECKLIST.md
   - Added comprehensive lessons learned to MIGRATION_TO_META_REPO.md
+  - Fixed Rust template zero-dependency CI pattern
 - ✅ Authentication workflow improved (direnv support, GH_TOKEN exports)
 - ✅ README.md updated with standalone repo links
-- Pending: 4 remaining independent tools (structured-error-handler, file-based-semaphore, file-based-semaphore-ts, output-diffing-utility)
-- Next: Migrate structured-error-handler using improved checklist
+- Pending: 2 remaining independent tools (file-based-semaphore-ts, output-diffing-utility)
+- Next: Migrate file-based-semaphore-ts using improved checklist
 
 ### 📋 Next Steps
 
