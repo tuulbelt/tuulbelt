@@ -38,7 +38,14 @@ export GITHUB_TOKEN
 export GH_TOKEN="$GITHUB_TOKEN"  # gh CLI respects this more than GITHUB_TOKEN
 export GITHUB_ORG
 
-# Set local git config (not global)
+# Export git author/committer info (takes precedence over git config)
+# Matches .envrc behavior for consistency
+export GIT_AUTHOR_NAME="$GITHUB_USERNAME"
+export GIT_AUTHOR_EMAIL="$GITHUB_EMAIL"
+export GIT_COMMITTER_NAME="$GITHUB_USERNAME"
+export GIT_COMMITTER_EMAIL="$GITHUB_EMAIL"
+
+# Set local git config (not global) - env vars above will take precedence
 git config user.name "$GITHUB_USERNAME"
 git config user.email "$GITHUB_EMAIL"
 
