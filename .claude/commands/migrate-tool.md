@@ -23,18 +23,26 @@ This command automates the entire migration workflow:
    - Creates temporary branch with extracted history
 
 2. **Create GitHub Repository**
-   - Creates new repo: `tuulbelt/{tool-name}`
-   - Configures description, topics, homepage
-   - Sets up repository settings (issues disabled, points to meta repo)
+   - Creates new repo: `tuulbelt/{tool-name}` (public)
+   - Sets repository description (short tool summary)
+   - Adds GitHub topics (e.g., tuulbelt, typescript, zero-dependencies, tool-specific keywords)
+   - Configures repository settings:
+     - **Disables issues** (all issues go to meta repo)
+     - **Disables wiki** (docs in README and VitePress)
+     - **Disables projects** (tracking in meta repo)
+   - Sets homepage URL to repository README
 
 3. **Prepare Standalone Repository**
    - Clones new empty repo to `/tmp/{tool-name}`
    - Pulls extracted git history
    - Updates metadata for standalone use:
-     - package.json or Cargo.toml (homepage, bugs, repository URLs)
-     - CI workflow (standalone paths, multi-version matrix)
-     - README.md (badges, absolute GitHub URLs)
-     - Creates CLAUDE.md with tool-specific context
+     - **package.json or Cargo.toml**: homepage, bugs, repository URLs
+     - **CI workflow**: standalone paths, multi-version matrix, zero-dep check
+     - **README.md**:
+       - Update badge URLs to point to standalone repo (not monorepo workflows)
+       - Convert relative links to absolute GitHub URLs where needed
+       - Keep meta repo reference link (appropriate)
+     - **CLAUDE.md**: Creates tool-specific development context file
 
 4. **Commit and Release**
    - Commits all changes using `scripts/commit.sh`
@@ -53,11 +61,13 @@ This command automates the entire migration workflow:
    - Commits submodule addition to meta repo
 
 7. **Update Tracking Documents**
-   - Updates `.claude/HANDOFF.md` with migration progress
-   - Updates `STATUS.md` with current phase status
-   - Updates `CHANGELOG.md` with migration entry
-   - Updates `.claude/NEXT_TASKS.md` marking tool complete
-   - Commits and pushes tracking updates
+   - **ALL FOUR documents must be updated** (critical for session continuity):
+     - **`.claude/HANDOFF.md`**: Update session summary, mark tool complete, update Wave 1 progress
+     - **`STATUS.md`**: Update current phase, tool count (e.g., 2/7 complete)
+     - **`CHANGELOG.md`**: Add complete migration entry with commit count, test results
+     - **`.claude/NEXT_TASKS.md`**: Move tool from pending to completed, update remaining count
+   - Commits tracking updates using `scripts/commit.sh`
+   - Pushes to meta repo using `scripts/push.sh`
 
 ## Prerequisites
 
@@ -230,6 +240,31 @@ The command implementation should:
 6. **Atomic operations** - Use transactions where possible (git operations)
 7. **Clean up on failure** - Remove temporary branches, partial repos
 
+## Lessons Learned (From cli-progress-reporting and cross-platform-path-normalizer Migrations)
+
+**Authentication:**
+- **Use MCP server, not gh CLI directly**: The custom GitHub MCP server (`.claude/mcp/tuulbelt-github/`) automatically reads from `.env`, avoiding gh CLI authentication cache issues
+- **gh CLI auth cache problem**: Even after setting GITHUB_TOKEN, gh CLI may use cached credentials from keyring. Use `export GH_TOKEN` as workaround, or prefer MCP server
+- **Fallback to REST API**: curl with direct token works when gh CLI has auth issues
+
+**GitHub Configuration:**
+- **Not automatic**: Repository settings (issues/wiki/projects), topics, and description must be explicitly configured after repo creation
+- **Verification required**: Check GitHub web UI or use `gh repo view` to verify all settings applied correctly
+
+**README Updates:**
+- **Badge URLs critical**: Badges must point to standalone repo workflows, not monorepo `test-all-tools.yml`
+- **Meta repo links OK**: Keeping "Part of Tuulbelt" link to meta repo is appropriate and expected
+
+**Tracking Documents:**
+- **All 4 must be updated**: HANDOFF.md, STATUS.md, CHANGELOG.md, NEXT_TASKS.md
+- **Session continuity**: These documents preserve context across sessions after migrations
+- **Gap analysis essential**: Always do comprehensive review against specification before considering migration complete
+
+**Testing:**
+- **Fresh clone required**: Don't trust local state - always verify with fresh clone from GitHub
+- **Full test suite**: Run complete test suite (unit + integration + CLI) in standalone context
+- **Build verification**: Verify TypeScript compilation and build succeed standalone
+
 ## Future Enhancements
 
 Potential improvements:
@@ -239,9 +274,10 @@ Potential improvements:
 - Rollback support: Undo migration if issues found
 - Dependency resolution: Automatically detect and warn about tool dependencies
 - CI integration: Trigger meta repo CI after migration
+- Automated gap analysis: Built-in checklist verification
 
 ---
 
 **Created:** 2025-12-29
-**Last Updated:** 2025-12-29
+**Last Updated:** 2025-12-29 (Enhanced after cross-platform-path-normalizer migration)
 **Status:** Active - Required for Phase 2 Wave 1 migrations

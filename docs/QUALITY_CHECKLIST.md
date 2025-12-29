@@ -315,6 +315,112 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
 
 ---
 
+## Meta Repository Migration Checklist
+
+**CRITICAL: For migrating tools from monorepo to standalone repositories (Phase 2 Wave 1-3)**
+
+Use this checklist when running `/migrate-tool` to ensure complete migration. Reference: `.claude/commands/migrate-tool.md`
+
+### Step 1: Extract Git History
+
+- [ ] **Run git subtree split**: `git subtree split -P {tool-name} -b {tool-name}-history`
+- [ ] **Verify commit count**: Compare with `git log --oneline {tool-name}/ | wc -l`
+- [ ] **Check branch created**: `git branch | grep {tool-name}-history`
+
+### Step 2: Create GitHub Repository
+
+- [ ] **Create repository**: `gh repo create tuulbelt/{tool-name} --public`
+- [ ] **Set description**: Short tool summary (one sentence)
+- [ ] **Add topics**: tuulbelt, language (typescript/rust), zero-dependencies, tool-specific keywords
+- [ ] **Disable issues**: `gh repo edit tuulbelt/{tool-name} --enable-issues=false`
+- [ ] **Disable wiki**: `gh repo edit tuulbelt/{tool-name} --enable-wiki=false`
+- [ ] **Disable projects**: `gh repo edit tuulbelt/{tool-name} --enable-projects=false`
+- [ ] **Verify on GitHub**: Check web UI shows all settings correct
+
+### Step 3: Prepare Standalone Repository
+
+- [ ] **Clone to /tmp**: `cd /tmp && git clone https://github.com/tuulbelt/{tool-name}.git`
+- [ ] **Pull history**: `git pull /path/to/monorepo {tool-name}-history`
+- [ ] **Update package.json/Cargo.toml**:
+  - [ ] `repository.url` points to standalone repo
+  - [ ] `homepage` points to standalone repo README
+  - [ ] `bugs.url` points to meta repo issues
+- [ ] **Update CI workflow**:
+  - [ ] Remove `working-directory` references
+  - [ ] Add multi-version matrix (Node 18, 20, 22 or Rust stable)
+  - [ ] Add zero-dependency verification step
+  - [ ] Remove `cache-dependency-path` (use just `cache: 'npm'` or cargo default)
+- [ ] **Update README.md**:
+  - [ ] Badge URLs point to standalone repo workflows (not monorepo)
+  - [ ] Installation instructions work standalone
+  - [ ] Meta repo link kept ("Part of Tuulbelt" is appropriate)
+- [ ] **Create CLAUDE.md**: Tool-specific development context
+
+### Step 4: Commit and Release
+
+- [ ] **Run npm install** (or cargo build): Verify dependencies install
+- [ ] **Commit changes**: Use `scripts/commit.sh` with correct author
+- [ ] **Tag v0.1.0**: `git tag v0.1.0`
+- [ ] **Push to GitHub**: Use `scripts/push.sh` with correct credentials
+- [ ] **Verify pushed**: Check GitHub shows v0.1.0 tag
+
+### Step 5: Verify Standalone Functionality
+
+- [ ] **Fresh clone**: `cd /tmp/verify && git clone https://github.com/tuulbelt/{tool-name}.git`
+- [ ] **Install dependencies**: `npm ci` or `cargo build`
+- [ ] **Run tests**: All tests pass (record count: X/X passing)
+- [ ] **TypeScript compile** (if TS): `npx tsc --noEmit` passes
+- [ ] **Build succeeds**: `npm run build` or `cargo build --release` passes
+- [ ] **CLI works** (if applicable): Test short and long CLI names
+
+### Step 6: Add Git Submodule
+
+- [ ] **Add submodule**: `git submodule add https://github.com/tuulbelt/{tool-name}.git tools/{tool-name}`
+- [ ] **Verify .gitmodules**: Check entry created correctly
+- [ ] **Commit submodule**: Use `scripts/commit.sh`
+- [ ] **Push to meta repo**: Use `scripts/push.sh`
+
+### Step 7: Update Tracking Documents
+
+- [ ] **Update .claude/HANDOFF.md**:
+  - [ ] Update session title with tool name and progress (e.g., 2/7 complete)
+  - [ ] Add migration accomplishments section
+  - [ ] Update "NEXT SESSION" to next tool
+  - [ ] Update Wave 1 progress checklist
+- [ ] **Update STATUS.md**:
+  - [ ] Update "Current Phase" with new progress (e.g., 2/7 complete)
+  - [ ] Update percentage (e.g., 28%)
+  - [ ] Add tool to completed list
+- [ ] **Update CHANGELOG.md**:
+  - [ ] Add new section with date: "### Added - Phase 2 Wave 1: {tool-name} Migration Complete ✅"
+  - [ ] Document commit count, test results, repository URL
+  - [ ] Document GitHub configuration applied
+- [ ] **Update .claude/NEXT_TASKS.md**:
+  - [ ] Move tool from pending to completed (with ✅)
+  - [ ] Update remaining count (e.g., "Remaining Tools (5/7)")
+- [ ] **Commit tracking updates**: Use `scripts/commit.sh`
+- [ ] **Push to meta repo**: Use `scripts/push.sh`
+
+### Post-Migration Verification
+
+- [ ] **GitHub repository**: Visit https://github.com/tuulbelt/{tool-name}
+  - [ ] README renders correctly
+  - [ ] CI workflow runs and passes
+  - [ ] Topics visible
+  - [ ] Issues disabled message shows
+- [ ] **Meta repo submodule**: `cd tools/{tool-name} && git log --oneline -5`
+- [ ] **Clean git status**: `git status` in meta repo shows clean
+- [ ] **All 4 tracking docs updated**: HANDOFF, STATUS, CHANGELOG, NEXT_TASKS
+
+### Authentication Checklist
+
+- [ ] **Use MCP server preferred**: Custom GitHub MCP server reads from `.env` automatically
+- [ ] **Fallback: Set GH_TOKEN**: `export GH_TOKEN="token"` if using gh CLI directly
+- [ ] **Verify auth**: `gh auth status` shows correct account (koficodedat)
+- [ ] **Test GitHub operation**: Try `gh repo view tuulbelt/tuulbelt` to verify access
+
+---
+
 ## Common Pitfalls Database
 
 ### TypeScript/Node.js Issues

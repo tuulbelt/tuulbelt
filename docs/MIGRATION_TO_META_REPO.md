@@ -299,6 +299,183 @@ scripts/push.sh
 
 ---
 
+## Lessons Learned from First Two Migrations
+
+**Source:** cli-progress-reporting (Wave 1, Tool 1/7) and cross-platform-path-normalizer (Wave 1, Tool 2/7) migrations completed 2025-12-29
+
+### Critical Success Factors
+
+**1. Comprehensive Gap Analysis is Essential**
+- Initial migration appeared complete but missed 6 critical gaps
+- Second-pass review discovered 5 additional potential gaps
+- **Takeaway:** Always run through complete checklist twice before marking complete
+- Reference: `docs/QUALITY_CHECKLIST.md` - Meta Repository Migration Checklist
+
+**2. All Four Tracking Documents Must Be Updated**
+- **HANDOFF.md**: Session summary, progress, next tool
+- **STATUS.md**: Current phase, tool count
+- **CHANGELOG.md**: Complete migration entry
+- **NEXT_TASKS.md**: Move tool to completed
+- **Why:** Session continuity - we clear context after every migration
+- Missing any document loses critical information
+
+**3. GitHub Configuration is NOT Automatic**
+- Creating repo doesn't automatically configure settings
+- Must explicitly disable: issues, wiki, projects
+- Must explicitly add: topics, description
+- **Verification required:** Always check GitHub web UI or use `gh repo view`
+
+### Authentication Challenges & Solutions
+
+**Problem:** gh CLI Authentication Cache
+- `gh` CLI caches credentials in system keyring
+- Setting GITHUB_TOKEN doesn't override cached credentials
+- Caused recurring "kofirc does not have the correct permissions" errors
+
+**Solutions (in order of preference):**
+1. **Use GitHub MCP Server** (`.claude/mcp/tuulbelt-github/`)
+   - Reads directly from `.env` file
+   - No CLI authentication cache issues
+   - Recommended for all GitHub operations
+
+2. **Use GH_TOKEN environment variable**
+   ```bash
+   unset GITHUB_TOKEN
+   export GH_TOKEN="ghp_token_here"
+   gh auth status  # Now shows correct account
+   ```
+   - GH_TOKEN takes precedence over GITHUB_TOKEN
+   - Avoids keyring cache
+
+3. **Fallback to curl REST API**
+   ```bash
+   curl -X POST -H "Authorization: token ghp_token" \
+     https://api.github.com/orgs/tuulbelt/repos -d '{...}'
+   ```
+   - Direct GitHub API access
+   - No CLI cache issues
+
+### README Badge Updates are Critical
+
+**Problem:** Badges pointed to monorepo workflows after migration
+- Test badge: `tuulbelt/tuulbelt/.../test-all-tools.yml`
+- Should be: `tuulbelt/{tool-name}/.../test.yml`
+
+**Why this matters:** Shows incorrect CI status to users
+
+**Fix pattern:**
+```markdown
+# Before (WRONG):
+[![Tests](https://github.com/tuulbelt/tuulbelt/actions/workflows/test-all-tools.yml/badge.svg)]
+
+# After (CORRECT):
+[![Tests](https://github.com/tuulbelt/{tool-name}/actions/workflows/test.yml/badge.svg)]
+```
+
+**Meta repo links OK:** Keeping "Part of [Tuulbelt](meta-repo-url)" is appropriate
+
+### Testing Verification Pattern
+
+**Fresh Clone is Non-Negotiable:**
+```bash
+# Don't trust local state
+cd /tmp/verify-$(date +%s)
+git clone https://github.com/tuulbelt/{tool-name}.git
+cd {tool-name}
+npm ci  # or cargo build
+npm test  # or cargo test
+```
+
+**Why:** Local state may have:
+- Symlinks to monorepo tools
+- Cached node_modules
+- Git worktree artifacts
+
+**Record everything:**
+- Commit count extracted
+- Test count passing
+- Build success confirmation
+
+### CI Workflow Updates
+
+**Required changes:**
+1. Remove `working-directory:` references
+2. Add multi-version matrix (Node 18, 20, 22)
+3. Add zero-dependency check
+4. Remove `cache-dependency-path` (just use `cache: 'npm'`)
+
+**Verification:**
+- Wait for first CI run in standalone repo
+- Don't rely on local testing alone
+
+### Git Submodule Integration
+
+**Correct order:**
+1. Complete all standalone repo work first
+2. Verify standalone tests pass
+3. Then add as submodule to meta repo
+4. Commit submodule addition separately
+
+**Why:** Separates concerns - if submodule fails, standalone repo is still complete
+
+### Documentation Updates
+
+**Second-pass review findings:**
+- Labels: GitHub adds 9 default labels automatically (no action needed)
+- Releases: Git tags sufficient, GitHub Releases not required
+- Cache config: Verified correctly removed
+- Meta repo README: Found monorepo paths still present (needs fix)
+
+### Session Continuity Strategy
+
+**Problem:** Context cleared after every migration
+**Solution:** Document everything in permanent files
+
+**Updated files this migration:**
+- `.claude/commands/migrate-tool.md` - Added explicit steps and lessons learned
+- `docs/QUALITY_CHECKLIST.md` - Added complete migration checklist (100+ items)
+- `docs/MIGRATION_TO_META_REPO.md` - This lessons learned section
+
+**Future migrations:** Reference these three files
+
+### What Worked Well
+
+1. **Authentication scripts** (setup-github-auth.sh, commit.sh, push.sh)
+   - Centralized credential management
+   - Auto-rebase before push prevents conflicts
+
+2. **Git subtree split**
+   - Preserves full commit history
+   - 58 commits (cli-progress) and 457 commits (path-normalizer) extracted cleanly
+
+3. **Incremental verification**
+   - Test at each step
+   - Don't batch multiple changes
+
+4. **CLAUDE.md in standalone repos**
+   - Provides tool-specific context
+   - Helps future development sessions
+
+### What Needs Improvement
+
+1. **Automate GitHub configuration**
+   - Current: Manual `gh repo edit` commands
+   - Future: MCP server batch operation or script
+
+2. **Automate badge URL updates**
+   - Current: Manual search/replace in README
+   - Future: Script to update badge patterns
+
+3. **Automated tracking document updates**
+   - Current: Manual edits to 4 files
+   - Future: Script or template expansion
+
+4. **Pre-flight verification**
+   - Add checklist verification before starting migration
+   - Prevent "oops I forgot" scenarios
+
+---
+
 ## References
 
 - **Automation:** `.claude/commands/migrate-tool.md` - Complete automation spec
@@ -308,5 +485,5 @@ scripts/push.sh
 
 ---
 
-**Document Version:** 2.0 (Streamlined)
+**Document Version:** 2.1 (Added Lessons Learned from First Two Migrations)
 **Last Updated:** 2025-12-29

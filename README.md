@@ -16,9 +16,9 @@ Each tool in Tuulbelt:
 
 ### CLI/DevTools
 - **[Structured Error Handler](structured-error-handler/)** — Error format + serialization with context preservation 🟢 v0.1.0 🐕 | [📖 Docs](structured-error-handler/) | [🚀 Examples](structured-error-handler/examples/)
-- **[CLI Progress Reporting](cli-progress-reporting/)** — Concurrent-safe progress updates 🟢 v0.1.0 🐕 | [📖 Docs](cli-progress-reporting/) | [🚀 Examples](cli-progress-reporting/examples/)
+- **[CLI Progress Reporting](https://github.com/tuulbelt/cli-progress-reporting)** — Concurrent-safe progress updates 🟢 v0.1.0 🐕 | [📖 Docs](https://github.com/tuulbelt/cli-progress-reporting#readme) | [🚀 Examples](https://github.com/tuulbelt/cli-progress-reporting/tree/main/examples/)
 - **[Configuration File Merger](config-file-merger/)** — ENV + config + CLI arg merging 🟢 v0.1.0 🐕 | [📖 Docs](config-file-merger/) | [🚀 Examples](config-file-merger/examples/)
-- **[Cross-Platform Path Normalizer](cross-platform-path-normalizer/)** — Windows/Unix path consistency 🟢 v0.1.0 🐕 | [📖 Docs](cross-platform-path-normalizer/) | [🚀 Examples](cross-platform-path-normalizer/examples/)
+- **[Cross-Platform Path Normalizer](https://github.com/tuulbelt/cross-platform-path-normalizer)** — Windows/Unix path consistency 🟢 v0.1.0 🐕 | [📖 Docs](https://github.com/tuulbelt/cross-platform-path-normalizer#readme) | [🚀 Examples](https://github.com/tuulbelt/cross-platform-path-normalizer/tree/main/examples/)
 
 ### Testing & Observability
 - **[Test Flakiness Detector](test-flakiness-detector/)** — Identify unreliable tests 🟢 v0.1.0 🐕 | [📖 Docs](test-flakiness-detector/docs/) | [🚀 Examples](test-flakiness-detector/examples/)
@@ -96,7 +96,7 @@ cd cli-progress-reporting && npm install
 prog init --total 100 --message "Processing files"
 ```
 
-[📖 Docs](cli-progress-reporting/) | [🚀 Examples](cli-progress-reporting/examples/)
+[📖 Docs](https://github.com/tuulbelt/cli-progress-reporting#readme) | [🚀 Examples](https://github.com/tuulbelt/cli-progress-reporting/tree/main/examples/)
 
 ---
 
@@ -107,7 +107,7 @@ cd cross-platform-path-normalizer && npm install
 normpath --format unix "C:\Users\file.txt"
 ```
 
-[📖 Docs](cross-platform-path-normalizer/) | [🚀 Examples](cross-platform-path-normalizer/examples/)
+[📖 Docs](https://github.com/tuulbelt/cross-platform-path-normalizer#readme) | [🚀 Examples](https://github.com/tuulbelt/cross-platform-path-normalizer/tree/main/examples/)
 
 ---
 
