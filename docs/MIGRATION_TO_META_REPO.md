@@ -363,6 +363,22 @@ Tools must be migrated in dependency order:
 
 ### Per-Tool Migration Template
 
+**AUTOMATION AVAILABLE:** Use `/migrate-tool <tool-name>` command to automate the entire migration process.
+
+The command handles all steps below automatically:
+- Git history extraction
+- GitHub repository creation
+- Metadata updates (package.json/Cargo.toml, CI, README, CLAUDE.md)
+- Commit and tag v0.1.0 with correct author
+- Git submodule addition to meta repo
+- Tracking document updates
+
+See `.claude/commands/migrate-tool.md` for complete details.
+
+**Manual steps below are for reference only. Use `/migrate-tool` instead.**
+
+---
+
 For each tool, execute these micro-tasks:
 
 #### Task N.1: Extract Tool with Git History

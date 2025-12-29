@@ -172,6 +172,9 @@ See @README.md for detailed architecture and @PRINCIPLES.md for design philosoph
 # Create new tool from template
 /scaffold-tool <tool-name> <typescript|rust>
 
+# Migrate existing tool to standalone repo (Phase 2 meta repo migration)
+/migrate-tool <tool-name>
+
 # Run all tests across templates
 /test-all [filter]
 
@@ -296,6 +299,7 @@ See @CONTRIBUTING.md for full contribution workflow.
 - `/test-all [filter]` - Run TypeScript and Rust tests
 - `/security-scan` - Comprehensive security analysis
 - `/scaffold-tool <name> <lang>` - Create new tool repository
+- `/migrate-tool <tool-name>` - **Migrate monorepo tool to standalone repo** (Phase 2)
 - `/git-commit <type> <scope> <msg>` - Semantic commit with validation
 - `/handoff` - Create session handoff for next session
 - `/resume-work` - Resume from previous session handoff
@@ -328,6 +332,26 @@ See @CONTRIBUTING.md for full contribution workflow.
 
 ## Common Workflows
 
+### Migrating a Tool to Standalone Repository (Phase 2)
+
+**CRITICAL: Use `/migrate-tool` for all Phase 2 migrations**
+
+1. Configure authentication: `source scripts/setup-github-auth.sh`
+2. Verify tool is complete: `cd {tool-name} && npm test`
+3. Run migration: `/migrate-tool {tool-name}`
+4. Verify standalone: Fresh clone from GitHub, run tests
+5. Start fresh session for next tool
+
+**The `/migrate-tool` command automates:**
+- Git history extraction (git subtree split)
+- GitHub repository creation
+- Metadata updates (package.json, CI, README, CLAUDE.md)
+- Commit and tag v0.1.0 with correct author
+- Git submodule addition to meta repo
+- Tracking document updates (HANDOFF.md, STATUS.md, CHANGELOG.md, NEXT_TASKS.md)
+
+**See:** @.claude/commands/migrate-tool.md for complete details
+
 ### Creating a New Tool
 
 1. Scaffold: `/scaffold-tool my-tool typescript`
@@ -358,8 +382,10 @@ See @CONTRIBUTING.md for full contribution workflow.
 - @docs/testing-standards.md - Testing requirements
 - @docs/security-guidelines.md - Security checklist
 - @docs/KNOWN_ISSUES.md - **Tracked bugs and known issues**
+- @docs/MIGRATION_TO_META_REPO.md - **Meta repository migration plan**
 - @.claude/HANDOFF.md - **Session handoff (session → session continuity)**
 - @.claude/NEXT_TASKS.md - **Task backlog and priorities**
+- @.claude/commands/migrate-tool.md - **Tool migration automation**
 - @.claude/rules/code-style.md - Code examples and patterns
 - @templates/tool-repo-template/ - TypeScript template
 - @templates/rust-tool-template/ - Rust template
