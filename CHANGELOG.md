@@ -9,6 +9,90 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Authentication Workflow Improvements ✅ (2025-12-29)
+
+**Implemented direnv support for automatic credential loading:**
+- Created `.envrc` for auto-loading credentials on `cd` to project
+- Created `.envrc.example` as template with setup instructions
+- Exports GH_TOKEN, GITHUB_TOKEN, GITHUB_ORG automatically
+- Exports GIT_AUTHOR_* and GIT_COMMITTER_* for commits
+- Works like `.npmrc` for project-specific configuration
+
+**Enhanced scripts/setup-github-auth.sh:**
+- Now exports `GH_TOKEN` (takes precedence over gh CLI keyring cache)
+- Now exports `GIT_AUTHOR_*` and `GIT_COMMITTER_*` environment variables
+- Matches `.envrc` behavior for consistency
+- Both workflows (direnv vs. manual) now use same mechanism
+
+**Updated .gitignore:**
+- Documented that `.envrc` is tracked (contains no secrets)
+- Clarified `.env` remains gitignored (contains actual credentials)
+
+**Impact:**
+- Solves recurring "wrong username" authentication issues
+- Prevents gh CLI from using cached kofirc credentials
+- Consistent behavior across manual and direnv workflows
+- Project-specific credentials always used (koficodedat)
+
+**Commits:**
+- `2dafbf6` - feat: add direnv support for automatic credential loading
+- `b415b0d` - refactor: export GIT_AUTHOR_* env vars in setup-github-auth.sh
+
+### Added - Migration Learnings Documentation ✅ (2025-12-29)
+
+**Enhanced `.claude/commands/migrate-tool.md` for session continuity:**
+- Added explicit GitHub configuration steps (issues/wiki/projects/topics)
+- Added explicit README badge update requirements (standalone repo URLs)
+- Added comprehensive "Lessons Learned" section from first 2 migrations
+- Documented authentication challenges (gh CLI cache) and solutions (MCP server, GH_TOKEN)
+- Total: +77 lines of critical guidance
+
+**Added Meta Repository Migration Checklist to `docs/QUALITY_CHECKLIST.md`:**
+- Complete 7-step migration checklist with 100+ verification items
+- Step 1: Extract Git History (3 items)
+- Step 2: Create GitHub Repository (8 items)
+- Step 3: Prepare Standalone Repository (7 items)
+- Step 4: Commit and Release (5 items)
+- Step 5: Verify Standalone Functionality (6 items)
+- Step 6: Add Git Submodule (4 items)
+- Step 7: Update Tracking Documents (9 items)
+- Post-Migration Verification (4 items)
+- Authentication Checklist (4 items)
+- Total: +107 lines of systematic verification
+
+**Added Lessons Learned to `docs/MIGRATION_TO_META_REPO.md`:**
+- Critical Success Factors (3 key insights)
+- Authentication Challenges & Solutions (3 approaches with examples)
+- README Badge Updates patterns (before/after examples)
+- Testing Verification pattern (fresh clone required)
+- CI Workflow Updates requirements
+- Git Submodule Integration best practices
+- Documentation Updates findings
+- Session Continuity Strategy
+- What Worked Well (4 items)
+- What Needs Improvement (4 items)
+- Total: +181 lines of strategic guidance
+
+**Fixed gaps in cli-progress-reporting:**
+- Added 8 topics (tuulbelt, cli, progress, reporting, typescript, zero-dependencies, concurrent, node)
+- Disabled issues (all issues go to meta repo)
+- Disabled wiki (docs in README/VitePress)
+- Disabled projects (tracking in meta repo)
+
+**Updated README.md with standalone repo links:**
+- cli-progress-reporting: 4 references (monorepo paths → GitHub URLs)
+- cross-platform-path-normalizer: 4 references (monorepo paths → GitHub URLs)
+- Updated both main tool list and Quick Examples section
+
+**Impact:**
+- All learnings preserved for future sessions (context cleared after migrations)
+- Next migration will reference 3 key documents (no rediscovery needed)
+- Both migrated tools now fully configured and consistent
+- Prevention of gaps through systematic checklist
+
+**Commit:**
+- `ffeaa9e` - docs: preserve migration learnings for session continuity
+
 ### Added - Migration Automation: /migrate-tool Command ✅ (2025-12-29)
 
 **Created comprehensive automation for Phase 2 migrations:**
