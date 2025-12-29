@@ -1,9 +1,9 @@
 # Tuulbelt Development Roadmap
 
-**Last Updated:** 2025-12-28
+**Last Updated:** 2025-12-29
 **Total Tools Planned:** 33
-**Completed:** 9 (27%)
-**Current Phase:** Phase 2 - High-Impact Medium Tools
+**Completed:** 10 (30%)
+**Current Phase:** Phase 2 - Core Tools (In Progress)
 
 ---
 
@@ -152,23 +152,87 @@ See `docs/setup/TUULBELT_TRIAGE.md` for detailed complexity analysis.
 
 ---
 
-## Phase 2: High-Impact Medium Tools
+## Phase 2: Core Tools
 
-**Goal:** Build most valuable medium-complexity tools
+**Goal:** Build essential utilities for testing, configuration, and error handling
 
 **Timeline:** Current phase (started 2025-12-26)
-**Status:** 🔄 In Progress | Recommended: Structured Error Handler
+**Status:** 🔄 In Progress (5/28 tools complete) | Next Up: Component Prop Validator
 
-### Configuration & CLI (3 tools)
+### Completed Phase 2 Tools (5 tools)
 
-- [ ] Configuration File Merger/Resolver - ENV + config + CLI arg merging
-- [ ] Component Prop Validator - TypeScript runtime validation
+#### ✅ Structured Error Handler (COMPLETE)
+
+**Priority:** HIGH
+**Language:** TypeScript
+**Status:** ✅ Complete v0.1.0 (2025-12-27)
+
+**Description:** Error format + serialization with context preservation through call stacks.
+
+**Location:** `/structured-error-handler/`
+
+---
+
+#### ✅ Configuration File Merger (COMPLETE)
+
+**Priority:** HIGH
+**Language:** TypeScript
+**Status:** ✅ Complete v0.1.0 (2025-12-27)
+
+**Description:** ENV + config + CLI arg merging with clear precedence (CLI > ENV > File > Defaults).
+
+**Location:** `/config-file-merger/`
+
+---
+
+#### ✅ Snapshot Comparison (COMPLETE)
+
+**Priority:** MEDIUM
+**Language:** Rust
+**Status:** ✅ Complete v0.1.0 (2025-12-27)
+
+**Description:** Snapshot testing with integrated diffs. First tool using Tuulbelt-to-Tuulbelt library composition.
+
+**Location:** `/snapshot-comparison/`
+
+---
+
+#### ✅ File-Based Semaphore (TypeScript) (COMPLETE)
+
+**Priority:** MEDIUM
+**Language:** TypeScript
+**Status:** ✅ Complete v0.1.0 (2025-12-28)
+
+**Description:** TypeScript implementation with cross-language compatibility with Rust version.
+
+**Location:** `/file-based-semaphore-ts/`
+
+---
+
+#### ✅ Test Port Resolver (COMPLETE)
+
+**Priority:** HIGH
+**Language:** TypeScript
+**Status:** ✅ Complete v0.1.0 (2025-12-29)
+
+**Description:** Concurrent test port allocation to avoid EADDRINUSE errors. Uses semats as library dependency.
+
+**Location:** `/test-port-resolver/`
+
+---
+
+### Remaining Phase 2 Tools (23 tools)
+
+#### Configuration & CLI
+
+- [x] Configuration File Merger/Resolver ✅
+- [ ] Component Prop Validator - TypeScript runtime validation 🎯 NEXT
 - [ ] Exhaustiveness Checker - Union case coverage for TS/JS
 
-### Testing & Observability (3 tools)
+#### Testing & Observability
 
-- [ ] Snapshot Comparison - Binary/structured data snapshots
-- [ ] Test Port Conflict Resolver - Concurrent test port allocation
+- [x] Snapshot Comparison ✅
+- [x] Test Port Resolver ✅
 - [ ] Structured Trace-to-SVG - Events → Flame Graph visualization
 
 ### Data & Protocols (4 tools)
@@ -245,67 +309,103 @@ See `docs/setup/TUULBELT_TRIAGE.md` for detailed complexity analysis.
 
 ---
 
-### Milestone 2: First 5 Quick Tools
+### Milestone 2: First 5 Quick Tools ✅ COMPLETE
 
-**Target:** Q1 2026
-**Status:** 🔄 In Progress (2/5 complete - 40%)
+**Completed:** 2025-12-26
+**Status:** ✅ Complete (5/5 - 100%)
 
 **Tools:**
-1. ✅ Test Flakiness Detector (Complete v0.1.0)
-2. ✅ CLI Progress Reporting (Complete v0.1.0)
-3. 🎯 Cross-Platform Path Handling (Next)
-4. File-Based Semaphore
-5. Output Diffing Utility
+1. ✅ Test Flakiness Detector v0.1.0
+2. ✅ CLI Progress Reporting v0.1.0
+3. ✅ Cross-Platform Path Normalizer v0.1.0
+4. ✅ File-Based Semaphore (Rust) v0.1.0
+5. ✅ Output Diffing Utility v0.1.0
 
-**Success Criteria:**
-- All tools published
+**Success Criteria Met:**
+- All 5 tools published and documented
 - All tools have 80%+ test coverage
-- All tools validated in real projects
-- Infrastructure refinements documented
+- All tools dogfooded and validated
+- Infrastructure patterns established
 
 ---
 
-### Milestone 3: 10 Medium Tools
+### Milestone 3: 10 Tools Total (Phase 1 + Phase 2)
 
-**Target:** Q2 2026
-**Status:** Not started (0/10 complete)
+**Target:** Q1 2025
+**Status:** ✅ Complete (10/10 - 100%) - Completed 2025-12-29
+
+**Phase 1 Tools (5):** All complete ✅
+**Phase 2 Tools (5):** All complete ✅
+
+**Breakdown:**
+- Configuration management: Config File Merger ✅
+- Testing infrastructure: Test Port Resolver, Snapshot Comparison ✅
+- Error handling: Structured Error Handler ✅
+- Cross-platform utilities: File-Based Semaphore (TS) ✅
+
+**Success Criteria Met:**
+- All 10 tools solve real production problems
+- Cross-tool composition verified (snapcmp uses odiff, portres uses semats)
+- Dogfooding network established
+- Documentation standards proven
+
+---
+
+### Milestone 4: 15 Tools (Next Goal)
+
+**Target:** Q2 2025
+**Status:** 🔄 Not started (0/5 complete)
+
+**Next 5 Tools:**
+1. Component Prop Validator - TypeScript runtime validation 🎯 NEXT
+2. Exhaustiveness Checker - Union case coverage for TS/JS
+3. Content-Addressable Blob Store - SHA-256 hash-based storage
+4. Streaming JSON Parser - Memory-efficient parsing (Rust)
+5. Universal Log Normalizer - Structured log standardization
 
 **Focus Areas:**
-- Configuration management (2 tools)
-- Testing infrastructure (2 tools)
-- Data protocols (2 tools)
-- Security (2 tools)
-- APIs (2 tools)
-
-**Success Criteria:**
-- Tools solve real production problems
-- Cross-tool compatibility verified
-- Performance benchmarks established
+- Frontend validation (2 tools)
+- Data storage (1 tool)
+- Data parsing (1 tool)
+- Observability (1 tool)
 
 ---
 
-### Milestone 4: 20 Medium Tools
+### Milestone 5: 20 Tools
 
-**Target:** Q3-Q4 2026
+**Target:** Q3 2025
 **Status:** Not started (0/20 complete)
 
 **Focus Areas:**
-- Complete all remaining medium tools
-- Build integrations between tools
+- Complete remaining Phase 2 tools
+- Build more integrations between tools
 - Establish ecosystem patterns
 
 ---
 
-### Milestone 5: Ecosystem Maturity
+### Milestone 6: All 33 Tools Complete
 
-**Target:** 2027
-**Status:** Not started
+**Target:** Q4 2025
+**Status:** Not started (10/33 complete - 30%)
 
 **Goals:**
 - All 33 tools published and maintained
+- Comprehensive cross-tool integration examples
+- Real-world production usage documented
+- Complete documentation and tutorials
+
+---
+
+### Milestone 7: Ecosystem Maturity
+
+**Target:** 2026+
+**Status:** Not started
+
+**Goals:**
 - Active community contributions
-- Real-world production usage
-- Documentation and tutorials complete
+- Tool discovery and search capabilities
+- Performance benchmarking suite
+- Case studies and real-world usage examples
 
 ---
 
@@ -362,18 +462,27 @@ Priorities may change based on:
 
 ## Current Focus
 
-**Phase:** Phase 1 - Quick Tools (2/5 complete - 40%)
-**Next Tool:** Cross-Platform Path Handling
-**Language:** TypeScript or Rust
-**Timeline:** 2-3 days
+**Phase:** Phase 2 - Core Tools (5/28 complete - 18%)
+**Next Tool:** Component Prop Validator 🎯
+**Language:** TypeScript
+**Timeline:** 3-5 days (Medium complexity)
 
 **Recently Completed:**
-- ✅ CLI Progress Reporting v0.1.0 (2025-12-23)
-- ✅ Test Flakiness Detector v0.1.0 (2025-12-23)
+- ✅ Test Port Resolver v0.1.0 (2025-12-29)
+- ✅ File-Based Semaphore (TS) v0.1.0 (2025-12-28)
+- ✅ Snapshot Comparison v0.1.0 (2025-12-27)
+- ✅ Configuration File Merger v0.1.0 (2025-12-27)
+- ✅ Structured Error Handler v0.1.0 (2025-12-27)
+
+**Total Progress:**
+- 10 of 33 tools complete (30%)
+- Phase 1: 5/5 complete (100%) ✅
+- Phase 2: 5/28 complete (18%)
 
 **After Next Tool:**
-- Continue with remaining Quick tools (File-Based Semaphore, Output Diffing Utility)
-- Phase 1 will be 60% complete (3/5 tools)
+- 11/33 tools (33%)
+- Exhaustiveness Checker (TypeScript)
+- Then Content-Addressable Blob Store
 
 ---
 

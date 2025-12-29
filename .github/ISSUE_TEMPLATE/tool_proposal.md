@@ -67,7 +67,7 @@ Before submitting, confirm:
 - [ ] This solves a single, focused problem
 - [ ] It can be implemented without external dependencies
 - [ ] It uses portable interfaces (CLI, files, sockets)
-- [ ] I've read [PRINCIPLES.md](../../PRINCIPLES.md)
+- [ ] I've read [PRINCIPLES.md](https://github.com/tuulbelt/tuulbelt/blob/main/PRINCIPLES.md)
 - [ ] Existing tools don't already solve this problem
 
 ## Additional Context
