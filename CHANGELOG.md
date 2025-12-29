@@ -11,6 +11,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Phase 2 Wave 1: output-diffing-utility (Rust) Migration Complete ✅ (2025-12-29)
+
+**Migrated output-diffing-utility to standalone repository - WAVE 1 COMPLETE!**
+- Repository: https://github.com/tuulbelt/output-diffing-utility
+- Extracted git history: 56 commits processed
+- Tagged v0.1.0 and pushed to GitHub
+- Verified standalone: 108/108 tests passing (76 lib + 27 integration + 5 doc tests)
+- Added as git submodule: `tools/output-diffing-utility`
+
+**Repository Configuration:**
+- Repository already existed (configured previously)
+- Description: "Semantic diff for JSON, text, binary files - Part of Tuulbelt"
+- Homepage: https://tuulbelt.github.io/tuulbelt/tools/output-diffing-utility/
+
+**Technical Details:**
+- CI workflow: Removed monorepo path filters, added zero-dependency verification
+- Created tool-specific CLAUDE.md for development guidance
+- Build verified: cargo build --release successful
+- No README badges to update (tool doesn't use badges)
+
+**🎉 Phase 2 Wave 1 Progress: 7/7 complete (100%) - WAVE 1 COMPLETE!**
+
+This completes all independent tools in Wave 1. Next up: Wave 2 (test-flakiness-detector with optional dependencies).
+
+---
+
 ### Added - Phase 2 Wave 1: file-based-semaphore-ts (TypeScript) Migration Complete ✅ (2025-12-29)
 
 **Migrated file-based-semaphore-ts to standalone repository:**
