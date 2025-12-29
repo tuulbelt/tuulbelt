@@ -130,7 +130,7 @@
 
 **What Was Done:**
 1. ✅ Created GitHub repository: https://github.com/tuulbelt/cli-progress-reporting
-2. ✅ Extracted git history (442 commits via `git subtree split`)
+2. ✅ Extracted git history (58 commits via `git subtree split`)
 3. ✅ Updated package.json (homepage, bugs URLs)
 4. ✅ Updated CI workflow for standalone repo (Node 18, 20, 22 + zero-dep check)
 5. ✅ Updated README.md (badges, absolute URLs, removed monorepo paths)

@@ -92,7 +92,7 @@ tuulbelt/test-port-resolver/      # Independent repo
 
 **Completed Tools (1/7):**
 - ✅ **cli-progress-reporting** - Migrated to https://github.com/tuulbelt/cli-progress-reporting
-  - 442 commits extracted, v0.1.0 tagged, 121/121 tests passing standalone
+  - 58 commits extracted, v0.1.0 tagged, 121/121 tests passing standalone
   - CI workflow updated (Node 18, 20, 22, zero-dep check)
   - Authentication scripts created (setup-github-auth.sh, git-commit-with-auth.sh, git-push-with-auth.sh)
 

@@ -189,7 +189,7 @@
 
 **2025-12-29** - Meta Repo Migration Phase 2 Wave 1: cli-progress-reporting - COMPLETE ✅
 - **GitHub Repository**: Created https://github.com/tuulbelt/cli-progress-reporting
-- **Git History**: Extracted 442 commits with full history via `git subtree split`
+- **Git History**: Extracted 58 commits with full history via `git subtree split`
 - **Standalone Verified**: 121/121 tests passing, TypeScript compiles, build succeeds
 - **CI Workflow**: Updated for standalone repo (Node 18, 20, 22 + zero-dep check)
 - **Documentation**: Updated README, created CLAUDE.md, fixed badges and links

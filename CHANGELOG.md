@@ -44,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **First Tool Migrated to Standalone Repository:**
 - Created GitHub repository: https://github.com/tuulbelt/cli-progress-reporting
-- Extracted 442 commits with full git history using `git subtree split`
+- Extracted 58 commits with full git history using `git subtree split`
 - Updated for standalone use:
   - package.json: Added homepage, bugs, repository URLs
   - CI workflow: Standalone test.yml (Node 18, 20, 22, zero-dep check)
