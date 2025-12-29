@@ -2174,6 +2174,819 @@ updates:
 
 ---
 
+## Addendum C: Tool Creation Automation System (2025-12-29)
+
+After migration, creating new tools should be highly automated. This section defines the automation architecture.
+
+### C.1 Overview: What Gets Automated
+
+When creating a new Tuulbelt tool, there are **30+ manual steps** that can be automated:
+
+| Category | Manual Steps | Automation |
+|----------|--------------|------------|
+| GitHub repo creation | 3 | MCP server (CLI) / Instructions (Web) |
+| Template scaffolding | 8 | `/new-tool` command |
+| Meta repo integration | 4 | `tool-creator` agent |
+| Tracking doc updates | 9 | Automatic edits |
+| CI/CD setup | 5 | Template generation |
+| Verification | 3 | Quality check |
+
+### C.2 `/new-tool` Command Specification
+
+**Location:** `.claude/commands/new-tool.md`
+
+**Purpose:** Single command to create a fully-integrated Tuulbelt tool.
+
+```markdown
+# /new-tool Command
+
+Create a new Tuulbelt tool with full automation.
+
+## Usage
+
+/new-tool <tool-name> <language> [short-name] [description]
+
+## Parameters
+
+| Parameter | Required | Description | Example |
+|-----------|----------|-------------|---------|
+| tool-name | Yes | Full kebab-case name | `component-prop-validator` |
+| language | Yes | `typescript` or `rust` | `typescript` |
+| short-name | No | CLI short name (auto-generated if omitted) | `propval` |
+| description | No | One-line description | `"Runtime prop validation"` |
+
+## Examples
+
+\`\`\`bash
+# Full specification
+/new-tool component-prop-validator typescript propval "Runtime prop validation for components"
+
+# Minimal (auto-generates short name and description)
+/new-tool json-schema-validator typescript
+\`\`\`
+
+## What This Command Does
+
+### Phase 1: Repository Creation
+1. Check if repo already exists (MCP: `check_repo_exists`)
+2. Create GitHub repository (MCP: `create_tool_repo` or manual fallback)
+3. Configure repo settings (MCP: `configure_repo_settings`)
+4. Clone to local workspace
+
+### Phase 2: Scaffolding
+5. Copy appropriate template (TypeScript or Rust)
+6. Customize package.json / Cargo.toml with tool info
+7. Generate README.md with all sections
+8. Create CHANGELOG.md with initial entry
+9. Generate DOGFOODING_STRATEGY.md
+10. Create dogfood-*.sh scripts
+11. Set up test boilerplate
+
+### Phase 3: Documentation
+12. Create docs/ directory structure
+13. Generate 6 VitePress pages from templates
+14. Create placeholder demo.gif
+15. Create demo recording script
+
+### Phase 4: Meta Repo Integration
+16. Add as git submodule to tools/
+17. Update docs/.vitepress/config.ts (sidebar)
+18. Update docs/tools/index.md (count, card)
+19. Update docs/index.md (home page)
+20. Update README.md (tool list)
+21. Update .claude/NEXT_TASKS.md
+22. Update docs/guide/getting-started.md
+
+### Phase 5: CI/CD Setup
+23. Add path filter to create-demos.yml
+24. Verify tool's test.yml workflow exists
+25. Create GitHub labels (if centralized issues)
+
+### Phase 6: Verification
+26. Run `npm install` / `cargo build`
+27. Run `npm test` / `cargo test`
+28. Run `npm run docs:build` (VitePress)
+29. Run `/quality-check`
+
+### Phase 7: Commit
+30. Commit tool repo: "feat: initialize {tool-name} from template"
+31. Push tool repo to origin
+32. Commit meta repo: "chore: add {tool-name} submodule"
+
+## Environment Detection
+
+The command automatically detects CLI vs Web environment:
+- **CLI:** Uses MCP for GitHub operations
+- **Web:** Provides manual instructions, continues with scaffolding after user confirms repo creation
+```
+
+### C.3 `tool-creator` Agent Specification
+
+**Location:** `.claude/agents/tool-creator.md`
+
+**Purpose:** Specialized agent with full Tuulbelt context for tool creation.
+
+```markdown
+# tool-creator Agent
+
+Specialized agent for creating new Tuulbelt tools with full automation.
+
+## Agent Description
+
+Use this agent when creating a new Tuulbelt tool. It has full context of:
+- Tuulbelt architecture and principles
+- All templates and their customization points
+- Tracking document locations and formats
+- Quality checklist requirements
+- VitePress documentation structure
+
+## Available Tools
+
+- Read, Write, Edit, Glob, Grep (file operations)
+- Bash (git, npm, cargo commands)
+- MCP tools: tuulbelt-github (if available)
+
+## Context Files (Auto-Loaded)
+
+The agent automatically reads:
+- PRINCIPLES.md (design philosophy)
+- CLAUDE.md (development standards)
+- docs/QUALITY_CHECKLIST.md (requirements)
+- .claude/NEXT_TASKS.md (current status)
+- templates/tool-repo-template/ (TypeScript template)
+- templates/rust-tool-template/ (Rust template)
+
+## Capabilities
+
+### Repository Management
+- Create GitHub repos via MCP or manual instructions
+- Configure branch protection and settings
+- Add submodules to meta repo
+
+### Template Customization
+- Replace placeholders in all template files
+- Generate appropriate boilerplate for language
+- Create tool-specific configurations
+
+### Tracking Document Updates
+- Update tool counts across all documents
+- Add tool cards to index pages
+- Update status tables and lists
+- Maintain consistent formatting
+
+### Documentation Generation
+- Create VitePress page structure
+- Generate API reference from source
+- Create demo recording scripts
+- Set up dogfooding strategy
+
+### Quality Assurance
+- Verify against QUALITY_CHECKLIST.md
+- Run build and test commands
+- Validate VitePress builds
+- Check for broken links
+
+## Workflow
+
+1. **Validate** - Check tool name, conflicts, language support
+2. **Create** - GitHub repo (MCP) or manual instructions
+3. **Scaffold** - Copy and customize template
+4. **Document** - Generate all documentation
+5. **Integrate** - Add to meta repo, update tracking
+6. **Verify** - Run quality checks
+7. **Commit** - Create commits in both repos
+
+## Error Handling
+
+- If GitHub creation fails: Provide manual instructions, continue scaffolding
+- If tests fail: Report errors, don't commit, suggest fixes
+- If VitePress fails: Check for broken links, fix before commit
+- If quality check fails: List failures, require fixes before commit
+```
+
+### C.4 `tuulbelt-github` MCP Server Specification
+
+**Location:** `.claude/mcp/tuulbelt-github/`
+
+**Purpose:** GitHub API operations for CLI users.
+
+```
+.claude/mcp/tuulbelt-github/
+├── package.json
+├── index.js          # MCP server implementation
+└── README.md         # Setup instructions
+```
+
+**MCP Configuration (`.mcp.json` in project root):**
+
+```json
+{
+  "mcpServers": {
+    "tuulbelt-github": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["./.claude/mcp/tuulbelt-github/index.js"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}",
+        "GITHUB_ORG": "tuulbelt"
+      }
+    }
+  }
+}
+```
+
+**Available Tools:**
+
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `check_repo_exists` | Check if repository exists | `name: string` |
+| `create_tool_repo` | Create new tool repository | `name, description, language, is_private` |
+| `configure_repo_settings` | Set up branch protection, labels | `repo: string` |
+| `create_github_labels` | Create issue labels for tool | `repo, labels[]` |
+| `get_repo_info` | Get repository metadata | `repo: string` |
+| `delete_repo` | Delete repository (careful!) | `repo: string, confirm: boolean` |
+
+**Implementation Outline:**
+
+```javascript
+// .claude/mcp/tuulbelt-github/index.js
+import { Server } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { Octokit } from "octokit";
+
+const server = new Server({ name: "tuulbelt-github", version: "1.0.0" });
+const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+const org = process.env.GITHUB_ORG || "tuulbelt";
+
+// Tool: check_repo_exists
+async function checkRepoExists(name) {
+  try {
+    await octokit.rest.repos.get({ owner: org, repo: name });
+    return { exists: true };
+  } catch (e) {
+    if (e.status === 404) return { exists: false };
+    throw e;
+  }
+}
+
+// Tool: create_tool_repo
+async function createToolRepo({ name, description, language, is_private = false }) {
+  const repo = await octokit.rest.repos.createInOrg({
+    org,
+    name,
+    description: description || `Tuulbelt tool: ${name}`,
+    private: is_private,
+    auto_init: false,  // We'll push our own content
+    has_issues: true,
+    has_projects: false,
+    has_wiki: false,
+  });
+
+  return {
+    url: repo.data.html_url,
+    clone_url: repo.data.clone_url,
+    ssh_url: repo.data.ssh_url
+  };
+}
+
+// Tool: configure_repo_settings
+async function configureRepoSettings(repo) {
+  // Set default branch protection
+  await octokit.rest.repos.updateBranchProtection({
+    owner: org,
+    repo,
+    branch: "main",
+    required_status_checks: {
+      strict: true,
+      contexts: ["test"]
+    },
+    enforce_admins: false,
+    required_pull_request_reviews: null,
+    restrictions: null
+  });
+
+  // Create standard labels
+  const labels = [
+    { name: "bug", color: "d73a4a", description: "Something isn't working" },
+    { name: "enhancement", color: "a2eeef", description: "New feature or request" },
+    { name: "documentation", color: "0075ca", description: "Documentation improvements" },
+    { name: "good first issue", color: "7057ff", description: "Good for newcomers" }
+  ];
+
+  for (const label of labels) {
+    try {
+      await octokit.rest.issues.createLabel({ owner: org, repo, ...label });
+    } catch (e) {
+      // Label may already exist
+    }
+  }
+
+  return { configured: true };
+}
+
+// Register tools with MCP server
+server.setRequestHandler(ListToolsRequestSchema, async () => ({
+  tools: [
+    { name: "check_repo_exists", description: "...", inputSchema: {...} },
+    { name: "create_tool_repo", description: "...", inputSchema: {...} },
+    { name: "configure_repo_settings", description: "...", inputSchema: {...} },
+    // ... more tools
+  ]
+}));
+
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  switch (request.params.name) {
+    case "check_repo_exists":
+      return checkRepoExists(request.params.arguments.name);
+    case "create_tool_repo":
+      return createToolRepo(request.params.arguments);
+    case "configure_repo_settings":
+      return configureRepoSettings(request.params.arguments.repo);
+    // ... more handlers
+  }
+});
+
+server.connect(process.stdin, process.stdout);
+```
+
+**Security Notes:**
+- Token passed via environment variable, never committed
+- Each developer uses their own token
+- Minimum required scopes: `repo`, `admin:org` (for org repos)
+
+### C.5 Additional Commands
+
+#### `/release-tool` Command
+
+**Location:** `.claude/commands/release-tool.md`
+
+```markdown
+# /release-tool Command
+
+Release a new version of a Tuulbelt tool.
+
+## Usage
+
+/release-tool <tool-name> <version> [changelog-entry]
+
+## Parameters
+
+| Parameter | Required | Description | Example |
+|-----------|----------|-------------|---------|
+| tool-name | Yes | Tool to release | `test-flakiness-detector` |
+| version | Yes | Semver version | `0.2.0` or `1.0.0` |
+| changelog-entry | No | What changed | `"Add timeout support"` |
+
+## What This Command Does
+
+1. **Validate** version format and increment logic
+2. **Update** package.json / Cargo.toml version
+3. **Update** CHANGELOG.md with new entry
+4. **Update** README.md badge if needed
+5. **Commit** with message: `chore(tool): release v{version}`
+6. **Create** git tag: `v{version}`
+7. **Push** commits and tags
+8. **Update** meta repo docs with new version badge
+
+## Example
+
+\`\`\`bash
+/release-tool test-flakiness-detector 0.2.0 "Add --timeout flag for long-running tests"
+\`\`\`
+```
+
+#### `/add-tool-dependency` Command
+
+**Location:** `.claude/commands/add-tool-dependency.md`
+
+```markdown
+# /add-tool-dependency Command
+
+Add a Tuulbelt tool as a dependency of another tool.
+
+## Usage
+
+/add-tool-dependency <tool-name> <dependency-tool> [required|optional]
+
+## Parameters
+
+| Parameter | Required | Description | Example |
+|-----------|----------|-------------|---------|
+| tool-name | Yes | Tool that needs the dependency | `test-port-resolver` |
+| dependency-tool | Yes | Tool to depend on | `file-based-semaphore-ts` |
+| type | No | `required` (default) or `optional` | `required` |
+
+## What This Command Does
+
+### For TypeScript:
+1. Add git URL to package.json dependencies
+2. Update README.md with Library Composition section
+3. Update VitePress docs with tip callout
+4. Update DOGFOODING_STRATEGY.md
+
+### For Rust:
+1. Add git dependency to Cargo.toml
+2. Update README.md with Library Composition section
+3. Update VitePress docs with tip callout
+
+## Example
+
+\`\`\`bash
+/add-tool-dependency test-port-resolver file-based-semaphore-ts required
+\`\`\`
+
+## Generated package.json Entry
+
+\`\`\`json
+{
+  "dependencies": {
+    "@tuulbelt/file-based-semaphore-ts": "git+https://github.com/tuulbelt/file-based-semaphore-ts.git"
+  }
+}
+\`\`\`
+```
+
+#### `/sync-tool-docs` Command
+
+**Location:** `.claude/commands/sync-tool-docs.md`
+
+```markdown
+# /sync-tool-docs Command
+
+Synchronize tool documentation across README and VitePress.
+
+## Usage
+
+/sync-tool-docs <tool-name|all>
+
+## What This Command Does
+
+1. **Read** tool's README.md
+2. **Update** VitePress pages to match:
+   - CLI usage examples
+   - API reference
+   - Feature list
+3. **Update** tool counts across all docs
+4. **Validate** internal links
+5. **Report** any inconsistencies
+
+## Example
+
+\`\`\`bash
+/sync-tool-docs test-flakiness-detector
+/sync-tool-docs all  # Sync all tools
+\`\`\`
+```
+
+#### `/update-all-counts` Command
+
+**Location:** `.claude/commands/update-all-counts.md`
+
+```markdown
+# /update-all-counts Command
+
+Update tool counts across all documentation.
+
+## Usage
+
+/update-all-counts
+
+## Files Updated
+
+- README.md (tool count in header)
+- docs/index.md (home page counts)
+- docs/tools/index.md (tools page count)
+- docs/guide/getting-started.md (tool table)
+- docs/guide/philosophy.md (progress)
+
+## What It Does
+
+1. Count actual tool directories in tools/
+2. Update all "X of 33 tools" references
+3. Update phase progress percentages
+4. Commit changes if any updates made
+```
+
+### C.6 Tracking Document Auto-Update Specifications
+
+The `tool-creator` agent must update these documents with precise edits:
+
+#### README.md Updates
+
+```markdown
+## Location: README.md
+
+### Tool List Entry (add to appropriate category)
+Pattern: `- **[{Tool Name}]({tool-dir}/)** — {description} 🟢 v0.1.0 🐕 | [📖 Docs]({tool-dir}/) | [🚀 Examples]({tool-dir}/examples/)`
+
+### Status Section
+Pattern: `**Progress:** {X} of 33 tools implemented ({Y}%)`
+
+### Dogfooding Section (if tool uses another)
+Add example showing the integration
+```
+
+#### docs/index.md Updates
+
+```markdown
+## Location: docs/index.md
+
+### Hero Section
+Update: "View All {X} Tools" button text
+
+### Features/Cards Section
+Add new tool card with icon
+
+### Progress Section
+Update counts and percentages
+```
+
+#### docs/tools/index.md Updates
+
+```markdown
+## Location: docs/tools/index.md
+
+### Header
+Update: "{X} tools available" count
+
+### Tool Grid
+Add card:
+\`\`\`html
+<div class="tool-card">
+  <h3><a href="/tools/{tool-name}/">{Tool Name}</a></h3>
+  <p>{description}</p>
+  <span class="badge">v0.1.0</span>
+</div>
+\`\`\`
+```
+
+#### .claude/NEXT_TASKS.md Updates
+
+```markdown
+## Location: .claude/NEXT_TASKS.md
+
+### Implemented Section
+Move tool from "Proposed" to "Implemented" table
+
+### Short CLI Names Reference
+Add entry: `| {Tool Name} | \`{short}\` | \`{long}\` |`
+
+### Test Counts
+Add row: `| {Tool Name} | {X} tests | ✅ 🐕 |`
+```
+
+#### docs/.vitepress/config.ts Updates
+
+```typescript
+// Location: docs/.vitepress/config.ts
+
+// Add to sidebar items array:
+{
+  text: '{Tool Name}',
+  collapsed: true,
+  items: [
+    { text: 'Overview', link: '/tools/{tool-name}/' },
+    { text: 'Getting Started', link: '/tools/{tool-name}/getting-started' },
+    { text: 'CLI Usage', link: '/tools/{tool-name}/cli-usage' },
+    { text: 'Library Usage', link: '/tools/{tool-name}/library-usage' },
+    { text: 'API Reference', link: '/tools/{tool-name}/api-reference' },
+    { text: 'Examples', link: '/tools/{tool-name}/examples' }
+  ]
+}
+```
+
+#### .github/workflows/create-demos.yml Updates
+
+```yaml
+# Location: .github/workflows/create-demos.yml
+
+# Add to paths: section under on.push and on.pull_request:
+- '{tool-name}/**'
+```
+
+### C.7 Execution Breakdown: Web vs CLI
+
+This section defines what can be done in each environment and the order of operations.
+
+#### Tasks by Environment
+
+| Task | Web | CLI | Notes |
+|------|-----|-----|-------|
+| **GitHub repo creation** | ❌ Manual | ✅ MCP | Web users create via GitHub UI |
+| **Template scaffolding** | ✅ | ✅ | File operations work in both |
+| **package.json customization** | ✅ | ✅ | File edits work in both |
+| **README generation** | ✅ | ✅ | File writes work in both |
+| **Git submodule add** | ⚠️ Limited | ✅ | Web may have git limitations |
+| **VitePress config update** | ✅ | ✅ | File edits work in both |
+| **Tracking doc updates** | ✅ | ✅ | File edits work in both |
+| **npm install / cargo build** | ⚠️ Limited | ✅ | Web may timeout |
+| **Run tests** | ⚠️ Limited | ✅ | Web may timeout |
+| **Git push** | ⚠️ Limited | ✅ | Web has auth issues |
+| **Quality check** | ⚠️ Partial | ✅ | Some checks may fail in Web |
+
+#### Recommended Workflow by Environment
+
+**If Using Claude Code CLI (Recommended for Tool Creation):**
+
+```
+1. Run /new-tool command
+2. MCP creates GitHub repo automatically
+3. Agent scaffolds, documents, integrates
+4. Agent runs verification
+5. Agent commits and pushes
+6. Done - fully automated
+```
+
+**If Using Claude Code Web:**
+
+```
+1. MANUAL: Create GitHub repo via UI
+   - Go to github.com/organizations/tuulbelt/repositories/new
+   - Create public repo with tool name
+   - Don't initialize with README
+
+2. Tell Claude the repo is created
+
+3. Claude scaffolds locally:
+   - Copies template
+   - Customizes files
+   - Creates documentation
+   - Updates tracking docs
+
+4. MANUAL: Clone repo locally and push
+   - git clone https://github.com/tuulbelt/{tool}.git
+   - Copy generated files
+   - git add . && git commit && git push
+
+5. MANUAL: Add submodule to meta repo
+   - cd tuulbelt
+   - git submodule add https://github.com/tuulbelt/{tool}.git tools/{tool}
+
+6. Claude commits meta repo changes
+```
+
+### C.8 Migration Execution Order (Precedence)
+
+The migration must happen in this specific order:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    PHASE 0: PREPARATION                          │
+│                    (Can be done in Web)                          │
+├─────────────────────────────────────────────────────────────────┤
+│ 0.1 Create ROADMAP.md                                           │
+│ 0.2 Update issue templates (absolute URLs)                      │
+│ 0.3 Update guide pages (tool counts)                            │
+│ 0.4 Decide on issue tracking strategy                           │
+│ 0.5 Decide on tagging strategy                                  │
+│ 0.6 Create docs/setup/TOOL_REPO_SETTINGS.md                     │
+│ 0.7 Add versioning section to template CONTRIBUTING.md          │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    PHASE 1: AUTOMATION SETUP                     │
+│                    (Must be done in CLI)                         │
+├─────────────────────────────────────────────────────────────────┤
+│ 1.1 Create MCP server: .claude/mcp/tuulbelt-github/             │
+│ 1.2 Create .mcp.json configuration                              │
+│ 1.3 Test MCP server locally (CLI only)                          │
+│ 1.4 Create /new-tool command                                    │
+│ 1.5 Create tool-creator agent                                   │
+│ 1.6 Create additional commands (/release-tool, etc.)            │
+│ 1.7 Test full /new-tool workflow with a test repo               │
+│ 1.8 Delete test repo after verification                         │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    PHASE 2: CREATE TOOL REPOS                    │
+│                    (Must be done in CLI)                         │
+├─────────────────────────────────────────────────────────────────┤
+│ Wave 1: Independent tools (no dependencies)                     │
+│   2.1 Create repo: tuulbelt/cli-progress-reporting              │
+│   2.2 Create repo: tuulbelt/cross-platform-path-normalizer      │
+│   2.3 Create repo: tuulbelt/structured-error-handler            │
+│   2.4 Create repo: tuulbelt/config-file-merger                  │
+│   2.5 Create repo: tuulbelt/file-based-semaphore (Rust)         │
+│   2.6 Create repo: tuulbelt/output-diffing-utility (Rust)       │
+│   2.7 Create repo: tuulbelt/file-based-semaphore-ts             │
+│                                                                  │
+│ Wave 2: Optional dependencies                                    │
+│   2.8 Create repo: tuulbelt/test-flakiness-detector             │
+│        - Update: cli-progress-reporting git URL (optional)       │
+│                                                                  │
+│ Wave 3: Required dependencies                                    │
+│   2.9 Create repo: tuulbelt/snapshot-comparison                 │
+│        - Update: output-diffing-utility git URL (required)       │
+│   2.10 Create repo: tuulbelt/test-port-resolver                 │
+│        - Update: file-based-semaphore-ts git URL (required)      │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    PHASE 3: MIGRATE CONTENT                      │
+│                    (Can be done in CLI or Web)                   │
+├─────────────────────────────────────────────────────────────────┤
+│ For each tool repo (in order from Phase 2):                     │
+│   3.x.1 Copy source code from monorepo                          │
+│   3.x.2 Copy tests                                              │
+│   3.x.3 Copy documentation                                      │
+│   3.x.4 Update internal paths (../sibling → git URLs)           │
+│   3.x.5 Add standalone CI workflow                              │
+│   3.x.6 Add CLAUDE.md for tool repo                             │
+│   3.x.7 Verify tests pass                                       │
+│   3.x.8 Push to tool repo                                       │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    PHASE 4: RESTRUCTURE META REPO                │
+│                    (Must be done in CLI for git operations)      │
+├─────────────────────────────────────────────────────────────────┤
+│ 4.1 Create tools/ directory                                     │
+│ 4.2 Add all 10 tool repos as submodules                         │
+│ 4.3 Remove old tool directories from root                       │
+│ 4.4 Update .gitignore for submodules                            │
+│ 4.5 Create scripts/prepare-docs.sh                              │
+│ 4.6 Update package.json with new scripts                        │
+│ 4.7 Test npm run docs:build with new structure                  │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    PHASE 5: UPDATE CLAUDE CODE COMPONENTS        │
+│                    (Can be done in Web after structure change)   │
+├─────────────────────────────────────────────────────────────────┤
+│ 5.1 UPDATE: .claude/commands/scaffold-tool.md → /new-tool       │
+│ 5.2 UPDATE: .claude/commands/test-all.md                        │
+│ 5.3 UPDATE: .claude/commands/quality-check.md                   │
+│ 5.4 UPDATE: .claude/agents/scaffold-assistant.md                │
+│ 5.5 UPDATE: .claude/skills/zero-deps-checker/                   │
+│ 5.6 UPDATE: templates/tool-repo-template/                       │
+│ 5.7 UPDATE: templates/rust-tool-template/                       │
+│ 5.8 UPDATE: Main CLAUDE.md                                      │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    PHASE 6: VERIFICATION                         │
+│                    (CLI recommended for full testing)            │
+├─────────────────────────────────────────────────────────────────┤
+│ 6.1 Verify all 10 tool repos have passing CI                    │
+│ 6.2 Verify VitePress builds successfully                        │
+│ 6.3 Verify all internal links work                              │
+│ 6.4 Verify /new-tool creates working tool repo                  │
+│ 6.5 Verify git submodule update --init works                    │
+│ 6.6 Test cloning single tool repo standalone                    │
+│ 6.7 Test tool with git URL dependency works standalone          │
+│ 6.8 Run /quality-check on meta repo                             │
+│ 6.9 Update HANDOFF.md with migration completion                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### C.9 Quick Reference: What to Do Where
+
+#### Do in Claude Code Web (Preparation & Documentation)
+
+- ✅ Update existing markdown files
+- ✅ Create new documentation
+- ✅ Update CLAUDE.md, commands, agents
+- ✅ Write MCP server code (but can't test)
+- ✅ Create templates
+- ✅ Update VitePress config
+- ✅ Code review and planning
+
+#### Do in Claude Code CLI (GitHub & Git Operations)
+
+- ✅ Create GitHub repositories (MCP)
+- ✅ Configure repo settings (MCP)
+- ✅ Git submodule operations
+- ✅ Git push to new repos
+- ✅ Run full test suites
+- ✅ Test MCP server
+- ✅ Full /quality-check
+- ✅ Run /new-tool command
+
+#### Hybrid Workflow (Efficient Use of Both)
+
+```
+WEB SESSION:
+  1. Plan and design
+  2. Update documentation
+  3. Write command/agent/MCP code
+  4. Commit to branch
+  5. Create handoff
+
+CLI SESSION:
+  1. Resume from handoff
+  2. Create GitHub repos (MCP)
+  3. Push code to repos
+  4. Run verification
+  5. Complete migration
+```
+
+---
+
 ## Document History
 
 | Date | Author | Changes |
@@ -2182,6 +2995,7 @@ updates:
 | 2025-12-29 | Claude | Added Addendum A with detailed component updates |
 | 2025-12-29 | Claude | Added Addendum B with second review findings |
 | 2025-12-29 | Claude | Added Claude Code Web limitation warning (gh CLI bug) |
+| 2025-12-29 | Claude | Added Addendum C with tool creation automation system |
 
 ---
 
