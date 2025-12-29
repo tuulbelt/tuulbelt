@@ -1,9 +1,9 @@
 # Tuulbelt Tool Quality Dashboard
 
-**Last Updated:** 2025-12-29 04:05 UTC
-**Test Results From:** 2025-12-29T03:54:06Z
-**Total Tools:** 9
-**Passing:** 9 | **Failing:** 0
+**Last Updated:** 2025-12-29 06:02 UTC
+**Test Results From:** 2025-12-29T06:01:58Z
+**Total Tools:** 10
+**Passing:** 10 | **Failing:** 0
 
 ---
 
@@ -20,6 +20,7 @@
 | snapshot-comparison | Rust | 92 | ✅ | 🟢 Production | 0.1.0 |
 | structured-error-handler | TypeScript | 0 | ✅ | 🟢 Production | 0.1.0 |
 | test-flakiness-detector | TypeScript | 36 | ✅ | 🟢 Production | 0.1.0 |
+| test-port-resolver | TypeScript | 0 | ✅ | 🟢 Production | 0.1.0 |
 
 ---
 
