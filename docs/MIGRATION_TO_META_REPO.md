@@ -1700,12 +1700,427 @@ Add these tasks to Phase 5 (Meta Repo Restructure):
 
 ---
 
+## Addendum B: Second Review - Additional Gaps (2025-12-29)
+
+After a second thorough review of the codebase, the following additional gaps were identified.
+
+### B.1 Issue Templates Need Updating
+
+**Location:** `.github/ISSUE_TEMPLATE/tool_proposal.md`
+
+**Problem:** The tool proposal template contains a relative link that will break:
+```markdown
+- [ ] I've read [PRINCIPLES.md](../../PRINCIPLES.md)
+```
+
+**Fix Required:**
+
+```markdown
+# Option A: Absolute GitHub URL
+- [ ] I've read [PRINCIPLES.md](https://github.com/tuulbelt/tuulbelt/blob/main/PRINCIPLES.md)
+
+# Option B: Copy PRINCIPLES.md to each tool repo (not recommended - duplication)
+```
+
+**Additional Issue Templates:**
+- `bug_report.md` - No relative links, OK as-is
+- `feature_request.md` - No relative links, OK as-is
+
+**Task:** Update tool_proposal.md to use absolute GitHub URL before migration.
+
+### B.2 VitePress Guide Pages Need Content Updates
+
+**Location:** `docs/guide/*.md`
+
+Seven guide pages exist with outdated content:
+
+| File | Issues |
+|------|--------|
+| `getting-started.md` | Progress shows "3 of 33 (9%)" - should be 10/33 (30%) |
+| `getting-started.md` | Tool table incomplete (missing 7 tools) |
+| `getting-started.md` | Clone instructions assume monorepo |
+| `philosophy.md` | Progress shows "2 of 33 (6%)" - outdated |
+| `philosophy.md` | References non-existent ROADMAP.md |
+
+**Required Updates:**
+
+```markdown
+# getting-started.md - Update installation section
+## Quick Start
+
+### Clone Individual Tool (Recommended)
+git clone https://github.com/tuulbelt/test-flakiness-detector.git
+cd test-flakiness-detector
+npm install && npm test
+
+### Clone Meta Repository (All Tools)
+git clone --recurse-submodules https://github.com/tuulbelt/tuulbelt.git
+cd tuulbelt
+```
+
+**Task:** Add to Phase 5 checklist:
+- [ ] Update `docs/guide/getting-started.md` - tool counts, clone instructions
+- [ ] Update `docs/guide/philosophy.md` - progress, remove ROADMAP.md reference
+- [ ] Audit all guide pages for outdated content
+
+### B.3 No Git Tags Exist
+
+**Problem:** No version tags exist in the repository. This will cause issues when:
+- Creating GitHub releases for individual tool repos
+- Tracking version history
+- npm/crates.io publishing
+
+**Current State:**
+```bash
+git tag -l  # Returns empty
+```
+
+**Required for Migration:**
+
+Before splitting tools into separate repos, each tool should have a tag:
+```bash
+# For each tool
+git tag test-flakiness-detector-v0.1.0 <commit-hash>
+git tag cli-progress-reporting-v0.1.0 <commit-hash>
+# etc.
+```
+
+**Alternative:** Create tags in new repos after migration (simpler, loses history).
+
+**Task:** Add to Phase 1 (Pre-Migration):
+- [ ] Decide on tagging strategy (pre-migration vs post-migration)
+- [ ] If pre-migration: Create tool-specific tags for each v0.1.0 release
+
+### B.4 Versioning Strategy Not Documented
+
+**Problem:** Individual tool repos need clear versioning guidance.
+
+**Add to Each Tool's CONTRIBUTING.md or README:**
+
+```markdown
+## Versioning
+
+This tool uses [Semantic Versioning](https://semver.org/):
+- `0.x.y` - Initial development (API may change)
+- `1.0.0` - First stable release
+- Breaking changes increment major version
+
+### Release Process
+1. Update `package.json`/`Cargo.toml` version
+2. Update CHANGELOG.md
+3. Commit: `git commit -m "chore: release v0.2.0"`
+4. Tag: `git tag v0.2.0`
+5. Push: `git push && git push --tags`
+6. GitHub Release created automatically (if workflow exists)
+```
+
+**Task:** Add to template files:
+- [ ] Add versioning section to `templates/tool-repo-template/CONTRIBUTING.md`
+- [ ] Add versioning section to `templates/rust-tool-template/CONTRIBUTING.md`
+
+### B.5 Issue Tracking Strategy Not Documented
+
+**Problem:** After migration, unclear where issues should be filed.
+
+**Options:**
+
+1. **Centralized (Recommended):** All issues in meta repo `tuulbelt/tuulbelt`
+   - Pros: Single place to search, cross-tool issues easy
+   - Cons: May get cluttered, requires labels
+
+2. **Per-Tool:** Issues in each tool's repo
+   - Pros: Cleaner separation, tool-specific context
+   - Cons: Cross-tool issues harder, users must find correct repo
+
+3. **Hybrid:** General issues in meta, tool-specific in tool repos
+   - Most flexible but most complex
+
+**Recommendation:** Start with Centralized, migrate to Per-Tool if volume increases.
+
+**Implementation for Centralized:**
+
+```markdown
+# In each tool's README.md
+## Issues & Support
+
+Found a bug? Have a suggestion?
+- [Open an issue](https://github.com/tuulbelt/tuulbelt/issues/new)
+- Use label: `tool:test-flakiness-detector`
+```
+
+**Task:** Add to Phase 3:
+- [ ] Decide on issue tracking strategy
+- [ ] Create GitHub labels for each tool (if centralized)
+- [ ] Update tool READMEs with issue instructions
+- [ ] Update issue templates if needed
+
+### B.6 URL Backward Compatibility
+
+**Problem:** After migration, existing URLs may break.
+
+**Affected URLs:**
+
+| Old URL Pattern | Status |
+|-----------------|--------|
+| `github.com/tuulbelt/tuulbelt/tree/main/test-flakiness-detector` | Will redirect to 404 |
+| `tuulbelt.github.io/tuulbelt/tools/test-flakiness-detector/` | Should still work (VitePress) |
+| npm package URLs (future) | N/A - new registry entries |
+
+**Mitigation Options:**
+
+1. **GitHub Redirects:** Not available for repository structure changes
+2. **README Notice:** Add migration notice to old locations (temporary)
+3. **VitePress Redirects:** Configure redirects in VitePress for any changed paths
+
+**VitePress Redirect Configuration:**
+
+```typescript
+// docs/.vitepress/config.ts
+export default defineConfig({
+  head: [
+    // Meta redirect for any moved pages
+    ['script', {}, `
+      if (window.location.pathname === '/old/path/') {
+        window.location.replace('/new/path/');
+      }
+    `]
+  ]
+})
+```
+
+**Task:** Add to Phase 5:
+- [ ] Audit current VitePress URLs for any that will change
+- [ ] Configure VitePress redirects if needed
+- [ ] Update any external documentation with new URLs
+
+### B.7 CHANGELOG Strategy Clarification
+
+**Current State:**
+- Root `CHANGELOG.md` tracks meta repo changes
+- Each tool has its own `CHANGELOG.md`
+
+**Post-Migration:**
+
+```
+tuulbelt/tuulbelt (meta repo)
+├── CHANGELOG.md              # Meta repo infrastructure changes only
+└── tools/
+    └── test-flakiness-detector (submodule)
+        └── CHANGELOG.md      # Tool-specific changes
+
+tuulbelt/test-flakiness-detector (tool repo)
+└── CHANGELOG.md              # Same as submodule - tool-specific changes
+```
+
+**Clarification Needed:**
+- Root CHANGELOG: Infrastructure, workflows, VitePress, templates
+- Tool CHANGELOGs: Feature changes, bug fixes, API changes
+
+**Task:** Add to documentation:
+- [ ] Add section to CONTRIBUTING.md explaining CHANGELOG scopes
+- [ ] Ensure tool CHANGELOGs are self-contained (no references to monorepo)
+
+### B.8 VitePress Internal Links Audit
+
+**Problem:** Guide pages have internal links that assume certain URL structure.
+
+**Current Links Found:**
+
+```markdown
+# In docs/guide/getting-started.md
+[Test Flakiness Detector](/tools/test-flakiness-detector/)
+[Philosophy](/guide/philosophy)
+[Contributing Guide](/guide/contributing)
+
+# In docs/guide/philosophy.md
+[Principles](/guide/principles)
+```
+
+**These should continue working** if VitePress structure is preserved. However:
+
+**Potential Issue:** If tool docs are copied from submodules, they may have different internal link structures.
+
+**Mitigation:**
+1. Tool docs in submodules should use relative links within their section
+2. `scripts/prepare-docs.sh` must preserve link structure
+3. Test all links after build: `npm run docs:build`
+
+**Task:** Add to Phase 5:
+- [ ] Audit all VitePress internal links
+- [ ] Ensure `prepare-docs.sh` preserves link structure
+- [ ] Add link validation to CI: `npx vitepress build docs 2>&1 | grep -i "dead link"`
+
+### B.9 Missing ROADMAP.md
+
+**Problem:** `docs/guide/philosophy.md` references ROADMAP.md which doesn't exist:
+```markdown
+See [ROADMAP](https://github.com/tuulbelt/tuulbelt/blob/main/ROADMAP.md) for detailed planning.
+```
+
+**Options:**
+1. Create ROADMAP.md with tool priorities and phases
+2. Remove the reference from philosophy.md
+3. Point to NEXT_TASKS.md instead
+
+**Recommendation:** Create a simple ROADMAP.md:
+
+```markdown
+# Tuulbelt Roadmap
+
+## Current Status
+- 10 of 33 tools implemented (30%)
+
+## Phases
+
+### Phase 1: Foundation (Complete)
+- [x] Test Flakiness Detector
+- [x] CLI Progress Reporting
+- [x] Cross-Platform Path Normalizer
+- [x] File-Based Semaphore (Rust)
+- [x] Output Diffing Utility
+
+### Phase 2: Core Tools (In Progress)
+- [x] Structured Error Handler
+- [x] Configuration File Merger
+- [x] Snapshot Comparison
+- [x] File-Based Semaphore (TS)
+- [x] Test Port Resolver
+- [ ] Component Prop Validator (Next)
+- [ ] Exhaustiveness Checker
+- ...
+
+### Phase 3-4: Advanced Tools
+See README.md for complete list.
+```
+
+**Task:** Add to Phase 1 (Pre-Migration):
+- [ ] Create ROADMAP.md at root level
+- [ ] Or update philosophy.md to remove broken reference
+
+### B.10 Tool Repo GitHub Settings Template
+
+**Problem:** Each new tool repo needs consistent GitHub settings.
+
+**Settings to Configure:**
+
+```yaml
+# Suggested repository settings for each tool repo
+
+# General
+- Default branch: main
+- Enable Issues: Yes
+- Enable Discussions: No (use meta repo)
+- Enable Projects: No (use meta repo)
+
+# Branches
+- Branch protection on main:
+  - Require pull request reviews: Optional
+  - Require status checks: Yes (test workflow)
+  - Require linear history: Optional
+
+# Actions
+- Allow all actions: Yes
+- Allow GitHub Actions to create PRs: Yes
+
+# Pages (if tool has its own docs)
+- Source: GitHub Actions
+```
+
+**Task:** Create setup documentation:
+- [ ] Add `docs/setup/TOOL_REPO_SETTINGS.md` with GitHub settings guide
+- [ ] Include screenshots or gh CLI commands for automation
+
+### B.11 Dependabot/Renovate Strategy
+
+**Problem:** How to handle dependency updates across 10+ repos.
+
+**Options:**
+
+1. **Per-Repo Dependabot:** Each repo has own `.github/dependabot.yml`
+2. **No Automation:** Tools have zero deps, only update devDependencies manually
+3. **Hybrid:** Dependabot for security updates only
+
+**Recommendation:** Option 2 (manual) for now since:
+- Zero runtime dependencies
+- devDependencies rarely need urgent updates
+- Reduces PR noise across repos
+
+**If Automation Needed Later:**
+
+```yaml
+# .github/dependabot.yml (template for each tool)
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 5
+    # Only devDependencies exist
+```
+
+**Task:** Add to templates:
+- [ ] Add optional dependabot.yml to tool templates (commented out)
+- [ ] Document rationale in template README
+
+---
+
+## Updated Phase 5 Checklist (Incorporating B.x)
+
+```markdown
+### Phase 5: Meta Repo Restructure (FINAL)
+
+**Pre-Restructure (from B.x):**
+- [ ] Create ROADMAP.md at root level (B.9)
+- [ ] Update `.github/ISSUE_TEMPLATE/tool_proposal.md` - absolute URLs (B.1)
+- [ ] Decide on issue tracking strategy (B.5)
+- [ ] Decide on git tagging strategy (B.3)
+
+**Documentation Updates (from B.x):**
+- [ ] Update `docs/guide/getting-started.md` - tool counts, clone instructions (B.2)
+- [ ] Update `docs/guide/philosophy.md` - progress, ROADMAP link (B.2)
+- [ ] Add versioning section to template CONTRIBUTING.md files (B.4)
+- [ ] Add CHANGELOG scope documentation (B.7)
+- [ ] Create `docs/setup/TOOL_REPO_SETTINGS.md` (B.10)
+
+**Structure Changes:**
+- [ ] Remove tool directories from meta repo root
+- [ ] Create `tools/` directory for submodules
+- [ ] Add git submodules for all 10 tools
+- [ ] Create `scripts/prepare-docs.sh` for VitePress
+- [ ] Update `package.json` with new scripts
+
+**Claude Code Updates (from A.x):**
+- [ ] UPDATE: `.claude/commands/scaffold-tool.md` - Complete rewrite
+- [ ] UPDATE: `.claude/commands/test-all.md` - Submodule iteration
+- [ ] UPDATE: `.claude/commands/quality-check.md` - Dual context support
+- [ ] UPDATE: `.claude/agents/scaffold-assistant.md` - Complete rewrite
+- [ ] UPDATE: `.claude/skills/zero-deps-checker/SKILL.md` - Git URL validation
+
+**Template Updates:**
+- [ ] UPDATE: `templates/tool-repo-template/` - Standalone CI, CLAUDE.md
+- [ ] UPDATE: `templates/rust-tool-template/` - Standalone CI, CLAUDE.md
+- [ ] Add optional dependabot.yml to templates (B.11)
+
+**Finalization:**
+- [ ] Update main CLAUDE.md for submodule structure
+- [ ] Update all workflows for submodule paths
+- [ ] Configure VitePress redirects if needed (B.6)
+- [ ] Audit VitePress internal links (B.8)
+- [ ] Test `npm run docs:build` with submodule structure
+- [ ] Verify all 10 tool repos have working CI
+- [ ] Create GitHub labels for each tool if using centralized issues (B.5)
+```
+
+---
+
 ## Document History
 
 | Date | Author | Changes |
 |------|--------|---------|
 | 2025-12-29 | Claude | Initial migration plan created |
-| 2025-12-29 | Claude | Added Addendum with detailed component updates |
+| 2025-12-29 | Claude | Added Addendum A with detailed component updates |
+| 2025-12-29 | Claude | Added Addendum B with second review findings |
 
 ---
 
