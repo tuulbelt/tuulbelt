@@ -263,6 +263,7 @@ The tool prevents path traversal attacks:
 
 
 
+
 ## Demo
 
 ![Demo](docs/demo.gif)
