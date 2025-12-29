@@ -16,3 +16,6 @@
 [submodule "tools/file-based-semaphore-ts"]
 	path = tools/file-based-semaphore-ts
 	url = https://github.com/tuulbelt/file-based-semaphore-ts.git
+[submodule "tools/output-diffing-utility"]
+	path = tools/output-diffing-utility
+	url = https://github.com/tuulbelt/output-diffing-utility.git
