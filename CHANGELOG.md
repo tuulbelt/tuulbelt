@@ -11,6 +11,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Phase 2 Wave 1: file-based-semaphore-ts (TypeScript) Migration Complete ✅ (2025-12-29)
+
+**Migrated file-based-semaphore-ts to standalone repository:**
+- Repository: https://github.com/tuulbelt/file-based-semaphore-ts
+- Extracted git history: 8 commits processed
+- Tagged v0.1.0 and pushed to GitHub
+- Verified standalone: 160/160 tests passing (42 suites)
+- Added as git submodule: `tools/file-based-semaphore-ts`
+
+**Repository Configuration:**
+- Issues/Wiki/Projects DISABLED (centralized in meta repo)
+- Topics: tuulbelt, typescript, zero-dependencies, semaphore, file-locking, process-synchronization, concurrency, cross-platform (8 total)
+- Homepage: https://tuulbelt.github.io/tuulbelt/tools/file-based-semaphore-ts/
+
+**Technical Details:**
+- CI workflow: Multi-version matrix (Node 18, 20, 22), zero-dependency verification
+- README badges: Updated to point to standalone repository workflows
+- Created tool-specific CLAUDE.md for development guidance
+- Build verified: npm run build successful, TypeScript compilation clean
+
+**Wave 1 Progress:** 6/7 complete (86%)
+
+---
+
 ### Added - Phase 2 Wave 1: file-based-semaphore (Rust) Migration Complete ✅ (2025-12-29)
 
 **Migrated file-based-semaphore to standalone repository:**

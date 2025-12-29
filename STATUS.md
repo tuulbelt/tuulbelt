@@ -1,9 +1,9 @@
 # Tuulbelt Project Status
 
 **Last Updated:** 2025-12-29
-**Current Phase:** Meta Repository Migration - Phase 2 Wave 1 (5/7 complete)
+**Current Phase:** Meta Repository Migration - Phase 2 Wave 1 (6/7 complete)
 **Active Session:** Phase 2 Wave 1 Tool Migration
-**Progress:** 10/33 Tools Complete (30%) | Migration: Phase 0 ✅ Phase 1 ✅ Phase 2 Wave 1: 5/7 (71%)
+**Progress:** 10/33 Tools Complete (30%) | Migration: Phase 0 ✅ Phase 1 ✅ Phase 2 Wave 1: 6/7 (86%)
 
 ---
 
@@ -117,12 +117,13 @@
 
 ### 🔄 In Progress
 
-**Phase 2 Wave 1: Tool Migration (5/7 complete - 71%)**
+**Phase 2 Wave 1: Tool Migration (6/7 complete - 86%)**
 - ✅ cli-progress-reporting migrated to standalone repo (+ gap fixes: topics, repo settings)
 - ✅ cross-platform-path-normalizer migrated to standalone repo
 - ✅ config-file-merger migrated to standalone repo (+ Node 18 compatibility fix)
 - ✅ structured-error-handler migrated to standalone repo
 - ✅ file-based-semaphore migrated to standalone repo (+ CI zero-dep check fixes)
+- ✅ file-based-semaphore-ts migrated to standalone repo (8 commits, 160/160 tests passing)
 - ✅ Migration learnings documented for session continuity:
   - Enhanced migrate-tool.md with explicit steps and lessons learned
   - Added 100+ item migration checklist to QUALITY_CHECKLIST.md
@@ -130,8 +131,8 @@
   - Fixed Rust template zero-dependency CI pattern
 - ✅ Authentication workflow improved (direnv support, GH_TOKEN exports)
 - ✅ README.md updated with standalone repo links
-- Pending: 2 remaining independent tools (file-based-semaphore-ts, output-diffing-utility)
-- Next: Migrate file-based-semaphore-ts using improved checklist
+- Pending: 1 remaining independent tool (output-diffing-utility)
+- Next: Migrate output-diffing-utility to complete Wave 1 🎯
 
 ### 📋 Next Steps
 
