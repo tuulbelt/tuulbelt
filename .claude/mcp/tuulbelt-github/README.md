@@ -33,16 +33,35 @@ This MCP server provides GitHub repository management capabilities to Claude Cod
      - `admin:org` (for creating repos in tuulbelt org)
    - Copy the token
 
-2. **Environment Variable**
+2. **Environment Variables**
+
+   **Automatic .env Loading (New!)**
+
+   The MCP server now automatically loads environment variables from `.env` at the project root. No manual sourcing required!
+
+   Just ensure your `.env` file exists with:
+   ```bash
+   GITHUB_TOKEN=your_token_here
+   GITHUB_USERNAME=your_username
+   GITHUB_EMAIL=your_email
+   ```
+
+   **How it works:**
+   - MCP server reads `.env` on startup
+   - Variables are loaded into the Node.js process
+   - No `/doctor` warning about missing GITHUB_TOKEN
+   - Environment variables from `.mcp.json` take precedence (if set)
+
+   **Alternative: Manual sourcing (optional)**
+   ```bash
+   # From tuulbelt meta repo root
+   source scripts/setup-github-auth.sh
+   ```
+
+   **Alternative: Export manually**
    ```bash
    export GITHUB_TOKEN=your_token_here
    export GITHUB_ORG=tuulbelt  # Optional, defaults to "tuulbelt"
-   ```
-
-   Add to your shell profile (`~/.zshrc`, `~/.bashrc`, etc.) for persistence:
-   ```bash
-   echo 'export GITHUB_TOKEN=your_token_here' >> ~/.zshrc
-   source ~/.zshrc
    ```
 
 ### Installation

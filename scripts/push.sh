@@ -1,6 +1,6 @@
 #!/bin/bash
 # Git push using credentials from .env
-# Usage: ./scripts/git-push-with-auth.sh [repo-path] [remote] [branch]
+# Usage: ./scripts/push.sh [repo-path] [remote] [branch]
 
 set -e
 

@@ -37,7 +37,7 @@ This command automates the entire migration workflow:
      - Creates CLAUDE.md with tool-specific context
 
 4. **Commit and Release**
-   - Commits all changes using `scripts/git-commit-with-auth.sh`
+   - Commits all changes using `scripts/commit.sh`
    - Tags v0.1.0 in new repository
    - Pushes to GitHub with correct credentials
 
@@ -184,8 +184,8 @@ See `docs/MIGRATION_TO_META_REPO.md` for complete migration plan.
 This command uses the following authentication scripts:
 
 - `scripts/setup-github-auth.sh` - Configure session from .env
-- `scripts/git-commit-with-auth.sh` - Commit with correct author (koficodedat), no Claude attribution
-- `scripts/git-push-with-auth.sh` - Push with correct credentials
+- `scripts/commit.sh` - Commit with correct author (koficodedat), no Claude attribution
+- `scripts/push.sh` - Push with correct credentials
 
 All scripts source `GITHUB_TOKEN`, `GITHUB_USERNAME`, `GITHUB_EMAIL` from meta repo `.env`.
 
@@ -222,7 +222,7 @@ source scripts/setup-github-auth.sh
 
 The command implementation should:
 
-1. **Use existing scripts** - Leverage `scripts/git-commit-with-auth.sh` and `scripts/git-push-with-auth.sh`
+1. **Use existing scripts** - Leverage `scripts/commit.sh` and `scripts/push.sh`
 2. **Be idempotent** - Safe to re-run if it fails partway through
 3. **Validate inputs** - Check tool exists, .env configured, gh authenticated
 4. **Provide clear progress** - Show what's happening at each step

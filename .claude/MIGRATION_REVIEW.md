@@ -109,13 +109,13 @@
    - ✅ Sets local git config (user.name, user.email)
    - ✅ Exports GITHUB_TOKEN
 
-2. **scripts/git-commit-with-auth.sh**
+2. **scripts/commit.sh**
    - ✅ Sources .env automatically
    - ✅ Sets git config before commit
    - ✅ No Claude Code attribution
    - ✅ Verified working (all commits show koficodedat author)
 
-3. **scripts/git-push-with-auth.sh**
+3. **scripts/push.sh**
    - ✅ Sources .env automatically
    - ✅ Verified working (all pushes successful)
 

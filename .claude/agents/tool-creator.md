@@ -1,3 +1,8 @@
+---
+name: tool-creator
+description: Specialized agent for creating new Tuulbelt tools from scratch with full automation, including GitHub repository creation, scaffolding from templates, and quality validation.
+---
+
 # tool-creator Agent
 
 Specialized agent for creating new Tuulbelt tools with full automation.

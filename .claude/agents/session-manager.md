@@ -1,3 +1,8 @@
+---
+name: session-manager
+description: Intelligent agent for managing complex session transitions, creating detailed handoffs, and planning multi-session work across code, tests, documentation, and infrastructure.
+---
+
 # Session Manager Agent
 
 Use this agent for intelligent session transitions, complex handoffs, and task planning across multiple sessions.

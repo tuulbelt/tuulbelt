@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Git history extraction via `git subtree split`
 - GitHub repository creation via gh CLI
 - Metadata updates: package.json/Cargo.toml, CI workflow, README.md, CLAUDE.md
-- Commit and tag v0.1.0 with correct author credentials (scripts/git-commit-with-auth.sh)
+- Commit and tag v0.1.0 with correct author credentials (scripts/commit.sh)
 - Git submodule addition to meta repo
 - Tracking document updates: HANDOFF.md, STATUS.md, CHANGELOG.md, NEXT_TASKS.md
 - Standalone verification: Clone, test, build
@@ -55,15 +55,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Authentication Infrastructure:**
 - Created scripts/setup-github-auth.sh - Configure authentication from .env
-- Created scripts/git-commit-with-auth.sh - Commit with correct author, no Claude attribution
-- Created scripts/git-push-with-auth.sh - Push with correct credentials
+- Created scripts/commit.sh - Commit with correct author, no Claude attribution
+- Created scripts/push.sh - Push with correct credentials
 - All scripts source GITHUB_TOKEN, GITHUB_USERNAME, GITHUB_EMAIL from meta repo .env
 
+**Git Submodule Integration:**
+- Added as git submodule: tools/cli-progress-reporting
+- References: https://github.com/tuulbelt/cli-progress-reporting (v0.1.0)
+- Tracking documents updated: HANDOFF.md, NEXT_TASKS.md, CHANGELOG.md
+
 **Impact:**
-- First tool successfully migrated (1/7 Wave 1 tools)
+- First tool FULLY migrated (1/7 Wave 1 tools complete)
 - Established migration workflow for remaining tools
 - Authentication pattern established for all future migrations
-- Next: Add git submodule to meta repo, migrate remaining 6 tools
+- Ready to migrate remaining 6 tools using /migrate-tool
 
 ### Added - Phase 1: Meta Repo Migration Automation Complete ✅ (2025-12-29)
 

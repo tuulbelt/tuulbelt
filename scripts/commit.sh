@@ -1,6 +1,6 @@
 #!/bin/bash
-# Git commit and push using credentials from .env
-# Usage: ./scripts/git-commit-with-auth.sh [repo-path] "commit message"
+# Git commit using credentials from .env
+# Usage: ./scripts/commit.sh [repo-path] "commit message"
 
 set -e
 

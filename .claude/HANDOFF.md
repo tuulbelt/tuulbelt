@@ -135,16 +135,16 @@
 4. ✅ Updated CI workflow for standalone repo (Node 18, 20, 22 + zero-dep check)
 5. ✅ Updated README.md (badges, absolute URLs, removed monorepo paths)
 6. ✅ Created CLAUDE.md for tool-specific context
-7. ✅ Committed with correct author (koficodedat) using scripts/git-commit-with-auth.sh
+7. ✅ Committed with correct author (koficodedat) using scripts/commit.sh
 8. ✅ Tagged v0.1.0 and pushed to GitHub
 9. ✅ Verified standalone: 121/121 tests passing, TypeScript compiles, build succeeds
-10. ⏸️  **PENDING:** Add as git submodule to meta repo
-11. ⏸️  **PENDING:** Update tracking documents
+10. ✅ Added as git submodule: tools/cli-progress-reporting
+11. ✅ Tracking documents updated (HANDOFF.md, NEXT_TASKS.md, CHANGELOG.md)
 
 **Authentication Scripts Created:**
 - scripts/setup-github-auth.sh - Configure session from .env
-- scripts/git-commit-with-auth.sh - Commit with correct author, no Claude attribution
-- scripts/git-push-with-auth.sh - Push with correct credentials
+- scripts/commit.sh - Commit with correct author, no Claude attribution
+- scripts/push.sh - Push with correct credentials
 
 ### Wave 1: Remaining Tools (6/7 pending)
 
@@ -173,11 +173,11 @@ For each remaining tool:
 4. Update CI workflow for standalone repo
 5. Update README.md (badges, absolute URLs)
 6. Create CLAUDE.md for tool-specific context
-7. Commit using scripts/git-commit-with-auth.sh (correct author, no attribution)
+7. Commit using scripts/commit.sh (correct author, no attribution)
 8. Tag v0.1.0 and push to GitHub
 9. Add as git submodule: `git submodule add https://github.com/tuulbelt/{tool}.git tools/{tool}`
 10. Update tracking documents (HANDOFF.md, STATUS.md, CHANGELOG.md, NEXT_TASKS.md)
-11. Commit tracking updates using scripts/git-commit-with-auth.sh
+11. Commit tracking updates using scripts/commit.sh
 12. Verify CI passes in new repo and tests work standalone
 
 **Reference:** See `docs/MIGRATION_TO_META_REPO.md` sections 5.1-5.3 for detailed migration steps.

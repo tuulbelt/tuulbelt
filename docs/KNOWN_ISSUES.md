@@ -180,13 +180,13 @@ pub fn serialize(&self) -> String {
 
 **Resolved:** 2025-12-29
 **Severity:** Medium (Workflow Blocker)
-**Area:** Scripts (git-push-with-auth.sh)
+**Area:** Scripts (push.sh)
 
 **Problem:** Every git push attempt failed with "failed to push some refs" error, requiring manual `git pull --rebase origin main` before each push. This occurred repeatedly during Phase 2 Wave 1 migration.
 
 **Root Cause:** GitHub Actions workflows (create-demos.yml, update-dashboard.yml, update-demos.yml) automatically commit demo recordings and dashboard updates to main branch while development work is in progress, causing local branch to fall behind remote.
 
-**Solution:** Updated `scripts/git-push-with-auth.sh` to automatically pull and rebase before pushing:
+**Solution:** Updated `scripts/push.sh` to automatically pull and rebase before pushing:
 ```bash
 # Pull latest changes to avoid conflicts (GitHub Actions may have committed)
 echo "Pulling latest changes from $REMOTE/$BRANCH..."

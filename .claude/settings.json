@@ -10,7 +10,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /home/user/tuulbelt/.claude/hooks/pre-write-check.sh",
+            "command": "bash .claude/hooks/pre-write-check.sh",
             "timeout": 5000
           }
         ]
@@ -22,7 +22,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /home/user/tuulbelt/.claude/hooks/post-write-format.sh",
+            "command": "bash .claude/hooks/post-write-format.sh",
             "timeout": 15000
           }
         ]
@@ -32,7 +32,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /home/user/tuulbelt/.claude/hooks/post-bash-audit.sh",
+            "command": "bash .claude/hooks/post-bash-audit.sh",
             "timeout": 5000
           }
         ]
@@ -44,7 +44,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /home/user/tuulbelt/.claude/hooks/on-stop-cleanup.sh",
+            "command": "bash .claude/hooks/on-stop-cleanup.sh",
             "timeout": 30000
           }
         ]
