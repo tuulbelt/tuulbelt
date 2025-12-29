@@ -6,8 +6,12 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { writeFileSync, unlinkSync, mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
 import { execSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+
+// Node 18 compatible __dirname (import.meta.dirname is only in Node 20.11+)
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import {
   parseEnv,
@@ -446,7 +450,7 @@ describe('getValue', () => {
 // ============================================================================
 
 describe('CLI', () => {
-  const cliPath = join(import.meta.dirname, '..', 'src', 'index.ts');
+  const cliPath = join(__dirname, '..', 'src', 'index.ts');
   let tmpDir: string;
 
   function runCli(args: string, env: Record<string, string> = {}): string {
@@ -1153,7 +1157,7 @@ describe('getValue - Extended', () => {
 // ============================================================================
 
 describe('CLI - Extended', () => {
-  const cliPath = join(import.meta.dirname, '..', 'src', 'index.ts');
+  const cliPath = join(__dirname, '..', 'src', 'index.ts');
   let tmpDir: string;
 
   function runCli(args: string, env: Record<string, string> = {}): string {
