@@ -37,6 +37,14 @@ cd "$REPO_PATH"
 echo "Pushing to $REMOTE/$BRANCH from $(pwd)..."
 echo ""
 
+# Pull latest changes to avoid conflicts (GitHub Actions may have committed)
+echo "Pulling latest changes from $REMOTE/$BRANCH..."
+git pull --rebase "$REMOTE" "$BRANCH" || {
+  echo "ERROR: Failed to pull and rebase. Please resolve conflicts manually."
+  exit 1
+}
+echo ""
+
 # Push
 git push "$REMOTE" "$BRANCH"
 

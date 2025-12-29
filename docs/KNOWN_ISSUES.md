@@ -176,6 +176,67 @@ pub fn serialize(&self) -> String {
 
 ---
 
+### Git Push Conflicts During Migration ✅
+
+**Resolved:** 2025-12-29
+**Severity:** Medium (Workflow Blocker)
+**Area:** Scripts (git-push-with-auth.sh)
+
+**Problem:** Every git push attempt failed with "failed to push some refs" error, requiring manual `git pull --rebase origin main` before each push. This occurred repeatedly during Phase 2 Wave 1 migration.
+
+**Root Cause:** GitHub Actions workflows (create-demos.yml, update-dashboard.yml, update-demos.yml) automatically commit demo recordings and dashboard updates to main branch while development work is in progress, causing local branch to fall behind remote.
+
+**Solution:** Updated `scripts/git-push-with-auth.sh` to automatically pull and rebase before pushing:
+```bash
+# Pull latest changes to avoid conflicts (GitHub Actions may have committed)
+echo "Pulling latest changes from $REMOTE/$BRANCH..."
+git pull --rebase "$REMOTE" "$BRANCH" || {
+  echo "ERROR: Failed to pull and rebase. Please resolve conflicts manually."
+  exit 1
+}
+echo ""
+
+# Push
+git push "$REMOTE" "$BRANCH"
+```
+
+**Benefits:**
+- Eliminates manual pull step before every push
+- Automatically syncs with CI workflow commits
+- Maintains clean linear history with rebase
+- Provides clear error message if conflicts occur
+
+---
+
+### On-Stop Cleanup Hook Path Failure ✅
+
+**Resolved:** 2025-12-29
+**Severity:** Low (Hook Failure)
+**Area:** Hooks (.claude/hooks/on-stop-cleanup.sh)
+
+**Problem:** The on-stop-cleanup.sh hook failed during every session cleanup with path errors. Hook could not find repository at hardcoded path `/home/user/tuulbelt`.
+
+**Root Cause:** Line 11 had hardcoded path that only worked in specific environment:
+```bash
+TUULBELT_ROOT="/home/user/tuulbelt"  # Only works on original dev machine
+```
+
+**Solution:** Replaced hardcoded path with dynamic detection:
+```bash
+# Dynamically detect repository root (works in both CLI and Web)
+TUULBELT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo "$HOME/tuulbelt")"
+```
+
+**How It Works:**
+- Uses `git rev-parse --show-toplevel` to find repository root
+- Falls back to `$HOME/tuulbelt` if not in a git repository
+- Works in Claude Code CLI and Web environments
+- Adapts to any directory structure
+
+**Verified:** Hook now runs successfully, detecting repository at `/Users/kofi/_/tuulbelt` and cleaning up temporary files correctly.
+
+---
+
 ## 📋 Issue Template
 
 When adding new issues, use this template:

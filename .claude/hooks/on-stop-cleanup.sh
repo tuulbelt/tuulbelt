@@ -8,7 +8,8 @@
 # 3. Optionally commits work in progress
 
 # Define directories
-TUULBELT_ROOT="/home/user/tuulbelt"
+# Dynamically detect repository root (works in both CLI and Web)
+TUULBELT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo "$HOME/tuulbelt")"
 CLAUDE_DIR="${HOME}/.claude"
 LOGS_DIR="${CLAUDE_DIR}/logs"
 
