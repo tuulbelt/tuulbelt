@@ -57,31 +57,46 @@ flaky "/home/user/file.txt"
 | [Test Flakiness Detector](/tools/test-flakiness-detector/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | Detect unreliable tests |
 | [CLI Progress Reporting](/tools/cli-progress-reporting/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | Concurrent-safe progress tracking |
 | [Cross-Platform Path Normalizer](/tools/cross-platform-path-normalizer/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | Convert Windows/Unix paths |
-| File-Based Semaphore | <img src="/icons/target.svg" class="inline-icon" alt=""> Next | Process synchronization |
-| Output Diffing Utility | <img src="/icons/circle.svg" class="inline-icon" alt=""> Planned | Semantic diff for test output |
+| [File-Based Semaphore](/tools/file-based-semaphore/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | Process synchronization (Rust) |
+| [Output Diffing Utility](/tools/output-diffing-utility/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | Semantic diff for test output |
+| [Structured Error Handler](/tools/structured-error-handler/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | Error serialization with context |
+| [Configuration File Merger](/tools/config-file-merger/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | ENV + config + CLI merging |
+| [Snapshot Comparison](/tools/snapshot-comparison/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | Binary/structured data snapshots |
+| [File-Based Semaphore (TS)](/tools/file-based-semaphore-ts/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | Process synchronization (TypeScript) |
+| [Test Port Resolver](/tools/test-port-resolver/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | Concurrent test port allocation |
 
-**Progress:** 3 of 33 tools (9%)
+**Progress:** 10 of 33 tools (30%)
 
 ## Installation Models
 
-### 1. Clone Individual Tools
+### 1. Clone Individual Tools (Recommended)
 
-Each tool is independently cloneable:
+Each tool can be used independently:
 
 ```bash
-# Clone just one tool
+# Current: Clone meta repo and navigate to tool
 git clone https://github.com/tuulbelt/tuulbelt.git
 cd tuulbelt/test-flakiness-detector
-npm test && npm run build
+npm install && npm test
+
+# Future (after migration): Clone individual tool repo
+# git clone https://github.com/tuulbelt/test-flakiness-detector.git
+# cd test-flakiness-detector
+# npm install && npm test
 ```
 
-### 2. Clone Entire Collection
+### 2. Clone Entire Collection (All Tools)
 
 Get all tools at once:
 
 ```bash
+# Current: Clone meta repo
 git clone https://github.com/tuulbelt/tuulbelt.git
 cd tuulbelt
+
+# Future (after migration): Clone with submodules
+# git clone --recurse-submodules https://github.com/tuulbelt/tuulbelt.git
+# cd tuulbelt
 ```
 
 ### 3. Use Without Cloning

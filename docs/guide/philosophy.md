@@ -89,6 +89,6 @@ If the answers aren't clear, we wait.
 
 ---
 
-**Current Progress:** 2 of 33 tools (6%) | Phase 1: 2/5 (40%)
+**Current Progress:** 10 of 33 tools (30%) | Phase 1: 5/5 (100% ✅) | Phase 2: 5/28 (18%)
 
 See [ROADMAP](https://github.com/tuulbelt/tuulbelt/blob/main/ROADMAP.md) for detailed planning.
