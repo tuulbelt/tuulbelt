@@ -246,9 +246,11 @@ The command implementation should:
 ## Lessons Learned (From cli-progress-reporting and cross-platform-path-normalizer Migrations)
 
 **Authentication:**
-- **Use MCP server, not gh CLI directly**: The custom GitHub MCP server (`.claude/mcp/tuulbelt-github/`) automatically reads from `.env`, avoiding gh CLI authentication cache issues
-- **gh CLI auth cache problem**: Even after setting GITHUB_TOKEN, gh CLI may use cached credentials from keyring. Use `export GH_TOKEN` as workaround, or prefer MCP server
-- **Fallback to REST API**: curl with direct token works when gh CLI has auth issues
+- **CRITICAL: Chain source with gh commands**: Each `gh` command must be chained with `source scripts/setup-github-auth.sh &&` because Claude Code runs each Bash command in a separate shell
+- **Pattern**: `source scripts/setup-github-auth.sh && gh repo create ...`
+- **Why**: Environment variables don't persist between separate Bash tool calls
+- **Alternative: Use MCP server**: The custom GitHub MCP server (`.claude/mcp/tuulbelt-github/`) reads from `.env` automatically
+- **Verification**: `source scripts/setup-github-auth.sh && gh api user --jq '.login'` should show project username
 
 **GitHub Configuration:**
 - **Not automatic**: Repository settings (issues/wiki/projects), topics, and description must be explicitly configured after repo creation

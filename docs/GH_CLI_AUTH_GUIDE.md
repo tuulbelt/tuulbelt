@@ -6,21 +6,28 @@ The global `gh` CLI is authenticated as one user account, but this project needs
 
 ## The Solution
 
-**Always prefix `gh` commands with `GH_TOKEN=$GITHUB_TOKEN`** to override global authentication.
+**Chain `source scripts/setup-github-auth.sh` with `gh` commands using `&&`** to ensure correct credentials.
 
 ## Correct Usage Patterns
 
 ### In Bash Tool Calls (Claude Code)
 
+**CRITICAL: Each Bash command in Claude Code runs in a separate shell instance, so environment variables don't persist between commands.**
+
 ```bash
 # WRONG - uses global auth (wrong account)
 gh repo edit tuulbelt/tool-name --add-topic rust
 
-# CORRECT - uses project auth (correct account)
-source .env  # Load GITHUB_TOKEN from .env
-export GH_TOKEN="$GITHUB_TOKEN"
-GH_TOKEN=$GITHUB_TOKEN gh repo edit tuulbelt/tool-name --add-topic rust
+# CORRECT - chain source with gh command in SAME command
+source scripts/setup-github-auth.sh && gh repo edit tuulbelt/tool-name --add-topic rust
+source scripts/setup-github-auth.sh && gh repo create tuulbelt/tool-name --public
+source scripts/setup-github-auth.sh && gh api user --jq '.login'
 ```
+
+**Why this works:**
+- `source scripts/setup-github-auth.sh` loads credentials and exports `GH_TOKEN`
+- Chaining with `&&` keeps the environment in the same shell session
+- `gh` CLI respects `GH_TOKEN` and uses project credentials
 
 ### In Scripts
 
@@ -64,22 +71,26 @@ GH_TOKEN=$GITHUB_TOKEN gh api user --jq '.login'
 
 ## For Future Migrations
 
-**Pattern to follow in all bash commands:**
+**Pattern to follow in all bash commands (Claude Code):**
 
 ```bash
-# Step 1: Load credentials
-source .env  # Loads GITHUB_TOKEN
-export GH_TOKEN="$GITHUB_TOKEN"
+# EVERY gh command must be chained with source in the SAME command
+source scripts/setup-github-auth.sh && gh repo create tuulbelt/tool-name --public
 
-# Step 2: Use gh with explicit GH_TOKEN
-GH_TOKEN=$GITHUB_TOKEN gh repo edit tuulbelt/output-diffing-utility \
+source scripts/setup-github-auth.sh && gh repo edit tuulbelt/tool-name \
   --add-topic tuulbelt \
   --add-topic rust \
   --add-topic zero-dependencies
 
-# Step 3: Verify
-GH_TOKEN=$GITHUB_TOKEN gh repo view tuulbelt/output-diffing-utility --json repositoryTopics
+source scripts/setup-github-auth.sh && gh repo edit tuulbelt/tool-name --disable-issues
+
+source scripts/setup-github-auth.sh && gh repo view tuulbelt/tool-name --json repositoryTopics
 ```
+
+**Key points:**
+- Each `gh` command needs `source scripts/setup-github-auth.sh &&` prefix
+- Don't try to source once and run multiple gh commands separately - won't work
+- The `&&` ensures gh runs in the same shell with exported `GH_TOKEN`
 
 ## Troubleshooting
 

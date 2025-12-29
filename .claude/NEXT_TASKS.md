@@ -32,12 +32,21 @@
 **Remaining Tools (1/1):**
 - [ ] test-flakiness-detector (TypeScript) - optional dependency: cli-progress-reporting
 
+**CRITICAL: GitHub Authentication Pattern** ⚠️
+```bash
+# EVERY gh command must be chained with source in SAME command
+source scripts/setup-github-auth.sh && gh repo create tuulbelt/test-flakiness-detector --public
+source scripts/setup-github-auth.sh && gh repo edit tuulbelt/test-flakiness-detector --add-topic typescript
+```
+**Why**: Claude Code runs each Bash command in separate shell - env vars don't persist
+
 **Next Steps:**
-1. Migrate test-flakiness-detector 🎯
+1. Migrate test-flakiness-detector using authentication chaining pattern 🎯
 2. After Wave 2 complete, begin Wave 3 (required dependencies)
 3. Update tracking documents after migration
 
 **Key Resources:**
+- **Authentication guide**: `docs/GH_CLI_AUTH_GUIDE.md` ⭐ NEW - Complete chaining pattern
 - Migration command: `.claude/commands/migrate-tool.md`
 - Quality checklist: `docs/QUALITY_CHECKLIST.md` (100+ item migration checklist)
 - Migration plan: `docs/MIGRATION_TO_META_REPO.md`

@@ -11,6 +11,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - Documentation Cleanup & Authentication Pattern Finalized ✅ (2025-12-29)
+
+**Removed real credentials from all documentation:**
+- Cleaned 10 files: GH_CLI_AUTH_GUIDE.md, CHANGELOG.md, HANDOFF.md, MIGRATION_REVIEW.md, migrate-tool.md, KNOWN_ISSUES.md, MIGRATION_TO_META_REPO.md, QUALITY_CHECKLIST.md, STATUS.md
+- Replaced real usernames with generic placeholders
+- Replaced specific file paths with generic examples
+- Replaced email addresses with environment variable references
+
+**Finalized authentication pattern for future migrations:**
+- **CRITICAL Discovery**: Claude Code Bash commands run in separate shells
+- **Solution**: Chain `source scripts/setup-github-auth.sh && gh ...` for every gh command
+- **Documentation updated**:
+  - `docs/GH_CLI_AUTH_GUIDE.md` - Complete usage guide with chaining pattern
+  - `.claude/commands/migrate-tool.md` - Lessons learned section updated with authentication requirements
+  - All migration documentation now reflects correct pattern
+
+**Why this matters:**
+- Environment variables don't persist between separate Bash tool calls in Claude Code
+- Chaining with `&&` keeps environment in same shell session
+- Ensures `gh` CLI always uses project credentials from `.env`
+- Prevents recurring authentication failures in future migrations
+
+**Impact:**
+- All documentation now credential-free and safe for public repository
+- Clear, verified pattern for all future GitHub operations
+- Wave 2 migrations can proceed without authentication issues
+
+---
+
 ### Added - Phase 2 Wave 1: output-diffing-utility (Rust) Migration Complete ✅ (2025-12-29)
 
 **Migrated output-diffing-utility to standalone repository - WAVE 1 COMPLETE!**
