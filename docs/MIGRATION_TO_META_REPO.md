@@ -372,7 +372,7 @@ scripts/push.sh
 [![Tests](https://github.com/tuulbelt/{tool-name}/actions/workflows/test.yml/badge.svg)]
 ```
 
-**Meta repo links OK:** Keeping "Part of [Tuulbelt](meta-repo-url)" is appropriate
+**Meta repo links OK:** Keeping "Part of [Tuulbelt](https://github.com/tuulbelt/tuulbelt)" is appropriate
 
 ### Testing Verification Pattern
 
