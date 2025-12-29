@@ -418,8 +418,8 @@ Use this checklist when running `/migrate-tool` to ensure complete migration. Re
 ### Authentication Checklist
 
 - [ ] **Use MCP server preferred**: Custom GitHub MCP server reads from `.env` automatically
-- [ ] **Fallback: Set GH_TOKEN**: `export GH_TOKEN="token"` if using gh CLI directly
-- [ ] **Verify auth**: `gh auth status` shows correct account (koficodedat)
+- [ ] **Fallback: Set GH_TOKEN**: `export GH_TOKEN="$GITHUB_TOKEN"` if using gh CLI directly
+- [ ] **Verify auth**: `gh auth status` shows correct account (from .env)
 - [ ] **Test GitHub operation**: Try `gh repo view tuulbelt/tuulbelt` to verify access
 
 ---

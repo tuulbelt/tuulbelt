@@ -194,7 +194,7 @@ See `docs/MIGRATION_TO_META_REPO.md` for complete migration plan.
 This command uses the following authentication scripts:
 
 - `scripts/setup-github-auth.sh` - Configure session from .env
-- `scripts/commit.sh` - Commit with correct author (koficodedat), no Claude attribution
+- `scripts/commit.sh` - Commit with correct author (from .env), no Claude attribution
 - `scripts/push.sh` - Push with correct credentials
 
 All scripts source `GITHUB_TOKEN`, `GITHUB_USERNAME`, `GITHUB_EMAIL` from meta repo `.env`.
@@ -209,7 +209,7 @@ npm test  # or cargo test
 npm run build
 
 # 2. Configure authentication
-cd /Users/kofi/_/tuulbelt
+cd /path/to/tuulbelt
 source scripts/setup-github-auth.sh
 
 # 3. Run migration
@@ -234,7 +234,7 @@ The command implementation should:
 
 1. **Use existing scripts** - Leverage `scripts/commit.sh` and `scripts/push.sh`
    - **Alternative commit method**: Using `git commit` with `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL`, `GIT_COMMITTER_NAME`, and `GIT_COMMITTER_EMAIL` environment variables is acceptable and produces identical results
-   - Example: `GIT_AUTHOR_NAME="koficodedat" GIT_AUTHOR_EMAIL="koficodedat@gmail.com" GIT_COMMITTER_NAME="koficodedat" GIT_COMMITTER_EMAIL="koficodedat@gmail.com" git commit -m "message"`
+   - Example: `GIT_AUTHOR_NAME="$GITHUB_USERNAME" GIT_AUTHOR_EMAIL="$GITHUB_EMAIL" GIT_COMMITTER_NAME="$GITHUB_USERNAME" GIT_COMMITTER_EMAIL="$GITHUB_EMAIL" git commit -m "message"`
    - Both methods ensure correct author attribution; prefer scripts for consistency
 2. **Be idempotent** - Safe to re-run if it fails partway through
 3. **Validate inputs** - Check tool exists, .env configured, gh authenticated

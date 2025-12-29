@@ -233,7 +233,7 @@ TUULBELT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo "$HOME/tuulbe
 - Works in Claude Code CLI and Web environments
 - Adapts to any directory structure
 
-**Verified:** Hook now runs successfully, detecting repository at `/Users/kofi/_/tuulbelt` and cleaning up temporary files correctly.
+**Verified:** Hook now runs successfully, detecting repository dynamically and cleaning up temporary files correctly.
 
 ---
 

@@ -27,7 +27,7 @@
 - **CLAUDE.md**: Created tool-specific development guide
 
 ### 4. ✅ Committed and Released
-- Committed changes with koficodedat author ✅
+- Committed changes with correct author (from .env) ✅
 - Tagged v0.1.0
 - Pushed to GitHub successfully
 

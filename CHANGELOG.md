@@ -152,8 +152,8 @@ This completes all independent tools in Wave 1. Next up: Wave 2 (test-flakiness-
 
 **Impact:**
 - Solves recurring "wrong username" authentication issues
-- Prevents gh CLI from using cached kofirc credentials
-- Project-specific credentials always used (koficodedat)
+- Prevents gh CLI from using cached global credentials
+- Project-specific credentials always used (from .env)
 
 ---
 

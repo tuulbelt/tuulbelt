@@ -105,7 +105,7 @@ source scripts/setup-github-auth.sh
 4. Updates CI workflow for standalone operation
 5. Updates README.md (absolute URLs, standalone instructions)
 6. Creates tool-specific CLAUDE.md
-7. Commits with correct author (koficodedat) using auth scripts
+7. Commits with correct author (from .env) using auth scripts
 8. Tags v0.1.0 and pushes to GitHub
 9. Verifies standalone functionality (tests, build)
 10. Adds as git submodule to meta repo
@@ -270,7 +270,7 @@ Individual tool migrations are isolated - if one fails, keep it in monorepo temp
 All migrations use these scripts for correct credentials:
 
 - **setup-github-auth.sh** - Sources GITHUB_TOKEN, GITHUB_USERNAME, GITHUB_EMAIL from .env
-- **commit.sh** - Commits with koficodedat author, no Claude attribution
+- **commit.sh** - Commits with correct author (from .env), no Claude attribution
 - **push.sh** - Pushes with correct credentials, auto-pulls before push to avoid conflicts
 
 **Usage:**
@@ -330,7 +330,7 @@ scripts/push.sh
 **Problem:** gh CLI Authentication Cache
 - `gh` CLI caches credentials in system keyring
 - Setting GITHUB_TOKEN doesn't override cached credentials
-- Caused recurring "kofirc does not have the correct permissions" errors
+- Caused recurring "wrong account does not have the correct permissions" errors
 
 **Solutions (in order of preference):**
 1. **Use GitHub MCP Server** (`.claude/mcp/tuulbelt-github/`)

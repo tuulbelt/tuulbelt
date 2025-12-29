@@ -113,7 +113,7 @@
    - ✅ Sources .env automatically
    - ✅ Sets git config before commit
    - ✅ No Claude Code attribution
-   - ✅ Verified working (all commits show koficodedat author)
+   - ✅ Verified working (all commits show correct author from .env)
 
 3. **scripts/push.sh**
    - ✅ Sources .env automatically
