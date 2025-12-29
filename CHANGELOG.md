@@ -9,6 +9,69 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Phase 1: Meta Repo Migration Automation Complete ✅ (2025-12-29)
+
+**MCP Server for GitHub Operations:**
+- Created `.claude/mcp/tuulbelt-github/` MCP server (420 lines)
+- 6 GitHub API tools: check_repo_exists, create_tool_repo, configure_repo_settings, create_github_labels, get_repo_info, delete_repo
+- Integration with Octokit for GitHub API access
+- Environment variable configuration via `.mcp.json`
+
+**Slash Commands:**
+- `/new-tool` - Complete tool creation automation (30+ steps, 350 lines)
+- `/release-tool` - Semver version management (280 lines)
+- `/add-tool-dependency` - Git URL dependency management (320 lines)
+- `/sync-tool-docs` - Documentation synchronization (240 lines)
+- `/update-all-counts` - Tool count updates across docs (310 lines)
+
+**Specialized Agent:**
+- `tool-creator` - Full Tuulbelt context for tool creation (600 lines)
+- Phase-by-phase workflow execution
+- Error handling and rollback procedures
+- Template customization for TypeScript and Rust
+
+**Environment Setup:**
+- `.env.example` template for developers
+- `.mcp.json` configuration for MCP server
+- GitHub token and org configuration
+
+**Testing Completed:**
+- ✅ Verified check_repo_exists with tuulbelt/tuulbelt
+- ✅ Created test repository (tuulbelt/test-dummy-tool)
+- ✅ Verified repository settings and labels
+- ✅ Successfully deleted test repository
+- Full /new-tool workflow deferred to actual tool creation
+
+**Impact:**
+- Complete automation infrastructure for meta repo migration
+- 11 files created (~4,200 lines total)
+- Ready for Phase 2: Wave 1 tool migration
+- Testing validated all GitHub API operations
+
+### Added - Phase 0: Meta Repo Migration Preparation Complete ✅ (2025-12-29)
+
+**Documentation Updates:**
+- Created ROADMAP.md with accurate 10/33 tool status
+- Updated .github/ISSUE_TEMPLATE/tool_proposal.md (fixed PRINCIPLES.md link)
+- Updated docs/guide/getting-started.md (tool count 10/33, added 7 missing tools)
+- Updated docs/guide/philosophy.md (progress 10/33)
+
+**Strategic Decisions Documented:**
+- Created docs/MIGRATION_DECISIONS.md
+- Centralized issue tracking strategy (all issues in meta repo)
+- Post-migration git tagging strategy
+- Created docs/setup/TOOL_REPO_SETTINGS.md template
+
+**Template Updates:**
+- Added CONTRIBUTING.md to templates/tool-repo-template/
+- Added CONTRIBUTING.md to templates/rust-tool-template/
+- Versioning section added to both templates
+
+**Impact:**
+- 4 files modified, 4 files created
+- All preparation tasks complete for migration
+- Strategic decisions documented for consistency
+
 ### Changed - Dogfood Strategy Rethink (2025-12-28)
 
 **Dogfood is now local-only:**

@@ -29,12 +29,13 @@ This violates PRINCIPLES.md:
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| 0 | Preparation (create repos, backup) | Pending |
-| 1 | Wave 1: Migrate 7 independent tools | Pending |
-| 2 | Wave 2: Migrate tools with optional deps | Pending |
-| 3 | Wave 3: Migrate tools with required deps | Pending |
-| 4 | Restructure meta repo (submodules) | Pending |
-| 5 | Verification & cleanup | Pending |
+| 0 | Preparation (docs, decisions, templates) | ✅ Complete |
+| 1 | Automation Setup (MCP, commands, agents) | ✅ Complete |
+| 2 | Wave 1: Migrate 7 independent tools | Pending |
+| 3 | Wave 2: Migrate tools with optional deps | Pending |
+| 4 | Wave 3: Migrate tools with required deps | Pending |
+| 5 | Restructure meta repo (submodules) | Pending |
+| 6 | Verification & cleanup | Pending |
 
 ### Key Changes
 
@@ -58,6 +59,36 @@ tuulbelt/test-port-resolver/      # Independent repo
 ```
 
 **See [MIGRATION_TO_META_REPO.md](/docs/MIGRATION_TO_META_REPO.md) for complete plan.**
+
+### Phase 0 Complete ✅ (2025-12-29)
+
+**Preparation tasks completed:**
+- Created ROADMAP.md with accurate tool status
+- Updated issue templates and guide pages
+- Documented migration decisions (issue tracking, git tagging)
+- Created TOOL_REPO_SETTINGS.md template
+- Added CONTRIBUTING.md to templates
+
+**Files:** 4 modified, 4 created | **Commits:** 2
+
+### Phase 1 Complete ✅ (2025-12-29)
+
+**Automation infrastructure created:**
+- **MCP Server:** `.claude/mcp/tuulbelt-github/` (420 lines, 6 GitHub API tools)
+- **Commands:** `/new-tool`, `/release-tool`, `/add-tool-dependency`, `/sync-tool-docs`, `/update-all-counts`
+- **Agent:** `tool-creator` (600 lines, specialized for tool creation)
+- **Environment:** `.env.example` template, `.mcp.json` configuration
+
+**Testing completed:**
+- ✅ check_repo_exists - Verified with existing repo
+- ✅ create_tool_repo - Created test-dummy-tool successfully
+- ✅ configure_repo_settings - Labels verified
+- ✅ delete_repo - Test repo cleaned up
+- Full /new-tool workflow deferred to actual tool creation (Phase 2)
+
+**Files:** 11 created (~4,200 lines) | **Commits:** 2
+
+**Next:** Begin Phase 2 - Wave 1 tool migration or create new tool with /new-tool
 
 ---
 

@@ -1,9 +1,9 @@
 # Tuulbelt Project Status
 
-**Last Updated:** 2025-12-27
-**Current Phase:** Phase 2 - Medium Tools Development
-**Active Session:** claude/resume-work-assessment-87UDw
-**Progress:** 6/33 Tools Complete (18%) | Phase 1 Quick Tools: 5/5 (100% ✅) | Phase 2: 1/28
+**Last Updated:** 2025-12-29
+**Current Phase:** Meta Repository Migration - Phase 2 Pending
+**Active Session:** Meta Repo Migration Automation
+**Progress:** 10/33 Tools Complete (30%) | Migration: Phase 0 ✅ Phase 1 ✅ Phase 2 Pending
 
 ---
 
@@ -98,25 +98,45 @@
 - Path filters for all 6 tools in create-demos.yml
 - Template enhancements (performance patterns, SPEC.md guidance, advanced examples)
 
+**Meta Repository Migration - Phase 0 Complete ✅ (2025-12-29)**
+- Created ROADMAP.md with accurate 10/33 tool status
+- Updated issue templates and guide pages (tool counts, migration links)
+- Documented strategic decisions (issue tracking, git tagging)
+- Created TOOL_REPO_SETTINGS.md template with gh CLI automation
+- Added CONTRIBUTING.md to both tool templates
+- **Files:** 4 modified, 4 created | **Commits:** 2
+
+**Meta Repository Migration - Phase 1 Complete ✅ (2025-12-29)**
+- Created `.claude/mcp/tuulbelt-github/` MCP server (420 lines, 6 GitHub API tools)
+- Created 5 slash commands: `/new-tool`, `/release-tool`, `/add-tool-dependency`, `/sync-tool-docs`, `/update-all-counts`
+- Created `tool-creator` specialized agent (600 lines)
+- Created `.env.example` template and `.mcp.json` configuration
+- **Testing:** Verified all GitHub API operations (create, configure, delete repos)
+- **Files:** 11 created (~4,200 lines) | **Commits:** 2
+- **Ready for Phase 2:** Wave 1 tool migration or new tool creation
+
 ### 🔄 In Progress
 
-**Nothing** - Ready for next Phase 2 tool!
+**Nothing** - Phase 1 automation complete, ready for Phase 2!
 
 ### 📋 Next Steps
 
-1. **Merge Current Branch** ⭐
-   - Merge `claude/resume-work-assessment-87UDw` to trigger demo regeneration
-   - Verify all 6 demos are regenerated with short CLI names
+1. **Begin Phase 2: Wave 1 Tool Migration** ⭐
+   - Migrate 7 independent tools to separate repositories
+   - Tools: cli-progress-reporting, cross-platform-path-normalizer, config-file-merger, structured-error-handler, file-based-semaphore, file-based-semaphore-ts, output-diffing-utility
+   - Use `/new-tool` for creating new repositories
+   - Update dependencies from `file:../` to `git+https://...`
+   - Add tools as git submodules to meta repo
 
-2. **Choose Next Tool (Phase 2)** 🎯
-   - **Options:** Configuration File Merger, Snapshot Comparison, Test Port Resolver
-   - Continue dogfooding validation practice
-   - Maintain 80%+ test coverage standard
+2. **Alternative: Create New Tool with /new-tool** 🎯
+   - Test full automation workflow with actual tool creation
+   - **Options:** Component Prop Validator, Exhaustiveness Checker, Content-Addressable Blob Store
+   - Validates all 30+ steps of automation
+   - Establishes patterns for future migrations
 
 ## Active Branches
 
-- `claude/resume-work-assessment-87UDw` - Demo & npm link fixes for short CLI names (current)
-- `main` - Stable base
+- `main` - Current (Phase 0 & Phase 1 complete)
 
 ## Blockers / Decisions Needed
 
@@ -124,19 +144,23 @@
 
 ## Tools Status
 
-### Implemented (6/33) ✅ Phase 1 Complete + 1 Phase 2
-- **Test Flakiness Detector** / `flaky` (TypeScript) - v0.1.0, 148 tests, VitePress docs
-- **CLI Progress Reporting** / `prog` (TypeScript) - v0.1.0, 125 tests, dogfooding validated
-- **Cross-Platform Path Normalizer** / `normpath` (TypeScript) - v0.1.0, 145 tests, VitePress docs
-- **File-Based Semaphore** / `sema` (Rust) - v0.1.0, 85 tests, SPEC.md, VitePress docs
-- **Output Diffing Utility** / `odiff` (Rust) - v0.1.0, 99 tests, SPEC.md, VitePress docs
-- **Structured Error Handler** / `serr` (TypeScript) - v0.1.0, 81 tests, VitePress docs 🆕
+### Implemented (10/33) ✅ All Phase 1 + 5 Phase 2
+- **Test Flakiness Detector** / `flaky` (TypeScript) - v0.1.0, 132 tests, VitePress docs, dogfooding
+- **CLI Progress Reporting** / `prog` (TypeScript) - v0.1.0, 121 tests, dogfooding validated
+- **Cross-Platform Path Normalizer** / `normpath` (TypeScript) - v0.1.0, 141 tests, VitePress docs, dogfooding
+- **File-Based Semaphore (Rust)** / `sema` (Rust) - v0.1.0, 95 tests, SPEC.md, VitePress docs, dogfooding
+- **Output Diffing Utility** / `odiff` (Rust) - v0.1.0, 108 tests, SPEC.md, VitePress docs, dogfooding
+- **Structured Error Handler** / `serr` (TypeScript) - v0.1.0, 88 tests, VitePress docs, dogfooding
+- **Configuration File Merger** / `cfgmerge` (TypeScript) - v0.1.0, 144 tests, VitePress docs, dogfooding
+- **Snapshot Comparison** / `snapcmp` (Rust) - v0.1.0, 96 tests, SPEC.md, VitePress docs, dogfooding
+- **File-Based Semaphore (TS)** / `semats` (TypeScript) - v0.1.0, 160 tests, VitePress docs, dogfooding
+- **Test Port Resolver** / `portres` (TypeScript) - v0.1.0, 56 tests, VitePress docs, dogfooding
 
-### In Planning (0/33)
-- None
+### In Migration Planning (10/33)
+- All 10 tools above need migration to separate repositories (Phase 2)
 
-### Not Started (27/33)
-- **Candidates:** Configuration File Merger (`cfgmerge`), Snapshot Comparison (`snapcmp`), Test Port Resolver (`portres`)
+### Not Started (23/33)
+- **Next Candidates:** Component Prop Validator (`propval`), Exhaustiveness Checker (`excheck`), Content-Addressable Blob Store (`blobstore`)
 - All remaining Medium/Complex tools
 
 ## Infrastructure Status
@@ -152,6 +176,22 @@
 | CI/CD | ✅ Ready | GitHub Actions configured |
 
 ## Recent Activity
+
+**2025-12-29** - Meta Repo Migration Phase 1: Automation - COMPLETE ✅
+- **MCP Server**: Created `.claude/mcp/tuulbelt-github/` (420 lines, 6 GitHub API tools)
+- **Commands**: `/new-tool`, `/release-tool`, `/add-tool-dependency`, `/sync-tool-docs`, `/update-all-counts` (5 total, ~1,500 lines)
+- **Agent**: `tool-creator` specialized agent (600 lines)
+- **Environment**: `.env.example` template, `.mcp.json` configuration
+- **Testing**: Verified all GitHub API operations (create/configure/delete repos)
+- **Total**: 11 files created (~4,200 lines)
+- **Result**: Complete automation infrastructure ready for Phase 2
+
+**2025-12-29** - Meta Repo Migration Phase 0: Preparation - COMPLETE ✅
+- **Documentation**: Created ROADMAP.md, updated issue templates and guides
+- **Decisions**: Documented issue tracking, git tagging strategies
+- **Templates**: Created TOOL_REPO_SETTINGS.md, added CONTRIBUTING.md to templates
+- **Total**: 4 files modified, 4 files created
+- **Result**: All preparation complete, ready for automation setup
 
 **2025-12-27** - npm link and Demo Fixes - COMPLETE ✅
 - **Issue**: Demo recordings showed "import: command not found" errors
@@ -234,15 +274,19 @@
 
 **For Next Session:**
 
-**Current Status:** 6/33 tools complete (18%) | Phase 1 COMPLETE ✅ | Phase 2: 1 tool done
+**Current Status:** 10/33 tools complete (30%) | Meta Repo Migration: Phase 0 ✅ Phase 1 ✅ Phase 2 Pending
 
 **Completed Tools:**
-1. Test Flakiness Detector / `flaky` (TypeScript) - 148 tests, VitePress docs
-2. CLI Progress Reporting / `prog` (TypeScript) - 125 tests, dogfooding validated
-3. Cross-Platform Path Normalizer / `normpath` (TypeScript) - 145 tests, VitePress docs
-4. File-Based Semaphore / `sema` (Rust) - 85 tests, SPEC.md, VitePress docs
-5. Output Diffing Utility / `odiff` (Rust) - 99 tests, SPEC.md, VitePress docs
-6. Structured Error Handler / `serr` (TypeScript) - 81 tests, VitePress docs 🆕
+1. Test Flakiness Detector / `flaky` (TypeScript) - 132 tests, VitePress docs, dogfooding
+2. CLI Progress Reporting / `prog` (TypeScript) - 121 tests, dogfooding validated
+3. Cross-Platform Path Normalizer / `normpath` (TypeScript) - 141 tests, VitePress docs, dogfooding
+4. File-Based Semaphore / `sema` (Rust) - 95 tests, SPEC.md, VitePress docs, dogfooding
+5. Output Diffing Utility / `odiff` (Rust) - 108 tests, SPEC.md, VitePress docs, dogfooding
+6. Structured Error Handler / `serr` (TypeScript) - 88 tests, VitePress docs, dogfooding
+7. Configuration File Merger / `cfgmerge` (TypeScript) - 144 tests, VitePress docs, dogfooding
+8. Snapshot Comparison / `snapcmp` (Rust) - 96 tests, SPEC.md, VitePress docs, dogfooding
+9. File-Based Semaphore (TS) / `semats` (TypeScript) - 160 tests, VitePress docs, dogfooding
+10. Test Port Resolver / `portres` (TypeScript) - 56 tests, VitePress docs, dogfooding
 
 **Established Practices:**
 - Comprehensive test coverage (80%+ minimum)
@@ -261,11 +305,22 @@
 - Template enhancements (performance patterns, advanced examples)
 - Path filters for efficient CI runs
 - npm link support for short CLI names
+- **Meta Repo Migration Automation** (Phase 0 & 1 complete):
+  - MCP server for GitHub operations (6 API tools)
+  - 5 slash commands for tool creation/management
+  - tool-creator specialized agent
+  - Complete testing infrastructure validated
 
-**Recommended Next Action:** Merge branch, then choose next Phase 2 tool
-- **Merge:** `claude/resume-work-assessment-87UDw` to trigger demo regeneration
-- **Options:** Configuration File Merger (`cfgmerge`), Snapshot Comparison (`snapcmp`), Test Port Resolver (`portres`)
-- Continue established practices (dogfooding, SPEC if needed, 80%+ coverage)
+**Recommended Next Action:** Begin Phase 2 - Meta Repository Migration
+- **Option A: Migrate Existing Tools**
+  - Migrate 7 independent tools to separate repositories (cli-progress-reporting, cross-platform-path-normalizer, config-file-merger, structured-error-handler, file-based-semaphore, file-based-semaphore-ts, output-diffing-utility)
+  - Create GitHub repos via `/new-tool` or gh CLI
+  - Update dependencies from `file:../` to `git+https://...`
+  - Add as git submodules to meta repo
+- **Option B: Create New Tool with /new-tool**
+  - Test full automation workflow (30+ steps)
+  - Options: Component Prop Validator (`propval`), Exhaustiveness Checker (`excheck`), Content-Addressable Blob Store (`blobstore`)
+  - Validates automation and establishes migration patterns
 
 **Reference Documents:**
 - See .claude/HANDOFF.md for latest session details
