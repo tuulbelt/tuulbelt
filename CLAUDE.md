@@ -175,6 +175,9 @@ See @README.md for detailed architecture and @PRINCIPLES.md for design philosoph
 # Migrate existing tool to standalone repo (Phase 2 meta repo migration)
 /migrate-tool <tool-name>
 
+# Trim documentation bloat (run every 5-10 migrations)
+/trim-docs
+
 # Run all tests across templates
 /test-all [filter]
 
