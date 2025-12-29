@@ -6,6 +6,61 @@ This document tracks pending work across the Tuulbelt project. Tasks are organiz
 
 ---
 
+## 🚨 CRITICAL: Meta Repository Migration
+
+**Status:** Planning Complete
+**Priority:** HIGHEST - Architectural Correction
+**Document:** [MIGRATION_TO_META_REPO.md](/docs/MIGRATION_TO_META_REPO.md)
+
+### Background
+
+Tuulbelt was incorrectly implemented as a **monorepo** (all tools in subdirectories) when it should be a **meta repository** (coordination layer referencing independent tool repos).
+
+This violates PRINCIPLES.md:
+> "Each tool is its own GitHub repository... Without needing the meta repo or any other tool."
+
+### Why This Matters
+
+1. **Independence Violated**: Users must clone entire repo to use any single tool
+2. **Path Dependencies Broken**: `file:../sibling` fails for standalone clones
+3. **PRINCIPLES.md Exception 2 Broken**: Tool composition requires monorepo context
+
+### Migration Phases
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| 0 | Preparation (create repos, backup) | Pending |
+| 1 | Wave 1: Migrate 7 independent tools | Pending |
+| 2 | Wave 2: Migrate tools with optional deps | Pending |
+| 3 | Wave 3: Migrate tools with required deps | Pending |
+| 4 | Restructure meta repo (submodules) | Pending |
+| 5 | Verification & cleanup | Pending |
+
+### Key Changes
+
+**Before (Monorepo - WRONG):**
+```
+tuulbelt/tuulbelt/
+├── test-port-resolver/           # Tool code here
+└── file-based-semaphore-ts/      # Tool code here
+    # Dependency: file:../file-based-semaphore-ts (BROKEN standalone)
+```
+
+**After (Meta Repo - CORRECT):**
+```
+tuulbelt/tuulbelt/                # Meta repo
+└── tools/                        # Git submodules
+    ├── test-port-resolver/       -> github.com/tuulbelt/test-port-resolver
+    └── file-based-semaphore-ts/  -> github.com/tuulbelt/file-based-semaphore-ts
+
+tuulbelt/test-port-resolver/      # Independent repo
+    # Dependency: git+https://github.com/tuulbelt/file-based-semaphore-ts.git (WORKS everywhere)
+```
+
+**See [MIGRATION_TO_META_REPO.md](/docs/MIGRATION_TO_META_REPO.md) for complete plan.**
+
+---
+
 ## 🎯 Short CLI Names Reference
 
 All tools have short CLI names for better DX:

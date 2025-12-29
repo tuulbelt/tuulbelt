@@ -1,12 +1,40 @@
 # Session Handoff
 
 **Last Updated:** 2025-12-29
-**Session:** Test Port Resolver Implementation (Tool #10)
-**Status:** 🟢 portres complete, gap analysis done
+**Session:** Meta Repository Migration Planning
+**Status:** 🟡 Migration plan complete, ready for execution
+
+---
+
+## 🚨 CRITICAL: Next Session Must Execute Migration
+
+**The monorepo structure was a mistake.** Tuulbelt should be a meta repository.
+
+### Migration Plan Created
+
+See **[docs/MIGRATION_TO_META_REPO.md](../docs/MIGRATION_TO_META_REPO.md)** for complete plan.
+
+**Key Points:**
+1. Each tool becomes its own GitHub repository (e.g., `tuulbelt/test-port-resolver`)
+2. Meta repo uses git submodules to reference tools
+3. Dependencies use git URLs (auto-fetched, no manual cloning)
+4. Tools work standalone without needing meta repo
+
+**Migration Order (Dependency-Aware):**
+- Wave 1: 7 independent tools (no dependencies)
+- Wave 2: test-flakiness-detector (optional deps)
+- Wave 3: snapshot-comparison, test-port-resolver (required deps)
 
 ---
 
 ## Current Session Summary
+
+### Meta Repo Migration Planning (2025-12-29)
+
+1. ✅ **Identified architectural mistake** — monorepo instead of meta repo
+2. ✅ **Created comprehensive migration plan** — `docs/MIGRATION_TO_META_REPO.md`
+3. ✅ **Updated tracking documents** — NEXT_TASKS.md, HANDOFF.md
+4. ✅ **Documented git URL dependency pattern** — fixes PRINCIPLES.md Exception 2
 
 ### Test Port Resolver (portres) - Tool #10 (2025-12-29)
 
@@ -51,7 +79,8 @@ Implemented concurrent test port allocation tool to avoid EADDRINUSE errors in p
 
 1. `a4e24c9` - feat(test-port-resolver): implement concurrent test port allocation (Tool #10)
 2. `b6daa79` - docs: update home page and NEXT_TASKS.md for portres
-3. (pending) - refactor(portres): make semats a required library dependency
+3. `60bd52f` - refactor(portres): make semats a required library dependency
+4. (pending) - docs: create meta repository migration plan
 
 ---
 
@@ -117,7 +146,12 @@ After initial implementation, ran through QUALITY_CHECKLIST.md and found:
 
 ## Next Immediate Tasks
 
-**Priority 1: Next tool**
+**🚨 PRIORITY 0: Meta Repository Migration**
+- Execute migration plan in `docs/MIGRATION_TO_META_REPO.md`
+- This is an architectural correction, not a new feature
+- Must be done before adding new tools
+
+**Priority 1: After Migration - New tools**
 - **Component Prop Validator** (`propval`) - TypeScript - Runtime validation
 - **Exhaustiveness Checker** (`excheck`) - TypeScript - Union case coverage
 
@@ -129,6 +163,7 @@ After initial implementation, ran through QUALITY_CHECKLIST.md and found:
 
 ## Important References
 
+- **Migration Plan**: `docs/MIGRATION_TO_META_REPO.md` ⚠️ CRITICAL
 - **Quality Checklist**: `docs/QUALITY_CHECKLIST.md`
 - **Template Scripts**: `templates/*/scripts/dogfood-*.sh`
 - **CI Guide**: `docs/CI_GUIDE.md`
