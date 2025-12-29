@@ -1,12 +1,50 @@
 # Session Handoff
 
 **Last Updated:** 2025-12-29
-**Session:** Meta Repository Migration Planning (Second Review Complete)
-**Status:** 🟢 Migration plan complete with Addendum A & B
+**Session:** Meta Repository Migration Planning (Complete)
+**Status:** 🟢 Migration plan complete with Addendum A, B & C
 
 ---
 
-## 🚨 CRITICAL: Next Session Must Execute Migration
+## 🎯 NEXT SESSION: Execute Phase 0 (Preparation)
+
+**Environment:** Can be done in Claude Code Web
+
+### Phase 0 Tasks (in order)
+
+```
+0.1 [ ] Create ROADMAP.md at root level
+      - Copy template from Addendum B.9
+      - Update with current 10/33 tool status
+
+0.2 [ ] Update .github/ISSUE_TEMPLATE/tool_proposal.md
+      - Change ../../PRINCIPLES.md → absolute GitHub URL
+      - See Addendum B.1 for exact fix
+
+0.3 [ ] Update docs/guide/getting-started.md
+      - Fix tool count (currently 3/33, should be 10/33)
+      - Add missing 7 tools to table
+      - Update clone instructions for meta repo
+
+0.4 [ ] Update docs/guide/philosophy.md
+      - Fix progress (currently 2/33, should be 10/33)
+      - Fix ROADMAP.md link (currently broken)
+
+0.5 [ ] Create docs/setup/TOOL_REPO_SETTINGS.md
+      - GitHub settings template for new tool repos
+      - See Addendum B.10 for content
+
+0.6 [ ] Add versioning section to template CONTRIBUTING.md files
+      - templates/tool-repo-template/CONTRIBUTING.md
+      - templates/rust-tool-template/CONTRIBUTING.md
+      - See Addendum B.4 for content
+```
+
+**Reference:** See `docs/MIGRATION_TO_META_REPO.md` section C.8 for full execution order.
+
+---
+
+## 🚨 CRITICAL: Migration Context
 
 **The monorepo structure was a mistake.** Tuulbelt should be a meta repository.
 
@@ -48,6 +86,15 @@ See **[docs/MIGRATION_TO_META_REPO.md](../docs/MIGRATION_TO_META_REPO.md)** for 
    - B.9: Missing ROADMAP.md
    - B.10: Tool repo GitHub settings template
    - B.11: Dependabot/Renovate strategy
+7. ✅ **Automation system (Addendum C)** — Tool creation automation:
+   - C.2: `/new-tool` command specification
+   - C.3: `tool-creator` agent specification
+   - C.4: `tuulbelt-github` MCP server specification
+   - C.5: Additional commands (`/release-tool`, `/add-tool-dependency`, etc.)
+   - C.6: Tracking document auto-update specifications
+   - C.7: Web vs CLI execution breakdown
+   - C.8: Migration execution order (6 phases)
+   - C.9: Quick reference for what to do where
 
 ### Test Port Resolver (portres) - Tool #10 (2025-12-29)
 
@@ -93,7 +140,9 @@ Implemented concurrent test port allocation tool to avoid EADDRINUSE errors in p
 1. `a4e24c9` - feat(test-port-resolver): implement concurrent test port allocation (Tool #10)
 2. `b6daa79` - docs: update home page and NEXT_TASKS.md for portres
 3. `60bd52f` - refactor(portres): make semats a required library dependency
-4. (pending) - docs: meta repository migration plan with second review addendum
+4. `bc44d49` - docs: add second review addendum to migration plan
+5. `5811918` - docs: add Claude Code Web limitation for gh CLI
+6. `20e1ef3` - docs: add comprehensive tool creation automation system (Addendum C)
 
 ---
 
@@ -159,18 +208,22 @@ After initial implementation, ran through QUALITY_CHECKLIST.md and found:
 
 ## Next Immediate Tasks
 
-**🚨 PRIORITY 0: Meta Repository Migration**
-- Execute migration plan in `docs/MIGRATION_TO_META_REPO.md`
-- This is an architectural correction, not a new feature
-- Must be done before adding new tools
+**🎯 CURRENT: Phase 0 - Preparation (Web)**
+- See top of this document for detailed task list
+- Can be done entirely in Claude Code Web
+- ~2-3 hours estimated
 
-**Priority 1: After Migration - New tools**
+**NEXT: Phase 1 - Automation Setup (CLI required)**
+- Create and test MCP server
+- Create /new-tool command
+- Test full workflow
+
+**LATER: Phases 2-6 (CLI required)**
+- Create GitHub repos, migrate content, restructure
+
+**After Migration:**
 - **Component Prop Validator** (`propval`) - TypeScript - Runtime validation
 - **Exhaustiveness Checker** (`excheck`) - TypeScript - Union case coverage
-
-**Priority 2: Documentation polish**
-- Fix VitePress icon theming (see KNOWN_ISSUES.md)
-- Fix StackBlitz badge alignment
 
 ---
 
