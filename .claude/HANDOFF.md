@@ -64,8 +64,9 @@ After multiple CI failures, we identified a fundamental issue: dogfood scripts d
 
 ## Commits This Session
 
-1. `69b75e8` - feat(ci): add dogfood validation CI workflow and tooling
-2. Earlier commits for semats implementation and docs
+1. `2eb635d` - refactor(ci): remove dogfood-validation.yml, make dogfood local-only
+2. `9ab4bf5` - docs: add known issue for demo deployment timing
+3. Earlier commits for semats implementation and docs
 
 ---
 
@@ -83,6 +84,7 @@ After multiple CI failures, we identified a fundamental issue: dogfood scripts d
 - `.claude/commands/quality-check.md` - Now runs dogfood scripts during local check
 - `docs/QUALITY_CHECKLIST.md` - Added CI integration docs
 - `file-based-semaphore-ts/scripts/dogfood-diff.sh` - Cross-language composition
+- `docs/KNOWN_ISSUES.md` - Added demo deployment timing issue (#2)
 
 ---
 
