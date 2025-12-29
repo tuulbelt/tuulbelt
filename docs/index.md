@@ -80,7 +80,7 @@ Cross-platform file-based semaphore for process coordination with stale lock det
 
 </div>
 
-[**View All 9 Tools →**](/tools/)
+[**View All 10 Tools →**](/tools/)
 
 ### More Tools
 
@@ -180,6 +180,20 @@ Cross-platform file-based semaphore for Node.js process synchronization.
 
 </div>
 
+<div class="tool-card">
+
+#### [Test Port Resolver](/tools/test-port-resolver/) <span class="library-badge"><img src="/icons/link.svg" class="badge-icon" alt=""><span>uses semats</span></span>
+
+Concurrent test port allocation to avoid port conflicts in parallel tests.
+
+- <img src="/icons/target.svg" class="inline-icon" alt=""> File-based port registry with atomic operations
+- <img src="/icons/zap.svg" class="inline-icon" alt=""> TCP bind test for actual port availability
+- <img src="/icons/lock.svg" class="inline-icon" alt=""> Optional [semats](/tools/file-based-semaphore-ts/) integration
+
+[Get Started →](/tools/test-port-resolver/getting-started)
+
+</div>
+
 > <img src="/icons/sparkles.svg" class="inline-icon" alt=""> **Tool Composition**: Snapshot Comparison is the first tool to use library-level composition ([PRINCIPLES.md Exception 2](/guide/principles#zero-external-dependencies)). It imports output-diffing-utility as a path dependency, demonstrating how Tuulbelt tools can build on each other while maintaining zero external dependencies.
 
 ## Progress
@@ -192,14 +206,15 @@ Cross-platform file-based semaphore for Node.js process synchronization.
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> File-Based Semaphore (Rust)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Output Diffing Utility (Rust)
 
-**Phase 2: Started** — 4 of 28
+**Phase 2: Started** — 5 of 28
 
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Structured Error Handler (TypeScript)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Config File Merger (TypeScript)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Snapshot Comparison (Rust)
-- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> File-Based Semaphore (TypeScript) ✨ NEW
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> File-Based Semaphore (TypeScript)
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Test Port Resolver (TypeScript) ✨ NEW
 
-**Overall Progress:** 9 of 33 tools (27%)
+**Overall Progress:** 10 of 33 tools (30%)
 
 ## Quick Start
 
