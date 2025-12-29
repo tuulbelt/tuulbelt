@@ -1,6 +1,6 @@
 # Known Issues
 
-**Last Updated:** 2025-12-27
+**Last Updated:** 2025-12-29
 
 This document tracks known bugs, limitations, and cosmetic issues across the Tuulbelt project. Issues are categorized by severity and area.
 
@@ -14,7 +14,53 @@ This document tracks known bugs, limitations, and cosmetic issues across the Tuu
 
 ## 🟡 Medium Priority Issues
 
-**None currently.**
+### 2. Demo GIFs Not Deployed to GitHub Pages After create-demos Workflow
+
+**Status:** Open
+**Severity:** Medium
+**Area:** CI/CD (create-demos.yml, deploy-docs.yml)
+**Affects:** All tool VitePress documentation pages
+
+**Description:**
+
+When the `create-demos.yml` workflow runs and updates demo recordings, the demo GIFs appear correctly in the GitHub README but NOT on the VitePress GitHub Pages site. The GIF is present in `docs/public/{tool}/demo.gif` but not visible on the live site.
+
+**Root Cause:**
+
+The `create-demos.yml` workflow commits with `[skip ci]` in the commit message:
+```
+docs: update demo recordings and embed in READMEs [skip ci]
+```
+
+This prevents `deploy-docs.yml` from running after demo updates, so the new GIFs are in the repository but never deployed to GitHub Pages.
+
+**Location:**
+- `.github/workflows/create-demos.yml` (line ~331)
+- Affects: `docs/public/*/demo.gif` files
+
+**Evidence:**
+- GitHub README shows GIF correctly (uses relative path `docs/demo.gif`)
+- GitHub README shows correct asciinema link
+- VitePress page shows no GIF (references `/tool-name/demo.gif` which needs deployment)
+- VitePress asciinema link still shows `(#)` placeholder (clicking reloads page)
+- Repository has correct content, but deployed site has stale content
+
+**Workaround:**
+
+1. Manually trigger `deploy-docs` workflow after `create-demos` completes
+2. Or make any trivial docs change to trigger deployment
+
+**Proposed Fix:**
+
+Option A: Remove `[skip ci]` from the demo commit message (may cause CI loops)
+
+Option B: Have `create-demos.yml` trigger `deploy-docs.yml` via `workflow_call` or `repository_dispatch`
+
+Option C: Add `docs/public/**` to `deploy-docs.yml` path triggers (current paths only include `docs/**` but not specific public subdirectories for tool demos)
+
+**References:**
+- `create-demos.yml` commit step (line ~331)
+- `deploy-docs.yml` path triggers
 
 ---
 
@@ -210,10 +256,10 @@ git commit -m "fix: improve icon theming (partial fix for KNOWN_ISSUES.md #1)"
 
 ## Statistics
 
-**Total Issues:** 1
+**Total Issues:** 2
 **Critical:** 0
 **High:** 0
-**Medium:** 0
+**Medium:** 1
 **Low (Cosmetic):** 1
 **Resolved:** 2
 
@@ -221,7 +267,7 @@ git commit -m "fix: improve icon theming (partial fix for KNOWN_ISSUES.md #1)"
 - Documentation: 1
 - Core: 1 (resolved)
 - Testing: 0
-- CI/CD: 0
+- CI/CD: 1
 
 ---
 
