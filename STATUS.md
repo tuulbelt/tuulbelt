@@ -1,9 +1,9 @@
 # Tuulbelt Project Status
 
 **Last Updated:** 2025-12-29
-**Current Phase:** Meta Repository Migration - Phase 2 Wave 1 (1/7 complete)
+**Current Phase:** Meta Repository Migration - Phase 2 Wave 1 (2/7 complete)
 **Active Session:** Phase 2 Wave 1 Tool Migration
-**Progress:** 10/33 Tools Complete (30%) | Migration: Phase 0 ✅ Phase 1 ✅ Phase 2 Wave 1: 1/7
+**Progress:** 10/33 Tools Complete (30%) | Migration: Phase 0 ✅ Phase 1 ✅ Phase 2 Wave 1: 2/7
 
 ---
 
@@ -117,9 +117,10 @@
 
 ### 🔄 In Progress
 
-**Phase 2 Wave 1: Tool Migration (1/7 complete)**
+**Phase 2 Wave 1: Tool Migration (2/7 complete - 28%)**
 - ✅ cli-progress-reporting migrated to standalone repo
-- Pending: 6 remaining independent tools
+- ✅ cross-platform-path-normalizer migrated to standalone repo
+- Pending: 5 remaining independent tools (config-file-merger, structured-error-handler, file-based-semaphore, file-based-semaphore-ts, output-diffing-utility)
 - Next: Add git submodules and update tracking documents
 
 ### 📋 Next Steps
