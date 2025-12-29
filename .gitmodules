@@ -19,3 +19,6 @@
 [submodule "tools/output-diffing-utility"]
 	path = tools/output-diffing-utility
 	url = https://github.com/tuulbelt/output-diffing-utility.git
+[submodule "tools/snapshot-comparison"]
+	path = tools/snapshot-comparison
+	url = https://github.com/tuulbelt/snapshot-comparison.git
