@@ -60,6 +60,24 @@
 - [ ] **Run `/quality-check`** - build, tests, zero deps
 - [ ] **All TodoWrite items marked `completed`** (no `in_progress` or `pending`)
 - [ ] **If ANY item incomplete** → DO NOT commit, finish work first
+- [ ] **ALWAYS use `scripts/commit.sh` for commits** - sets correct git author (koficodedat)
+- [ ] **ALWAYS use `scripts/push.sh` for pushes** - validates before pushing
+
+### ✓ Git Credentials (MANDATORY):
+- **NEVER use direct `git commit`** → ALWAYS use `./scripts/commit.sh [repo-path] "message"`
+- **NEVER use direct `git push`** → ALWAYS use `./scripts/push.sh [repo-path]`
+- **Why:** Scripts load `.env` and set `user.name=koficodedat` and `user.email=koficodedat@gmail.com`
+- **Without scripts:** Commits use wrong author (kofirc) and attribution
+- **Example:**
+  ```bash
+  # Correct
+  ./scripts/commit.sh tools/my-tool "fix: update feature"
+  ./scripts/push.sh tools/my-tool
+
+  # WRONG - do not use
+  git commit -m "fix: update feature"  # Uses wrong author!
+  git push origin main                  # No validation!
+  ```
 
 ### ✓ Critical Reminders:
 - **Never claim work complete without verification** → CHECK actual state, show test output
