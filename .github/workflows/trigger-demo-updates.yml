@@ -1,0 +1,103 @@
+name: Trigger Demo Updates
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      # Demo framework or recording scripts changed
+      - 'scripts/lib/demo-framework.sh'
+      - 'scripts/record-*-demo.sh'
+
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      tool:
+        description: 'Tool to update demo for (leave empty for all tools)'
+        required: false
+        type: string
+
+jobs:
+  trigger-demos:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false  # Don't need submodules, just list of tools
+
+      - name: Trigger demo workflows
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_TOOL: ${{ github.event.inputs.tool }}
+        run: |
+          # Smart detection: only trigger for tools that need it
+          if [ -n "$TARGET_TOOL" ]; then
+            # Manual trigger: specific tool
+            TOOLS=("$TARGET_TOOL")
+            echo "Manual trigger: updating demo for $TARGET_TOOL"
+          else
+            # Auto-detect tools that need demo updates
+            TOOLS=()
+
+            # Get changed files in this push
+            CHANGED_FILES=""
+            if git rev-parse HEAD^ >/dev/null 2>&1; then
+              CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+            fi
+
+            # Check each tool with a recording script
+            for script in scripts/record-*-demo.sh; do
+              if [ ! -f "$script" ]; then
+                continue
+              fi
+
+              # Extract tool name from script filename
+              tool=$(basename "$script" | sed 's/^record-//' | sed 's/-demo\.sh$//')
+
+              SHOULD_TRIGGER=false
+
+              # Reason 1: Demo framework changed (affects all tools)
+              if [ -n "$CHANGED_FILES" ]; then
+                if echo "$CHANGED_FILES" | grep -q "^scripts/lib/demo-framework\.sh$"; then
+                  echo "  → $tool: Demo framework changed (will trigger)"
+                  SHOULD_TRIGGER=true
+                fi
+              fi
+
+              # Reason 2: Recording script changed
+              if [ -n "$CHANGED_FILES" ]; then
+                if echo "$CHANGED_FILES" | grep -q "^scripts/record-${tool}-demo\.sh$"; then
+                  echo "  → $tool: Recording script changed (will trigger)"
+                  SHOULD_TRIGGER=true
+                fi
+              fi
+
+              if [ "$SHOULD_TRIGGER" = true ]; then
+                TOOLS+=("$tool")
+              fi
+            done
+          fi
+
+          echo "Found ${#TOOLS[@]} tool(s) to trigger:"
+          printf '%s\n' "${TOOLS[@]}"
+          echo ""
+
+          # Trigger workflow_dispatch for each tool
+          for tool in "${TOOLS[@]}"; do
+            echo "Triggering demo workflow for: $tool"
+
+            # Dispatch workflow to standalone tool repository
+            gh workflow run create-demo.yml \
+              --repo "tuulbelt/$tool" \
+              2>&1 || echo "  ⚠️  Failed to trigger $tool (workflow may not exist yet)"
+
+            echo ""
+          done
+
+          echo "✓ Triggered ${#TOOLS[@]} demo workflow(s)"
+          echo ""
+          echo "Note: Each tool will generate and commit its own demo."
+          echo "Check individual tool repositories for workflow status."
