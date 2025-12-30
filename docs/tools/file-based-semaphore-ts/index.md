@@ -80,7 +80,7 @@ See the tool in action:
 
 ![File-Based Semaphore Demo](/file-based-semaphore-ts/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](#)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/5BxDVemXtFEM2YGD7UCDgloW9)**
 
 <div style="margin: 20px 0;">
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
