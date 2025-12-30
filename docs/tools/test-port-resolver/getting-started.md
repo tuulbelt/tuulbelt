@@ -5,8 +5,8 @@
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/test-port-resolver
+git clone https://github.com/tuulbelt/test-port-resolver.git
+cd test-port-resolver
 npm install
 ```
 
