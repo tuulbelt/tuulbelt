@@ -1,5 +1,7 @@
 # /migrate-tool - Migrate Monorepo Tool to Standalone Repository
 
+> **⚠️ ARCHIVED:** This command completed its purpose. All 10 tools have been migrated to standalone repositories (Phase 2 complete, 2025-12-29). This documentation is preserved for reference only.
+
 Automates the complete migration of a tool from the monorepo structure to a standalone GitHub repository with git submodule integration.
 
 ## Usage

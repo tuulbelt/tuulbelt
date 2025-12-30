@@ -3,6 +3,8 @@ description: Create a new tool repository from template
 argument-hint: "<tool-name> <typescript|rust>"
 ---
 
+> **⚠️ ARCHIVED:** Superseded by `/new-tool` command which is more comprehensive (includes GitHub repo creation, CI setup, metadata configuration, and git submodule integration). Archived 2025-12-30.
+
 Create a new tool repository using the appropriate template.
 
 ## Arguments

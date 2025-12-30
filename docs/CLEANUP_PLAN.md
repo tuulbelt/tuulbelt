@@ -210,22 +210,23 @@ git commit -m "chore: archive migration review to git history"
 
 **Commands no longer needed after Phase 2 migration:**
 
-- [ ] `/migrate-tool` - All 10 tools migrated, command is dead code
-  - Action: Move content to `docs/archive/migrate-tool-reference.md`
-  - Delete: `.claude/commands/migrate-tool.md`
+- [x] `/migrate-tool` - All 10 tools migrated, command is dead code
+  - ✅ Moved content to `docs/archive/migrate-tool-reference.md` with archive notice
+  - ✅ Deleted: `.claude/commands/migrate-tool.md`
 
-- [ ] `/release-tool` - Untested, unclear purpose post-migration
-  - Action: Evaluate if needed, delete if not
-  - File: `.claude/commands/release-tool.md`
+- [x] `/release-tool` - Untested, never implemented
+  - ✅ Moved to `docs/archive/release-tool-reference.md` with archive notice
+  - ✅ Deleted: `.claude/commands/release-tool.md`
 
-- [ ] `/add-tool-dependency` - Rarely used (only 3 tools have deps)
-  - Action: Keep documentation, simplify or inline into `/new-tool`
+- [x] `/add-tool-dependency` - Rarely used (only 3 tools have deps)
+  - ✅ KEPT - Serves valid purpose for future tool composition (tools 11-33)
   - File: `.claude/commands/add-tool-dependency.md`
 
 ### C2. Delete Superseded Command
 
-- [ ] `/scaffold-tool` - Superseded by `/new-tool` which is more comprehensive
-  - File: `.claude/commands/scaffold-tool.md`
+- [x] `/scaffold-tool` - Superseded by `/new-tool` which is more comprehensive
+  - ✅ Moved to `docs/archive/scaffold-tool-reference.md` with archive notice
+  - ✅ Deleted: `.claude/commands/scaffold-tool.md`
   - Reason: `/new-tool` does everything `/scaffold-tool` does plus more
 
 ### C3. Delete Redundant Agents
@@ -234,18 +235,18 @@ git commit -m "chore: archive migration review to git history"
 
 **Agents to delete:**
 
-- [ ] `scaffold-assistant` - Redundant with `/new-tool` command
-  - File: `.claude/agents/scaffold-assistant.md`
+- [x] `scaffold-assistant` - Redundant with `/new-tool` command
+  - ✅ Deleted: `.claude/agents/scaffold-assistant.md` (14KB)
   - Reason: `/new-tool` command is better documented and authoritative
 
-- [ ] `security-reviewer` - Redundant with `/security-scan` command
-  - File: `.claude/agents/security-reviewer.md`
+- [x] `security-reviewer` - Redundant with `/security-scan` command
+  - ✅ Deleted: `.claude/agents/security-reviewer.md` (8.7KB)
   - Reason: Command-based approach is simpler and consistent
 
-**Agents to KEEP:**
-- `tool-creator` - Complex multi-step workflow (useful for edge cases)
-- `test-runner` - Standalone capability, good separation
-- `session-manager` - Essential for complex handoffs
+**Agents KEPT:**
+- ✅ `tool-creator` - Complex multi-step workflow (useful for edge cases)
+- ✅ `test-runner` - Standalone capability, good separation
+- ✅ `session-manager` - Essential for complex handoffs
 
 ### C4. Delete Redundant Workflow
 
@@ -258,16 +259,18 @@ git commit -m "chore: archive migration review to git history"
 
 **Problem:** `create-demos.yml` commits with `[skip ci]`, preventing docs deployment.
 
-**File:** `.github/workflows/create-demos.yml` (line ~331)
+**File:** `.github/workflows/create-demos.yml` (line 322)
 
-**Options (choose one):**
-- [ ] Option A: Remove `[skip ci]` flag (may cause CI loops)
-- [ ] Option B: Trigger `deploy-docs` explicitly after demo commits
-- [ ] Option C: Add `docs/public/**` to `deploy-docs` path triggers
+**Solution Chosen: Option A - Remove `[skip ci]` flag**
+- [x] ✅ Removed `[skip ci]` from commit message (line 322)
+- Reason: create-demos.yml has path filters that prevent infinite loops
+  - Triggers only on: workflow changes, script changes, manual dispatch
+  - Does NOT trigger on demo file commits (demo.cast, demo.gif, README.md)
+- Result: deploy-docs workflow will now run after demo updates, deploying GIFs to GitHub Pages
 
 **Verification:**
-- [ ] Demo GIFs deploy to GitHub Pages correctly
-- [ ] No infinite CI loops
+- [x] No risk of CI loops (verified path filters)
+- [ ] Demo GIFs deploy correctly (will verify on next demo update)
 
 ### C6. Verify Unused Script
 
@@ -275,18 +278,21 @@ git commit -m "chore: archive migration review to git history"
 
 **Status:** Untested, never invoked
 
-- [ ] Verify if needed (check for usage in commands/workflows)
-- [ ] If unused, delete
-- [ ] If needed, document its purpose
+- [x] ✅ Verified - No usage found in codebase
+- [x] ✅ Deleted - Redundant with `scripts/setup-github-auth.sh` (more comprehensive)
+- Reason: setup-github-auth.sh validates credentials, exports env vars, sets git config, and verifies auth - gh-wrapper.sh only wrapped individual gh commands
 
 ### C7. Phase C Completion
 
-- [ ] All C1 items checked
-- [ ] C2 completed
-- [ ] All C3 items checked
-- [ ] C4 completed
-- [ ] C5 completed (one option chosen and implemented)
-- [ ] C6 completed
+- [x] All C1 items checked
+  - ✅ /migrate-tool archived
+  - ✅ /release-tool archived
+  - ✅ /add-tool-dependency kept (valid use case)
+- [x] C2 completed - /scaffold-tool archived
+- [x] All C3 items checked - 2 redundant agents deleted, 3 essential agents kept
+- [x] C4 completed - (Already done in Phase A)
+- [x] C5 completed - Removed [skip ci] flag to enable docs deployment
+- [x] C6 completed - gh-wrapper.sh deleted (redundant)
 - [ ] Committed and pushed
 - [ ] CI passes
 - [ ] All commands still work

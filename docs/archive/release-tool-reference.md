@@ -1,5 +1,7 @@
 # /release-tool Command
 
+> **⚠️ ARCHIVED:** This command was never implemented or tested. All initial tool releases (v0.1.0) were handled during Phase 2 migration. Preserved for reference if needed for future releases (tools 11-33). Archived 2025-12-30.
+
 Release a new version of a Tuulbelt tool.
 
 ## Usage

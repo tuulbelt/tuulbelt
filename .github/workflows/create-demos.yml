@@ -319,7 +319,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "docs: update demo recordings and embed in READMEs [skip ci]"
+            git commit -m "docs: update demo recordings and embed in READMEs"
 
             # Clean up unstaged changes (build artifacts from npm install, cargo build)
             # These are not needed after we've committed the demo files we care about
