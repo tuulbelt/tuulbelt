@@ -8,8 +8,9 @@ on:
       # Workflow itself
       - '.github/workflows/create-demos.yml'
 
-      # Recording scripts (triggers demo for specific tool)
+      # Recording scripts and framework (triggers demo regeneration)
       - 'scripts/record-*-demo.sh'
+      - 'scripts/lib/demo-framework.sh'
 
       # Note: Tool source changes don't auto-trigger (tools are now submodules)
       # Use workflow_dispatch to manually trigger demo regeneration
