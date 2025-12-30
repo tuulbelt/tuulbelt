@@ -1,6 +1,6 @@
 # Tool Name
 
-[![Tests](https://github.com/tuulbelt/{{TOOL_NAME}}/actions/workflows/test.yml/badge.svg)](https://github.com/tuulbelt/{{TOOL_NAME}}/actions/workflows/test.yml)
+[![Tests](https://github.com/tuulbelt/{{tool-name}}/actions/workflows/test.yml/badge.svg)](https://github.com/tuulbelt/{{tool-name}}/actions/workflows/test.yml)
 ![Version](https://img.shields.io/badge/version-0.1.0-blue)
 ![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)
 ![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success)
@@ -162,9 +162,9 @@ dogfood scripts that run in CI to catch regressions.
 
 **Local Development Only:**
 
-Dogfood scripts are for local development verification in the monorepo context.
-Tests are validated by `test-all-tools.yml` in CI. See [DOGFOODING_STRATEGY.md](./DOGFOODING_STRATEGY.md)
-for the full composition strategy.
+Dogfood scripts are for local development verification when this tool is in the meta repo context (tools/ submodule). They test cross-tool composition by importing other Tuulbelt tools from sibling directories.
+
+When installed standalone (via `git clone`), dogfood scripts detect the standalone context and exit gracefully. Tests are validated by this tool's own CI workflow (`test.yml`). See [DOGFOODING_STRATEGY.md](./DOGFOODING_STRATEGY.md) for the full composition strategy.
 
 **Using Other TypeScript Tools (Dynamic Import):**
 
@@ -200,7 +200,7 @@ if (existsSync(rustToolPath)) {
 
 **Key Principles:**
 - Tools must work standalone (graceful fallback when dependencies unavailable)
-- Document monorepo enhancements in README
+- Document meta repo enhancements in README
 - Use CLI for cross-language integration
 
 See [QUALITY_CHECKLIST.md](../docs/QUALITY_CHECKLIST.md) for dogfooding patterns.
@@ -303,7 +303,7 @@ See [SPEC.md](SPEC.md) for detailed specification.
 
 <div>
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;"><strong>Try it online:</strong></span>
-  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/tool-name" style="display: inline-block; vertical-align: middle;">
+  <a href="https://stackblitz.com/github/tuulbelt/{{tool-name}}" style="display: inline-block; vertical-align: middle;">
     <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
   </a>
 </div>

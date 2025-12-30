@@ -182,7 +182,7 @@ Example:
 ./scripts/dogfood-diff.sh   # Verify consistent outputs (100 runs)
 ```
 
-These scripts require monorepo context but tool works standalone.
+These scripts require meta repo context but tool works standalone.
 
 ---
 

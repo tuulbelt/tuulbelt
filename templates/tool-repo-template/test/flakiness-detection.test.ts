@@ -10,7 +10,7 @@
  *   npx tsx test/flakiness-detection.test.ts
  *
  * Prerequisites:
- *   - test-flakiness-detector must be available in parent directory (monorepo)
+ *   - test-flakiness-detector must be available in parent directory (meta repo)
  *   - Node.js and npm must be installed
  */
 
@@ -30,8 +30,8 @@ if (!existsSync(FLAKINESS_DETECTOR_PATH)) {
   console.log('Test Flakiness Detector not found at:', FLAKINESS_DETECTOR_PATH);
   console.log('   Make sure test-flakiness-detector tool is available in parent directory');
   console.log('');
-  console.log('   This is expected if running standalone (outside monorepo).');
-  console.log('   Dogfooding is optional and only works in monorepo context.');
+  console.log('   This is expected if running standalone (outside meta repo).');
+  console.log('   Dogfooding is optional and only works in meta repo context.');
   process.exit(0);
 }
 

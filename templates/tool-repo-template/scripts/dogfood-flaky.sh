@@ -22,7 +22,7 @@ echo
 
 # Check for test-flakiness-detector
 if [ ! -d "$FLAKY_DIR" ]; then
-    echo "⚠️  Not in monorepo context (test-flakiness-detector not found)"
+    echo "⚠️  Not in meta repo context (test-flakiness-detector not found)"
     echo "   Skipping dogfood validation - tool works standalone"
     exit 0
 fi

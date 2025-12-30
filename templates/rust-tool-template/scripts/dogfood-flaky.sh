@@ -13,7 +13,7 @@
 #   ./scripts/dogfood.sh 20     # Custom: 20 runs
 #
 # Prerequisites:
-#   - test-flakiness-detector must be available in parent directory (monorepo)
+#   - test-flakiness-detector must be available in parent directory (meta repo)
 #   - Node.js and npm must be installed
 #   - Rust and cargo must be installed
 #
@@ -35,8 +35,8 @@ if [ ! -d "$DETECTOR_DIR" ]; then
     echo "Test Flakiness Detector not found at: $DETECTOR_DIR"
     echo "   Make sure test-flakiness-detector tool is available in parent directory"
     echo ""
-    echo "   This is expected if running standalone (outside monorepo)."
-    echo "   Dogfooding is optional and only works in monorepo context."
+    echo "   This is expected if running standalone (outside meta repo)."
+    echo "   Dogfooding is optional and only works in meta repo context."
     exit 0
 fi
 

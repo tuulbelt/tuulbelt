@@ -3,8 +3,8 @@ name: Test
 on:
   push:
     branches: [main]
-    # Only run when this tool's files change (in monorepo context)
-    # Uncomment and adjust when used in monorepo:
+    # Only run when this tool's files change (in meta repo context)
+    # Uncomment and adjust when used in meta repo:
     # paths: ['<tool-name>/**']
   pull_request:
     branches: [main]

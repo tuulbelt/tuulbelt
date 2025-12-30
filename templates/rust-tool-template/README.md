@@ -1,6 +1,6 @@
 # Tool Name
 
-[![Tests](https://github.com/tuulbelt/{{TOOL_NAME}}/actions/workflows/test.yml/badge.svg)](https://github.com/tuulbelt/{{TOOL_NAME}}/actions/workflows/test.yml)
+[![Tests](https://github.com/tuulbelt/{{tool-name}}/actions/workflows/test.yml/badge.svg)](https://github.com/tuulbelt/{{tool-name}}/actions/workflows/test.yml)
 ![Version](https://img.shields.io/badge/version-0.1.0-blue)
 ![Rust](https://img.shields.io/badge/rust-1.70+-orange)
 ![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success)
@@ -171,15 +171,15 @@ dogfood scripts that run in CI to catch regressions.
 
 **Local Development Only:**
 
-Dogfood scripts are for local development verification in the monorepo context.
-Tests are validated by `test-all-tools.yml` in CI. See [DOGFOODING_STRATEGY.md](./DOGFOODING_STRATEGY.md)
-for the full composition strategy.
+Dogfood scripts are for local development verification when this tool is in the meta repo context (tools/ submodule). They test cross-tool composition by calling other Tuulbelt tools from sibling directories.
+
+When installed standalone (via `git clone`), dogfood scripts detect the standalone context and exit gracefully. Tests are validated by this tool's own CI workflow (`test.yml`). See [DOGFOODING_STRATEGY.md](./DOGFOODING_STRATEGY.md) for the full composition strategy.
 
 **How It Works:**
 - TypeScript tools (test-flakiness-detector) validate Rust tools via CLI
 - Rust tools (odiff) can validate TypeScript tool outputs
 - Scripts run `cargo test` multiple times and check for inconsistent results
-- Works only in monorepo context (exits gracefully when standalone)
+- Works only in meta repo context (exits gracefully when standalone)
 
 **Using Rust CLI in TypeScript Tools (Reverse Dogfooding):**
 
