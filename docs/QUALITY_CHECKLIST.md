@@ -266,7 +266,11 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
 
 ### GitHub Workflows
 
-- [ ] **Demo recording script created**: `scripts/record-{tool-name}-demo.sh` exists with `--title` flag
+- [ ] **Demo recording script created**: `scripts/record-{tool-name}-demo.sh` using demo-framework.sh
+  - Copy template from `templates/{language}-tool-template/scripts/record-demo.sh`
+  - Set `TOOL_NAME`, `SHORT_NAME`, `LANGUAGE`
+  - Implement `demo_commands()` function with tool's demo flow
+  - See `scripts/lib/README.md` for framework documentation
 - [ ] **Demo workflow path filter added**: Add tool path to `.github/workflows/create-demos.yml` under `paths:` section
   - Example: `- '{tool-name}/**'`
   - This enables smart detection to only record demo when tool changes
@@ -298,7 +302,7 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
 1. [x] Implement tool functionality
 2. [x] Write tests (80%+ coverage)
 3. [x] Create tool README with demo section structure
-4. [ ] Create demo recording script (scripts/record-{tool-name}-demo.sh)
+4. [ ] Create demo recording script using demo-framework.sh
 5. [ ] Add path filter to create-demos.yml workflow
 6. [ ] Add to VitePress config (docs/.vitepress/config.ts)
 7. [ ] Create docs/tools/{tool-name}/ directory

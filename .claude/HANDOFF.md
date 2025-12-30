@@ -1,57 +1,59 @@
 # Session Handoff
 
 **Last Updated:** 2025-12-30
-**Session:** Post-Migration Cleanup & Streamlining
-**Status:** ✅ Phase A Complete - Pre-push Validation Implemented
+**Session:** Demo Script Consolidation
+**Status:** ✅ Demo Framework Complete
 
 ---
 
-## 🧹 CURRENT PRIORITY: Repository Cleanup
+## 🎬 COMPLETED: Demo Script Consolidation
 
-**Comprehensive audit completed.** The meta repo has significant bloat after Phase 2 migration.
+Created a shared demo recording framework that reduces code duplication and streamlines new tool setup.
 
-### Phase A Complete ✅
+### What Was Done
 
-**Document:** `docs/CLEANUP_PLAN.md`
+**Created `scripts/lib/demo-framework.sh` (243 lines)**
+- Shared library for all demo recordings
+- Handles: dependency installation, asciinema recording, upload, GIF conversion
+- Supports hooks: `demo_setup()` and `demo_cleanup()` for test data
+- Exports `$BIN` for Rust tools to reference built binary
+- Custom GIF parameters: `GIF_COLS`, `GIF_ROWS`, `GIF_SPEED`, `GIF_FONT_SIZE`, `GIF_THEME`
 
-**Completed work:**
-- ✅ Deleted 10 obsolete tool directories at root (~1.4 MB freed)
-- ✅ Fixed naming inconsistency (test-port-resolver → port-resolver)
-- ✅ Removed obsolete setup documentation (2,710 lines deleted)
-- ✅ Fixed CI failures (deleted redundant workflow, updated path filters)
-- ✅ Implemented pre-push validation system
+**Migrated all 10 demo scripts**
+- Old total: 1,150 lines
+- New total: 984 lines (741 scripts + 243 framework)
+- Each script now focused on just `demo_commands()` function
+- Eliminated ~80% boilerplate duplication
 
-**Bonus: Pre-push Validation System**
+**Added template scripts**
+- `templates/tool-repo-template/scripts/record-demo.sh`
+- `templates/rust-tool-template/scripts/record-demo.sh`
 
-Enhanced `scripts/push.sh` with validation that runs before every push:
-- ✅ README link checking (catches broken links locally)
-- ✅ Git submodule verification (ensures submodules initialized)
-- ✅ Cross-platform compatible (uses sed, works on macOS + Linux)
-- ✅ Fast execution (<5 seconds)
-- ✅ Prevents 80% of CI failures before they reach GitHub
+**Updated documentation**
+- `scripts/lib/README.md` - Framework usage guide
+- `docs/QUALITY_CHECKLIST.md` - Updated new tool checklist
 
-**CI fixes applied:**
-- Updated `.github/workflows/meta-validation.yml` to initialize submodules
-- Deleted redundant `.github/workflows/update-demos.yml` (Phase C4 completed early)
-- Removed obsolete path filters from `create-demos.yml`
+### Benefits
 
-### Cleanup Phases
+1. **Faster new tool setup** - Just define `TOOL_NAME`, `SHORT_NAME`, `LANGUAGE`, and `demo_commands()`
+2. **Centralized fixes** - Improvements to framework benefit all tools
+3. **Consistent output** - Same recording parameters, upload logic, GIF generation
+4. **Cleaner scripts** - Each script focuses only on its unique demo content
 
-| Phase | Description | Est. Time | Status |
-|-------|-------------|-----------|--------|
-| **A** | Critical: Delete obsolete dirs, fix naming, remove setup docs | 30 min | ✅ Complete |
-| **B** | Documentation: Condense CLAUDE.md, update ARCHITECTURE/CONTRIBUTING | 1-2 hrs | ⬜ Pending |
-| **C** | Automation: Archive obsolete commands, delete redundant agents/workflows | 1 hr | 🟡 Partial (C4 done) |
-| **D** | Templates: Fix badges, add CLAUDE.md, consolidate demo scripts | 1-2 hrs | ⬜ Pending |
+### Cleanup Phases Remaining
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| **A** | Critical cleanup | ✅ Complete |
+| **B** | Documentation condensing | ⬜ Pending |
+| **C** | Automation cleanup | 🟡 Partial |
+| **D.5** | Demo script consolidation | ✅ Complete |
 
 ### Quick Start for Next Session
 
 ```bash
-# 1. Review Phase B tasks
+# Continue with Phase B (documentation condensing)
 cat docs/CLEANUP_PLAN.md | sed -n '/^## Phase B:/,/^## Phase C:/p'
-
-# 2. Start with B1: Condense CLAUDE.md (405 → ~100 lines)
-# Focus on removing duplication, keeping essential info
 ```
 
 ---

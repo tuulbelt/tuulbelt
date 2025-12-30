@@ -345,24 +345,29 @@ git commit -m "chore: archive migration review to git history"
 
 **Decision:** Keep Rust-specific files with clear optional notices rather than forcing standardization
 
-### D5. Consolidate Demo Scripts ⚠️ DEFERRED
+### D5. Consolidate Demo Scripts ✅ COMPLETE
 
 **Problem:** 10 demo scripts with 1,150 lines, 80% duplicated.
 
-**Status:** Deferred to future work
+**Status:** Completed (2025-12-30)
 
-**Reasoning:**
-- Complex refactoring requiring workflow changes (`.github/workflows/create-demos.yml`)
-- Scripts are functional and in git history
-- Duplication not hurting performance or maintainability significantly
-- Risk of breaking working demo generation outweighs benefits
-- Low priority compared to other cleanup items
+**Solution implemented:**
+- Created `scripts/lib/demo-framework.sh` (243 lines) as shared library
+- Migrated all 10 demo scripts to use the framework
+- Each script now just defines: `TOOL_NAME`, `SHORT_NAME`, `LANGUAGE`, `demo_commands()`
+- Optional hooks: `demo_setup()`, `demo_cleanup()` for test data
+- Total: 984 lines (down from 1,150 = 14% reduction, but 80% less duplication)
 
-**Future approach if revisited:**
-- Refactor workflow to support parameterized demo script
-- Create master demo script with tool-specific configuration files
-- Test thoroughly in isolated branch before migration
-- Update all 10 individual scripts to call master script
+**Files created:**
+- `scripts/lib/demo-framework.sh` - Shared framework
+- `scripts/lib/README.md` - Framework documentation
+- `templates/tool-repo-template/scripts/record-demo.sh` - TypeScript template
+- `templates/rust-tool-template/scripts/record-demo.sh` - Rust template
+
+**Benefits:**
+- New tools: Just copy template and customize `demo_commands()`
+- Centralized fixes: Framework improvements benefit all tools
+- Workflow unchanged: Still globs `scripts/record-*-demo.sh`
 
 ### D6. Add Missing npm Scripts to Template ✅
 
@@ -379,7 +384,7 @@ git commit -m "chore: archive migration review to git history"
 - [x] All D2 items checked - CLAUDE.md added to both templates
 - [x] All D3 items checked - Git URL dependencies documented
 - [x] D4 decision made and implemented - Optional file notices added
-- [x] D5 deferred with clear reasoning - Future work if needed
+- [x] D5 completed - Demo framework created, all scripts migrated
 - [x] D6 completed - Removed erroneous npm script documentation
 - [x] Committed and pushed - Committing now
 - [ ] CI passes - To be verified after commit

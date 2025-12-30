@@ -1,38 +1,27 @@
 #!/bin/bash
 # Record Output Diffing Utility demo
-set -e
+source "$(dirname "$0")/lib/demo-framework.sh"
 
-TOOL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../output-diffing-utility" && pwd)"
-DEMO_FILE="$TOOL_DIR/demo.cast"
-UPLOAD_URL=""
+TOOL_NAME="output-diffing-utility"
+SHORT_NAME="odiff"
+LANGUAGE="rust"
 
-# Create a clean demo environment
-export PS1="\$ "
-export TERM=xterm-256color
-
-# Build the release binary first
-echo "Building release binary..."
-cd "$TOOL_DIR"
-cargo build --release 2>/dev/null
-BIN="./target/release/odiff"
-
-# Create test files
-echo "Creating test files..."
-cat > /tmp/old.txt <<EOF
+demo_setup() {
+  cat > /tmp/old.txt <<EOF
 Hello World
 This is line 2
 Line 3 remains
 Line 4 is here
 EOF
 
-cat > /tmp/new.txt <<EOF
+  cat > /tmp/new.txt <<EOF
 Hello World
 This is modified line 2
 Line 3 remains
 Line 5 is different
 EOF
 
-cat > /tmp/old.json <<EOF
+  cat > /tmp/old.json <<EOF
 {
   "user": "alice",
   "age": 30,
@@ -40,86 +29,58 @@ cat > /tmp/old.json <<EOF
 }
 EOF
 
-cat > /tmp/new.json <<EOF
+  cat > /tmp/new.json <<EOF
 {
   "user": "alice",
   "age": 31,
   "active": false
 }
 EOF
+}
 
-# Record the demo
-asciinema rec "$DEMO_FILE" --overwrite --title "Output Diffing Utility / odiff - Tuulbelt" --command "bash -c '
-echo \"# Output Diffing Utility Demo\"
-sleep 1
+demo_cleanup() {
+  rm -f /tmp/old.txt /tmp/new.txt /tmp/old.json /tmp/new.json
+}
 
-echo \"\"
-echo \"# 1. Text diff with color (unified format)\"
-sleep 0.5
-echo \"\$ odiff --color always /tmp/old.txt /tmp/new.txt\"
-sleep 0.5
-cd \"$TOOL_DIR\"
-$BIN --color always /tmp/old.txt /tmp/new.txt
-sleep 2
+demo_commands() {
+  echo "# Output Diffing Utility Demo"
+  sleep 1
 
-echo \"\"
-echo \"# 2. JSON diff with color (structural)\"
-sleep 0.5
-echo \"\$ odiff --color always /tmp/old.json /tmp/new.json\"
-sleep 0.5
-$BIN --color always /tmp/old.json /tmp/new.json
-sleep 2
+  echo ""
+  echo "# 1. Text diff with color (unified format)"
+  sleep 0.5
+  echo "$ odiff --color always /tmp/old.txt /tmp/new.txt"
+  sleep 0.5
+  $BIN --color always /tmp/old.txt /tmp/new.txt
+  sleep 2
 
-echo \"\"
-echo \"# 3. JSON output format (structured data)\"
-sleep 0.5
-echo \"\$ odiff --format json /tmp/old.json /tmp/new.json\"
-sleep 0.5
-$BIN --format json /tmp/old.json /tmp/new.json | head -20
-sleep 2
+  echo ""
+  echo "# 2. JSON diff with color (structural)"
+  sleep 0.5
+  echo "$ odiff --color always /tmp/old.json /tmp/new.json"
+  sleep 0.5
+  $BIN --color always /tmp/old.json /tmp/new.json
+  sleep 2
 
-echo \"\"
-echo \"# 4. Compact format\"
-sleep 0.5
-echo \"\$ odiff --format compact /tmp/old.txt /tmp/new.txt\"
-sleep 0.5
-$BIN --format compact /tmp/old.txt /tmp/new.txt
-sleep 2
+  echo ""
+  echo "# 3. JSON output format (structured data)"
+  sleep 0.5
+  echo "$ odiff --format json /tmp/old.json /tmp/new.json"
+  sleep 0.5
+  $BIN --format json /tmp/old.json /tmp/new.json | head -20
+  sleep 2
 
-echo \"\"
-echo \"# Done! Diff outputs with the odiff command.\"
-sleep 1
-'"
+  echo ""
+  echo "# 4. Compact format"
+  sleep 0.5
+  echo "$ odiff --format compact /tmp/old.txt /tmp/new.txt"
+  sleep 0.5
+  $BIN --format compact /tmp/old.txt /tmp/new.txt
+  sleep 2
 
-echo "Demo recording saved to $DEMO_FILE"
+  echo ""
+  echo "# Done! Diff outputs with the odiff command."
+  sleep 1
+}
 
-# Upload to asciinema.org if install ID is provided
-if [ -n "$ASCIINEMA_INSTALL_ID" ]; then
-  echo "Uploading to asciinema.org..."
-
-  # Set up install ID in asciinema config
-  mkdir -p ~/.config/asciinema
-  echo "$ASCIINEMA_INSTALL_ID" > ~/.config/asciinema/install-id
-
-  # Upload the recording
-  UPLOAD_OUTPUT=$(asciinema upload "$DEMO_FILE" 2>&1)
-  UPLOAD_URL=$(echo "$UPLOAD_OUTPUT" | grep -oP 'https://asciinema.org/a/\K[a-zA-Z0-9]+' || echo "")
-
-  if [ -n "$UPLOAD_URL" ]; then
-    echo "Demo uploaded: https://asciinema.org/a/$UPLOAD_URL"
-    echo "https://asciinema.org/a/$UPLOAD_URL" > "$TOOL_DIR/demo-url.txt"
-  else
-    echo "Upload failed or URL not found in output:"
-    echo "$UPLOAD_OUTPUT"
-  fi
-fi
-
-# Convert to GIF (requires agg)
-if command -v agg &> /dev/null; then
-  echo "Converting to GIF..."
-  mkdir -p "$TOOL_DIR/docs"
-  agg "$DEMO_FILE" "$TOOL_DIR/docs/demo.gif" --theme monokai --font-size 16
-  echo "GIF saved to $TOOL_DIR/docs/demo.gif"
-fi
-
-echo "Demo creation complete!"
+run_demo
