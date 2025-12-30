@@ -340,8 +340,28 @@ jobs:
             echo ""
             echo "Demo files will only be committed to meta repo."
           else
-            # Configure git to use TUULBELT_SUBMODULE_TOKEN for authentication
-            git config --global url."https://x-access-token:${TUULBELT_SUBMODULE_TOKEN}@github.com/".insteadOf "https://github.com/"
+            echo "✓ TUULBELT_SUBMODULE_TOKEN found - configuring authentication..."
+
+            # Reconfigure each submodule to use PAT (override actions/checkout auth)
+            for tool_path in tools/*/; do
+              tool_path=${tool_path%/}
+              tool_name=$(basename "$tool_path")
+
+              cd "$tool_path"
+
+              # Get current remote URL
+              CURRENT_REMOTE=$(git remote get-url origin)
+
+              # Replace with PAT-authenticated URL
+              NEW_REMOTE=$(echo "$CURRENT_REMOTE" | sed "s|https://github.com/|https://x-access-token:${TUULBELT_SUBMODULE_TOKEN}@github.com/|")
+
+              git remote set-url origin "$NEW_REMOTE"
+              echo "  ✓ Configured $tool_name to use PAT"
+
+              cd ../..
+            done
+
+            echo ""
 
             # First, commit changes to each standalone tool repository (submodules)
             for tool_path in tools/*/; do
