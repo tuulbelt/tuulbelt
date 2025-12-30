@@ -26,7 +26,6 @@
    - Run tests before claiming they pass
    - Verify files exist before referencing them
    - Test commands before documenting them
-   - Ensure STATUS.md accurately reflects reality
    - Have the upmost confidence in your work before committing
 
 5. **RUN QUALITY CHECKS BEFORE EVERY COMMIT**
@@ -37,9 +36,7 @@
 6. **ALWAYS USE TodoWrite FOR MULTI-STEP TASKS**
    - Any task with 3+ steps MUST use TodoWrite to track progress
    - Do NOT mark work as complete until ALL todos are checked
-   - For new tools, use the checklist from @docs/QUALITY_CHECKLIST.md
    - Update todo status in real-time as work progresses
-   - This prevents missing critical steps (like GitHub Pages integration)
 
 **Violation of these standards compromises the entire project. When in doubt, verify.**
 
@@ -52,12 +49,10 @@
 ### ✓ Before Starting ANY Multi-Step Task (3+ steps):
 - [ ] **CREATE TodoWrite checklist** from `@docs/QUALITY_CHECKLIST.md`
 - [ ] **DO NOT proceed** without checklist in place
-- [ ] Verify checklist covers: implementation, testing, documentation, quality checks
 
-### ✓ During Implementation (After Each Major Section):
+### ✓ During Implementation:
 - [ ] **Mark TodoWrite item as `in_progress`** BEFORE starting work
 - [ ] **STOP when section complete** → READ what you created → VERIFY against reference
-- [ ] **Compare against existing tools** (use test-flakiness-detector as reference for docs)
 - [ ] **Mark `completed` ONLY IF**: tests pass, docs exist, quality standards met
 - [ ] **If incomplete** → DO NOT mark done, DO NOT move to next section
 
@@ -65,35 +60,13 @@
 - [ ] **Run `/quality-check`** - build, tests, zero deps
 - [ ] **All TodoWrite items marked `completed`** (no `in_progress` or `pending`)
 - [ ] **If ANY item incomplete** → DO NOT commit, finish work first
-- [ ] **Read `@docs/QUALITY_CHECKLIST.md`** and verify compliance
 
-### ✓ For New Tool Documentation (CRITICAL):
-- [ ] **Read existing tool docs FIRST** (test-flakiness-detector, cli-progress-reporting)
-- [ ] **Verify line counts comparable** (library-usage ~300-400 lines, examples ~300-500 lines)
-- [ ] **Check BOTH locations exist**:
-  - GitHub Pages: `docs/tools/{tool-name}/`
-  - Local VitePress (if applicable): `{tool-name}/docs/`
-- [ ] **Verify Demo sections match structure**:
-  - demo.gif image reference
-  - asciinema interactive recording link
-  - StackBlitz "Try it online" button
-  - Description text
-  - Automation note
-- [ ] **All internal links work** (no dead links in sidebar)
+### ✓ Critical Reminders:
+- **Never claim work complete without verification** → CHECK actual state, show test output
+- **Never hallucinate** → If uncertain about ANYTHING, verify first
+- **Report honestly** → If tests fail or docs incomplete, say so immediately
 
-### ✓ Zero Hallucination Enforcement:
-- **Never claim tests pass** → Must run tests and show actual output
-- **Never claim files exist** → Must read files and verify contents
-- **Never claim work complete** → Must verify against TodoWrite checklist
-- **If uncertain about ANYTHING** → CHECK the actual state, don't assume
-
-### ✓ Honest Status Reporting:
-- **If tests fail** → Report failure, don't mark as complete
-- **If docs incomplete** → Report what's missing, don't mark as complete
-- **If quality issues exist** → Report them, add to blockers in HANDOFF.md
-- **If you discover issues in already-completed work** → Report immediately, fix before proceeding
-
-**REMEMBER: This workflow prevents after-the-fact fixes. Follow it EVERY time.**
+**See @docs/QUALITY_CHECKLIST.md for complete new tool documentation requirements.**
 
 ---
 
