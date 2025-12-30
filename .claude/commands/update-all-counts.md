@@ -353,7 +353,6 @@ jobs:
 
 - `/new-tool` - Automatically runs /update-all-counts
 - `/sync-tool-docs` - Sync documentation (includes count updates)
-- `/release-tool` - May need count update if tool status changes
 
 ## References
 

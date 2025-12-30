@@ -284,7 +284,6 @@ jobs:
 
 - `/update-all-counts` - Update tool counts only
 - `/new-tool` - Create new tool (auto-syncs initially)
-- `/release-tool` - Release new version (may need re-sync)
 
 ## References
 

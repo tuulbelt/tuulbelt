@@ -511,7 +511,7 @@ Next Steps:
 3. Add real tests
 4. Run ./scripts/dogfood-flaky.sh
 5. Create demo: ./scripts/record-component-prop-validator-demo.sh
-6. Release: /release-tool component-prop-validator 0.1.0 "Initial release"
+6. Release: git tag v0.1.0 && git push origin v0.1.0
 ```
 
 ## References

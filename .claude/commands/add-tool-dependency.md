@@ -323,7 +323,6 @@ test-flakiness-detector → cli-progress-reporting (optional)
 ## Related Commands
 
 - `/new-tool` - Create new tool
-- `/release-tool` - Release new version
 - `/update-all-counts` - Update dependency references
 
 ## References

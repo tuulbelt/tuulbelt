@@ -171,8 +171,10 @@ After the tool is created, you should:
    ```
 
 5. **Create first release**
-   ```
-   /release-tool component-prop-validator 0.1.0 "Initial release"
+   ```bash
+   cd tools/component-prop-validator
+   git tag v0.1.0
+   git push origin v0.1.0
    ```
 
 ## Troubleshooting
@@ -210,8 +212,8 @@ After the tool is created, you should:
 
 ## Related Commands
 
-- `/release-tool` - Create new version release
 - `/add-tool-dependency` - Add Tuulbelt tool dependency
 - `/sync-tool-docs` - Synchronize README and VitePress docs
 - `/update-all-counts` - Update tool counts across docs
 - `/quality-check` - Run pre-commit quality checks
+- Archived: `docs/archive/release-tool-reference.md` - Release automation (never implemented)

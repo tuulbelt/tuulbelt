@@ -98,9 +98,9 @@ Each tool is now:
 
 **Key Resources (for reference):**
 - **Authentication guide**: `docs/GH_CLI_AUTH_GUIDE.md`
-- Migration command: `.claude/commands/migrate-tool.md`
 - Quality checklist: `docs/QUALITY_CHECKLIST.md`
-- Migration plan: `docs/MIGRATION_TO_META_REPO.md`
+- Migration history: `docs/MIGRATION_TO_META_REPO.md`
+- Archived migration command: `docs/archive/migrate-tool-reference.md`
 
 ---
 
