@@ -328,6 +328,9 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
+          # Configure git to use GITHUB_TOKEN for authentication
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+
           # First, commit changes to each standalone tool repository (submodules)
           for tool_path in tools/*/; do
             tool_path=${tool_path%/}
