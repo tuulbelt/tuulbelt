@@ -342,6 +342,9 @@ jobs:
           else
             echo "✓ TUULBELT_SUBMODULE_TOKEN found - configuring authentication..."
 
+            # Clear credential helper configured by actions/checkout (uses GITHUB_TOKEN)
+            git config --global --unset-all credential.helper || true
+
             # Reconfigure each submodule to use PAT (override actions/checkout auth)
             for tool_path in tools/*/; do
               tool_path=${tool_path%/}
@@ -349,10 +352,13 @@ jobs:
 
               cd "$tool_path"
 
+              # Clear local credential helper too
+              git config --unset-all credential.helper || true
+
               # Get current remote URL
               CURRENT_REMOTE=$(git remote get-url origin)
 
-              # Replace with PAT-authenticated URL
+              # Replace with PAT-authenticated URL (token in URL = no credential helper needed)
               NEW_REMOTE=$(echo "$CURRENT_REMOTE" | sed "s|https://github.com/|https://x-access-token:${TUULBELT_SUBMODULE_TOKEN}@github.com/|")
 
               git remote set-url origin "$NEW_REMOTE"
