@@ -37,7 +37,7 @@ GitHub Actions' `GITHUB_TOKEN` only has write permissions to the repository wher
    - Demo recording scripts use Title Case format
 
 2. **⚠️ Submodule Push Authentication (2025-12-30)** - Requires manual setup:
-   - Workflow updated to check for `SUBMODULE_TOKEN` secret
+   - Workflow updated to check for `TUULBELT_SUBMODULE_TOKEN` secret
    - If token not present, workflow skips submodule commits (with clear warning)
    - Demo files still committed to meta repo and GitHub Pages
 
@@ -56,7 +56,7 @@ GitHub Actions' `GITHUB_TOKEN` only has write permissions to the repository wher
 **Step 2: Add Token to Repository Secrets**
 1. Go to tuulbelt/tuulbelt repository → Settings → Secrets and variables → Actions
 2. Click "New repository secret"
-3. Name: `SUBMODULE_TOKEN`
+3. Name: `TUULBELT_SUBMODULE_TOKEN`
 4. Value: Paste the PAT from Step 1
 5. Click "Add secret"
 

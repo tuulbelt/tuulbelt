@@ -324,24 +324,24 @@ jobs:
       - name: Commit demo files to submodules
         env:
           # IMPORTANT: GITHUB_TOKEN only has write access to the meta repo, not submodules
-          # Use SUBMODULE_TOKEN (PAT with repo scope) if available, otherwise skip submodule pushes
-          SUBMODULE_TOKEN: ${{ secrets.SUBMODULE_TOKEN }}
+          # Use TUULBELT_SUBMODULE_TOKEN (PAT with repo scope) if available, otherwise skip submodule pushes
+          TUULBELT_SUBMODULE_TOKEN: ${{ secrets.TUULBELT_SUBMODULE_TOKEN }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Check if SUBMODULE_TOKEN is available
-          if [ -z "$SUBMODULE_TOKEN" ]; then
-            echo "⚠️  SUBMODULE_TOKEN not set - skipping submodule commits"
+          # Check if TUULBELT_SUBMODULE_TOKEN is available
+          if [ -z "$TUULBELT_SUBMODULE_TOKEN" ]; then
+            echo "⚠️  TUULBELT_SUBMODULE_TOKEN not set - skipping submodule commits"
             echo "ℹ️  To enable automatic demo updates in standalone repos:"
             echo "   1. Create a Personal Access Token with 'repo' scope"
-            echo "   2. Add it as repository secret: SUBMODULE_TOKEN"
+            echo "   2. Add it as repository secret: TUULBELT_SUBMODULE_TOKEN"
             echo "   3. See docs/KNOWN_ISSUES.md #2 for details"
             echo ""
             echo "Demo files will only be committed to meta repo."
           else
-            # Configure git to use SUBMODULE_TOKEN for authentication
-            git config --global url."https://x-access-token:${SUBMODULE_TOKEN}@github.com/".insteadOf "https://github.com/"
+            # Configure git to use TUULBELT_SUBMODULE_TOKEN for authentication
+            git config --global url."https://x-access-token:${TUULBELT_SUBMODULE_TOKEN}@github.com/".insteadOf "https://github.com/"
 
             # First, commit changes to each standalone tool repository (submodules)
             for tool_path in tools/*/; do
