@@ -58,6 +58,13 @@ setup_demo_env() {
   export TERM=xterm-256color
 }
 
+# === Utility Functions ===
+
+# Convert kebab-case to Title Case: "port-resolver" → "Port Resolver"
+kebab_to_title() {
+  echo "$1" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))}1'
+}
+
 # === Dependency Installation ===
 
 install_dependencies() {
@@ -107,7 +114,9 @@ run_cleanup() {
 # === Recording ===
 
 record_demo() {
-  local title="${TOOL_NAME} / ${SHORT_NAME} - Tuulbelt"
+  # Use DISPLAY_NAME if set, otherwise convert TOOL_NAME from kebab-case to Title Case
+  local display_name="${DISPLAY_NAME:-$(kebab_to_title "$TOOL_NAME")}"
+  local title="${display_name} / ${SHORT_NAME} - Tuulbelt"
 
   echo "Recording demo: $title"
   echo "Output: $DEMO_FILE"

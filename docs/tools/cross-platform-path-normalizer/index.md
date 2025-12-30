@@ -105,7 +105,7 @@ See the tool in action:
 
 ![Cross-Platform Path Normalizer Demo](/cross-platform-path-normalizer/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/qoLQqfgMWiNoGkv4aKTNC5B1p)**
+**[▶ View interactive recording on asciinema.org](#)**
 
 <div style="margin: 20px 0;">
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
