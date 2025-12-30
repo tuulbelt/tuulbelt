@@ -147,63 +147,32 @@ See existing tools for examples (test-flakiness-detector, cli-progress-reporting
 
 ### Dogfooding
 
-Tuulbelt tools validate and enhance each other via dogfooding. This tool includes
-dogfood scripts that run in CI to catch regressions.
+Tuulbelt tools validate each other via devDependencies. This tool uses test-flakiness-detector to validate test determinism.
 
-**Dogfood Scripts (run in CI):**
+**How It Works:**
 
 ```bash
-# Validate test reliability (runs tests N times)
-./scripts/dogfood-flaky.sh 10
-
-# Validate output determinism (compares two test runs)
-./scripts/dogfood-diff.sh
+npm run dogfood    # Runs tests 10 times to catch flaky tests
 ```
 
-**Local Development Only:**
+This runs automatically in CI on every push/PR.
 
-Dogfood scripts are for local development verification when this tool is in the meta repo context (tools/ submodule). They test cross-tool composition by importing other Tuulbelt tools from sibling directories.
+**Configuration (package.json):**
 
-When installed standalone (via `git clone`), dogfood scripts detect the standalone context and exit gracefully. Tests are validated by this tool's own CI workflow (`test.yml`). See [DOGFOODING_STRATEGY.md](./DOGFOODING_STRATEGY.md) for the full composition strategy.
-
-**Using Other TypeScript Tools (Dynamic Import):**
-
-```typescript
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
-
-async function loadOptionalTool(): Promise<any | null> {
-  try {
-    const toolPath = join(process.cwd(), '..', 'tool-name', 'src', 'index.ts');
-    if (!existsSync(toolPath)) return null;
-    return await import(`file://${toolPath}`);
-  } catch {
-    return null; // Graceful fallback when standalone
+```json
+{
+  "scripts": {
+    "dogfood": "flaky --test 'npm test' --runs 10"
+  },
+  "devDependencies": {
+    "@tuulbelt/test-flakiness-detector": "git+https://github.com/tuulbelt/test-flakiness-detector.git"
   }
 }
 ```
 
-**Using Rust CLI Tools:**
+**Adding More Dogfood Dependencies:**
 
-```typescript
-import { execSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
-
-// Check if Rust tool is available (pre-built)
-const rustToolPath = join(process.cwd(), '..', 'rust-tool', 'target', 'release', 'rust-tool');
-if (existsSync(rustToolPath)) {
-  const result = execSync(`${rustToolPath} --arg value`, { encoding: 'utf-8' });
-  // Use result...
-}
-```
-
-**Key Principles:**
-- Tools must work standalone (graceful fallback when dependencies unavailable)
-- Document meta repo enhancements in README
-- Use CLI for cross-language integration
-
-See [QUALITY_CHECKLIST.md](../docs/QUALITY_CHECKLIST.md) for dogfooding patterns.
+See [DOGFOODING_STRATEGY.md](./DOGFOODING_STRATEGY.md) for the decision tree on when to add additional Tuulbelt tools as devDependencies.
 
 ### Library Composition (PRINCIPLES.md Exception 2)
 

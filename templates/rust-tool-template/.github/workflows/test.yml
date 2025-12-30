@@ -46,6 +46,17 @@ jobs:
       - name: Build release
         run: cargo build --release
 
+      - name: Setup Node.js (for dogfooding)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dogfood dependencies
+        run: npm install
+
+      - name: Dogfood (flakiness detection)
+        run: npm run dogfood
+
       - name: Verify zero runtime dependencies
         run: |
           # Check if [dependencies] section has any non-comment, non-empty lines

@@ -14,53 +14,38 @@ This document tracks known bugs, limitations, and cosmetic issues across the Tuu
 
 ## 🟡 Medium Priority Issues
 
-### 2. Demo GIFs Not Deployed to GitHub Pages After create-demos Workflow
+### 2. Port Resolver Missing Asciinema URL
 
-**Status:** Open
+**Status:** Fixed (pending CI run to complete)
 **Severity:** Medium
-**Area:** CI/CD (create-demos.yml, deploy-docs.yml)
-**Affects:** All tool VitePress documentation pages
+**Area:** CI/CD (create-demos.yml)
+**Affects:** port-resolver and potentially all tool demos
 
 **Description:**
 
-When the `create-demos.yml` workflow runs and updates demo recordings, the demo GIFs appear correctly in the GitHub README but NOT on the VitePress GitHub Pages site. The GIF is present in `docs/public/{tool}/demo.gif` but not visible on the live site.
+The port-resolver tool has a placeholder `(#)` for its asciinema link instead of the actual recording URL.
 
-**Root Cause:**
+**Root Cause (DISCOVERED 2025-12-30):**
 
-The `create-demos.yml` workflow commits with `[skip ci]` in the commit message:
-```
-docs: update demo recordings and embed in READMEs [skip ci]
-```
+The `create-demos.yml` workflow was looking for tools at the repo root (`$tool/`) but tools are now git submodules in `tools/` directory. This caused the workflow to skip all tools, never creating `demo-url.txt` files.
 
-This prevents `deploy-docs.yml` from running after demo updates, so the new GIFs are in the repository but never deployed to GitHub Pages.
+**Fix Applied (2025-12-30):**
 
-**Location:**
-- `.github/workflows/create-demos.yml` (line ~331)
-- Affects: `docs/public/*/demo.gif` files
+1. **Fixed workflow paths** - Updated `create-demos.yml` to use `tools/$tool` paths:
+   - Detection loop (lines 94-137): Now checks `tools/$tool/` instead of root
+   - Recording loop (lines 143-171): Uses `tools/$tool/` for npm/cargo operations
+   - Copy demos step: Uses `tools/*/` glob pattern
+   - Update READMEs step: Uses `tools/*/` glob pattern
+   - Update VitePress docs step: Uses `tools/*/` glob pattern
+   - Git add command: Uses `tools/*/` patterns
 
-**Evidence:**
-- GitHub README shows GIF correctly (uses relative path `docs/demo.gif`)
-- GitHub README shows correct asciinema link
-- VitePress page shows no GIF (references `/tool-name/demo.gif` which needs deployment)
-- VitePress asciinema link still shows `(#)` placeholder (clicking reloads page)
-- Repository has correct content, but deployed site has stale content
+2. **Renamed demo script** - From `record-test-port-resolver-demo.sh` to `record-port-resolver-demo.sh`
 
-**Workaround:**
-
-1. Manually trigger `deploy-docs` workflow after `create-demos` completes
-2. Or make any trivial docs change to trigger deployment
-
-**Proposed Fix:**
-
-Option A: Remove `[skip ci]` from the demo commit message (may cause CI loops)
-
-Option B: Have `create-demos.yml` trigger `deploy-docs.yml` via `workflow_call` or `repository_dispatch`
-
-Option C: Add `docs/public/**` to `deploy-docs.yml` path triggers (current paths only include `docs/**` but not specific public subdirectories for tool demos)
-
-**References:**
-- `create-demos.yml` commit step (line ~331)
-- `deploy-docs.yml` path triggers
+On next push to main, the workflow will:
+1. Detect the script change and workflow change
+2. Properly find tools in `tools/` directory
+3. Re-record demos and upload to asciinema.org
+4. Create `demo-url.txt` files and update VitePress docs
 
 ---
 
@@ -322,13 +307,13 @@ git commit -m "fix: improve icon theming (partial fix for KNOWN_ISSUES.md #1)"
 **High:** 0
 **Medium:** 1
 **Low (Cosmetic):** 1
-**Resolved:** 2
+**Resolved:** 4
 
 **By Area:**
-- Documentation: 1
-- Core: 1 (resolved)
+- Documentation: 2
+- Core: 0
 - Testing: 0
-- CI/CD: 1
+- CI/CD: 0
 
 ---
 

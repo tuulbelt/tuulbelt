@@ -156,49 +156,34 @@ See existing tools for examples (file-based-semaphore, output-diffing-utility).
 
 ### Dogfooding
 
-Tuulbelt tools validate each other via CLI-based dogfooding. This tool includes
-dogfood scripts that run in CI to catch regressions.
-
-**Dogfood Scripts (run in CI):**
-
-```bash
-# Validate test reliability (runs tests N times)
-./scripts/dogfood-flaky.sh 10
-
-# Validate output determinism (compares two test runs)
-./scripts/dogfood-diff.sh
-```
-
-**Local Development Only:**
-
-Dogfood scripts are for local development verification when this tool is in the meta repo context (tools/ submodule). They test cross-tool composition by calling other Tuulbelt tools from sibling directories.
-
-When installed standalone (via `git clone`), dogfood scripts detect the standalone context and exit gracefully. Tests are validated by this tool's own CI workflow (`test.yml`). See [DOGFOODING_STRATEGY.md](./DOGFOODING_STRATEGY.md) for the full composition strategy.
+Tuulbelt tools validate each other via devDependencies. This Rust tool uses test-flakiness-detector (via a minimal package.json) to validate test determinism.
 
 **How It Works:**
-- TypeScript tools (test-flakiness-detector) validate Rust tools via CLI
-- Rust tools (odiff) can validate TypeScript tool outputs
-- Scripts run `cargo test` multiple times and check for inconsistent results
-- Works only in meta repo context (exits gracefully when standalone)
 
-**Using Rust CLI in TypeScript Tools (Reverse Dogfooding):**
+```bash
+npm install         # Install dogfood dependencies
+npm run dogfood     # Runs cargo test 20 times to catch flaky tests
+```
 
-If a TypeScript tool needs to use this Rust tool's CLI:
+This runs automatically in CI on every push/PR.
 
-```typescript
-import { execSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+**Configuration (package.json):**
 
-// Check if Rust tool is available
-const rustToolPath = join(process.cwd(), '..', 'tool-name', 'target', 'release', 'tool-name');
-if (existsSync(rustToolPath)) {
-  const result = execSync(`${rustToolPath} --arg value`, { encoding: 'utf-8' });
-  // Use result...
+```json
+{
+  "private": true,
+  "scripts": {
+    "dogfood": "flaky --test 'cargo test' --runs 20"
+  },
+  "devDependencies": {
+    "@tuulbelt/test-flakiness-detector": "git+https://github.com/tuulbelt/test-flakiness-detector.git"
+  }
 }
 ```
 
-See [QUALITY_CHECKLIST.md](../docs/QUALITY_CHECKLIST.md) for dogfooding patterns.
+**Adding More Dogfood Dependencies:**
+
+See [DOGFOODING_STRATEGY.md](./DOGFOODING_STRATEGY.md) for the decision tree on when to add additional compositions.
 
 ### Library Composition (PRINCIPLES.md Exception 2)
 

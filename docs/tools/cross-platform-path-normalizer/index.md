@@ -128,6 +128,11 @@ Run the tool directly in your browser with zero setup. Try converting Windows an
 - [Examples](/tools/cross-platform-path-normalizer/examples) - Real-world usage patterns
 - [API Reference](/tools/cross-platform-path-normalizer/api-reference) - Complete API documentation
 
+## Related Tools
+
+- [Test Flakiness Detector](/tools/test-flakiness-detector/) - Detect unreliable tests
+- [Config File Merger](/tools/config-file-merger/) - Merge configurations from multiple sources
+
 ## License
 
 MIT License - see repository for details.

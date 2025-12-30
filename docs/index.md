@@ -182,13 +182,13 @@ Cross-platform file-based semaphore for Node.js process synchronization.
 
 <div class="tool-card">
 
-#### [Port Resolver](/tools/port-resolver/) <span class="library-badge"><img src="/icons/link.svg" class="badge-icon" alt=""><span>uses semats</span></span>
+#### [Port Resolver](/tools/port-resolver/) <span class="library-badge"><img src="/icons/package.svg" class="badge-icon" alt=""><span>Uses semats</span></span>
 
 Concurrent port allocation for any application - avoid port conflicts in tests, servers, microservices, and development.
 
 - <img src="/icons/target.svg" class="inline-icon" alt=""> File-based port registry with atomic operations
 - <img src="/icons/zap.svg" class="inline-icon" alt=""> TCP bind test for actual port availability
-- <img src="/icons/lock.svg" class="inline-icon" alt=""> Required [semats](/tools/file-based-semaphore-ts/) integration
+- <img src="/icons/link.svg" class="inline-icon" alt=""> **Library composition**: Uses [semats](/tools/file-based-semaphore-ts/) for atomic registry access
 
 [Get Started →](/tools/port-resolver/getting-started)
 

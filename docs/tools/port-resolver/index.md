@@ -1,25 +1,67 @@
-# Port Resolver / `portres`
+# Port Resolver
 
-Concurrent test port allocation - avoid port conflicts in parallel tests.
+Concurrent port allocation for any application - avoid port conflicts in tests, servers, microservices, and development.
 
-## Problem
+## Overview
 
-When running tests in parallel (e.g., with `--workers=4`), multiple test files may try to use the same ports, causing:
+Port Resolver (`portres`) provides a centralized, file-based registry for port allocation. When running tests in parallel or multiple services in development, it ensures each process gets a unique port without conflicts.
 
+::: tip <img src="/icons/package.svg" class="inline-icon" alt=""> Uses semats Library
+This tool uses [file-based-semaphore-ts](/tools/file-based-semaphore-ts/) as a **library dependency** for atomic registry access. See [PRINCIPLES.md Exception 2](/guide/principles#zero-external-dependencies) for details on Tuulbelt tool composition.
+:::
+
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
+
+**Language:** TypeScript
+
+**Repository:** [tuulbelt/tuulbelt/port-resolver](https://github.com/tuulbelt/tuulbelt/tree/main/port-resolver)
+
+## Features
+
+### <img src="/icons/target.svg" class="inline-icon" alt=""> File-Based Registry
+
+Centralized port registry with atomic operations. Multiple processes coordinate without conflicts.
+
+### <img src="/icons/zap.svg" class="inline-icon" alt=""> Real Port Verification
+
+TCP bind test confirms ports are actually available, not just recorded as free.
+
+### <img src="/icons/clock.svg" class="inline-icon" alt=""> Automatic Stale Cleanup
+
+Detects and removes stale entries from crashed processes based on PID checks.
+
+### <img src="/icons/lock.svg" class="inline-icon" alt=""> Semaphore-Protected
+
+Uses [file-based-semaphore-ts](/tools/file-based-semaphore-ts/) for atomic registry access.
+
+### <img src="/icons/tool.svg" class="inline-icon" alt=""> CLI & Library
+
+Use as a command-line tool for shell scripts or integrate as a TypeScript/JavaScript library.
+
+### <img src="/icons/zap.svg" class="inline-icon" alt=""> Zero Runtime Dependencies
+
+Uses only Node.js built-ins plus Tuulbelt tools (zero external dependencies maintained).
+
+## Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/tuulbelt/tuulbelt.git
+cd tuulbelt/port-resolver
+
+# Install dev dependencies
+npm install
+
+# CLI usage
+portres get --tag "api-server"
+# Output: 54321
+
+# Release when done
+portres release --port 54321
 ```
-Error: listen EADDRINUSE: address already in use :::3000
-```
-
-This happens because:
-- Tests hardcode port numbers (`:3000`, `:8080`)
-- Multiple test workers race for the same ports
-- Flaky "works locally, fails in CI" behavior
-
-## Solution
-
-`portres` provides a file-based registry for port allocation:
 
 ```typescript
+// Library usage
 import { PortResolver } from '@tuulbelt/port-resolver';
 
 const resolver = new PortResolver();
@@ -30,38 +72,13 @@ if (result.ok) {
 }
 ```
 
-::: tip <img src="/icons/link.svg" class="inline-icon" alt=""> Uses semats Library
-This tool uses [file-based-semaphore-ts](/tools/file-based-semaphore-ts/) as a library dependency for atomic registry access. See [PRINCIPLES.md Exception 2](/guide/principles#zero-external-dependencies) for details on Tuulbelt tool composition.
-:::
-
-## Features
-
-- **Concurrent-safe** - File-based registry with atomic operations
-- **Port verification** - Confirms ports are actually available via TCP bind test
-- **Automatic cleanup** - Stale entries from crashed processes are detected
-- **Semaphore-protected** - Atomic registry access via [semats](/tools/file-based-semaphore-ts/)
-- **Zero external dependencies** - Node.js + Tuulbelt tools only
-
-## Quick Start
-
-```bash
-cd port-resolver && npm install
-
-# CLI usage
-portres get --tag "api-server"
-# Output: 54321
-
-# Release when done
-portres release --port 54321
-```
-
 ## Demo
 
 See the tool in action:
 
 ![Port Resolver Demo](/port-resolver/demo.gif)
 
-**[View interactive recording on asciinema.org](#)**
+**[▶ View interactive recording on asciinema.org](#)**
 
 <div style="margin: 20px 0;">
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
@@ -72,12 +89,28 @@ See the tool in action:
   </a>
 </div>
 
-## When to Use
+## Use Cases
 
-- Running multiple test workers in parallel
-- Integration tests that spawn servers
-- E2E tests with multiple services
-- Any scenario where tests compete for ports
+- **Parallel Test Workers:** Running tests with `--workers=4` or similar
+- **Integration Tests:** Tests that spawn servers or databases
+- **E2E Tests:** Multiple services running simultaneously
+- **Development:** Multiple microservices in local development
+- **CI/CD Pipelines:** Avoiding port conflicts in shared runners
+
+## Why Port Resolver?
+
+The common problem with hardcoded ports:
+
+```
+Error: listen EADDRINUSE: address already in use :::3000
+```
+
+This happens because:
+- Tests hardcode port numbers (`:3000`, `:8080`)
+- Multiple test workers race for the same ports
+- Flaky "works locally, fails in CI" behavior
+
+Port Resolver solves this by providing a centralized registry with atomic operations.
 
 ## API Overview
 
@@ -91,10 +124,19 @@ See the tool in action:
 | `clean()` | Remove stale entries |
 | `status()` | Get registry statistics |
 
-## Learn More
+## Documentation
 
-- [Getting Started](./getting-started) - Installation and setup
-- [CLI Usage](./cli-usage) - Command-line interface
-- [Library Usage](./library-usage) - TypeScript/JavaScript API
-- [Examples](./examples) - Real-world patterns
-- [API Reference](./api-reference) - Full API documentation
+- [Getting Started](/tools/port-resolver/getting-started) - Installation and setup
+- [CLI Usage](/tools/port-resolver/cli-usage) - Command-line interface
+- [Library Usage](/tools/port-resolver/library-usage) - TypeScript/JavaScript API
+- [Examples](/tools/port-resolver/examples) - Real-world patterns
+- [API Reference](/tools/port-resolver/api-reference) - Full API documentation
+
+## Related Tools
+
+- [File-Based Semaphore (TS)](/tools/file-based-semaphore-ts/) - Atomic locking (used internally)
+- [Test Flakiness Detector](/tools/test-flakiness-detector/) - Detect unreliable tests
+
+## License
+
+MIT License - see repository for details.

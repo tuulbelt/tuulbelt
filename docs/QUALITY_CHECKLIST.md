@@ -183,28 +183,50 @@ Use TodoWrite to track these items. Do NOT mark the tool as complete until every
 
 **CRITICAL: Only implement compositions that provide REAL value, not checkboxes.**
 
-- [ ] **DOGFOODING_STRATEGY.md created**: Document high-value compositions (2-4 maximum)
-- [ ] **High-value scripts implemented**: Focus on meaningful compositions:
-  - **Test Flakiness Detector** (almost always valuable) - Validates test determinism
-  - **Output Diffing Utility** (if outputs matter) - Proves consistent behavior
-  - **Tool-specific compositions** (domain-relevant only) - Real utility, not forced
-- [ ] **README dogfooding section**: Documents all composition scripts with examples
-- [ ] **GH Pages dogfooding section**: Mirrors README documentation
-- [ ] **Graceful fallback tested**: Tool works standalone when dependencies unavailable
-- [ ] **Scripts executable**: All `scripts/dogfood-*.sh` have execute permissions
-- [ ] **Root README 🐕 badge**: Add dogfood emoji badge next to version for dogfooded tools
+**How It Works:**
+- Tools add other Tuulbelt tools as `devDependencies` via git URLs
+- Dogfood runs in CI automatically via `npm run dogfood`
+- See `DOGFOODING_STRATEGY.md` template for full decision tree
 
-**Local Development Only:**
-- Dogfood scripts are for local development verification, not CI
-- Tests are validated by `test-all-tools.yml` workflow
-- Dogfood scripts verify cross-tool composition in monorepo context
-- Run manually: `./scripts/dogfood-flaky.sh` or `./scripts/dogfood-diff.sh`
+**Step 1: Default Setup (All Tools)**
 
-**Guidelines:**
-- Don't dogfood just to dogfood - focus on REAL utility
-- Typical high-value: dogfood-flaky.sh (test validation), dogfood-diff.sh (output consistency)
-- Optional: Tool-specific compositions (only if genuinely useful)
-- See existing tools for patterns: Test Flakiness Detector, CLI Progress, Path Normalizer, Semaphore, Output Diffing
+All tools include test-flakiness-detector as a devDependency by default:
+
+```json
+{
+  "scripts": {
+    "dogfood": "flaky --test 'npm test' --runs 10"
+  },
+  "devDependencies": {
+    "@tuulbelt/test-flakiness-detector": "git+https://github.com/tuulbelt/test-flakiness-detector.git"
+  }
+}
+```
+
+**Step 2: Additional Compositions (Answer These Questions)**
+
+| Question | If YES | If NO |
+|----------|--------|-------|
+| Does your tool produce deterministic output? | Add output-diffing-utility | Skip (e.g., port-resolver) |
+| Does your tool use file-based-semaphore-ts? | Test concurrent scenarios | Skip |
+| Would your tool validate itself? | DON'T add that tool | (circular validation) |
+
+**Step 3: Verification**
+
+- [ ] **DOGFOODING_STRATEGY.md created**: Answer questions, document decisions
+- [ ] **npm run dogfood**: Passes locally and in CI
+- [ ] **CI runs dogfood**: test.yml workflow includes dogfood step
+- [ ] **README dogfooding section**: Documents what tools are used
+
+**Anti-Patterns:**
+- ❌ Adding output-diffing to non-deterministic tools (port-resolver)
+- ❌ Self-validation (output-diffing-utility validating itself)
+- ❌ Adding all tools "just in case"
+
+**Testing Dogfood:**
+```bash
+npm run dogfood    # Runs flaky detection (10 runs for TS, 20 for Rust)
+```
 
 ### Library Composition Documentation (PRINCIPLES.md Exception 2)
 
@@ -817,158 +839,75 @@ fi
 
 ### Best Practices
 
-#### Dogfooding Pattern: Dynamic Imports with Graceful Fallback (2025-12-24)
+#### Dogfooding Pattern: DevDependency Approach (2025-12-30)
 
 **Pattern:**
-Tools can use other Tuulbelt tools while maintaining standalone independence.
+Tools validate each other by adding Tuulbelt tools as devDependencies via git URLs.
 
 **Use Case:**
-test-flakiness-detector integrates cli-progress-reporting for progress tracking, but works fine without it.
+All tools use test-flakiness-detector to validate test determinism. This runs in CI automatically.
 
-**Implementation:**
-```typescript
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+**Implementation (TypeScript):**
 
-/**
- * Try to load optional Tuulbelt tool (monorepo context)
- * Returns null if not available (standalone context)
- */
-async function loadOptionalTool(): Promise<any | null> {
-  try {
-    // Check if sibling directory exists
-    const toolPath = join(process.cwd(), '..', 'tool-name', 'src', 'index.ts');
-    if (!existsSync(toolPath)) {
-      return null; // Not in monorepo, that's fine
-    }
+Add to `package.json`:
 
-    // Dynamic import
-    const module = await import(`file://${toolPath}`);
-    return module;
-  } catch {
-    return null; // Import failed, that's fine - tool is optional
+```json
+{
+  "scripts": {
+    "dogfood": "flaky --test 'npm test' --runs 10"
+  },
+  "devDependencies": {
+    "@tuulbelt/test-flakiness-detector": "git+https://github.com/tuulbelt/test-flakiness-detector.git"
   }
-}
-
-// Use optional tool with graceful fallback
-export async function myFunction() {
-  const optionalTool = await loadOptionalTool();
-
-  if (optionalTool) {
-    // Enhanced functionality when available
-    optionalTool.doSomething();
-  }
-
-  // Core functionality works regardless
-  return coreLogic();
 }
 ```
 
+CI workflow includes:
+
+```yaml
+- name: Dogfood (flakiness detection)
+  run: npm run dogfood
+```
+
+**Implementation (Rust):**
+
+Add a minimal `package.json` for dogfooding:
+
+```json
+{
+  "private": true,
+  "scripts": {
+    "dogfood": "flaky --test 'cargo test' --runs 20"
+  },
+  "devDependencies": {
+    "@tuulbelt/test-flakiness-detector": "git+https://github.com/tuulbelt/test-flakiness-detector.git"
+  }
+}
+```
+
+CI workflow includes:
+
+```yaml
+- name: Setup Node.js (for dogfooding)
+  uses: actions/setup-node@v4
+
+- name: Install dogfood dependencies
+  run: npm install
+
+- name: Dogfood (flakiness detection)
+  run: npm run dogfood
+```
+
 **Checklist:**
-- [ ] Function is `async` if using dynamic imports
-- [ ] Check file exists before importing (`existsSync`)
-- [ ] Wrap import in try-catch
-- [ ] Return `null` on failure (graceful fallback)
-- [ ] Core functionality works without optional tool
-- [ ] Document in README that tool uses other Tuulbelt tools when in monorepo
-- [ ] Add `test:dogfood` script if tool validates other tools
+- [ ] `package.json` has test-flakiness-detector as devDependency
+- [ ] `npm run dogfood` script is defined
+- [ ] CI workflow includes dogfood step
+- [ ] Dogfood passes locally before pushing
 
 **Benefits:**
-- **Monorepo**: Tools enhance each other
-- **Standalone**: Tools work independently
-- **Zero Impact**: No runtime dependencies, no breaking changes
-
----
-
-#### Dogfooding Pattern: CLI-Based Cross-Language Validation (2025-12-25)
-
-**Pattern:**
-Tools can validate each other across languages (TypeScript ↔ Rust) via CLI.
-
-**Use Case:**
-- TypeScript test-flakiness-detector validates Rust file-based-semaphore tests
-- Rust CLI tools can be called from TypeScript tools
-
-**Implementation (TypeScript → Rust via Shell Script):**
-
-For Rust tools, add `scripts/dogfood.sh`:
-
-```bash
-#!/bin/bash
-# Validate Rust tests using TypeScript test-flakiness-detector
-
-RUNS="${1:-10}"
-DETECTOR_DIR="$TOOL_DIR/../test-flakiness-detector"
-
-# Exit gracefully if not in monorepo
-if [ ! -d "$DETECTOR_DIR" ]; then
-    echo "Not in monorepo context, skipping dogfooding"
-    exit 0
-fi
-
-cd "$DETECTOR_DIR"
-flaky \
-    --test "cd '$TOOL_DIR' && cargo test 2>&1" \
-    --runs "$RUNS"
-```
-
-**Implementation (TypeScript → Rust CLI):**
-
-For TypeScript tools needing Rust CLI:
-
-```typescript
-import { execSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
-
-function useRustTool(args: string): string | null {
-  const binaryPath = join(process.cwd(), '..', 'rust-tool', 'target', 'release', 'rust-tool');
-
-  if (!existsSync(binaryPath)) {
-    return null; // Not available, graceful fallback
-  }
-
-  try {
-    return execSync(`${binaryPath} ${args}`, { encoding: 'utf-8' });
-  } catch {
-    return null;
-  }
-}
-```
-
-**Implementation (Rust → TypeScript via Shell):**
-
-For Rust tools needing TypeScript functionality:
-
-```rust
-use std::process::Command;
-
-fn use_typescript_tool(args: &[&str]) -> Option<String> {
-    let output = Command::new("npx")
-        .args(["tsx", "../ts-tool/src/index.ts"])
-        .args(args)
-        .output()
-        .ok()?;
-
-    if output.status.success() {
-        Some(String::from_utf8_lossy(&output.stdout).to_string())
-    } else {
-        None // Graceful fallback
-    }
-}
-```
-
-**Checklist:**
-- [ ] Exit gracefully when not in monorepo (exit 0, return null)
-- [ ] Check binary/script exists before executing
-- [ ] Wrap execution in try-catch or error handling
-- [ ] Document in README that dogfooding requires monorepo context
-- [ ] Add `scripts/dogfood.sh` for Rust tools
-- [ ] Add `test/flakiness-detection.test.ts` for TypeScript tools
-
-**Template Files:**
-- Rust: `templates/rust-tool-template/scripts/dogfood.sh`
-- TypeScript: `templates/tool-repo-template/test/flakiness-detection.test.ts`
+- **CI Integration**: Runs automatically on every push/PR
+- **Standalone**: Each tool is independently testable
+- **No Sibling Dependencies**: Works without meta repo context
 
 ---
 

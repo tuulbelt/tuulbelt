@@ -97,6 +97,11 @@ Merge configurations directly in your browser with zero setup. Experiment with d
 - [Examples](/tools/config-file-merger/examples) - Real-world usage patterns
 - [API Reference](/tools/config-file-merger/api-reference) - Complete API documentation
 
+## Related Tools
+
+- [Structured Error Handler](/tools/structured-error-handler/) - Structured error format with context
+- [Test Flakiness Detector](/tools/test-flakiness-detector/) - Detect unreliable tests
+
 ## License
 
 MIT License - see repository for details.

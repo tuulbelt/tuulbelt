@@ -104,6 +104,11 @@ Run the tool directly in your browser with zero setup.
 - [Protocol Spec](/tools/file-based-semaphore-ts/protocol-spec) - Lock file format specification
 - [API Reference](/tools/file-based-semaphore-ts/api-reference) - Complete API documentation
 
+## Related Tools
+
+- [File-Based Semaphore (Rust)](/tools/file-based-semaphore/) - Rust implementation (same lock file format)
+- [Port Resolver](/tools/port-resolver/) - Uses semats for atomic port allocation
+
 ## License
 
 MIT License - see repository for details.

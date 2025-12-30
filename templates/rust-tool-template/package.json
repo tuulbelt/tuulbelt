@@ -1,0 +1,13 @@
+{
+  "name": "@tuulbelt/tool-name-dogfood",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Dogfooding support for tool-name (not published)",
+  "scripts": {
+    "dogfood": "npm run dogfood:flaky",
+    "dogfood:flaky": "flaky --test 'cargo test' --runs 20"
+  },
+  "devDependencies": {
+    "@tuulbelt/test-flakiness-detector": "git+https://github.com/tuulbelt/test-flakiness-detector.git"
+  }
+}

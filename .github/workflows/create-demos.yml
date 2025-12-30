@@ -99,23 +99,25 @@ jobs:
 
               # Extract tool name from script filename
               tool=$(basename "$script" | sed 's/^record-//' | sed 's/-demo\.sh$//')
+              tool_path="tools/$tool"
 
-              # Check if tool directory exists
-              if [ ! -d "$tool" ]; then
+              # Check if tool directory exists (tools are git submodules in tools/)
+              if [ ! -d "$tool_path" ]; then
+                echo "  → $tool: Directory not found at $tool_path (skipping)"
                 continue
               fi
 
               SHOULD_RECORD=false
 
               # Reason 1: Demo files are missing
-              if [ ! -f "$tool/demo.cast" ] || [ ! -f "$tool/demo-url.txt" ] || [ ! -f "$tool/docs/demo.gif" ]; then
+              if [ ! -f "$tool_path/demo.cast" ] || [ ! -f "$tool_path/demo-url.txt" ] || [ ! -f "$tool_path/docs/demo.gif" ]; then
                 echo "  → $tool: Demo files missing (will record)"
                 SHOULD_RECORD=true
               fi
 
-              # Reason 2: Tool implementation changed
+              # Reason 2: Tool implementation changed (check tools/ path)
               if [ -n "$CHANGED_FILES" ]; then
-                if echo "$CHANGED_FILES" | grep -q "^$tool/"; then
+                if echo "$CHANGED_FILES" | grep -q "^tools/$tool/"; then
                   echo "  → $tool: Implementation changed (will record)"
                   SHOULD_RECORD=true
                 fi
@@ -140,28 +142,29 @@ jobs:
 
           # Record demos for each tool
           for tool in "${TOOLS[@]}"; do
+            tool_path="tools/$tool"
             echo "================================"
-            echo "Recording demo for: $tool"
+            echo "Recording demo for: $tool (at $tool_path)"
             echo "================================"
 
             # Install dependencies based on tool type
-            if [ -f "$tool/package.json" ]; then
+            if [ -f "$tool_path/package.json" ]; then
               echo "Installing npm dependencies for $tool..."
-              cd "$tool"
+              cd "$tool_path"
               npm install
-              cd ..
-            elif [ -f "$tool/Cargo.toml" ]; then
+              cd ../..
+            elif [ -f "$tool_path/Cargo.toml" ]; then
               echo "Building Rust release for $tool..."
-              cd "$tool"
+              cd "$tool_path"
               cargo build --release
-              cd ..
+              cd ../..
             fi
 
             # Run the recording script
             if [ -f "scripts/record-${tool}-demo.sh" ]; then
-              cd "$tool"
-              bash "../scripts/record-${tool}-demo.sh"
-              cd ..
+              cd "$tool_path"
+              bash "../../scripts/record-${tool}-demo.sh"
+              cd ../..
             else
               echo "Warning: No recording script found for $tool"
             fi
@@ -183,15 +186,17 @@ jobs:
           # The code below will make all uploaded recordings public:
 
           if [ -n "$ASCIINEMA_API_TOKEN" ]; then
-            for tool_dir in */; do
-              tool=${tool_dir%/}
+            # Tools are git submodules in tools/ directory
+            for tool_path in tools/*/; do
+              tool_path=${tool_path%/}  # Remove trailing slash
+              tool_name=$(basename "$tool_path")
 
-              if [ -f "$tool/demo-url.txt" ]; then
-                URL=$(cat "$tool/demo-url.txt")
+              if [ -f "$tool_path/demo-url.txt" ]; then
+                URL=$(cat "$tool_path/demo-url.txt")
                 RECORDING_ID=$(echo "$URL" | grep -oP 'https://asciinema.org/a/\K[a-zA-Z0-9]+')
 
                 if [ -n "$RECORDING_ID" ]; then
-                  echo "Making recording public for $tool (ID: $RECORDING_ID)..."
+                  echo "Making recording public for $tool_name (ID: $RECORDING_ID)..."
                   curl -s -X PATCH "https://asciinema.org/api/asciicasts/$RECORDING_ID" \
                     -H "Authorization: Bearer $ASCIINEMA_API_TOKEN" \
                     -H "Content-Type: application/json" \
@@ -206,43 +211,47 @@ jobs:
       - name: Copy demos to VitePress public directory
         run: |
           # Copy demo GIFs to VitePress public directory for GitHub Pages
-          for tool_dir in */; do
-            tool_dir=${tool_dir%/}
+          # Tools are git submodules in tools/ directory
+          for tool_path in tools/*/; do
+            tool_path=${tool_path%/}
+            tool_name=$(basename "$tool_path")
 
-            if [ -f "$tool_dir/docs/demo.gif" ]; then
-              mkdir -p "docs/public/$tool_dir"
-              cp "$tool_dir/docs/demo.gif" "docs/public/$tool_dir/demo.gif"
-              echo "✓ Copied demo to docs/public/$tool_dir/demo.gif"
+            if [ -f "$tool_path/docs/demo.gif" ]; then
+              mkdir -p "docs/public/$tool_name"
+              cp "$tool_path/docs/demo.gif" "docs/public/$tool_name/demo.gif"
+              echo "✓ Copied demo to docs/public/$tool_name/demo.gif"
             fi
           done
 
       - name: Update READMEs with demo embeds
         run: |
           # Update each tool's README with embedded GIF and asciinema link
-          for tool_dir in */; do
-            tool_dir=${tool_dir%/}  # Remove trailing slash
+          # Tools are git submodules in tools/ directory
+          for tool_path in tools/*/; do
+            tool_path=${tool_path%/}  # Remove trailing slash
+            tool_name=$(basename "$tool_path")
 
             # Skip if not a tool directory
-            if [ ! -f "$tool_dir/README.md" ]; then
+            if [ ! -f "$tool_path/README.md" ]; then
               continue
             fi
 
             # Skip if no demo files
-            if [ ! -f "$tool_dir/docs/demo.gif" ]; then
+            if [ ! -f "$tool_path/docs/demo.gif" ]; then
               continue
             fi
 
-            echo "Updating README for $tool_dir..."
+            echo "Updating README for $tool_name..."
 
             # Get asciinema URL if available
             ASCIINEMA_URL="#"
-            if [ -f "$tool_dir/demo-url.txt" ]; then
-              ASCIINEMA_URL=$(cat "$tool_dir/demo-url.txt" | tr -d '\n')
+            if [ -f "$tool_path/demo-url.txt" ]; then
+              ASCIINEMA_URL=$(cat "$tool_path/demo-url.txt" | tr -d '\n')
             fi
 
             # Update README Demo section
             # Replace placeholder with embedded GIF and real asciinema link
-            if grep -q "## Demo" "$tool_dir/README.md"; then
+            if grep -q "## Demo" "$tool_path/README.md"; then
               # Create updated demo section
               {
                 echo "## Demo"
@@ -251,42 +260,44 @@ jobs:
                 echo ""
                 echo "**[▶ View interactive recording on asciinema.org]($ASCIINEMA_URL)**"
                 echo ""
-                echo "> Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/$tool_dir)"
+                echo "> Try it online: [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/$tool_name)"
               } > /tmp/demo-section.md
 
               # Replace Demo section in README (from ## Demo to next ##)
-              awk '/^## Demo$/{p=1} p{if(/^## / && !/^## Demo$/){p=0}} !p' "$tool_dir/README.md" > /tmp/readme-without-demo.md
+              awk '/^## Demo$/{p=1} p{if(/^## / && !/^## Demo$/){p=0}} !p' "$tool_path/README.md" > /tmp/readme-without-demo.md
 
               # Find where to insert (before ## License)
-              awk '/^## License$/{print "";system("cat /tmp/demo-section.md");print ""} {print}' /tmp/readme-without-demo.md > "$tool_dir/README.md.new"
+              awk '/^## License$/{print "";system("cat /tmp/demo-section.md");print ""} {print}' /tmp/readme-without-demo.md > "$tool_path/README.md.new"
 
-              mv "$tool_dir/README.md.new" "$tool_dir/README.md"
+              mv "$tool_path/README.md.new" "$tool_path/README.md"
 
-              echo "✓ Updated README for $tool_dir"
+              echo "✓ Updated README for $tool_name"
             fi
           done
 
       - name: Update VitePress docs with demo links
         run: |
           # Update VitePress documentation index pages with asciinema links
-          for tool_dir in */; do
-            tool_dir=${tool_dir%/}  # Remove trailing slash
+          # Tools are git submodules in tools/ directory
+          for tool_path in tools/*/; do
+            tool_path=${tool_path%/}  # Remove trailing slash
+            tool_name=$(basename "$tool_path")
 
             # Skip if no VitePress docs exist
-            if [ ! -f "docs/tools/$tool_dir/index.md" ]; then
+            if [ ! -f "docs/tools/$tool_name/index.md" ]; then
               continue
             fi
 
             # Skip if no demo URL
-            if [ ! -f "$tool_dir/demo-url.txt" ]; then
+            if [ ! -f "$tool_path/demo-url.txt" ]; then
               continue
             fi
 
-            echo "Updating VitePress docs for $tool_dir..."
+            echo "Updating VitePress docs for $tool_name..."
 
             # Get asciinema URL
-            ASCIINEMA_URL=$(cat "$tool_dir/demo-url.txt" | tr -d '\n')
-            INDEX_FILE="docs/tools/$tool_dir/index.md"
+            ASCIINEMA_URL=$(cat "$tool_path/demo-url.txt" | tr -d '\n')
+            INDEX_FILE="docs/tools/$tool_name/index.md"
 
             # Pattern 1: Update existing asciinema.org URL
             sed -i "s|\*\*\[▶ View interactive recording on asciinema\.org\](https://asciinema\.org/a/[^)]*)\*\*|\*\*[▶ View interactive recording on asciinema.org]($ASCIINEMA_URL)\*\*|g" "$INDEX_FILE"
@@ -298,14 +309,14 @@ jobs:
             # This handles "Demo recording will be generated automatically..."
             if grep -q "Demo recording will be generated automatically" "$INDEX_FILE"; then
               # Create the proper demo section content
-              DEMO_SECTION="See the tool in action:\n\n![${tool_dir} Demo](/${tool_dir}/demo.gif)\n\n**[▶ View interactive recording on asciinema.org]($ASCIINEMA_URL)**"
+              DEMO_SECTION="See the tool in action:\n\n![${tool_name} Demo](/${tool_name}/demo.gif)\n\n**[▶ View interactive recording on asciinema.org]($ASCIINEMA_URL)**"
 
               # Replace the placeholder line
               sed -i "s|Demo recording will be generated automatically after merge via GitHub Actions\.|$DEMO_SECTION|g" "$INDEX_FILE"
               sed -i "s|Demo recording will be generated automatically after merge via GitHub Actions|$DEMO_SECTION|g" "$INDEX_FILE"
             fi
 
-            echo "✓ Updated VitePress docs for $tool_dir"
+            echo "✓ Updated VitePress docs for $tool_name"
           done
 
       - name: Commit demo files
@@ -314,7 +325,8 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # Add all demo-related files including updated READMEs, VitePress docs, and public directory
-          git add "*/demo.cast" "*/docs/demo.gif" "*/demo-url.txt" "*/README.md" "docs/public/*/demo.gif" "docs/tools/*/index.md" || true
+          # Tools are git submodules in tools/ directory
+          git add "tools/*/demo.cast" "tools/*/docs/demo.gif" "tools/*/demo-url.txt" "tools/*/README.md" "docs/public/*/demo.gif" "docs/tools/*/index.md" || true
 
           if git diff --staged --quiet; then
             echo "No changes to commit"
