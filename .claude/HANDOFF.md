@@ -59,11 +59,26 @@
 ### 8. ✅ Updated All Tracking Documents
 - HANDOFF.md, STATUS.md, CHANGELOG.md, NEXT_TASKS.md
 
+### 9. ✅ Comprehensive Gap Analysis (Post-Migration)
+- **Reviewed against migrate-tool.md specification**
+- **Fixed 6 major gaps across all documentation:**
+  1. **SPEC.md**: Updated "Zero dependencies" → "Zero external dependencies" + updated changelog
+  2. **Tests**: Verified cli-progress integration works (132/132 passing, no explicit test coverage needed)
+  3. **DOGFOODING_STRATEGY.md**: Updated from optional to REQUIRED dependency pattern
+  4. **CI workflow**: Fixed zero-dep check to allow @tuulbelt/* deps while blocking external packages
+  5. **README.md**: Fixed 4 misleading "zero dependencies" statements across Features, Installation, How It Works, Dogfooding
+  6. **VitePress docs**: Fixed 3 files (index.md, what-is-it.md, installation.md) with incorrect dependency statements
+- **CI Fix**: Corrected grep pattern that was matching devDependencies (false positive)
+
 **Commits This Session:**
 - `34e629d` - chore: prepare for standalone release (standalone repo)
 - `fb3bd1e` - feat: make cli-progress-reporting a required dependency (standalone repo)
 - `344e957` - chore: add test-flakiness-detector as git submodule (meta repo)
 - `82f8cec` - chore: update test-flakiness-detector submodule (required dependency) (meta repo)
+- `25edae8` - docs: update all documentation to reflect required cli-progress dependency (standalone repo)
+- `2179606` - chore: update test-flakiness-detector submodule (gap fixes) (meta repo)
+- `1f6b6a8` - fix(ci): correct zero-dep check to exclude devDependencies (standalone repo)
+- `f7d6a57` - chore: update test-flakiness-detector submodule (CI fix) (meta repo)
 
 **Migration Progress:**
 - **Wave 1: 7/7 complete (100%) ✅✅✅**

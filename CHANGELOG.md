@@ -36,11 +36,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - npm automatically clones and installs git URL dependencies during `npm install`
 - Preserves zero external dependency principle (all Tuulbelt tools have zero external deps)
 
+**Gap Analysis & Documentation Fixes:**
+After migration, comprehensive review identified 6 documentation gaps:
+1. SPEC.md: "Zero dependencies" → "Zero external dependencies"
+2. DOGFOODING_STRATEGY.md: Updated from optional to REQUIRED pattern
+3. CI workflow: Fixed zero-dep check to allow @tuulbelt/* deps
+4. README.md: Fixed 4 misleading statements
+5. VitePress docs: Fixed 3 files (index.md, what-is-it.md, installation.md)
+6. CI Fix: Corrected grep pattern matching devDependencies (false positive)
+
 **Commits:**
 - `34e629d` - chore: prepare for standalone release
 - `fb3bd1e` - feat: make cli-progress-reporting a required dependency
 - `344e957` - chore: add test-flakiness-detector as git submodule
 - `82f8cec` - chore: update test-flakiness-detector submodule (required dependency)
+- `25edae8` - docs: update all documentation to reflect required cli-progress dependency
+- `2179606` - chore: update test-flakiness-detector submodule (gap fixes)
+- `1f6b6a8` - fix(ci): correct zero-dep check to exclude devDependencies
+- `f7d6a57` - chore: update test-flakiness-detector submodule (CI fix)
 
 ### Added - Phase 2 Wave 2: snapshot-comparison Migration Complete ✅ (2025-12-29)
 
