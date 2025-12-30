@@ -326,7 +326,7 @@ This validates:
 - Zero runtime dependencies
 - **Documentation builds without errors**
 
-See [Quality Checklist](/guide/quality-checklist) for complete requirements.
+See [Quality Checklist](/QUALITY_CHECKLIST) for complete requirements.
 
 ### Step 12: Use TodoWrite for Task Tracking
 

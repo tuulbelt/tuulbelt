@@ -97,86 +97,14 @@
 
 ---
 
-## Project Overview
-
-Tuulbelt is a meta-repository for curating focused, zero-dependency tools and utilities for modern software development. Each tool solves one specific problem and is maintained as an independent repository.
-
-This meta repository provides:
-- Scaffolding templates for TypeScript and Rust tools
-- Standardized development workflows
-- Cross-cutting quality assurance (testing, security, linting)
-- Claude Code automation for consistent development
-
-See @README.md for detailed architecture and @PRINCIPLES.md for design philosophy.
-
-## Tech Stack
-
-**TypeScript Tools:**
-- Runtime: Node.js 18+
-- Language: TypeScript 5.3+ (strict mode)
-- Test Framework: Node.js native test runner (`node:test`)
-- Assertions: Node.js native (`node:assert/strict`)
-- Dev Dependencies: TypeScript, tsx, @types/node
-- **Zero Runtime Dependencies**
-
-**Rust Tools:**
-- Rust Edition: 2021+
-- Test Framework: Built-in cargo test
-- Linter: clippy (all warnings denied)
-- Formatter: rustfmt
-- **Zero Runtime Dependencies**
-
-**Development Tools:**
-- Git with conventional commits
-- GitHub Actions for CI/CD
-- npm for TypeScript package management
-- cargo for Rust package management
-
-## Project Structure
-
-```
-/home/user/tuulbelt/
-├── .claude/                      # Claude Code workflows & automation
-│   ├── commands/                 # Reusable slash commands
-│   │   ├── test-all.md          # Run all tests (TS + Rust)
-│   │   ├── quality-check.md     # Pre-commit quality checks
-│   │   ├── security-scan.md     # Security analysis
-│   │   ├── scaffold-tool.md     # Create new tool from template
-│   │   └── git-commit.md        # Semantic commits
-│   ├── rules/                   # Code style and conventions
-│   │   └── code-style.md        # TS/Rust code examples
-│   ├── agents/                  # Specialized AI agents
-│   ├── skills/                  # Cross-cutting expertise
-│   └── hooks/                   # Quality gates & automation
-├── templates/                   # Tool scaffolding templates
-│   ├── tool-repo-template/     # TypeScript/Node.js
-│   └── rust-tool-template/     # Rust
-├── docs/                       # Development documentation
-│   ├── QUALITY_CHECKLIST.md    # Pre-commit quality checks
-│   ├── testing-standards.md    # Test requirements
-│   └── security-guidelines.md  # Security checklist
-├── CLAUDE.md                   # This file
-├── README.md                   # Project architecture
-├── PRINCIPLES.md               # Design philosophy
-└── CONTRIBUTING.md             # Contribution workflow
-```
-
 ## Quick Commands
 
-### Development Workflows
-
 ```bash
-# Pre-commit quality checks (MANDATORY before commit)
+# MANDATORY pre-commit quality checks
 /quality-check
 
 # Create new tool from template
-/scaffold-tool <tool-name> <typescript|rust>
-
-# Migrate existing tool to standalone repo (Phase 2 meta repo migration)
-/migrate-tool <tool-name>
-
-# Trim documentation bloat (run every 5-10 migrations)
-/trim-docs
+/new-tool <tool-name> <typescript|rust>
 
 # Run all tests across templates
 /test-all [filter]
@@ -186,219 +114,57 @@ See @README.md for detailed architecture and @PRINCIPLES.md for design philosoph
 
 # Semantic git commit
 /git-commit <type> <scope> <message>
+
+# Session management
+/handoff
+/resume-work
 ```
 
-### TypeScript Development
+See @.claude/commands/ for complete command documentation.
 
-```bash
-# In any tool repository using TypeScript template
-npm install          # Install dev dependencies
-npm test             # Run tests
-npm run build        # TypeScript compilation
-npx tsc --noEmit     # Type check only
-```
+---
 
-### Rust Development
+## Project Overview
 
-```bash
-# In any tool repository using Rust template
-cargo test                   # Run tests
-cargo check                  # Check without building
-cargo fmt                    # Format code
-cargo clippy -- -D warnings  # Lint (zero warnings)
-cargo build --release        # Build release
-```
+Tuulbelt is a meta-repository for curating focused, zero-dependency tools and utilities. Each tool is a standalone GitHub repository, referenced as a git submodule in `tools/`.
 
-## Code Conventions
+This meta repository provides:
+- Scaffolding templates for TypeScript and Rust tools
+- Standardized development workflows
+- Cross-cutting quality assurance (testing, security, linting)
+- Claude Code automation for consistent development
 
-See @.claude/rules/code-style.md for detailed code examples and patterns.
+See @README.md for detailed architecture and @PRINCIPLES.md for design philosophy.
 
-**TypeScript:**
-- ES modules only (`import`, not `require()`)
-- Use `node:` prefix for built-ins: `import { readFileSync } from 'node:fs'`
-- Explicit return types on all exported functions
-- Result pattern for error handling: `Result<T> = { ok: true, value: T } | { ok: false, error: Error }`
-- Include `@types/node` in devDependencies
-- Zero `any` types (use `unknown` and type guards)
+---
 
-**Rust:**
-- Use `?` operator for error propagation (avoid `unwrap()`)
-- Explicit error types with `Result<T, E>`
-- Run `cargo fmt` and `cargo clippy -- -D warnings` before committing
-- All public items documented with `///`
+## Essential References
 
-## Testing
-
-**Coverage Requirements:**
-- Minimum 80% line coverage for all tools
-- 90% coverage for critical paths (data processing, error handling)
-- Edge cases required (empty input, malformed data, large inputs)
-
-**Test Organization:**
-- TypeScript: Colocated tests (`src/index.ts` + `test/index.test.ts`)
-- Rust: Unit tests in `#[cfg(test)]` modules, integration tests in `tests/`
-
-See @docs/testing-standards.md for complete requirements.
-
-## Security
-
-**Protected Files (enforced by hooks):**
-- `package-lock.json`, `Cargo.lock` (use package managers)
-- `.env*`, `*.secret.*`, `*.private.*` (sensitive data)
-
-**Security Checklist:**
-- No hardcoded credentials
-- All external input validated
-- Path traversal prevention
-- Error messages contain no sensitive data
-
-See @docs/security-guidelines.md and run `/security-scan` before releases.
-
-## Zero Dependencies Principle
-
-**Every Tuulbelt tool must have ZERO runtime dependencies.**
-
-**Allowed:**
-- Standard library (Node.js built-ins, Rust std)
-- Dev dependencies (TypeScript, test runners, linters)
-
-**Not Allowed:**
-- npm packages in `dependencies` (devDependencies OK)
-- External crates in `[dependencies]` (dev-dependencies OK)
-
-**Validation:**
-```bash
-# Verify zero runtime deps
-/quality-check  # Automated check
-```
-
-The `zero-deps-checker` skill validates this automatically.
-
-## Git Workflow
-
-**Conventional Commits:**
-```
-<type>(<scope>): <description>
-```
-
-**Types:** `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `ci`, `perf`
-
-**Examples:**
-```bash
-feat(cli): add verbose logging option
-fix(core): handle edge case in path normalization
-test(core): add coverage for error conditions
-```
-
-Use `/git-commit <type> <scope> <message>` for validation.
-
-See @CONTRIBUTING.md for full contribution workflow.
-
-## Available Workflows
-
-### Slash Commands
-
-- `/quality-check` - **MANDATORY** pre-commit checks (build, tests, zero deps)
-- `/test-all [filter]` - Run TypeScript and Rust tests
-- `/security-scan` - Comprehensive security analysis
-- `/scaffold-tool <name> <lang>` - Create new tool repository
-- `/migrate-tool <tool-name>` - **Migrate monorepo tool to standalone repo** (Phase 2)
-- `/git-commit <type> <scope> <msg>` - Semantic commit with validation
-- `/handoff` - Create session handoff for next session
-- `/resume-work` - Resume from previous session handoff
-
-### Specialized Agents
-
-- `test-runner` - Test execution, coverage, debugging
-- `security-reviewer` - Security analysis, vulnerability scanning
-- `scaffold-assistant` - Tool creation, template customization
-- `session-manager` - Session transitions, task planning, complex handoffs
-
-### Skills
-
-- `typescript-patterns` - TypeScript best practices enforcement
-- `rust-idioms` - Rust best practices enforcement
-- `zero-deps-checker` - Validate zero-dependency principle
-
-## Quality Gates (Hooks)
-
-**Pre-Write:**
-- Prevent modification of protected files
-
-**Post-Write:**
-- Auto-format with prettier (TypeScript)
-- Auto-format with rustfmt (Rust)
-
-**Post-Bash:**
-- Audit dangerous commands (rm -rf, etc.)
-- Log all command executions
-
-## Common Workflows
-
-### Migrating a Tool to Standalone Repository (Phase 2)
-
-**CRITICAL: Use `/migrate-tool` for all Phase 2 migrations**
-
-1. Configure authentication: `source scripts/setup-github-auth.sh`
-2. Verify tool is complete: `cd {tool-name} && npm test`
-3. Run migration: `/migrate-tool {tool-name}`
-4. Verify standalone: Fresh clone from GitHub, run tests
-5. Start fresh session for next tool
-
-**The `/migrate-tool` command automates:**
-- Git history extraction (git subtree split)
-- GitHub repository creation
-- Metadata updates (package.json, CI, README, CLAUDE.md)
-- Commit and tag v0.1.0 with correct author
-- Git submodule addition to meta repo
-- Tracking document updates (HANDOFF.md, STATUS.md, CHANGELOG.md, NEXT_TASKS.md)
-
-**See:** @.claude/commands/migrate-tool.md for complete details
-
-### Creating a New Tool
-
-1. Scaffold: `/scaffold-tool my-tool typescript`
-2. Customize implementation
-3. Validate: `/quality-check` and `/security-scan`
-4. Commit: `/git-commit feat core "implement main functionality"`
-
-### Before Every Commit
-
-1. Run `/quality-check` (build, tests, zero deps)
-2. Review checklist: @docs/QUALITY_CHECKLIST.md
-3. Fix any issues discovered
-4. Commit with `/git-commit`
-
-### Security Review Before Release
-
-1. Run `/security-scan`
-2. Address findings
-3. Re-run until clean
-4. Proceed with release
-
-## References
-
+**Core Documentation:**
 - @README.md - Project architecture
 - @PRINCIPLES.md - Design philosophy
+- @ARCHITECTURE.md - Repository structure, tech stack
 - @CONTRIBUTING.md - Contribution workflow
+
+**Quality & Standards:**
 - @docs/QUALITY_CHECKLIST.md - **Pre-commit quality checks**
 - @docs/testing-standards.md - Testing requirements
 - @docs/security-guidelines.md - Security checklist
-- @docs/KNOWN_ISSUES.md - **Tracked bugs and known issues**
-- @docs/MIGRATION_TO_META_REPO.md - **Meta repository migration plan**
+- @.claude/rules/code-style.md - Code examples and patterns
+
+**Session Continuity:**
 - @.claude/HANDOFF.md - **Session handoff (session → session continuity)**
 - @.claude/NEXT_TASKS.md - **Task backlog and priorities**
-- @.claude/commands/migrate-tool.md - **Tool migration automation**
-- @.claude/rules/code-style.md - Code examples and patterns
+- @docs/KNOWN_ISSUES.md - **Tracked bugs and known issues**
+
+**Commands & Automation:**
+- @.claude/commands/ - All slash command documentation
+- @.claude/skills/ - Cross-cutting expertise (typescript-patterns, rust-idioms, zero-deps-checker)
+- @.claude/agents/ - Specialized AI agents
+
+**Templates:**
 - @templates/tool-repo-template/ - TypeScript template
 - @templates/rust-tool-template/ - Rust template
-
-## Known Limitations
-
-- Templates assume Unix-like environment (Linux, macOS)
-- Windows support requires WSL or Git Bash
-- Cross-platform path handling must be explicit in tools
-- CI/CD assumes GitHub Actions (adaptable to other platforms)
 
 ---
 

@@ -167,7 +167,7 @@ execSync('npx tsx ../test-flakiness-detector/src/index.ts --test "npm test"');
 
 ### Contribute
 - [Contributing Guide](/guide/contributing) - How to build new tools
-- [Quality Checklist](/guide/quality-checklist) - Pre-commit checks
+- [Quality Checklist](/QUALITY_CHECKLIST) - Pre-commit checks
 - [Testing Standards](/guide/testing-standards) - Test requirements
 
 ## Common Questions

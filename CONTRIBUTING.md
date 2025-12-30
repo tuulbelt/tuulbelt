@@ -36,55 +36,48 @@ Output: JSON list of unreliable tests
 
 Get feedback before building.
 
-### Step 2: Set Up Tool Repository
+### Step 2: Create Tool Repository
 
-Use the template in `templates/tool-repo-template/` as your starting point.
+**Recommended: Use `/new-tool` command**
 
-Create a new repo under https://github.com/tuulbelt:
-- Repo name: `<category>-<tool-name>` (e.g., `testing-flakiness-detector`)
-- Visibility: Public
-- Initialize with: README, LICENSE (MIT)
-
-Clone locally:
+In Claude Code, run:
 ```bash
-git clone https://github.com/tuulbelt/<tool-name>.git
-cd <tool-name>
+/new-tool <tool-name> <typescript|rust>
 ```
 
-### Step 3: Copy Template Files
+This command automatically:
+1. Creates standalone GitHub repository
+2. Scaffolds from appropriate template (TypeScript or Rust)
+3. Configures CI/CD, metadata, and documentation
+4. Tags v0.1.0 and pushes to GitHub
+5. Adds as git submodule to meta repo
 
-For Node.js/TypeScript tools:
+See [@.claude/commands/new-tool.md](.claude/commands/new-tool.md) for complete documentation.
 
-```bash
-cp -r ../tuulbelt/templates/tool-repo-template/* .
-```
+**Alternative: Manual Setup** (not recommended)
 
-For Rust tools:
+If you need manual control:
+1. Create GitHub repo: `gh repo create tuulbelt/<tool-name> --public`
+2. Clone locally: `git clone https://github.com/tuulbelt/<tool-name>.git`
+3. Copy template files:
+   - TypeScript: `cp -r templates/tool-repo-template/* <tool-name>/`
+   - Rust: `cp -r templates/rust-tool-template/* <tool-name>/`
+4. Customize package.json/Cargo.toml (name, description, repository URLs)
+5. Add as submodule to meta repo: `git submodule add https://github.com/tuulbelt/<tool-name>.git tools/<tool-name>`
 
-```bash
-cp -r ../tuulbelt/templates/rust-tool-template/* .
-```
+### Step 3: Implement Core Functionality
 
-Customize:
-- Update `package.json` (or `Cargo.toml`) name, description
-- Update README.md with your tool's purpose
-- Remove example code, keep structure
+Open the tool repository in Claude Code and implement:
 
-### Step 4: Implement in Claude Code
-
-Open the tool repo in Claude Code:
-1. In Claude Code, click "Open folder"
-2. Clone: `https://github.com/tuulbelt/<tool-name>.git`
-3. Start implementing following the template structure
-
-Implementation checklist:
+**Implementation checklist:**
 - [ ] Core logic in `src/index.ts` (or `src/lib.rs`)
 - [ ] At least 3-5 test cases in `test/index.test.ts`
 - [ ] Example usage in `examples/`
 - [ ] README with clear usage instructions
-- [ ] Run `npm test` (or `cargo test`) successfully
+- [ ] Run `/quality-check` before committing
+- [ ] All tests pass: `npm test` (or `cargo test`)
 
-### Step 5: Testing Standards
+### Step 4: Testing Standards
 
 All tools must have:
 
@@ -117,62 +110,53 @@ test('handles empty input', () => {
 });
 ```
 
+See [@docs/testing-standards.md](docs/testing-standards.md) for complete requirements.
+
 **CI/CD Automatic Testing:**
 
-Your tool will be **automatically discovered and tested** by CI workflows - no configuration needed!
+Each standalone tool repository has its own CI/CD workflow (`.github/workflows/test.yml`) that runs on every push and pull request.
 
-**How it works:**
-- **TypeScript tools:** Discovered by finding `package.json` files (excluding root, docs, templates, .github, .claude, scripts)
-- **Rust tools:** Discovered by finding `Cargo.toml` files (excluding templates)
-- **Workflows:** `test-all-tools.yml` and `update-dashboard.yml` auto-discover all tools
-- **When:** On push to main, pull requests, and nightly at 2 AM UTC
-- **What gets tested:**
-  - TypeScript: `npm ci`, `npm test`, `npm run build`
-  - Rust: `cargo test`, `cargo clippy -- -D warnings`, `cargo fmt --check`, `cargo build --release`
+- **TypeScript tools:** `npm ci`, `npm test`, `npm run build`
+- **Rust tools:** `cargo test`, `cargo clippy -- -D warnings`, `cargo fmt --check`, `cargo build --release`
 
-**Just create your tool directory with `package.json` or `Cargo.toml` and CI will find it!**
-
-Example discovery output:
-```
-Found 2 TypeScript tools: cli-progress-reporting test-flakiness-detector
-Found 0 Rust tools:
-Total: 2 tools
-```
-
-### Step 6: Documentation
+### Step 5: Documentation
 
 **README.md** — One page, includes:
 - 1-sentence description
 - Why it exists (what problem it solves)
-- Installation (just: clone the repo)
-- Usage (with examples)
+- Installation (clone + `npm install` or `cargo build`)
+- Usage examples (CLI and library)
 - Exit codes / error handling (if applicable)
 
-**SPEC.md** (optional, for protocols/formats) — Formal wire format, algorithm, or data structure definition.
+**CLAUDE.md** — Tool-specific development context for Claude Code
 
-**ARCHITECTURE.md** (optional, for complex tools) — Design decisions, key functions, interaction flow.
+**SPEC.md** (optional) — Formal wire format, algorithm, or data structure definition
 
-### Step 7: Code Quality
+**ARCHITECTURE.md** (optional) — Design decisions, key functions, interaction flow
 
-- TypeScript: `strict: true` in tsconfig.json
-- No `any` types
-- No external dependencies (runtime)
-- Clear variable names
-- Comments for non-obvious logic
+### Step 6: Code Quality
 
-Example:
+Run `/quality-check` before every commit. This verifies:
+- Build succeeds
+- Tests pass (100%)
+- Zero runtime dependencies
+- TypeScript compilation (for TS tools)
+- Clippy warnings (for Rust tools)
 
-```typescript
-// Detect if a test is flaky by running it multiple times
-export function detectFlakiness(
-  testFn: () => Promise<void>,
-  runs: number = 10
-): Promise<FlakeReport> {
-  // ...
-}
-```
+**TypeScript:**
+- `strict: true` in tsconfig.json
+- No `any` types (use `unknown` and type guards)
+- Explicit return types on all exported functions
+- ES modules only (`import`, not `require()`)
 
-### Step 8: Versioning
+**Rust:**
+- Use `?` operator for error propagation (avoid `unwrap()`)
+- Run `cargo fmt` and `cargo clippy -- -D warnings`
+- All public items documented with `///`
+
+See [@.claude/rules/code-style.md](.claude/rules/code-style.md) for detailed examples.
+
+### Step 7: Versioning
 
 Start at `0.1.0`. Increment:
 - `0.1.x` for bug fixes (internal only)
@@ -186,33 +170,65 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-### Step 9: Update Meta Repo
+### Step 8: Update Meta Repo
 
 Once your tool is ready for initial release:
 
-1. Update meta `README.md` — change `(TBD)` to `(✓ v0.1.0)` and link to repo
-2. Add a one-line entry to the appropriate category
+1. Update meta `README.md`:
+   - Change `(TBD)` to `🟢 v0.1.0`
+   - Add tool to appropriate category
+   - Include link to standalone repository
 
 Example:
 ```markdown
-- **[Test Flakiness Detector](https://github.com/tuulbelt/test-flakiness-detector)** — Identify unreliable tests ✓ v0.1.0
+- **[Test Flakiness Detector](https://github.com/tuulbelt/test-flakiness-detector)** — Identify unreliable tests 🟢 v0.1.0 | [📖 Docs](https://github.com/tuulbelt/test-flakiness-detector#readme) | [🚀 Examples](https://github.com/tuulbelt/test-flakiness-detector/tree/main/examples/)
 ```
 
-### Step 10: Maintenance
+2. Ensure tool is added as git submodule in `tools/` (done automatically by `/new-tool`)
+
+### Step 9: Maintenance
 
 - Respond to issues within a week
 - Keep README updated with new features
-- Run tests before every merge
+- Run `/quality-check` before every merge
 - Consider backwards compatibility; avoid breaking changes in patch versions
+- Update git submodule reference in meta repo when releasing new versions
+
+---
+
+## Working with Git Submodules
+
+Tools are referenced as git submodules in the meta repository:
+
+```bash
+# Clone meta repo with all tools
+git clone --recursive https://github.com/tuulbelt/tuulbelt.git
+
+# Initialize submodules after clone
+git submodule update --init --recursive
+
+# Update all submodules to latest
+git submodule update --remote
+
+# Update specific tool
+cd tools/test-flakiness-detector
+git pull origin main
+cd ../..
+git add tools/test-flakiness-detector
+git commit -m "chore: update test-flakiness-detector submodule"
+```
+
+See [@ARCHITECTURE.md](ARCHITECTURE.md) for complete submodule documentation.
 
 ---
 
 ## Pull Request Process
 
 1. Create feature branch: `git checkout -b feature/description`
-2. Commit with clear messages: `git commit -m "Add feature: description"`
-3. Push: `git push origin feature/description`
-4. Open PR on GitHub with:
+2. Run `/quality-check` to verify all checks pass
+3. Commit with semantic messages: `/git-commit <type> <scope> <message>`
+4. Push: `git push origin feature/description`
+5. Open PR on GitHub with:
    - What changed
    - Why it changed
    - Tests added
@@ -225,14 +241,21 @@ Example:
 Reviewers check:
 - [ ] Solves the stated problem
 - [ ] No new runtime dependencies
-- [ ] Tests cover core logic + edge cases
+- [ ] Tests cover core logic + edge cases (80%+ coverage)
 - [ ] README is clear and complete
 - [ ] No console logs or debug code
 - [ ] Follows the style of the existing codebase
+- [ ] `/quality-check` passes
+
+See [@docs/QUALITY_CHECKLIST.md](docs/QUALITY_CHECKLIST.md) for complete checklist.
 
 ---
 
 ## Issues & Feedback
+
+**For tool-specific issues:** Open issues in the tool's standalone repository
+
+**For meta repo issues:** Open issues at https://github.com/tuulbelt/tuulbelt/issues
 
 - Bug reports: Include steps to reproduce
 - Feature requests: Explain the use case
@@ -242,4 +265,30 @@ Reviewers check:
 
 ## Questions?
 
-Check existing issues first. If unsure, ask in the meta repo discussion.
+- Check existing issues first
+- Read [@ARCHITECTURE.md](ARCHITECTURE.md) for repository structure
+- Read [@PRINCIPLES.md](PRINCIPLES.md) for design philosophy
+- Ask in meta repo discussions if unsure
+
+---
+
+## Useful Commands
+
+```bash
+# Quality checks (MANDATORY before commit)
+/quality-check
+
+# Create new tool
+/new-tool <tool-name> <typescript|rust>
+
+# Run all tests
+/test-all
+
+# Security analysis
+/security-scan
+
+# Semantic commit
+/git-commit <type> <scope> <message>
+```
+
+See [@.claude/commands/](.claude/commands/) for complete command documentation.

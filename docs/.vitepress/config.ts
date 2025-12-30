@@ -45,7 +45,7 @@ export default defineConfig({
         {
           text: 'Development',
           items: [
-            { text: 'Quality Checklist', link: '/guide/quality-checklist' },
+            { text: 'Quality Checklist', link: '/QUALITY_CHECKLIST' },
             { text: 'Testing Standards', link: '/guide/testing-standards' },
             { text: 'Security Guidelines', link: '/guide/security-guidelines' },
             { text: 'Contributing', link: '/guide/contributing' }
