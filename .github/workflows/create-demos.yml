@@ -11,18 +11,8 @@ on:
       # Recording scripts (triggers demo for specific tool)
       - 'scripts/record-*-demo.sh'
 
-      # Tool implementation changes (triggers demo regeneration)
-      # Only src/ changes affect demo output
-      - 'test-flakiness-detector/src/**'
-      - 'cli-progress-reporting/src/**'
-      - 'cross-platform-path-normalizer/src/**'
-      - 'file-based-semaphore/src/**'
-      - 'output-diffing-utility/src/**'
-      - 'structured-error-handler/src/**'
-      - 'config-file-merger/src/**'
-      - 'snapshot-comparison/src/**'
-      - 'file-based-semaphore-ts/src/**'
-      - 'test-port-resolver/src/**'
+      # Note: Tool source changes don't auto-trigger (tools are now submodules)
+      # Use workflow_dispatch to manually trigger demo regeneration
 
   workflow_dispatch:  # Manual trigger
     inputs:

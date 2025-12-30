@@ -95,11 +95,12 @@ git commit -m "chore: remove obsolete Phase 0 setup documentation"
 
 ### A4. Phase A Completion
 
-- [ ] All A1 items checked
-- [ ] All A2 items checked
-- [ ] All A3 items checked
-- [ ] Committed and pushed
-- [ ] CI passes
+- [x] All A1 items checked - 10 directories deleted (~1.4 MB freed)
+- [x] All A2 items checked - All references updated to tools/ paths
+- [x] All A3 items checked - docs/setup/ deleted (2,710 lines removed)
+- [x] Committed and pushed - Commit 0c38a1e pushed successfully
+- [x] CI passes - Fixed by deleting update-demos.yml (Phase C4 completed early)
+- [x] Additional fix: Removed obsolete path filters from create-demos.yml
 
 ---
 
@@ -241,9 +242,10 @@ git commit -m "chore: archive migration review to git history"
 
 ### C4. Delete Redundant Workflow
 
-- [ ] `.github/workflows/update-demos.yml`
+- [x] `.github/workflows/update-demos.yml` - **COMPLETED EARLY IN PHASE A**
   - Reason: Only handles test-flakiness-detector, functionality already in `create-demos.yml`
   - Verification: `create-demos.yml` covers all tools
+  - Note: Deleted during Phase A to fix CI failure caused by references to deleted directories
 
 ### C5. Fix Demo Deployment Pipeline
 
