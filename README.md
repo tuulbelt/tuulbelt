@@ -15,16 +15,16 @@ Each tool in Tuulbelt:
 ## Current Tools
 
 ### CLI/DevTools
-- **[Structured Error Handler](structured-error-handler/)** — Error format + serialization with context preservation 🟢 v0.1.0 🐕 | [📖 Docs](structured-error-handler/) | [🚀 Examples](structured-error-handler/examples/)
+- **[Structured Error Handler](tools/structured-error-handler/)** — Error format + serialization with context preservation 🟢 v0.1.0 🐕 | [📖 Docs](tools/structured-error-handler/) | [🚀 Examples](tools/structured-error-handler/examples/)
 - **[CLI Progress Reporting](https://github.com/tuulbelt/cli-progress-reporting)** — Concurrent-safe progress updates 🟢 v0.1.0 🐕 | [📖 Docs](https://github.com/tuulbelt/cli-progress-reporting#readme) | [🚀 Examples](https://github.com/tuulbelt/cli-progress-reporting/tree/main/examples/)
 - **[Configuration File Merger](https://github.com/tuulbelt/config-file-merger)** — ENV + config + CLI arg merging 🟢 v0.1.0 🐕 | [📖 Docs](https://github.com/tuulbelt/config-file-merger#readme) | [🚀 Examples](https://github.com/tuulbelt/config-file-merger/tree/main/examples/)
 - **[Cross-Platform Path Normalizer](https://github.com/tuulbelt/cross-platform-path-normalizer)** — Windows/Unix path consistency 🟢 v0.1.0 🐕 | [📖 Docs](https://github.com/tuulbelt/cross-platform-path-normalizer#readme) | [🚀 Examples](https://github.com/tuulbelt/cross-platform-path-normalizer/tree/main/examples/)
 
 ### Testing & Observability
-- **[Test Flakiness Detector](test-flakiness-detector/)** — Identify unreliable tests 🟢 v0.1.0 🐕 | [📖 Docs](test-flakiness-detector/docs/) | [🚀 Examples](test-flakiness-detector/examples/)
-- **[Output Diffing Utility](output-diffing-utility/)** — Semantic diff for JSON, text, binary files 🟢 v0.1.0 🐕 | [📖 Docs](output-diffing-utility/) | [🚀 Examples](output-diffing-utility/examples/)
-- **[Snapshot Comparison](snapshot-comparison/)** — Snapshot testing with integrated diffs 🟢 v0.1.0 🐕 | [📖 Docs](snapshot-comparison/) | [🚀 Examples](snapshot-comparison/examples/)
-- **[Test Port Resolver](test-port-resolver/)** — Concurrent test port allocation 🟢 v0.1.0 🐕 | [📖 Docs](test-port-resolver/) | [🚀 Examples](test-port-resolver/examples/)
+- **[Test Flakiness Detector](tools/test-flakiness-detector/)** — Identify unreliable tests 🟢 v0.1.0 🐕 | [📖 Docs](tools/test-flakiness-detector/docs/) | [🚀 Examples](tools/test-flakiness-detector/examples/)
+- **[Output Diffing Utility](tools/output-diffing-utility/)** — Semantic diff for JSON, text, binary files 🟢 v0.1.0 🐕 | [📖 Docs](tools/output-diffing-utility/) | [🚀 Examples](tools/output-diffing-utility/examples/)
+- **[Snapshot Comparison](tools/snapshot-comparison/)** — Snapshot testing with integrated diffs 🟢 v0.1.0 🐕 | [📖 Docs](tools/snapshot-comparison/) | [🚀 Examples](tools/snapshot-comparison/examples/)
+- **[Test Port Resolver](tools/port-resolver/)** — Concurrent test port allocation 🟢 v0.1.0 🐕 | [📖 Docs](tools/port-resolver/) | [🚀 Examples](tools/port-resolver/examples/)
 
 ### Frontend
 - **[Component Prop Validator](https://github.com/tuulbelt/component-prop-validator)** — TypeScript runtime validation (TBD)
@@ -50,8 +50,8 @@ Each tool in Tuulbelt:
 
 ### Utilities & Infrastructure
 - **[Universal Log Normalizer](https://github.com/tuulbelt/log-normalizer)** — Structured log standardization (TBD)
-- **[File-Based Semaphore](file-based-semaphore/)** — Cross-platform process locking (Rust) 🟢 v0.1.0 🐕 | [📖 Docs](file-based-semaphore/) | [🚀 Examples](file-based-semaphore/examples/)
-- **[File-Based Semaphore (TS)](file-based-semaphore-ts/)** — Cross-platform process locking (TypeScript) 🟢 v0.1.0 🐕 | [📖 Docs](file-based-semaphore-ts/) | [🚀 Examples](file-based-semaphore-ts/examples/)
+- **[File-Based Semaphore](tools/file-based-semaphore/)** — Cross-platform process locking (Rust) 🟢 v0.1.0 🐕 | [📖 Docs](tools/file-based-semaphore/) | [🚀 Examples](tools/file-based-semaphore/examples/)
+- **[File-Based Semaphore (TS)](tools/file-based-semaphore-ts/)** — Cross-platform process locking (TypeScript) 🟢 v0.1.0 🐕 | [📖 Docs](tools/file-based-semaphore-ts/) | [🚀 Examples](tools/file-based-semaphore-ts/examples/)
 - **[Manifest-First Sync Tool](https://github.com/tuulbelt/manifest-sync)** — Directory sync via manifest diffs (TBD)
 - **[Universal Health-Check Probe](https://github.com/tuulbelt/health-check-probe)** — Multi-check abstraction (TBD)
 - **[Secret Injector](https://github.com/tuulbelt/secret-injector)** — Encrypted secret injection (TBD)
@@ -81,11 +81,11 @@ npm test  # or cargo test for Rust tools
 ### Test Flakiness Detector
 
 ```bash
-cd test-flakiness-detector && npm install
+cd tools/test-flakiness-detector && npm install
 flaky --test "npm test" --runs 10
 ```
 
-[📖 Docs](test-flakiness-detector/docs/) | [🚀 Examples](test-flakiness-detector/examples/)
+[📖 Docs](tools/test-flakiness-detector/docs/) | [🚀 Examples](tools/test-flakiness-detector/examples/)
 
 ---
 
@@ -125,12 +125,12 @@ cfgmerge --file config.json --env --prefix APP_ --args "port=3000"
 ### Test Port Resolver
 
 ```bash
-cd test-port-resolver && npm install
+cd tools/port-resolver && npm install
 portres get --tag "api-server"
 # Output: 54321
 ```
 
-[📖 Docs](test-port-resolver/) | [🚀 Examples](test-port-resolver/examples/)
+[📖 Docs](tools/port-resolver/) | [🚀 Examples](tools/port-resolver/examples/)
 
 _[See all 33 tools →](#current-tools)_
 

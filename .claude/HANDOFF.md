@@ -1,92 +1,57 @@
 # Session Handoff
 
-**Last Updated:** 2025-12-29
-**Session:** Phase 2 Wave 2 - test-port-resolver Migration (WAVE 2 COMPLETE! 🎉)
-**Status:** 🟢 Wave 2 Progress: 3/3 Complete (100%)
+**Last Updated:** 2025-12-30
+**Session:** Post-Migration Cleanup & Streamlining
+**Status:** 🟡 Cleanup Plan Created - Ready for Execution
 
 ---
 
-## ✅ THIS SESSION: test-port-resolver Migration (Wave 2, Tool 3/3 - FINAL)
+## 🧹 CURRENT PRIORITY: Repository Cleanup
 
-**Environment:** Completed in Claude Code CLI
+**Comprehensive audit completed.** The meta repo has significant bloat after Phase 2 migration.
 
-**What Was Accomplished:**
+### Cleanup Plan Created
 
-### 1. ✅ Comprehensive Pre-Migration Review
-- Implementation quality: Reviewed 950-line codebase, security patterns, atomic locking
-- Test coverage: 56/56 tests passing (unit, CLI, integration, performance, security, stress)
-- Documentation: README + 6 VitePress pages verified
-- Dependency: Confirmed file-based-semaphore-ts is REQUIRED (not optional)
+**Document:** `docs/CLEANUP_PLAN.md`
 
-### 2. ✅ Extracted Git History
-- Used `git subtree split` to extract 3 commits
-- Created temporary branch `test-port-resolver-history`
-- Preserved all commit history, authors, and dates
+**Summary of issues found:**
+- 10 obsolete tool directories at root (~1.4 MB duplicate code)
+- 2,710 lines of obsolete setup documentation
+- CLAUDE.md bloated (405 lines → should be ~100)
+- Command/agent redundancy (3 pairs doing same work)
+- Templates outdated (don't match actual tools)
+- 1,150 lines of duplicated demo scripts
 
-### 3. ✅ Created and Configured GitHub Repository
-- Repository: https://github.com/tuulbelt/test-port-resolver
-- Description: "Concurrent test port allocation - avoid port conflicts in parallel tests - Part of Tuulbelt"
-- Configuration: Disabled issues, wiki, projects
-- Topics: tuulbelt, typescript, zero-dependencies, testing, port-allocation, concurrent-testing
+**Estimated cleanup: 40-50% reduction in repository content**
 
-### 4. ✅ Updated Metadata for Standalone
-- **package.json**: Updated repository URLs, homepage, bugs, **dependency changed from file path to git URL**
-- **CI workflow**: Multi-version matrix (Node 18, 20, 22), zero-dep check allowing @tuulbelt/* deps
-- **README**: Fixed badges, installation, all relative links to absolute GitHub URLs
-- **CLAUDE.md**: Created tool-specific development context
+### Cleanup Phases
 
-### 5. ✅ Committed and Released
-- Committed standalone changes with koficodedat author
-- Tagged v0.1.0
-- Pushed to GitHub successfully
+| Phase | Description | Est. Time | Status |
+|-------|-------------|-----------|--------|
+| **A** | Critical: Delete obsolete dirs, fix naming, remove setup docs | 30 min | ⬜ Pending |
+| **B** | Documentation: Condense CLAUDE.md, update ARCHITECTURE/CONTRIBUTING | 1-2 hrs | ⬜ Pending |
+| **C** | Automation: Archive obsolete commands, delete redundant agents/workflows | 1 hr | ⬜ Pending |
+| **D** | Templates: Fix badges, add CLAUDE.md, consolidate demo scripts | 1-2 hrs | ⬜ Pending |
 
-### 6. ✅ Verified Standalone Functionality
-- Fresh clone from GitHub
-- 56/56 tests passing (with required file-based-semaphore-ts dependency)
-- Build successful (npm run build)
-- **Git URL dependency working**: npm automatically fetched file-based-semaphore-ts from GitHub
+### Quick Start for Next Session
 
-### 7. ✅ Added Git Submodule
-- Added to meta repo: `tools/test-port-resolver`
-- Committed submodule addition
-- Deleted temporary branch
-- Pushed to meta repo
+```bash
+# 1. Review the cleanup plan
+cat docs/CLEANUP_PLAN.md
 
-### 8. ✅ Updated All Tracking Documents
-- HANDOFF.md, STATUS.md, CHANGELOG.md, NEXT_TASKS.md
-
-**Commits This Session:**
-- `e9c7990` - chore: prepare for standalone release (standalone repo)
-- `c9117a8` - chore: add test-port-resolver as git submodule (meta repo)
-
-**Migration Progress:**
-- **Wave 1: 7/7 complete (100%) ✅✅✅**
-- **Wave 2: 3/3 complete (100%) ✅✅✅ COMPLETE!**
-  - ✅ snapshot-comparison (Rust, depends on output-diffing-utility)
-  - ✅ test-flakiness-detector (TypeScript, **requires** cli-progress-reporting)
-  - ✅ test-port-resolver (TypeScript, **requires** file-based-semaphore-ts)
+# 2. Start with Phase A (critical cleanup)
+# Delete obsolete root directories first
+```
 
 ---
 
-## 🎉 WAVE 2 COMPLETE!
+## Previous Session: Phase 2 Migration COMPLETE 🎉
 
-**All tools with required dependencies have been migrated successfully!**
+All 10 tools successfully migrated to standalone repositories:
+- Wave 1: 7/7 independent tools ✅
+- Wave 2: 3/3 tools with dependencies ✅
 
-10 of 10 monorepo tools are now standalone repositories with git submodules.
-
-### What's Next?
-
-**The meta repository migration (Phase 2) is COMPLETE!** All 10 tools are now:
-- ✅ Standalone GitHub repositories
-- ✅ Git submodules in the meta repo
-- ✅ Using git URL dependencies for Tuulbelt tool composition
-- ✅ Independently cloneable and functional
-- ✅ CI configured with zero external dependency checks
-
-**Next steps after migration:**
-1. Continue building new tools (11-33)
-2. Focus on growing the Tuulbelt collection
-3. Reference: NEXT_TASKS.md for upcoming tools
+**Total: 1,141 tests across 10 tools (all dogfooded)**
 
 ---
 
