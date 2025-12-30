@@ -11,6 +11,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Phase 2 Wave 2: test-flakiness-detector Migration Complete ✅ (2025-12-29)
+
+**Second Wave 2 tool with REQUIRED git URL dependency migrated to standalone repository!**
+- Repository: https://github.com/tuulbelt/test-flakiness-detector
+- Extracted git history: 92 commits processed
+- **Added REQUIRED dependency**: `"@tuulbelt/cli-progress-reporting": "git+https://github.com/tuulbelt/cli-progress-reporting.git"`
+- **Critical correction**: User requested cli-progress be required, not optional - updated implementation to use standard ES module import instead of dynamic fallback
+- Tagged v0.1.0 and pushed to GitHub with koficodedat credentials
+- Verified standalone: 132/132 tests passing with required cli-progress dependency
+- **Git URL dependency verified**: npm automatically fetched cli-progress-reporting from GitHub
+- Added as git submodule: `tools/test-flakiness-detector`
+- **Wave 2 Progress**: 2/3 complete (67%)
+- **Demonstrates**: Tuulbelt-to-Tuulbelt composition (PRINCIPLES.md Exception 2)
+
+**GitHub Repository Configuration:**
+- Issues disabled (centralized to meta repo)
+- Wiki disabled
+- Projects disabled
+- Topics: tuulbelt, typescript, zero-dependencies, testing, flakiness, test-reliability
+
+**Key Lessons:**
+- TypeScript tools can have required Tuulbelt dependencies via git URLs
+- npm automatically clones and installs git URL dependencies during `npm install`
+- Preserves zero external dependency principle (all Tuulbelt tools have zero external deps)
+
+**Commits:**
+- `34e629d` - chore: prepare for standalone release
+- `fb3bd1e` - feat: make cli-progress-reporting a required dependency
+- `344e957` - chore: add test-flakiness-detector as git submodule
+- `82f8cec` - chore: update test-flakiness-detector submodule (required dependency)
+
 ### Added - Phase 2 Wave 2: snapshot-comparison Migration Complete ✅ (2025-12-29)
 
 **First Wave 2 tool with git URL dependency migrated to standalone repository!**

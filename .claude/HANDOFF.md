@@ -1,79 +1,94 @@
 # Session Handoff
 
 **Last Updated:** 2025-12-29
-**Session:** Phase 2 Wave 2 - snapshot-comparison Migration
-**Status:** 🟢 Wave 2 Progress: 1/3 Complete
+**Session:** Phase 2 Wave 2 - test-flakiness-detector Migration
+**Status:** 🟢 Wave 2 Progress: 2/3 Complete
 
 ---
 
-## ✅ THIS SESSION: snapshot-comparison Migration (Wave 2, Tool 1/3)
+## ✅ THIS SESSION: test-flakiness-detector Migration (Wave 2, Tool 2/3)
 
 **Environment:** Completed in Claude Code CLI
 
 **What Was Accomplished:**
 
 ### 1. ✅ Extracted Git History
-- Used `git subtree split` to extract 12 commits
-- Created temporary branch `snapshot-comparison-history`
+- Used `git subtree split` to extract 92 commits
+- Created temporary branch `test-flakiness-detector-history`
 - Preserved all commit history, authors, and dates
 
 ### 2. ✅ Created and Configured GitHub Repository
-- Repository: https://github.com/tuulbelt/snapshot-comparison
-- Description: "Snapshot testing with integrated diffs - Part of Tuulbelt"
+- Repository: https://github.com/tuulbelt/test-flakiness-detector
+- Description: "Detect unreliable tests by running them multiple times - Part of Tuulbelt"
 - Configuration: Disabled issues, wiki, projects
-- Topics: tuulbelt, rust, zero-dependencies, snapshot-testing, testing, diff
+- Topics: tuulbelt, typescript, zero-dependencies, testing, flakiness, test-reliability
 
 ### 3. ✅ Updated Metadata for Standalone
-- **Cargo.toml**: Updated dependency from `path = "../output-diffing-utility"` to `git = "https://github.com/tuulbelt/output-diffing-utility"`
-- **CI workflow**: Removed monorepo path filters
+- **package.json**: Updated repository URLs, homepage, bugs
+- **CI workflow**: Multi-version matrix (Node 18, 20, 22), zero-dep check
+- **README**: Fixed badges, installation, all links to GitHub URLs
 - **CLAUDE.md**: Created tool-specific development guide
 
-### 4. ✅ Committed and Released
-- Committed changes with correct author (koficodedat) ✅
+### 4. ✅ Made cli-progress-reporting a REQUIRED Dependency
+- **CRITICAL CORRECTION**: User requested cli-progress be required, not optional
+- Added to package.json `dependencies`: `"@tuulbelt/cli-progress-reporting": "git+https://github.com/tuulbelt/cli-progress-reporting.git"`
+- Removed dynamic import fallback logic from src/index.ts
+- Changed to standard ES module import: `import * as progress from '@tuulbelt/cli-progress-reporting'`
+- Updated CLAUDE.md to reflect required dependency (Tuulbelt-to-Tuulbelt composition)
+- Demonstrates PRINCIPLES.md Exception 2: Tuulbelt tools may depend on other Tuulbelt tools
+
+### 5. ✅ Committed and Released
+- Committed initial standalone changes with koficodedat author
+- Committed required dependency fix with koficodedat author
 - Tagged v0.1.0
 - Pushed to GitHub successfully
 
-### 5. ✅ Verified Standalone Functionality
+### 6. ✅ Verified Standalone Functionality
 - Fresh clone from GitHub
-- 96/96 tests passing (33 lib + 59 integration + 4 doc tests)
-- Build successful (cargo build --release)
-- **Git URL dependency working**: Cargo automatically fetched output-diffing-utility
+- 132/132 tests passing (with required cli-progress dependency)
+- Build successful (npm run build)
+- **Git URL dependency working**: npm automatically fetched cli-progress-reporting from GitHub
 
-### 6. ✅ Added Git Submodule
-- Added to meta repo: `tools/snapshot-comparison`
+### 7. ✅ Added Git Submodule
+- Added to meta repo: `tools/test-flakiness-detector`
 - Committed submodule addition
+- Updated submodule to include required dependency fix
 - Deleted temporary branch
 - Pushed to meta repo
 
-### 7. ✅ Updated All Tracking Documents
+### 8. ✅ Updated All Tracking Documents
 - HANDOFF.md, STATUS.md, CHANGELOG.md, NEXT_TASKS.md
 
 **Commits This Session:**
-- `c198aac` - chore: add snapshot-comparison as git submodule (meta repo)
-- `1d31a84` - chore: prepare for standalone release (standalone repo)
+- `34e629d` - chore: prepare for standalone release (standalone repo)
+- `fb3bd1e` - feat: make cli-progress-reporting a required dependency (standalone repo)
+- `344e957` - chore: add test-flakiness-detector as git submodule (meta repo)
+- `82f8cec` - chore: update test-flakiness-detector submodule (required dependency) (meta repo)
 
 **Migration Progress:**
 - **Wave 1: 7/7 complete (100%) ✅✅✅**
-- **Wave 2: 1/3 complete (33%) 🎯**
+- **Wave 2: 2/3 complete (67%) 🎯**
   - ✅ snapshot-comparison (Rust, depends on output-diffing-utility)
-  - ⏳ test-flakiness-detector (TypeScript, depends on cli-progress-reporting)
+  - ✅ test-flakiness-detector (TypeScript, **requires** cli-progress-reporting)
   - ⏳ test-port-resolver (TypeScript, depends on file-based-semaphore-ts)
 
 ---
 
-## 🎯 NEXT SESSION: test-flakiness-detector Migration (Wave 2, Tool 2/3)
+## 🎯 NEXT SESSION: test-port-resolver Migration (Wave 2, Tool 3/3 - FINAL)
 
 **Environment:** ⚠️ REQUIRES Claude Code CLI (for GitHub operations)
 
 **Priority Task:**
-Migrate test-flakiness-detector (TypeScript) - depends on cli-progress-reporting
+Migrate test-port-resolver (TypeScript) - requires file-based-semaphore-ts
 
-**IMPORTANT: Implementation Review Required**
-This tool currently has cli-progress as an OPTIONAL dependency. Before migration:
-1. **Review implementation** to determine if cli-progress should be REQUIRED
-2. **Review tests, spec, architecture** for dependency usage
-3. **Update integration** if needed to enforce required dependency
-4. **Update documentation** to reflect dependency status
+**IMPORTANT: Comprehensive Review Required**
+This is the LAST Wave 2 tool and needs thorough validation against /new-tool standards:
+1. **Review implementation** against quality standards
+2. **Review tests** - verify unit, CLI, integration, performance coverage
+3. **Review documentation** - GitHub README + full VitePress site
+4. **Review demos** - asciinema recording + StackBlitz integration
+5. **Verify dependency** - file-based-semaphore-ts should be REQUIRED (not optional)
+6. **Validate templates** - ensure all scaffolding standards met
 
 **CRITICAL: GitHub Authentication Pattern**
 ```bash
@@ -84,11 +99,11 @@ source scripts/setup-github-auth.sh && gh repo edit tuulbelt/test-flakiness-dete
 **Why**: Claude Code runs each Bash command in separate shell - env vars don't persist between commands
 
 **Expected Outcome:**
-- GitHub repo: https://github.com/tuulbelt/test-flakiness-detector
-- Git submodule: tools/test-flakiness-detector
-- Dependency updated: `"@tuulbelt/cli-progress-reporting": "git+https://github.com/tuulbelt/cli-progress-reporting.git"`
-- 132/132 tests passing standalone
-- Wave 2 Progress: 2/3 (67%)
+- GitHub repo: https://github.com/tuulbelt/test-port-resolver
+- Git submodule: tools/test-port-resolver
+- Dependency updated: `"@tuulbelt/file-based-semaphore-ts": "git+https://github.com/tuulbelt/file-based-semaphore-ts.git"`
+- 56/56 tests passing standalone
+- Wave 2 Progress: 3/3 (100% COMPLETE ✅)
 
 **Critical References:**
 1. `docs/GH_CLI_AUTH_GUIDE.md` - Authentication pattern with examples

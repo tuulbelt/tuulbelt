@@ -6,7 +6,7 @@
 
 ## 🚨 CRITICAL: Meta Repository Migration
 
-**Status:** Phase 2 Wave 2 IN PROGRESS (1/3) 🎯
+**Status:** Phase 2 Wave 2 IN PROGRESS (2/3) 🎯
 **Priority:** HIGHEST - Architectural Correction
 
 ### Phase 2 Wave 1: Independent Tools Migration ✅ COMPLETE
@@ -31,25 +31,27 @@
 
 **Migration Order:** Lightest → Heaviest for incremental learning
 
-**Completed Tools (1/3):**
+**Completed Tools (2/3):**
 1. ✅ **snapshot-comparison** - https://github.com/tuulbelt/snapshot-comparison
    - 12 commits, v0.1.0, 96/96 tests passing, CI green
    - Dependency: output-diffing-utility (git URL working)
 
-**Remaining Tools (2/3):**
-1. [ ] **test-flakiness-detector** (TypeScript) - requires: cli-progress-reporting 🎯 NEXT
-   - **NEEDS IMPLEMENTATION REVIEW**: Make cli-progress dependency REQUIRED
-   - Review: implementation, tests, spec, architecture
-   - Update: integration and documentation to enforce required dependency
+2. ✅ **test-flakiness-detector** - https://github.com/tuulbelt/test-flakiness-detector
+   - 92 commits, v0.1.0, 132/132 tests passing, CI green
+   - **REQUIRED dependency**: cli-progress-reporting (git URL working)
+   - **Implementation corrected**: Changed from optional dynamic import to required ES module import
+   - Demonstrates Tuulbelt-to-Tuulbelt composition (PRINCIPLES.md Exception 2)
 
-2. [ ] **test-port-resolver** (TypeScript) - requires: file-based-semaphore-ts
+**Remaining Tools (1/3):**
+1. [ ] **test-port-resolver** (TypeScript) - requires: file-based-semaphore-ts 🎯 NEXT
    - **NEEDS COMPREHENSIVE REVIEW**: Full audit against /new-tool standards
    - Verify: implementation, testing, code quality, security
    - Verify: expanded testing (unit, CLI, integration, performance)
    - Verify: documentation (GitHub + VitePress complete)
    - Verify: demos (asciinema + StackBlitz)
    - Verify: templates and scaffolding adherence
-   - Most complex - saved for last
+   - **Verify dependency**: file-based-semaphore-ts should be REQUIRED (not optional)
+   - Last Wave 2 tool - ensure all standards met
 
 **CRITICAL: GitHub Authentication Pattern** ⚠️
 ```bash
@@ -60,9 +62,10 @@ source scripts/setup-github-auth.sh && gh repo edit tuulbelt/test-flakiness-dete
 **Why**: Claude Code runs each Bash command in separate shell - env vars don't persist
 
 **Next Steps:**
-1. Migrate test-flakiness-detector (TypeScript) - review to make cli-progress dependency required 🎯
-2. Migrate test-port-resolver - comprehensive /new-tool standards audit
-3. Update tracking documents after each migration
+1. Migrate test-port-resolver (TypeScript) - comprehensive /new-tool standards audit 🎯
+2. Verify file-based-semaphore-ts dependency is REQUIRED (not optional)
+3. Update tracking documents after migration
+4. Complete Wave 2 (3/3 = 100%)
 
 **Key Resources:**
 - **Authentication guide**: `docs/GH_CLI_AUTH_GUIDE.md` ⭐ NEW - Complete chaining pattern
