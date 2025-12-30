@@ -14,83 +14,7 @@ This document tracks known bugs, limitations, and cosmetic issues across the Tuu
 
 ## 🟡 Medium Priority Issues
 
-### 2. Demo Recordings Not Auto-Updating in Standalone Repos
-
-**Status:** Needs PAT Setup
-**Severity:** Medium
-**Area:** CI/CD (create-demos.yml)
-**Affects:** All tool demo recordings
-
-**Description:**
-
-The create-demos workflow successfully generates demo recordings and uploads them to asciinema.org, but cannot automatically commit the updated demo files (demo.cast, demo.gif, demo-url.txt, README.md) to each standalone tool repository.
-
-**Root Cause:**
-
-GitHub Actions' `GITHUB_TOKEN` only has write permissions to the repository where the workflow runs (tuulbelt/tuulbelt meta repo). It cannot push to other repositories, even submodules in the same GitHub organization. This is a fundamental security limitation of GitHub Actions.
-
-**Two-Part Fix Applied:**
-
-1. **✅ Path Detection (2025-12-30)** - Updated workflow to use `tools/$tool` paths:
-   - Detection loop correctly finds submodule tools
-   - Recording loop properly builds TypeScript/Rust tools
-   - Demo recording scripts use Title Case format
-
-2. **⚠️ Submodule Push Authentication (2025-12-30)** - Requires manual setup:
-   - Workflow updated to check for `TUULBELT_SUBMODULE_TOKEN` secret
-   - If token not present, workflow skips submodule commits (with clear warning)
-   - Demo files still committed to meta repo and GitHub Pages
-
-**How to Enable Automatic Submodule Updates:**
-
-**Step 1: Create Personal Access Token (PAT)**
-1. Go to GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)
-2. Click "Generate new token (classic)"
-3. Name: "Tuulbelt Demo Workflow"
-4. Expiration: No expiration (or set renewal reminder)
-5. Scopes: Select **`repo`** (Full control of private repositories)
-   - This grants read/write access to all repos the token owner can access
-6. Click "Generate token"
-7. **Copy the token immediately** (you won't see it again)
-
-**Step 2: Add Token to Repository Secrets**
-1. Go to tuulbelt/tuulbelt repository → Settings → Secrets and variables → Actions
-2. Click "New repository secret"
-3. Name: `TUULBELT_SUBMODULE_TOKEN`
-4. Value: Paste the PAT from Step 1
-5. Click "Add secret"
-
-**Step 3: Verify**
-1. Push any change to `.github/workflows/create-demos.yml` or `scripts/record-*-demo.sh`
-2. Check workflow run logs for "✓ Pushed demo updates for {tool-name}"
-3. Verify standalone repos have new commits from github-actions[bot]
-
-**Current Behavior (Without PAT):**
-
-The workflow:
-- ✅ Generates demos in submodule directories
-- ✅ Uploads to asciinema.org
-- ✅ Updates meta repo VitePress docs
-- ⚠️ Skips pushing to standalone tool repos (logs warning message)
-
-**Expected Behavior (With PAT):**
-
-The workflow:
-- ✅ Generates demos in submodule directories
-- ✅ Uploads to asciinema.org
-- ✅ Commits demos to each standalone tool repository
-- ✅ Updates meta repo VitePress docs
-- ✅ Users see latest demos when cloning individual tools
-
-**Workaround (Until PAT Added):**
-
-Manually update standalone repos:
-```bash
-cd tools/{tool-name}
-git add demo.cast docs/demo.gif demo-url.txt README.md
-git commit -m "docs: update demo recording"
-git push origin main
-```
+**None currently.**
 
 ---
 
@@ -157,6 +81,39 @@ None currently. Badge is functional and mostly aligned, just not pixel-perfect.
 ---
 
 ## ✅ Resolved Issues
+
+### Centralized Demo Workflow Authentication Issues ✅
+
+**Resolved:** 2025-12-30
+**Severity:** Medium
+**Area:** CI/CD (demo generation)
+
+**Problem:** The centralized create-demos.yml workflow in the meta repo could not push demo updates to standalone tool repositories. Multiple authentication approaches failed (PAT, credential helper overrides).
+
+**Root Cause:** GitHub Actions' `GITHUB_TOKEN` is intentionally restricted to only write to the repository where the workflow runs. This is a fundamental security feature - workflows shouldn't push to arbitrary repos without explicit authorization.
+
+**Failed Approaches:**
+1. PAT embedded in remote URL - overridden by credential helper
+2. Clearing credential helper - still couldn't authenticate
+3. URL rewrite - Git config had multiple authentication layers
+
+**Proper Solution:** Migrated to distributed architecture:
+- Each tool has its own `.github/workflows/create-demo.yml`
+- Triggered by meta repo's `trigger-demo-updates.yml` workflow
+- Each tool uses its own `GITHUB_TOKEN` (works within repo scope)
+- Organization secret `ASCIINEMA_INSTALL_ID` shared across all tools
+- No cross-repo authentication needed
+
+**Benefits:**
+- ✅ No authentication issues
+- ✅ Aligns with standalone tool principle
+- ✅ Simpler permissions model
+- ✅ Each tool controls its own CI/CD
+- ✅ No PAT management overhead
+
+**Commit:** `454cb43` - "feat(ci): migrate to standalone demo workflows"
+
+---
 
 ### Tag Newline Injection in file-based-semaphore ✅
 
@@ -347,15 +304,15 @@ git commit -m "fix: improve icon theming (partial fix for KNOWN_ISSUES.md #1)"
 
 ## Statistics
 
-**Total Issues:** 2
+**Total Issues:** 1
 **Critical:** 0
 **High:** 0
-**Medium:** 1
+**Medium:** 0
 **Low (Cosmetic):** 1
-**Resolved:** 4
+**Resolved:** 5
 
 **By Area:**
-- Documentation: 2
+- Documentation: 1 (cosmetic)
 - Core: 0
 - Testing: 0
 - CI/CD: 0
