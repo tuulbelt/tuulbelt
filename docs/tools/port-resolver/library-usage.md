@@ -1,11 +1,11 @@
 # Library Usage
 
-The `test-port-resolver` library provides a TypeScript API for port allocation.
+The `port-resolver` library provides a TypeScript API for port allocation.
 
 ## Basic Usage
 
 ```typescript
-import { PortResolver } from '@tuulbelt/test-port-resolver';
+import { PortResolver } from '@tuulbelt/port-resolver';
 
 const resolver = new PortResolver();
 
@@ -158,7 +158,7 @@ await resolver.clear();
 
 ```typescript
 import { test, before, after } from 'node:test';
-import { PortResolver } from '@tuulbelt/test-port-resolver';
+import { PortResolver } from '@tuulbelt/port-resolver';
 
 const resolver = new PortResolver();
 let testPort: number;
@@ -181,7 +181,7 @@ test('server starts on allocated port', async () => {
 ### Jest
 
 ```typescript
-import { PortResolver } from '@tuulbelt/test-port-resolver';
+import { PortResolver } from '@tuulbelt/port-resolver';
 
 const resolver = new PortResolver();
 let testPort: number;
@@ -207,7 +207,7 @@ describe('API Server', () => {
 
 ```typescript
 import { beforeAll, afterAll, describe, test } from 'vitest';
-import { PortResolver } from '@tuulbelt/test-port-resolver';
+import { PortResolver } from '@tuulbelt/port-resolver';
 
 const resolver = new PortResolver();
 let testPort: number;
@@ -230,7 +230,7 @@ afterAll(async () => {
 Check if a specific port is available:
 
 ```typescript
-import { isPortAvailable } from '@tuulbelt/test-port-resolver';
+import { isPortAvailable } from '@tuulbelt/port-resolver';
 
 const available = await isPortAvailable(3000);
 console.log(available); // true or false
@@ -241,7 +241,7 @@ console.log(available); // true or false
 Find any available port in a range:
 
 ```typescript
-import { findAvailablePort } from '@tuulbelt/test-port-resolver';
+import { findAvailablePort } from '@tuulbelt/port-resolver';
 
 const result = await findAvailablePort(8000, 9000);
 if (result.ok) {

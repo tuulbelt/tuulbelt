@@ -185,23 +185,23 @@ Cross-platform file-based semaphore for process synchronization in Node.js. Comp
 
 ---
 
-### Test Port Resolver
+### Port Resolver
 
 **Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
 **Language:** TypeScript
-**Tests:** 56 tests
+**Tests:** 79 tests
 
-Concurrent test port allocation to avoid port conflicts in parallel tests. File-based registry ensures multiple test workers don't compete for the same ports.
+Concurrent port allocation for any application. Avoid port conflicts in tests, servers, microservices, and development environments. File-based registry ensures multiple processes don't compete for the same ports.
 
 **Features:**
 - File-based port registry with atomic operations
 - TCP bind test for actual port availability
 - Automatic stale entry cleanup (crashed processes)
-- Optional semaphore integration for enhanced atomicity
+- Required semaphore integration for atomicity
 - CLI and library API
 - Zero runtime dependencies
 
-[View Documentation →](/tools/test-port-resolver/)
+[View Documentation →](/tools/port-resolver/)
 
 ---
 

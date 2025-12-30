@@ -182,15 +182,15 @@ Cross-platform file-based semaphore for Node.js process synchronization.
 
 <div class="tool-card">
 
-#### [Test Port Resolver](/tools/test-port-resolver/) <span class="library-badge"><img src="/icons/link.svg" class="badge-icon" alt=""><span>uses semats</span></span>
+#### [Port Resolver](/tools/port-resolver/) <span class="library-badge"><img src="/icons/link.svg" class="badge-icon" alt=""><span>uses semats</span></span>
 
-Concurrent test port allocation to avoid port conflicts in parallel tests.
+Concurrent port allocation for any application - avoid port conflicts in tests, servers, microservices, and development.
 
 - <img src="/icons/target.svg" class="inline-icon" alt=""> File-based port registry with atomic operations
 - <img src="/icons/zap.svg" class="inline-icon" alt=""> TCP bind test for actual port availability
-- <img src="/icons/lock.svg" class="inline-icon" alt=""> Optional [semats](/tools/file-based-semaphore-ts/) integration
+- <img src="/icons/lock.svg" class="inline-icon" alt=""> Required [semats](/tools/file-based-semaphore-ts/) integration
 
-[Get Started →](/tools/test-port-resolver/getting-started)
+[Get Started →](/tools/port-resolver/getting-started)
 
 </div>
 
@@ -212,7 +212,7 @@ Concurrent test port allocation to avoid port conflicts in parallel tests.
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Config File Merger (TypeScript)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Snapshot Comparison (Rust)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> File-Based Semaphore (TypeScript)
-- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Test Port Resolver (TypeScript) ✨ NEW
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Port Resolver (TypeScript) ✨ NEW
 
 **Overall Progress:** 10 of 33 tools (30%)
 

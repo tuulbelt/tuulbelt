@@ -6,7 +6,7 @@ Real-world examples for common test port scenarios.
 
 ```typescript
 import { createServer } from 'node:http';
-import { PortResolver } from '@tuulbelt/test-port-resolver';
+import { PortResolver } from '@tuulbelt/port-resolver';
 
 async function startTestServer() {
   const resolver = new PortResolver();
@@ -48,7 +48,7 @@ await cleanup();
 
 ```typescript
 // test-setup.ts
-import { PortResolver } from '@tuulbelt/test-port-resolver';
+import { PortResolver } from '@tuulbelt/port-resolver';
 
 const resolver = new PortResolver();
 
@@ -96,7 +96,7 @@ test('services communicate correctly', () => {
 ```typescript
 // generate-docker-ports.ts
 import { writeFileSync } from 'node:fs';
-import { PortResolver } from '@tuulbelt/test-port-resolver';
+import { PortResolver } from '@tuulbelt/port-resolver';
 
 async function generateDockerPorts() {
   const resolver = new PortResolver();
@@ -138,7 +138,7 @@ generateDockerPorts();
 
 ```typescript
 import express from 'express';
-import { PortResolver } from '@tuulbelt/test-port-resolver';
+import { PortResolver } from '@tuulbelt/port-resolver';
 
 class TestableServer {
   private resolver = new PortResolver();
@@ -227,7 +227,7 @@ echo "Tests completed successfully!"
 
 ```typescript
 import { WebSocketServer } from 'ws';
-import { PortResolver } from '@tuulbelt/test-port-resolver';
+import { PortResolver } from '@tuulbelt/port-resolver';
 
 async function createTestWebSocket() {
   const resolver = new PortResolver();
@@ -258,7 +258,7 @@ async function createTestWebSocket() {
 
 ```typescript
 // multi-service-test.ts
-import { PortResolver } from '@tuulbelt/test-port-resolver';
+import { PortResolver } from '@tuulbelt/port-resolver';
 
 interface ServicePorts {
   api: number;
@@ -326,7 +326,7 @@ await env.teardown();
 ## Resource Pool Pattern
 
 ```typescript
-import { PortResolver } from '@tuulbelt/test-port-resolver';
+import { PortResolver } from '@tuulbelt/port-resolver';
 
 class PortPool {
   private resolver = new PortResolver();

@@ -63,7 +63,7 @@ flaky "/home/user/file.txt"
 | [Configuration File Merger](/tools/config-file-merger/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | ENV + config + CLI merging |
 | [Snapshot Comparison](/tools/snapshot-comparison/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | Binary/structured data snapshots |
 | [File-Based Semaphore (TS)](/tools/file-based-semaphore-ts/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | Process synchronization (TypeScript) |
-| [Test Port Resolver](/tools/test-port-resolver/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | Concurrent test port allocation |
+| [Port Resolver](/tools/port-resolver/) | <img src="/icons/check-circle.svg" class="inline-icon" alt=""> v0.1.0 | Concurrent port allocation for any application |
 
 **Progress:** 10 of 33 tools (30%)
 

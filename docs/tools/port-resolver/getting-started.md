@@ -5,8 +5,8 @@
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/tuulbelt/test-port-resolver.git
-cd test-port-resolver
+git clone https://github.com/tuulbelt/port-resolver.git
+cd port-resolver
 npm install
 ```
 
@@ -58,7 +58,7 @@ portres release --port $PORT
 ### Library for Node.js Tests
 
 ```typescript
-import { PortResolver } from '@tuulbelt/test-port-resolver';
+import { PortResolver } from '@tuulbelt/port-resolver';
 
 const resolver = new PortResolver();
 

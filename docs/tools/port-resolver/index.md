@@ -1,4 +1,4 @@
-# Test Port Resolver / `portres`
+# Port Resolver / `portres`
 
 Concurrent test port allocation - avoid port conflicts in parallel tests.
 
@@ -20,7 +20,7 @@ This happens because:
 `portres` provides a file-based registry for port allocation:
 
 ```typescript
-import { PortResolver } from '@tuulbelt/test-port-resolver';
+import { PortResolver } from '@tuulbelt/port-resolver';
 
 const resolver = new PortResolver();
 const result = await resolver.get({ tag: 'my-server' });
@@ -45,7 +45,7 @@ This tool uses [file-based-semaphore-ts](/tools/file-based-semaphore-ts/) as a l
 ## Quick Start
 
 ```bash
-cd test-port-resolver && npm install
+cd port-resolver && npm install
 
 # CLI usage
 portres get --tag "api-server"
@@ -59,7 +59,7 @@ portres release --port 54321
 
 See the tool in action:
 
-![Test Port Resolver Demo](/test-port-resolver/demo.gif)
+![Port Resolver Demo](/port-resolver/demo.gif)
 
 **[View interactive recording on asciinema.org](#)**
 
@@ -67,7 +67,7 @@ See the tool in action:
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
     <strong>Try it online:</strong>
   </span>
-  <a href="https://stackblitz.com/github/tuulbelt/test-port-resolver" style="display: inline-block; vertical-align: middle;">
+  <a href="https://stackblitz.com/github/tuulbelt/port-resolver" style="display: inline-block; vertical-align: middle;">
     <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
   </a>
 </div>

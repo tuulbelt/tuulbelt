@@ -1,6 +1,6 @@
 # API Reference
 
-Complete API documentation for the test-port-resolver library.
+Complete API documentation for the port-resolver library.
 
 ## Types
 
@@ -302,7 +302,7 @@ async function isPortAvailable(port: number): Promise<boolean>
 
 **Example:**
 ```typescript
-import { isPortAvailable } from '@tuulbelt/test-port-resolver';
+import { isPortAvailable } from '@tuulbelt/port-resolver';
 
 if (await isPortAvailable(3000)) {
   console.log('Port 3000 is free');
@@ -332,7 +332,7 @@ async function findAvailablePort(
 
 **Example:**
 ```typescript
-import { findAvailablePort } from '@tuulbelt/test-port-resolver';
+import { findAvailablePort } from '@tuulbelt/port-resolver';
 
 const result = await findAvailablePort(8000, 9000);
 if (result.ok) {
