@@ -1,5 +1,7 @@
 # CLI Interface Design
 
+> **Note:** This file is OPTIONAL. Delete if your tool has a simple CLI that doesn't need design documentation. Keep if your CLI is complex enough to benefit from upfront planning.
+
 **Status:** Planning
 **Last Updated:** {{DATE}}
 

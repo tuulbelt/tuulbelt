@@ -1,5 +1,11 @@
 # Tool Name
 
+[![Tests](https://github.com/tuulbelt/{{TOOL_NAME}}/actions/workflows/test.yml/badge.svg)](https://github.com/tuulbelt/{{TOOL_NAME}}/actions/workflows/test.yml)
+![Version](https://img.shields.io/badge/version-0.1.0-blue)
+![Rust](https://img.shields.io/badge/rust-1.70+-orange)
+![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 One sentence description of what this tool does.
 
 ## Problem
@@ -208,7 +214,7 @@ If this tool uses another Tuulbelt tool as a library dependency (not CLI), docum
 ```toml
 # Cargo.toml
 [dependencies]
-output-diffing-utility = { path = "../output-diffing-utility" }
+output-diffing-utility = { git = "https://github.com/tuulbelt/output-diffing-utility" }
 ```
 
 ```rust
@@ -227,7 +233,7 @@ use output_diffing_utility::{diff_text, diff_json, diff_binary};
 - CLI composition would add unnecessary overhead
 
 **Documentation requirements:**
-- Add `[dependencies]` entry in Cargo.toml with path dependency
+- Add `[dependencies]` entry in Cargo.toml with git URL dependency
 - Document the integration in README (this section)
 - Update DOGFOODING_STRATEGY.md to explain the value
 - Add to root README.md Dogfooding section

@@ -1,11 +1,9 @@
 # Tool Name
 
-[![Tests](https://github.com/tuulbelt/tuulbelt/actions/workflows/test-all-tools.yml/badge.svg)](https://github.com/tuulbelt/tuulbelt/actions/workflows/test-all-tools.yml)
-[![Tool Tests](https://github.com/tuulbelt/tuulbelt/workflows/Test%20All%20Tools/badge.svg?branch=main)](https://github.com/tuulbelt/tuulbelt/actions)
+[![Tests](https://github.com/tuulbelt/{{TOOL_NAME}}/actions/workflows/test.yml/badge.svg)](https://github.com/tuulbelt/{{TOOL_NAME}}/actions/workflows/test.yml)
 ![Version](https://img.shields.io/badge/version-0.1.0-blue)
 ![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)
 ![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success)
-![Tests](https://img.shields.io/badge/tests-passing-success)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 One sentence description of what this tool does.
@@ -162,12 +160,6 @@ dogfood scripts that run in CI to catch regressions.
 ./scripts/dogfood-diff.sh
 ```
 
-**Quick Validation (npm script):**
-
-```bash
-npm run test:dogfood
-```
-
 **Local Development Only:**
 
 Dogfood scripts are for local development verification in the monorepo context.
@@ -225,18 +217,20 @@ If this tool uses another Tuulbelt tool as a library dependency (not CLI), docum
 **Example:** A TypeScript tool using another TypeScript Tuulbelt tool:
 
 ```json
-// package.json - NO runtime dependencies, use relative imports
+// package.json - git URL dependency for standalone repo
 {
-  "dependencies": {}
+  "dependencies": {
+    "@tuulbelt/other-tool": "git+https://github.com/tuulbelt/other-tool.git"
+  }
 }
 ```
 
 ```typescript
-// src/index.ts - Import from sibling directory in monorepo
-import { someFunction } from '../../other-tool/src/index.js';
+// src/index.ts - Import from npm package
+import { someFunction } from '@tuulbelt/other-tool';
 
 // Or use dynamic import for optional integration
-const otherTool = await import('../../other-tool/src/index.js').catch(() => null);
+const otherTool = await import('@tuulbelt/other-tool').catch(() => null);
 ```
 
 **Why use library composition:**

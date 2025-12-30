@@ -1,5 +1,7 @@
 # Implementation Research
 
+> **Note:** This file is OPTIONAL. Delete if your tool doesn't require algorithm research. Keep if you need to document design decisions, algorithm choices, or implementation approaches.
+
 **Status:** Planning
 **Last Updated:** {{DATE}}
 
