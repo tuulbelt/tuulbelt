@@ -25,6 +25,6 @@
 [submodule "tools/test-flakiness-detector"]
 	path = tools/test-flakiness-detector
 	url = https://github.com/tuulbelt/test-flakiness-detector.git
-[submodule "tools/test-port-resolver"]
-	path = tools/test-port-resolver
-	url = https://github.com/tuulbelt/test-port-resolver.git
+[submodule "tools/port-resolver"]
+	path = tools/port-resolver
+	url = https://github.com/tuulbelt/port-resolver.git
