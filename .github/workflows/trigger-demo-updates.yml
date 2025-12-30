@@ -48,6 +48,12 @@ jobs:
               CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
             fi
 
+            # Check if this is a manual trigger (workflow_dispatch with no TARGET_TOOL)
+            IS_MANUAL_TRIGGER=false
+            if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+              IS_MANUAL_TRIGGER=true
+            fi
+
             # Check each tool with a recording script
             for script in scripts/record-*-demo.sh; do
               if [ ! -f "$script" ]; then
@@ -59,7 +65,13 @@ jobs:
 
               SHOULD_TRIGGER=false
 
-              # Reason 1: Demo framework changed (affects all tools)
+              # Reason 1: Manual trigger without specific tool = trigger ALL tools
+              if [ "$IS_MANUAL_TRIGGER" = true ]; then
+                echo "  → $tool: Manual trigger (all tools)"
+                SHOULD_TRIGGER=true
+              fi
+
+              # Reason 2: Demo framework changed (affects all tools)
               if [ -n "$CHANGED_FILES" ]; then
                 if echo "$CHANGED_FILES" | grep -q "^scripts/lib/demo-framework\.sh$"; then
                   echo "  → $tool: Demo framework changed (will trigger)"
@@ -67,7 +79,7 @@ jobs:
                 fi
               fi
 
-              # Reason 2: Recording script changed
+              # Reason 3: Recording script changed
               if [ -n "$CHANGED_FILES" ]; then
                 if echo "$CHANGED_FILES" | grep -q "^scripts/record-${tool}-demo\.sh$"; then
                   echo "  → $tool: Recording script changed (will trigger)"
