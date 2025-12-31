@@ -17,17 +17,21 @@ No `npm install`, no `cargo add`, no runtime dependency management required.
 
 **Exception 1:** Development dependencies (TypeScript compiler, test runners) are okay if they don't ship with the tool.
 
-**Exception 2:** Tuulbelt tools MAY use other Tuulbelt tools via library integration (path dependencies). Since all Tuulbelt tools have zero external dependencies, composing them preserves the zero-dep guarantee. This enables richer functionality without dependency chains.
+**Exception 2:** Tuulbelt tools MAY use other Tuulbelt tools via library integration (git URL dependencies). Since all Tuulbelt tools have zero external dependencies, composing them preserves the zero-dep guarantee. This enables richer functionality without dependency chains.
 
 ```toml
-# Rust: Use sibling tool as path dependency
+# Rust: Use git URL dependency for standalone repos
 [dependencies]
-output_diffing_utility = { path = "../output-diffing-utility" }
+output_diffing_utility = { git = "https://github.com/tuulbelt/output-diffing-utility.git" }
 ```
 
 ```json
-// TypeScript: Import from sibling (monorepo context)
-// Dynamic import with existence check for standalone compatibility
+// TypeScript: Use git URL dependency for standalone repos
+{
+  "dependencies": {
+    "@tuulbelt/cli-progress-reporting": "git+https://github.com/tuulbelt/cli-progress-reporting.git"
+  }
+}
 ```
 
 **Rationale:** Tools that don't require dependency resolution outlive language trends. They're more portable, more maintainable, and less fragile. Tuulbelt-to-Tuulbelt composition maintains these benefits while enabling powerful tool combinations.

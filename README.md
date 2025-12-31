@@ -85,14 +85,14 @@ cd tools/test-flakiness-detector && npm install
 flaky --test "npm test" --runs 10
 ```
 
-[📖 Docs](tools/test-flakiness-detector/docs/) | [🚀 Examples](tools/test-flakiness-detector/examples/)
+[📖 Docs](https://github.com/tuulbelt/test-flakiness-detector#readme) | [🚀 Examples](https://github.com/tuulbelt/test-flakiness-detector/tree/main/examples/)
 
 ---
 
 ### CLI Progress Reporting
 
 ```bash
-cd cli-progress-reporting && npm install
+cd tools/cli-progress-reporting && npm install
 prog init --total 100 --message "Processing files"
 ```
 
@@ -103,7 +103,7 @@ prog init --total 100 --message "Processing files"
 ### Cross-Platform Path Normalizer
 
 ```bash
-cd cross-platform-path-normalizer && npm install
+cd tools/cross-platform-path-normalizer && npm install
 normpath --format unix "C:\Users\file.txt"
 ```
 
@@ -114,7 +114,7 @@ normpath --format unix "C:\Users\file.txt"
 ### Configuration File Merger
 
 ```bash
-cd config-file-merger && npm install
+cd tools/config-file-merger && npm install
 cfgmerge --file config.json --env --prefix APP_ --args "port=3000"
 ```
 
@@ -130,7 +130,7 @@ portres get --tag "api-server"
 # Output: 54321
 ```
 
-[📖 Docs](tools/port-resolver/) | [🚀 Examples](tools/port-resolver/examples/)
+[📖 Docs](https://github.com/tuulbelt/port-resolver#readme) | [🚀 Examples](https://github.com/tuulbelt/port-resolver/tree/main/examples/)
 
 _[See all 33 tools →](#current-tools)_
 
@@ -153,7 +153,7 @@ let diff = match file_type {
 
 **Test Flakiness Detector** integrates **CLI Progress Reporting** for real-time progress tracking:
 ```bash
-cd test-flakiness-detector
+cd tools/test-flakiness-detector
 flaky --test "npm test" --runs 20 --verbose
 # [INFO] Progress tracking enabled (dogfooding cli-progress-reporting)
 # Shows live run counts and pass/fail status
@@ -161,11 +161,11 @@ flaky --test "npm test" --runs 20 --verbose
 
 **CLI Progress Reporting** and **Cross-Platform Path Normalizer** use **Test Flakiness Detector** to validate their test suites:
 ```bash
-cd cli-progress-reporting
+cd tools/cli-progress-reporting
 npm run test:dogfood
 # ✅ NO FLAKINESS DETECTED (111 tests × 20 runs = 2,220 executions)
 
-cd cross-platform-path-normalizer
+cd tools/cross-platform-path-normalizer
 npm run test:dogfood
 # ✅ NO FLAKINESS DETECTED (128 tests × 10 runs = 1,280 executions)
 ```
