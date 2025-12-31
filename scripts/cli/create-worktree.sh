@@ -4,7 +4,14 @@
 set -e
 
 FEATURE_NAME="$1"
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+# Get main repo root (works from worktrees too)
+COMMON_GIT_DIR="$(git rev-parse --git-common-dir)"
+# Convert to absolute path if relative
+if [[ "$COMMON_GIT_DIR" != /* ]]; then
+  COMMON_GIT_DIR="$(pwd)/$COMMON_GIT_DIR"
+fi
+REPO_ROOT="$(dirname "$COMMON_GIT_DIR")"
 SANITIZED_NAME=$(echo "$FEATURE_NAME" | tr '/' '-')
 WORKTREE_DIR="$REPO_ROOT/.claude/worktrees/$SANITIZED_NAME"
 

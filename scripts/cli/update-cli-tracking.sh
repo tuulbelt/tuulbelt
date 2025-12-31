@@ -7,7 +7,13 @@ ACTION="$1"  # add, update, remove
 WORKTREE_DIR="$2"
 FEATURE_NAME="$3"
 
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+# Get main repo root (works from worktrees too)
+COMMON_GIT_DIR="$(git rev-parse --git-common-dir)"
+# Convert to absolute path if relative
+if [[ "$COMMON_GIT_DIR" != /* ]]; then
+  COMMON_GIT_DIR="$(pwd)/$COMMON_GIT_DIR"
+fi
+REPO_ROOT="$(dirname "$COMMON_GIT_DIR")"
 TRACKING_FILE="$REPO_ROOT/.claude/cli-workspace-tracking.json"
 
 # Initialize tracking file if it doesn't exist
