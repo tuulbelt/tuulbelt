@@ -17,14 +17,14 @@
 - [x] 1.4: Session start integration ✅ `.claude/hooks/on-session-start.sh` (lines 32-35)
 - [x] Verification: All hooks tested ✅ (meta + all 10 submodules block commits to main)
 
-### Phase 2: CLI Workspace Commands - NOT STARTED
-- [ ] 2.1: Workspace tracking file structure
-- [ ] 2.2: /work-init command
-- [ ] 2.3: CLI worktree creation script
-- [ ] 2.4: /work-status command
-- [ ] 2.5: /work-pr command
-- [ ] 2.6: /work-cleanup command
-- [ ] 2.7: Tracking file regeneration script
+### Phase 2: CLI Workspace Commands - ✅ COMPLETE
+- [x] 2.1: Workspace tracking file structure ✅ `.claude/schemas/cli-workspace-tracking.json`, `.claude/schemas/web-session-tracking.json`
+- [x] 2.2: /work-init command ✅ `.claude/commands/work-init.md`, `scripts/workflow/init-workspace.sh`
+- [x] 2.3: CLI worktree creation script ✅ `scripts/cli/create-worktree.sh`, `scripts/cli/create-branch.sh`, `scripts/cli/update-cli-tracking.sh`
+- [x] 2.4: /work-status command ✅ `.claude/commands/work-status.md`, `scripts/workflow/show-status.sh`, `scripts/cli/show-cli-status.sh`
+- [x] 2.5: /work-pr command ✅ `.claude/commands/work-pr.md`, `scripts/workflow/create-prs.sh`, `scripts/cli/create-cli-prs.sh`
+- [x] 2.6: /work-cleanup command ✅ `.claude/commands/work-cleanup.md`, `scripts/workflow/cleanup-workspace.sh`, `scripts/cli/cleanup-cli-workspace.sh`
+- [x] 2.7: Tracking file regeneration script ✅ `scripts/workflow/regenerate-tracking.sh`
 
 ### Phase 3: Environment-Aware Commands - NOT STARTED
 - [ ] 3.1: Unified command interface
