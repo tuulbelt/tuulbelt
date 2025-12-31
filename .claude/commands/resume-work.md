@@ -24,7 +24,14 @@ Check that the project state matches the handoff:
 - Check recent commits: `git log --oneline -5`
 - Verify no unexpected changes
 
-3. **Present Handoff Summary**
+3. **Check Web Session Status (if in Web environment)**
+
+If running in Claude Code Web (`CLAUDE_CODE_REMOTE=true`):
+- Run `./scripts/web/show-status.sh` to see submodule session state
+- Include session status in handoff summary
+- Note any submodules with pending changes or PRs
+
+4. **Present Handoff Summary**
 
 Show the user a clear, actionable summary:
 
@@ -56,6 +63,14 @@ Show the user a clear, actionable summary:
    - Files to work on
    - Expected outcome
 
+### Web Session Status (if applicable)
+
+[If in Web environment, show session status table from /web-status]
+- Submodules being tracked
+- Pending changes
+- Open PRs
+- See `.claude/web-session-tracking.json` for details
+
 ### Important Context
 
 [Key decisions, constraints, or context from handoff]
@@ -83,7 +98,7 @@ Show the user a clear, actionable summary:
 **Ready to start?** I can begin with [Priority 1 Task] or wait for your direction.
 ```
 
-4. **Offer to Start First Task**
+5. **Offer to Start First Task**
 
 After presenting the summary, offer to start the highest priority task:
 
@@ -98,7 +113,7 @@ D) Update the handoff before starting
 Let me know how you'd like to proceed!
 ```
 
-5. **Handle Different Scenarios**
+6. **Handle Different Scenarios**
 
 **Scenario: No Handoff Found**
 ```markdown
