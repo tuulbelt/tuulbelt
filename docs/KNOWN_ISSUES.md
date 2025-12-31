@@ -97,21 +97,34 @@ None currently. Badge is functional and mostly aligned, just not pixel-perfect.
 2. Clearing credential helper - still couldn't authenticate
 3. URL rewrite - Git config had multiple authentication layers
 
-**Proper Solution:** Migrated to distributed architecture:
+**Proper Solution:** Fully standalone demo architecture (Option 1):
 - Each tool has its own `.github/workflows/create-demo.yml`
-- Triggered by meta repo's `trigger-demo-updates.yml` workflow
+- Triggers on implementation changes (`src/**`, `lib/**` for TS; `src/**` for Rust)
+- Demos maintained ONLY in standalone repositories
+- VitePress documentation links to tool READMEs (no demo duplication)
 - Each tool uses its own `GITHUB_TOKEN` (works within repo scope)
 - Organization secret `ASCIINEMA_INSTALL_ID` shared across all tools
-- No cross-repo authentication needed
+- No cross-repo authentication or workflow triggering needed
 
 **Benefits:**
 - ✅ No authentication issues
-- ✅ Aligns with standalone tool principle
-- ✅ Simpler permissions model
+- ✅ Aligns with standalone tool principle (demos live with the tools)
+- ✅ Simpler permissions model (no cross-repo workflow dispatch needed)
 - ✅ Each tool controls its own CI/CD
 - ✅ No PAT management overhead
+- ✅ Demos trigger only on actual code changes, not arbitrary updates
+- ✅ Single source of truth: tool README contains the demo
 
-**Commit:** `454cb43` - "feat(ci): migrate to standalone demo workflows"
+**Final Implementation:**
+- Removed `trigger-demo-updates.yml` (cross-repo triggering not possible with GITHUB_TOKEN)
+- Updated `sync-demos-to-vitepress.yml` to documentation link checker (not demo copier)
+- Updated all tool workflows to trigger only on implementation changes
+- Template workflows updated for new tools: `src/**` (and `lib/**` for TypeScript)
+- VitePress documentation structure: links to tool READMEs instead of embedding demos
+
+**Commits:**
+- Initial migration: `454cb43` - "feat(ci): migrate to standalone demo workflows"
+- Final architecture: TBD - "feat(ci): implement standalone demo architecture (Option 1)"
 
 ---
 
