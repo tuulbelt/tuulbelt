@@ -7,6 +7,28 @@ set -e
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 cd "$REPO_ROOT"
 
+# Check and install gh CLI if not available (both Web and CLI)
+if ! command -v gh &> /dev/null; then
+  echo "📦 GitHub CLI (gh) not found - installing..."
+
+  # Download and install gh binary
+  GH_VERSION="2.40.1"
+  GH_TARBALL="/tmp/gh_${GH_VERSION}_linux_amd64.tar.gz"
+
+  if curl -sL "https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_amd64.tar.gz" -o "$GH_TARBALL" 2>/dev/null; then
+    tar -xzf "$GH_TARBALL" -C /tmp 2>/dev/null
+    if sudo mv "/tmp/gh_${GH_VERSION}_linux_amd64/bin/gh" /usr/local/bin/ 2>/dev/null; then
+      rm -rf "$GH_TARBALL" "/tmp/gh_${GH_VERSION}_linux_amd64" 2>/dev/null
+      echo "✓ GitHub CLI installed successfully (version $(gh --version | head -1))"
+    else
+      echo "⚠️  Failed to install gh CLI (sudo required)"
+    fi
+  else
+    echo "⚠️  Failed to download gh CLI"
+  fi
+  echo ""
+fi
+
 # Only run in Web environment
 if [ "${CLAUDE_CODE_REMOTE}" = "true" ]; then
   echo "🌐 Claude Code Web detected - initializing Web workflow..."
