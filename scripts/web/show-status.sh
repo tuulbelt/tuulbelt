@@ -1,16 +1,25 @@
 #!/bin/bash
 # Display status of current web session
 # Shows tracked submodules, branches, commits, and PR status
-# Usage: ./show-status.sh [--no-color]
+# Usage: ./show-status.sh [--no-color|--color]
+# Note: Auto-detects Web environment and defaults to plain text output
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/tracking-lib.sh"
 
-# Check for --no-color flag
+# Auto-detect if we should disable colors
+# In Web environment, default to no colors (terminal doesn't interpret ANSI codes)
 NO_COLOR=false
-if [ "$1" = "--no-color" ] || [ "$1" = "--plain" ]; then
+if [ "${CLAUDE_CODE_REMOTE}" = "true" ]; then
+  NO_COLOR=true
+fi
+
+# Allow explicit override with flags
+if [ "$1" = "--color" ]; then
+  NO_COLOR=false
+elif [ "$1" = "--no-color" ] || [ "$1" = "--plain" ]; then
   NO_COLOR=true
 fi
 
