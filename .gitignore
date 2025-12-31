@@ -31,6 +31,9 @@ Thumbs.db
 .env.*.local
 # Note: .envrc IS tracked (contains no secrets, just references .env)
 
+# Keys and secrets
+.key/
+
 # Logs
 *.log
 npm-debug.log*
@@ -44,6 +47,7 @@ tmp/
 temp/
 *.tmp
 .plan.md
+.playwright-mcp/
 
 # Claude Code
 .claude/settings.local.json
