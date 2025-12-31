@@ -53,7 +53,7 @@ Additional settings (recommended):
 
 Only repository admins should be able to add the `override-submodule-check` label.
 
-**Settings → Labels → Create label**
+**Issues → Labels → New label** (from repository main navigation)
 
 ```
 Name: override-submodule-check
@@ -61,9 +61,10 @@ Description: Bypass submodule PR check (admin only - use with caution)
 Color: #d73a4a (red)
 ```
 
-**Access control:**
-- In Organization settings, restrict label creation to admins
-- Or rely on PR review requirements (only approved PRs can be merged)
+**Note:** GitHub doesn't have granular access control for labels. The "admin only" enforcement relies on:
+- Team trust and PR review process
+- Only admins should apply this label to PRs
+- Misuse is visible in PR history and audit logs
 
 ---
 
