@@ -209,16 +209,103 @@ VitePress API documentation was written for a DIFFERENT/PLANNED API that was nev
 
 ---
 
-## Remaining Tools (Need Verification)
+#### 4. structured-error-handler ✅
+**Source Code Exports:**
+- `StructuredError` class with static methods (`wrap`, `from`, `fromJSON`)
+- `ErrorContext` interface
+- `SerializedError` interface
+- `StructuredErrorOptions` interface
+- Functions: `serializeError`, `deserializeError`, `formatError`, etc.
 
-The following tools need detailed verification (currently checking source code):
+**VitePress API Reference:**
+- Documents all types and classes ✓
+- Documents all methods and functions ✓
+- Signatures match source code ✓
 
-#### 4. output-diffing-utility (Rust) - Need to verify
-#### 5. structured-error-handler - Need to verify
-#### 6. config-file-merger - Need to verify
-#### 7. snapshot-comparison (Rust) - Need to verify
-#### 8. file-based-semaphore-ts - Need to verify
-#### 9. port-resolver - Need to verify
+**Status:** CORRECT - No action needed
+
+---
+
+#### 5. config-file-merger ✅
+**Source Code Exports:**
+- `ConfigSource` type
+- `ConfigValue` interface
+- `TrackedConfig`, `SimpleConfig` types
+- `MergeOptions`, `MergeResult`, `MergeError` interfaces
+- Functions: `mergeConfig`, `getValue`, `parseJsonFile`, `parseEnv`, `parseCliArgs`, etc.
+
+**VitePress API Reference:**
+- Documents all types ✓
+- Documents all functions ✓
+- Signatures match source code ✓
+
+**Status:** CORRECT - No action needed
+
+---
+
+#### 6. output-diffing-utility (Rust) ✅
+**Source Code Exports:**
+- `DiffConfig` struct
+- `OutputFormat`, `FileType` enums
+- `TextDiffResult`, `BinaryDiffResult` structs
+- `DiffError`, `LineChange`, `JsonChange` enums
+- Functions: `diff_text`, `diff_json`, `diff_binary`, `detect_file_type`, etc.
+
+**VitePress API Reference:**
+- Documents all structs and enums ✓
+- Documents all functions ✓
+- Signatures match source code ✓
+
+**Status:** CORRECT - No action needed
+
+---
+
+#### 7. snapshot-comparison (Rust) ✅
+**Source Code Exports:**
+- `SnapshotStore` struct
+- `SnapshotConfig`, `Snapshot`, `SnapshotMetadata` structs
+- `SnapshotError`, `CompareResult`, `DiffOutput` enums
+- Methods: `new`, `create`, `read`, `check`, `update`, `delete`, `exists`
+
+**VitePress API Reference:**
+- Documents all structs and enums ✓
+- Documents all methods ✓
+- Signatures match source code ✓
+
+**Status:** CORRECT - No action needed
+
+---
+
+#### 8. file-based-semaphore-ts ✅
+**Source Code Exports:**
+- `Semaphore` class
+- `SemaphoreConfig`, `LockInfo` interfaces
+- `SemaphoreError` interface, `SemaphoreErrorType` type
+- `SemaphoreResult<T>` type
+- Functions: `createLockInfo`, `parseLockInfo`, `isLockStale`, `isProcessRunning`
+
+**VitePress API Reference:**
+- Documents all types and classes ✓
+- Documents all methods and functions ✓
+- Signatures match source code ✓
+
+**Status:** CORRECT - No action needed
+
+---
+
+#### 9. port-resolver ✅
+**Source Code Exports:**
+- `PortResolver` class
+- `PortConfig`, `PortEntry`, `PortRegistry`, `PortAllocation`, `RegistryStatus` interfaces
+- `Result<T, E>` type
+- Function: `isPortAvailable`
+
+**VitePress API Reference:**
+- Documents all types and classes ✓
+- Documents all methods and functions ✓
+- Signatures match source code ✓
+
+**Status:** CORRECT - No action needed
 
 ---
 
@@ -243,11 +330,7 @@ The following tools need detailed verification (currently checking source code):
 - Verify all type definitions exist in src/index.ts
 - Test code snippets actually compile
 
-### Phase 2: Verify Remaining Tools
-
-Complete audit of remaining 6 tools to ensure no other discrepancies.
-
-### Phase 3: Establish Verification Process
+### Phase 2: Establish Verification Process (Future Enhancement)
 
 Create automated checks to prevent future drift:
 - Script to extract exported types from source code
@@ -258,13 +341,23 @@ Create automated checks to prevent future drift:
 
 ## Next Steps
 
-1. **PAUSE** and present findings to user
-2. Get approval to fix test-flakiness-detector
-3. Complete audit of remaining 6 tools
-4. Execute alignment plan
-5. Test all fixed documentation
+1. ✅ **Complete audit of all 10 tools** - DONE
+2. **Fix test-flakiness-detector VitePress API documentation** - Execute Phase 1
+3. **Test updated documentation** - Verify examples compile
+4. **Commit and push fixes** - Single commit with alignment changes
 
 ---
 
-**Status:** AUDIT IN PROGRESS - Critical issue identified, awaiting user decision
+## Summary
+
+**✅ AUDIT COMPLETE - 10/10 tools audited**
+
+- **9 tools:** API documentation correctly aligned with source code ✓
+- **1 tool:** test-flakiness-detector requires complete API reference rewrite ❌
+
+**Recommendation:** Proceed with Phase 1 to fix test-flakiness-detector VitePress API documentation by rewriting it to match the actual source code (FlakinessReport, Config, TestRunResult, TestFlakiness interfaces).
+
+---
+
+**Status:** AUDIT COMPLETE - Ready to execute alignment plan
 
