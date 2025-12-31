@@ -48,3 +48,6 @@ temp/
 # Claude Code
 .claude/settings.local.json
 .claude/logs/
+
+# One-off scripts
+scripts/create-all-repos.sh

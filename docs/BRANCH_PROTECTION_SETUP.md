@@ -45,9 +45,14 @@ Additional settings (recommended):
   ✅ Dismiss stale pull request approvals when new commits are pushed
   ✅ Do not allow bypassing the above settings
      (Unchecked - allows admin override with label)
+
+  Allow specified actors to bypass required pull requests:
+    ✅ github-actions[bot] (allows automated dashboard/demo updates)
 ```
 
-**IMPORTANT:** Do NOT check "Do not allow bypassing" - this prevents admin override via label.
+**IMPORTANT:**
+- Do NOT check "Do not allow bypassing" - this prevents admin override via label
+- Add `github-actions[bot]` to bypass actors - this allows automated workflows (update-dashboard, create-demo) to push directly to main without PRs
 
 #### Step 3: Configure Admin Override Access
 
@@ -230,7 +235,7 @@ The workflow checks for the `override-submodule-check` label before running any 
 ## Related Documentation
 
 - [CI_GUIDE.md](CI_GUIDE.md#pr-merge-coordination) - Complete merge order documentation
-- [CONTRIBUTING.md](../CONTRIBUTING.md) - Contribution workflow
+- [CONTRIBUTING.md](https://github.com/tuulbelt/tuulbelt/blob/main/CONTRIBUTING.md) - Contribution workflow
 
 ---
 

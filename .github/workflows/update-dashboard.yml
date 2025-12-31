@@ -33,6 +33,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
 
       - name: Download test results (from triggering workflow)
         if: github.event_name == 'workflow_run'
