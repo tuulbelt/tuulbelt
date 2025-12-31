@@ -89,27 +89,29 @@ The tool outputs JSON to `flakiness-report.json`:
 
 ```json
 {
-  "summary": {
-    "totalRuns": 10,
-    "passedRuns": 8,
-    "failedRuns": 2,
-    "isFlaky": true,
-    "failureRate": 20
-  },
+  "success": true,
+  "totalRuns": 10,
+  "passedRuns": 8,
+  "failedRuns": 2,
+  "flakyTests": [
+    {
+      "testName": "Test Suite",
+      "passed": 8,
+      "failed": 2,
+      "totalRuns": 10,
+      "failureRate": 20.0
+    }
+  ],
   "runs": [
     {
-      "runNumber": 1,
       "success": true,
       "exitCode": 0,
-      "duration": 1234,
-      "timestamp": "2025-01-01T00:00:00.000Z"
+      "stdout": "...",
+      "stderr": ""
     },
     {
-      "runNumber": 2,
       "success": false,
       "exitCode": 1,
-      "duration": 1456,
-      "timestamp": "2025-01-01T00:00:01.000Z",
       "stdout": "...",
       "stderr": "Error: test failed"
     }

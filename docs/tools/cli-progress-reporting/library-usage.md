@@ -6,8 +6,8 @@ Use CLI Progress Reporting programmatically in TypeScript/JavaScript application
 
 ```bash
 # Clone the repository
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/cli-progress-reporting
+git clone https://github.com/tuulbelt/cli-progress-reporting.git
+cd cli-progress-reporting
 npm install  # Dev dependencies only
 ```
 

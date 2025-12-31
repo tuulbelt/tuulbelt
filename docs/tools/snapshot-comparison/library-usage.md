@@ -8,7 +8,7 @@ Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-snapshot-comparison = { git = "https://github.com/tuulbelt/tuulbelt.git" }
+snapshot-comparison = { git = "https://github.com/tuulbelt/snapshot-comparison.git" }
 ```
 
 Or for monorepo use:

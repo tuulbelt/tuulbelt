@@ -12,8 +12,8 @@ This guide will help you install and set up Config File Merger for your project.
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/config-file-merger
+git clone https://github.com/tuulbelt/config-file-merger.git
+cd config-file-merger
 ```
 
 ### Install Dependencies

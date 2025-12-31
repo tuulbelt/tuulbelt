@@ -8,8 +8,8 @@ Since this is a standalone tool with zero runtime dependencies, you can either:
 
 1. **Clone and import directly:**
 ```bash
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/cross-platform-path-normalizer
+git clone https://github.com/tuulbelt/cross-platform-path-normalizer.git
+cd cross-platform-path-normalizer
 ```
 
 2. **Copy the source files** into your project

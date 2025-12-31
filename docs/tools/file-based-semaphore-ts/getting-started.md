@@ -12,8 +12,8 @@ This guide will help you get started with File-Based Semaphore (TypeScript).
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/file-based-semaphore-ts
+git clone https://github.com/tuulbelt/file-based-semaphore-ts.git
+cd file-based-semaphore-ts
 ```
 
 ### Install Development Dependencies
