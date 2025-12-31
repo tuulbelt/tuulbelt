@@ -139,8 +139,8 @@ while IFS= read -r submodule; do
   PR_MERGED="false"
   if [ -d "$SUBMOD_PATH" ] && [ -n "$CURRENT_BRANCH" ] && [ "$CURRENT_BRANCH" != "main" ]; then
     cd "$SUBMOD_PATH"
-    # Get PR number for current branch
-    PR_INFO=$(gh pr list --head "$CURRENT_BRANCH" --json number,state --jq '.[0]' 2>/dev/null || echo "null")
+    # Get PR number for current branch (including merged PRs)
+    PR_INFO=$(gh pr list --state all --head "$CURRENT_BRANCH" --json number,state --jq '.[0]' 2>/dev/null || echo "null")
     if [ "$PR_INFO" != "null" ] && [ -n "$PR_INFO" ]; then
       PR_NUMBER=$(echo "$PR_INFO" | jq -r '.number' 2>/dev/null || echo "null")
       PR_STATE=$(echo "$PR_INFO" | jq -r '.state' 2>/dev/null || echo "OPEN")
