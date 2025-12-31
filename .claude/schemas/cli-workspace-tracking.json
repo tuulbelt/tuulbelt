@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CLI Workspace Tracking Schema",
+  "description": "Tracks worktree-based workspaces in CLI environment",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "environment": {
+      "type": "string",
+      "const": "cli"
+    },
+    "worktrees": {
+      "type": "object",
+      "patternProperties": {
+        "^\\.claude/worktrees/": {
+          "type": "object",
+          "properties": {
+            "meta_branch": {
+              "type": "string",
+              "description": "Feature branch name in meta repo"
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updated_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["active", "merged", "abandoned"]
+            },
+            "submodules": {
+              "type": "object",
+              "patternProperties": {
+                "^tools/": {
+                  "type": "object",
+                  "properties": {
+                    "branch": {
+                      "type": "string",
+                      "description": "Feature branch name in submodule"
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "has_changes": {
+                      "type": "boolean"
+                    },
+                    "commits_count": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "last_commit_sha": {
+                      "type": ["string", "null"]
+                    },
+                    "pr_url": {
+                      "type": ["string", "null"],
+                      "format": "uri"
+                    },
+                    "pr_number": {
+                      "type": ["integer", "null"]
+                    },
+                    "pr_state": {
+                      "type": ["string", "null"],
+                      "enum": [null, "open", "closed", "merged"]
+                    },
+                    "pr_merged": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["branch", "created_at", "has_changes", "commits_count", "pr_merged"]
+                }
+              }
+            }
+          },
+          "required": ["meta_branch", "created_at", "updated_at", "status", "submodules"]
+        }
+      }
+    }
+  },
+  "required": ["version", "environment", "worktrees"]
+}
