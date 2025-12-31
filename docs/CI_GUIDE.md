@@ -399,7 +399,7 @@ When adding a new tool, ensure:
 
 ## Related Documentation
 
-- [CI Optimization Proposal](./CI_OPTIMIZATION_PROPOSAL.md) - Detailed analysis
+- [CI Optimization Proposal](./archive/ci-optimization-proposal-2025-12-25.md) - Detailed analysis (archived - implemented)
 - [Quality Checklist](./QUALITY_CHECKLIST.md) - Pre-commit checks
 - [Testing Standards](./testing-standards.md) - Test requirements
 
