@@ -27,10 +27,7 @@ jobs:
     name: Update Dashboard
     runs-on: ubuntu-latest
     # Run if test-all-tools completed (success or failure) OR if manually/scheduled
-    # Skip if triggered by the bot's own commits to prevent infinite loops
-    if: |
-      (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion != 'cancelled') &&
-      (github.event_name != 'workflow_run' || github.event.workflow_run.head_commit.author.name != 'github-actions[bot]')
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion != 'cancelled'
     steps:
       - name: Generate GitHub App token
         id: app-token
@@ -173,7 +170,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to dashboard"
           else
-            git commit -m "docs: update tool quality dashboard
+            git commit -m "docs: update tool quality dashboard [skip ci]
 
           Tools: ${{ steps.generate.outputs.tool-count }}
           Passing: ${{ steps.generate.outputs.passing-count }}
