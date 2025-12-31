@@ -10,6 +10,7 @@ This document is the single source of truth for all CI/CD workflows in Tuulbelt.
 
 | Workflow | Trigger | Purpose | Runtime |
 |----------|---------|---------|---------|
+| `submodule-pr-guard.yml` | PR to main | **Block merge if submodule PRs open** | ~30 sec |
 | `test-all-tools.yml` | push, PR, nightly, manual | Test all tools | ~4 min |
 | `update-dashboard.yml` | after test-all-tools, nightly, manual | Generate quality dashboard | ~30 sec |
 | `deploy-docs.yml` | push to docs/*, manual | Build & deploy VitePress | ~2 min |
@@ -50,6 +51,36 @@ This document is the single source of truth for all CI/CD workflows in Tuulbelt.
 ---
 
 ## Root Workflows (`.github/workflows/`)
+
+### submodule-pr-guard.yml
+
+**Purpose:** Enforce correct merge order - block meta repo PR if submodule PRs are open.
+
+**Triggers:**
+- `pull_request` to `main` branch (opened, synchronize, reopened, labeled, unlabeled)
+
+**Features:**
+- ✅ Scans all submodules for open PRs on the same branch
+- ✅ Blocks merge if any submodule has open PRs
+- ✅ Admin override via `override-submodule-check` label
+- ✅ Clear error messages with merge order instructions
+
+**How It Works:**
+1. Checks if PR has `override-submodule-check` label (skip if present)
+2. For each submodule, gets current branch
+3. Queries GitHub API for open PRs from that branch
+4. Fails status check if any open PRs found
+5. Provides instructions on correct merge order
+
+**Branch Protection:**
+- Make this a **required status check** in branch protection rules
+- See [BRANCH_PROTECTION_SETUP.md](BRANCH_PROTECTION_SETUP.md) for configuration
+
+**Admin Override:**
+- Add `override-submodule-check` label to bypass (use with caution)
+- Only repository admins should have access to this label
+
+---
 
 ### test-all-tools.yml
 
@@ -274,10 +305,17 @@ Meta PR merge → sync-demos-to-vitepress.yml → demos synced to VitePress
 
 ### **Rule: ALWAYS Merge Submodule PRs First** ✅
 
+**This rule is enforced by the `submodule-pr-guard` workflow (see [BRANCH_PROTECTION_SETUP.md](BRANCH_PROTECTION_SETUP.md)).**
+
 **Why:**
 1. Submodule `create-demo.yml` generates `docs/demo.gif` on merge
 2. Meta repo's `sync-demos-to-vitepress.yml` expects demos to exist
 3. Merging meta first → syncs stale/missing demos → no automatic retry
+
+**Branch Protection:**
+- Meta repo PRs are blocked if submodule PRs are open
+- Required status check: `check-submodule-prs`
+- Admin override available via `override-submodule-check` label
 
 ### **Correct Workflow**
 
@@ -526,6 +564,7 @@ When adding a new tool, ensure:
 
 ## Related Documentation
 
+- [Branch Protection Setup](./BRANCH_PROTECTION_SETUP.md) - **Configure merge guards and status checks**
 - [CI Optimization Proposal](./archive/ci-optimization-proposal-2025-12-25.md) - Detailed analysis (archived - implemented)
 - [Quality Checklist](./QUALITY_CHECKLIST.md) - Pre-commit checks
 - [Testing Standards](./testing-standards.md) - Test requirements
@@ -536,6 +575,7 @@ When adding a new tool, ensure:
 
 | Date | Change |
 |------|--------|
+| 2025-12-31 | Added submodule-pr-guard workflow (enforces merge order with branch protection) |
 | 2025-12-31 | Added PR Merge Coordination section (critical merge order documentation) |
 | 2025-12-28 | Removed dogfood-validation.yml (dogfood is local-only) |
 | 2025-12-25 | Phase 2: Artifact-based dashboard |

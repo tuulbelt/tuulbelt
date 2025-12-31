@@ -1,0 +1,140 @@
+name: Submodule PR Guard
+
+# CRITICAL: Prevents merging meta repo PR if submodule PRs are still open
+# Enforces correct merge order: submodules first, then meta
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  check-submodule-prs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Check for override label
+        id: check-override
+        run: |
+          # Check if PR has "override-submodule-check" label (admin override)
+          if gh pr view ${{ github.event.pull_request.number }} --json labels --jq '.labels[].name' | grep -q "override-submodule-check"; then
+            echo "override=true" >> $GITHUB_OUTPUT
+            echo "⚠️  OVERRIDE ENABLED: Submodule PR check will be skipped"
+            echo "This should only be used by admins when merge order doesn't matter"
+          else
+            echo "override=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Install gh CLI
+        if: steps.check-override.outputs.override != 'true'
+        run: |
+          if ! command -v gh &> /dev/null; then
+            curl -sL https://github.com/cli/cli/releases/download/v2.40.1/gh_2.40.1_linux_amd64.tar.gz -o /tmp/gh.tar.gz
+            tar -xzf /tmp/gh.tar.gz -C /tmp
+            sudo mv /tmp/gh_2.40.1_linux_amd64/bin/gh /usr/local/bin/
+          fi
+
+      - name: Check for open submodule PRs
+        if: steps.check-override.outputs.override != 'true'
+        id: check-prs
+        run: |
+          echo "Checking for open PRs in submodules..."
+          echo ""
+
+          OPEN_PRS=""
+          SUBMODULES_WITH_PRS=""
+
+          for submodule_path in tools/*/; do
+            if [ ! -d "$submodule_path" ]; then
+              continue
+            fi
+
+            submodule_name=$(basename "$submodule_path")
+
+            # Get the branch this submodule is on
+            cd "$submodule_path"
+            CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+            cd - > /dev/null
+
+            if [ -z "$CURRENT_BRANCH" ] || [ "$CURRENT_BRANCH" = "main" ]; then
+              echo "→ $submodule_name: on main branch (no PR expected)"
+              continue
+            fi
+
+            echo "→ $submodule_name: on branch '$CURRENT_BRANCH'"
+
+            # Check for open PRs from this branch
+            PR_COUNT=$(gh pr list --repo "tuulbelt/$submodule_name" --head "$CURRENT_BRANCH" --state open --json number --jq 'length' 2>/dev/null || echo "0")
+
+            if [ "$PR_COUNT" -gt 0 ]; then
+              PR_NUMBERS=$(gh pr list --repo "tuulbelt/$submodule_name" --head "$CURRENT_BRANCH" --state open --json number,title --jq '.[] | "#\(.number): \(.title)"' 2>/dev/null || echo "")
+              echo "  ⚠️  OPEN PR FOUND:"
+              echo "$PR_NUMBERS" | while read -r line; do
+                echo "     $line"
+              done
+              OPEN_PRS="${OPEN_PRS}${submodule_name}\n"
+              SUBMODULES_WITH_PRS="${SUBMODULES_WITH_PRS}- **${submodule_name}**: ${PR_NUMBERS}\n"
+            else
+              echo "  ✓ No open PRs"
+            fi
+            echo ""
+          done
+
+          if [ -n "$OPEN_PRS" ]; then
+            echo "has_open_prs=true" >> $GITHUB_OUTPUT
+            # Save for PR comment
+            echo "$SUBMODULES_WITH_PRS" > /tmp/open_prs.txt
+          else
+            echo "has_open_prs=false" >> $GITHUB_OUTPUT
+            echo "✅ All submodules ready - no open PRs found"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Block merge if submodule PRs are open
+        if: steps.check-override.outputs.override != 'true' && steps.check-prs.outputs.has_open_prs == 'true'
+        run: |
+          echo "❌ MERGE BLOCKED: Submodule PRs must be merged first"
+          echo ""
+          echo "The following submodules have open PRs:"
+          cat /tmp/open_prs.txt || echo "(unable to read PR list)"
+          echo ""
+          echo "📋 Correct merge order (see docs/CI_GUIDE.md):"
+          echo "1. Merge all submodule PRs first"
+          echo "2. Wait for create-demo.yml to complete in each submodule"
+          echo "3. Then merge this meta repo PR"
+          echo ""
+          echo "🔓 Admin override:"
+          echo "Add the 'override-submodule-check' label to this PR to bypass this check"
+          echo "(Only use if you know merge order doesn't matter for this change)"
+          exit 1
+
+      - name: Success - ready to merge
+        if: steps.check-override.outputs.override != 'true' && steps.check-prs.outputs.has_open_prs != 'true'
+        run: |
+          echo "✅ All submodules ready - no blocking PRs"
+          echo "This meta repo PR is safe to merge"
+
+      - name: Success - override enabled
+        if: steps.check-override.outputs.override == 'true'
+        run: |
+          echo "✅ Check bypassed via override label"
+          echo "⚠️  Admin override enabled - merge order check skipped"
