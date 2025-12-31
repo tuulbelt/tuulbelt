@@ -1,18 +1,33 @@
 #!/bin/bash
 # Display status of current web session
 # Shows tracked submodules, branches, commits, and PR status
+# Usage: ./show-status.sh [--no-color]
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/tracking-lib.sh"
 
-# Colors
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-NC='\033[0m'
+# Check for --no-color flag
+NO_COLOR=false
+if [ "$1" = "--no-color" ] || [ "$1" = "--plain" ]; then
+  NO_COLOR=true
+fi
+
+# Colors (disabled if --no-color)
+if [ "$NO_COLOR" = true ]; then
+  GREEN=''
+  YELLOW=''
+  BLUE=''
+  CYAN=''
+  NC=''
+else
+  GREEN='\033[0;32m'
+  YELLOW='\033[1;33m'
+  BLUE='\033[0;34m'
+  CYAN='\033[0;36m'
+  NC='\033[0m'
+fi
 
 # Check if in Web environment
 if [ "${CLAUDE_CODE_REMOTE}" != "true" ]; then
