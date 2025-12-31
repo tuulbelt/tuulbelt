@@ -23,12 +23,9 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
-      - name: Update VitePress docs to link to tool READMEs
+      - name: Sync demos from tool repos to VitePress
         run: |
-          echo "Updating VitePress documentation links..."
-          echo ""
-          echo "NOTE: Demos are maintained ONLY in standalone tool repositories."
-          echo "VitePress documentation links to tool READMEs for demo content."
+          echo "Syncing demo files from tool repositories to VitePress..."
           echo ""
 
           # Track if any changes were made
@@ -40,25 +37,76 @@ jobs:
 
             echo "→ $tool_name"
 
-            # VitePress index.md should link to tool README demo section
+            # 1. Copy demo.gif to VitePress public directory
+            TOOL_DEMO_GIF="$tool_path/docs/demo.gif"
+            VITEPRESS_DEMO_DIR="docs/public/$tool_name"
+            VITEPRESS_DEMO_GIF="$VITEPRESS_DEMO_DIR/demo.gif"
+
+            if [ -f "$TOOL_DEMO_GIF" ]; then
+              # Create directory if needed
+              mkdir -p "$VITEPRESS_DEMO_DIR"
+
+              # Copy demo.gif (check if it's not a placeholder)
+              DEMO_SIZE=$(stat -f%z "$TOOL_DEMO_GIF" 2>/dev/null || stat -c%s "$TOOL_DEMO_GIF")
+              if [ "$DEMO_SIZE" -gt 1000 ]; then
+                cp "$TOOL_DEMO_GIF" "$VITEPRESS_DEMO_GIF"
+                echo "  ✓ Copied demo.gif (${DEMO_SIZE} bytes)"
+                CHANGES_MADE=true
+              else
+                echo "  ⊘ Skipped demo.gif (placeholder, ${DEMO_SIZE} bytes)"
+              fi
+            else
+              echo "  ⊘ No demo.gif found in tool repo"
+            fi
+
+            # 2. Update asciinema URL in VitePress index.md
+            DEMO_URL_FILE="$tool_path/demo-url.txt"
             INDEX_FILE="docs/tools/$tool_name/index.md"
 
-            if [ -f "$INDEX_FILE" ]; then
-              # Ensure Demo section links to standalone repo README
-              TOOL_README_URL="https://github.com/tuulbelt/$tool_name#demo"
+            if [ -f "$DEMO_URL_FILE" ] && [ -f "$INDEX_FILE" ]; then
+              ASCIINEMA_URL=$(cat "$DEMO_URL_FILE" | tr -d '\n')
 
-              # Check if Demo section exists and update it
-              if grep -q "## Demo" "$INDEX_FILE"; then
-                echo "  ✓ Demo section found - VitePress links to tool README"
+              if [ -n "$ASCIINEMA_URL" ]; then
+                # Update the asciinema link in index.md
+                sed -i "s|https://asciinema.org/a/[a-zA-Z0-9]*|$ASCIINEMA_URL|g" "$INDEX_FILE"
+                echo "  ✓ Updated asciinema URL: $ASCIINEMA_URL"
+                CHANGES_MADE=true
               else
-                echo "  ⚠️  No Demo section in VitePress docs"
+                echo "  ⊘ Empty demo-url.txt"
               fi
+            else
+              echo "  ⊘ No demo-url.txt or index.md found"
             fi
 
             echo ""
           done
 
-          echo "✓ VitePress documentation structure verified"
           echo ""
-          echo "Demos are generated and maintained in each tool's repository."
-          echo "Users access demos via tool README links on GitHub."
+          if [ "$CHANGES_MADE" = true ]; then
+            echo "✓ Demo files synced to VitePress"
+            echo "CHANGES_MADE=true" >> $GITHUB_OUTPUT
+          else
+            echo "⊘ No changes needed"
+            echo "CHANGES_MADE=false" >> $GITHUB_OUTPUT
+          fi
+        id: sync-demos
+
+      - name: Commit and push synced demos
+        if: steps.sync-demos.outputs.CHANGES_MADE == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Stage changes
+          git add docs/public/*/demo.gif docs/tools/*/index.md
+
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "docs: sync demo recordings from tool repos to VitePress" \
+                       -m "Auto-synced by sync-demos-to-vitepress workflow." \
+                       -m "[skip ci]"
+            git push
+            echo "✓ Changes committed and pushed"
+          fi
