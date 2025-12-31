@@ -10,7 +10,7 @@ Config File Merger (`cfgmerge`) solves the common problem of combining configura
 
 **Language:** TypeScript
 
-**Repository:** [tuulbelt/tuulbelt/config-file-merger](https://github.com/tuulbelt/tuulbelt/tree/main/config-file-merger)
+**Repository:** [tuulbelt/config-file-merger](https://github.com/tuulbelt/config-file-merger)
 
 ## Features
 
@@ -38,8 +38,8 @@ Uses only Node.js built-ins. No `npm install` required in production.
 
 ```bash
 # Clone the repository
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/config-file-merger
+git clone https://github.com/tuulbelt/config-file-merger.git
+cd config-file-merger
 
 # Install dev dependencies (for TypeScript)
 npm install
@@ -80,7 +80,7 @@ See the tool in action:
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
     <strong>Try it online:</strong>
   </span>
-  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/config-file-merger" style="display: inline-block; vertical-align: middle;">
+  <a href="https://stackblitz.com/github/tuulbelt/config-file-merger" style="display: inline-block; vertical-align: middle;">
     <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
   </a>
 </div>

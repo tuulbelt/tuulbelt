@@ -10,7 +10,7 @@ Structured Error Handler provides a rich error format that preserves context as 
 
 **Language:** TypeScript
 
-**Repository:** [tuulbelt/tuulbelt/structured-error-handler](https://github.com/tuulbelt/tuulbelt/tree/main/structured-error-handler)
+**Repository:** [tuulbelt/structured-error-handler](https://github.com/tuulbelt/structured-error-handler)
 
 ## Features
 
@@ -42,8 +42,8 @@ Uses only Node.js standard library. No external packages required at runtime.
 
 ```bash
 # Clone the repository
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/structured-error-handler
+git clone https://github.com/tuulbelt/structured-error-handler.git
+cd structured-error-handler
 
 # Install dev dependencies
 npm install
@@ -127,8 +127,8 @@ See [`DOGFOODING_STRATEGY.md`](https://github.com/tuulbelt/tuulbelt/blob/main/st
 
 ```bash
 # Clone and setup
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/structured-error-handler
+git clone https://github.com/tuulbelt/structured-error-handler.git
+cd structured-error-handler
 npm install
 
 # Run CLI demo
@@ -145,7 +145,7 @@ serr parse '{"message":"test","context":[]}'
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
     <strong>Try it online:</strong>
   </span>
-  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/structured-error-handler" style="display: inline-block; vertical-align: middle;">
+  <a href="https://stackblitz.com/github/tuulbelt/structured-error-handler" style="display: inline-block; vertical-align: middle;">
     <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
   </a>
 </div>

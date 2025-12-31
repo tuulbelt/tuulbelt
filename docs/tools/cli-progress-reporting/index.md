@@ -10,7 +10,7 @@ CLI Progress Reporting provides a simple, reliable way to track progress across 
 
 **Language:** TypeScript
 
-**Repository:** [tuulbelt/tuulbelt/cli-progress-reporting](https://github.com/tuulbelt/tuulbelt/tree/main/cli-progress-reporting)
+**Repository:** [tuulbelt/cli-progress-reporting](https://github.com/tuulbelt/cli-progress-reporting)
 
 ## Features
 
@@ -36,8 +36,8 @@ Validated using Test Flakiness Detector with 100% pass rate and zero flaky tests
 
 ```bash
 # Clone the repository
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/cli-progress-reporting
+git clone https://github.com/tuulbelt/cli-progress-reporting.git
+cd cli-progress-reporting
 
 # Install dev dependencies (for TypeScript)
 npm install
@@ -82,7 +82,7 @@ See the tool in action:
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
     <strong>Try it online:</strong>
   </span>
-  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/cli-progress-reporting" style="display: inline-block; vertical-align: middle;">
+  <a href="https://stackblitz.com/github/tuulbelt/cli-progress-reporting" style="display: inline-block; vertical-align: middle;">
     <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
   </a>
 </div>

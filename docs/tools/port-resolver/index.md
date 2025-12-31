@@ -14,7 +14,7 @@ This tool uses [file-based-semaphore-ts](/tools/file-based-semaphore-ts/) as a *
 
 **Language:** TypeScript
 
-**Repository:** [tuulbelt/tuulbelt/port-resolver](https://github.com/tuulbelt/tuulbelt/tree/main/port-resolver)
+**Repository:** [tuulbelt/port-resolver](https://github.com/tuulbelt/port-resolver)
 
 ## Features
 
@@ -46,8 +46,8 @@ Uses only Node.js built-ins plus Tuulbelt tools (zero external dependencies main
 
 ```bash
 # Clone the repository
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/port-resolver
+git clone https://github.com/tuulbelt/port-resolver.git
+cd port-resolver
 
 # Install dev dependencies
 npm install

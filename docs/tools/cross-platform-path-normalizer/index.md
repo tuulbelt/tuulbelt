@@ -10,7 +10,7 @@ Cross-Platform Path Normalizer provides bidirectional path conversion between Wi
 
 **Language:** TypeScript
 
-**Repository:** [tuulbelt/tuulbelt/cross-platform-path-normalizer](https://github.com/tuulbelt/tuulbelt/tree/main/cross-platform-path-normalizer)
+**Repository:** [tuulbelt/cross-platform-path-normalizer](https://github.com/tuulbelt/cross-platform-path-normalizer)
 
 ## Features
 
@@ -42,8 +42,8 @@ Uses only Node.js built-ins. No `npm install` required in production.
 
 ```bash
 # Clone the repository
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/cross-platform-path-normalizer
+git clone https://github.com/tuulbelt/cross-platform-path-normalizer.git
+cd cross-platform-path-normalizer
 
 # Install dev dependencies (for TypeScript)
 npm install
@@ -111,7 +111,7 @@ See the tool in action:
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
     <strong>Try it online:</strong>
   </span>
-  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/cross-platform-path-normalizer" style="display: inline-block; vertical-align: middle;">
+  <a href="https://stackblitz.com/github/tuulbelt/cross-platform-path-normalizer" style="display: inline-block; vertical-align: middle;">
     <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
   </a>
 </div>

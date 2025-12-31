@@ -14,7 +14,7 @@ This is the first Tuulbelt tool to use another Tuulbelt tool as a **library depe
 
 **Language:** Rust
 
-**Repository:** [tuulbelt/tuulbelt/snapshot-comparison](https://github.com/tuulbelt/tuulbelt/tree/main/snapshot-comparison)
+**Repository:** [tuulbelt/snapshot-comparison](https://github.com/tuulbelt/snapshot-comparison)
 
 ## Features
 
@@ -45,8 +45,8 @@ Uses only Rust standard library plus output-diffing-utility (another zero-dep Tu
 
 ```bash
 # Clone the repository
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/snapshot-comparison
+git clone https://github.com/tuulbelt/snapshot-comparison.git
+cd snapshot-comparison
 
 # Build
 cargo build --release
@@ -73,7 +73,7 @@ See the tool in action:
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
     <strong>Try it online:</strong>
   </span>
-  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/snapshot-comparison?file=examples/basic.rs" style="display: inline-block; vertical-align: middle;">
+  <a href="https://stackblitz.com/github/tuulbelt/snapshot-comparison?file=examples/basic.rs" style="display: inline-block; vertical-align: middle;">
     <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
   </a>
 </div>

@@ -10,7 +10,7 @@ Test Flakiness Detector helps identify non-deterministic tests by running your t
 
 **Language:** TypeScript
 
-**Repository:** [tuulbelt/tuulbelt/test-flakiness-detector](https://github.com/tuulbelt/tuulbelt/tree/main/test-flakiness-detector)
+**Repository:** [tuulbelt/test-flakiness-detector](https://github.com/tuulbelt/test-flakiness-detector)
 
 ## Features
 
