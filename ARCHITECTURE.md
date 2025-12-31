@@ -53,9 +53,9 @@ tuulbelt (meta repo)
 │   │   ├── feature_request.md
 │   │   └── tool_proposal.md
 │   └── workflows/
-│       ├── meta-validation.yml  # Validates meta repo integrity
-│       ├── create-demos.yml     # Auto-generates demo recordings
-│       └── deploy-docs.yml      # Deploys VitePress to GitHub Pages
+│       ├── meta-validation.yml        # Validates meta repo integrity
+│       ├── sync-demos-to-vitepress.yml  # Syncs tool demos to GitHub Pages
+│       └── deploy-docs.yml            # Deploys VitePress to GitHub Pages
 └── LICENSE                      # MIT for all tools
 ```
 
@@ -106,7 +106,8 @@ Each tool is a standalone repository following this structure:
 ├── docs/
 │   └── demo.gif              # Demo recording (auto-generated)
 ├── scripts/
-│   └── dogfood-*.sh          # Dogfooding scripts
+│   ├── dogfood-*.sh          # Dogfooding scripts
+│   └── record-*-demo.sh      # Demo recording script
 ├── package.json              # (Node/TS only)
 ├── tsconfig.json             # (Node/TS only)
 ├── Cargo.toml                # (Rust only)
@@ -115,7 +116,8 @@ Each tool is a standalone repository following this structure:
 ├── LICENSE                    # MIT
 └── .github/
     └── workflows/
-        └── test.yml          # Runs tests on every push/PR
+        ├── test.yml          # Runs tests on every push/PR
+        └── create-demo.yml   # Auto-generates demo recordings
 ```
 
 ## Tech Stack

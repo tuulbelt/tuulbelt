@@ -11,6 +11,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - GitHub Actions Demo Workflows (2025-12-30)
+
+**Fixed YAML syntax errors across all 10 tool demo workflows:**
+- **Problem**: `tr -d '\n')` command broken across lines 96-97 in create-demo.yml
+- **Root Cause**: Previous sed fix attempt failed because lines were already split
+- **Solution**: Python script to detect and merge broken lines
+- **Files Fixed**: 8 workflows (cli-progress-reporting and test-flakiness-detector were already correct)
+- **Tools**: cross-platform-path-normalizer, file-based-semaphore, output-diffing-utility, structured-error-handler, config-file-merger, snapshot-comparison, file-based-semaphore-ts, port-resolver
+- **Result**: All workflows now pass YAML validation
+
+**Commits:**
+- `c81642b` - fix(ci): YAML syntax and manual trigger logic
+
+---
+
+### Changed - Documentation Cleanup (2025-12-30)
+
+**Archived completed migration and demo documentation:**
+- Moved 4 completed documents to `docs/archive/`:
+  - `DEMO_RECORDING_PLAN.md` → `demo-recording-plan-complete.md`
+  - `MIGRATION_TO_META_REPO.md` → `migration-to-meta-repo-complete.md`
+  - `MIGRATION_DECISIONS.md` → `migration-decisions.md`
+  - `CI_OPTIMIZATION_PROPOSAL.md` → `ci-optimization-proposal-2025-12-25.md`
+
+**Updated root README.md:**
+- Fixed all 10 tool links from monorepo paths to GitHub URLs
+- Changed pattern from `tools/<tool>/` to `https://github.com/tuulbelt/<tool>`
+- Updated docs links to use `#readme` and examples to use `tree/main/examples/`
+
+**Updated ARCHITECTURE.md:**
+- Documented distributed demo workflow architecture
+- Updated `.github/workflows/` section to show `sync-demos-to-vitepress.yml`
+- Added `scripts/record-*-demo.sh` to tool repository structure
+- Added `create-demo.yml` to tool workflows section
+
+**Updated CONTRIBUTING.md:**
+- Verified `/new-tool` command is primary workflow (already documented)
+
+**Status**: Documentation cleanup in progress, more updates pending
+
+---
+
 ### Added - Phase 2 Wave 2: test-port-resolver Migration Complete ✅ (2025-12-29)
 
 **FINAL Wave 2 tool with REQUIRED git URL dependency migrated to standalone repository! 🎉 WAVE 2 COMPLETE!**

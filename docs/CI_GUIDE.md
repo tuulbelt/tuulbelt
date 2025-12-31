@@ -1,6 +1,6 @@
 # CI/CD Guide
 
-**Last Updated:** 2025-12-28
+**Last Updated:** 2025-12-30
 
 This document is the single source of truth for all CI/CD workflows in Tuulbelt. Reference this when adding new tools, debugging CI issues, or optimizing workflows.
 
@@ -13,10 +13,10 @@ This document is the single source of truth for all CI/CD workflows in Tuulbelt.
 | `test-all-tools.yml` | push, PR, nightly, manual | Test all tools | ~4 min |
 | `update-dashboard.yml` | after test-all-tools, nightly, manual | Generate quality dashboard | ~30 sec |
 | `deploy-docs.yml` | push to docs/*, manual | Build & deploy VitePress | ~2 min |
-| `create-demos.yml` | push to tool/*, scripts/record-*, manual | Smart demo recording (only changed tools) | 0-5 min* |
-| `update-demos.yml` | push to test-flakiness-detector/src/*, weekly | Generate demo outputs | ~1 min |
+| `sync-demos-to-vitepress.yml` | push to tools/*/docs/demo.gif | Sync demos to VitePress | ~1 min |
 | `meta-validation.yml` | push to templates/docs, PR | Validate repo structure | ~1 min |
 | Per-tool `test.yml` | push/PR to tool's files | Test individual tool | ~1 min |
+| Per-tool `create-demo.yml` | push to tool/*, manual | Smart demo recording for specific tool | 0-2 min* |
 
 \* 0 min if no changes, ~2 min per tool that changed (75%+ time savings)
 
@@ -120,73 +120,27 @@ This document is the single source of truth for all CI/CD workflows in Tuulbelt.
 
 ---
 
-### create-demos.yml
+### sync-demos-to-vitepress.yml
 
-**Purpose:** Record asciinema demos and generate GIFs for tools with smart change detection.
-
-**Triggers:**
-- `push` to `main` with paths:
-  - `.github/workflows/create-demos.yml` (workflow itself)
-  - `scripts/record-*-demo.sh` (recording scripts)
-  - `test-flakiness-detector/**` (tool implementation)
-  - `cli-progress-reporting/**`
-  - `cross-platform-path-normalizer/**`
-  - `file-based-semaphore/**`
-  - `output-diffing-utility/**`
-- `workflow_dispatch`: Manual trigger (can specify single tool)
-
-**Features:**
-- ✅ **Smart detection** - Only records demos when needed
-- ✅ **Path filters** - Runs when specific tools change
-- ✅ **Change detection** - Checks 3 conditions:
-  1. Demo files missing (demo.cast, demo-url.txt, docs/demo.gif)
-  2. Tool implementation changed (any file in tool directory)
-  3. Recording script changed (scripts/record-*-demo.sh)
-- ✅ Concurrency controls
-- ✅ Caches `agg` binary (saves ~2 min)
-- ✅ Supports both TypeScript and Rust tools
-- ✅ Uploads to asciinema.org with proper titles
-- ✅ Optional API integration to make recordings public
-
-**Required Secret:** `ASCIINEMA_INSTALL_ID`
-**Optional Secret:** `ASCIINEMA_API_TOKEN` (to make recordings searchable on asciinema.org)
-
-**Efficiency:** 75-80% CI time savings - only records demos for tools that actually changed.
-
-**Adding New Tools:**
-
-When adding a new tool, you **must** add its path to the workflow:
-
-```yaml
-# Add to .github/workflows/create-demos.yml
-paths:
-  - 'new-tool-name/**'  # Your tool here
-```
-
-Then create a recording script at `scripts/record-new-tool-name-demo.sh` with proper title:
-
-```bash
-asciinema rec "demo.cast" --overwrite --title "New Tool Name - Tuulbelt" --command ...
-```
-
-See [QUALITY_CHECKLIST.md](QUALITY_CHECKLIST.md) for complete new tool checklist.
-
----
-
-### update-demos.yml
-
-**Purpose:** Generate example output files for test-flakiness-detector.
+**Purpose:** Sync demo recordings from standalone tool repositories to VitePress documentation.
 
 **Triggers:**
-- `push` to `main` with paths: `test-flakiness-detector/src/**`
-- `schedule`: Weekly on Sundays at 4 AM UTC
+- `push` to `main` with paths: `tools/*/docs/demo.gif`
 - `workflow_dispatch`: Manual trigger
 
 **Features:**
-- ✅ Path filters
 - ✅ Concurrency controls
+- ✅ Auto-detects changed demos from git submodules
+- ✅ Copies demo.gif files to VitePress public directory
+- ✅ Syncs demo-url.txt for asciinema links
 
-**Note:** This only handles test-flakiness-detector. Consider consolidating with `create-demos.yml` in the future.
+**Architecture:**
+- Each standalone tool repo has its own `.github/workflows/create-demo.yml`
+- Demos are generated in the tool repo and committed there
+- Meta repo's sync workflow pulls the demos when submodules update
+- VitePress serves demos from `docs/public/{tool-name}/demo.gif`
+
+**Note:** This replaced the centralized `create-demos.yml` approach. Each tool now manages its own demo recording.
 
 ---
 
@@ -214,7 +168,7 @@ See [QUALITY_CHECKLIST.md](QUALITY_CHECKLIST.md) for complete new tool checklist
 
 ## Per-Tool Workflows
 
-Each tool has its own `.github/workflows/test.yml` for standalone testing.
+Each standalone tool repository has its own CI workflows for testing and demo generation.
 
 ### TypeScript Tools
 
@@ -257,6 +211,50 @@ Each tool has its own `.github/workflows/test.yml` for standalone testing.
 5. `cargo clippy -- -D warnings` (fail fast)
 6. `cargo test`
 7. `cargo build --release`
+
+### Demo Recording Workflows (Per-Tool)
+
+**Location:** `{tool}/.github/workflows/create-demo.yml` (in standalone tool repo)
+
+**Triggers:**
+- `workflow_dispatch`: Manual trigger
+- `push` to `main` - auto-triggers if implementation changed
+
+**Features:**
+- ✅ **Smart detection** - Only records when needed (4 checks):
+  1. Did implementation change? (src/** or lib/**)
+  2. Is demo.gif missing or a placeholder?
+  3. Is demo-url.txt missing or empty?
+  4. Does README have placeholder demo link (#)?
+- ✅ Concurrency controls (cancel in-progress runs)
+- ✅ Installs asciinema and agg for recording
+- ✅ Updates README with asciinema URL
+- ✅ Commits demo files with `[skip ci]`
+
+**Organization Secret Required:** `ASCIINEMA_INSTALL_ID` (shared across all tool repos)
+
+**Steps:**
+1. Check if demo needs generation (4 conditions)
+2. If needed: Install dependencies, install asciinema, install agg
+3. Record demo using tool's `scripts/record-demo.sh`
+4. Update README with asciinema URL
+5. Commit demo files (demo.cast, docs/demo.gif, demo-url.txt, README.md)
+
+**Key Behavior:**
+- Commits include `[skip ci]` to prevent infinite loops
+- Only runs when changes warrant new demo
+- Standalone - each tool controls its own demo recording
+- Meta repo syncs demos via sync-demos-to-vitepress.yml
+
+**Adding to New Tools:**
+
+When creating a new tool, the `/new-tool` command automatically:
+1. Creates `.github/workflows/create-demo.yml` in tool repo
+2. Creates `scripts/record-demo.sh` for demo commands
+3. Creates placeholder `docs/demo.gif` (1x1 transparent)
+4. Adds tool to meta repo's sync workflow
+
+See [QUALITY_CHECKLIST.md](QUALITY_CHECKLIST.md#new-tool-completion-checklist) for complete requirements.
 
 ---
 

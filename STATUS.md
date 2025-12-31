@@ -1,9 +1,9 @@
 # Tuulbelt Project Status
 
-**Last Updated:** 2025-12-29
-**Current Phase:** Meta Repository Migration - COMPLETE ✅✅✅
-**Active Session:** test-port-resolver migration complete - Wave 2 FINAL tool with REQUIRED git URL dependency
-**Progress:** 10/33 Tools Complete (30%) | Migration: Phase 0 ✅ Phase 1 ✅ Phase 2 Wave 1: 7/7 (100%) ✅ Wave 2: 3/3 (100%) ✅
+**Last Updated:** 2025-12-30
+**Current Phase:** Documentation Cleanup & Repository Maintenance
+**Active Session:** Fixed YAML workflows + archiving completed docs + updating documentation for git submodule architecture
+**Progress:** 10/33 Tools Complete (30%) | Migration: COMPLETE ✅ | Demo Recording: COMPLETE ✅ | Documentation: IN PROGRESS ⏳
 
 ---
 
@@ -191,6 +191,15 @@
 | CI/CD | ✅ Ready | GitHub Actions configured |
 
 ## Recent Activity
+
+**2025-12-30** - Documentation Cleanup & YAML Workflow Fixes ✅ (IN PROGRESS)
+- **YAML Fixes**: Fixed create-demo.yml syntax errors across all 10 tools (lines 96-97 tr command)
+- **Documentation Archival**: Moved 4 completed documents to docs/archive/
+- **README Updates**: Fixed all 10 tool links from monorepo paths to GitHub URLs
+- **ARCHITECTURE.md**: Documented distributed demo workflow architecture
+- **CONTRIBUTING.md**: Verified (already has /new-tool workflow documented)
+- **Tracking Docs**: Updated HANDOFF.md, CHANGELOG.md, STATUS.md
+- **Pending**: CI_GUIDE.md update, TOOL_DASHBOARD.md verification, commit/push
 
 **2025-12-29** - Meta Repo Migration: Created /migrate-tool Automation ✅
 - **Command Created**: `.claude/commands/migrate-tool.md` (289 lines)
