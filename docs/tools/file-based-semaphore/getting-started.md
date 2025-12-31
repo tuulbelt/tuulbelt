@@ -13,8 +13,8 @@ This guide walks you through installing and setting up File-Based Semaphore.
 
 ```bash
 # Clone the repository
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/file-based-semaphore
+git clone https://github.com/tuulbelt/file-based-semaphore.git
+cd file-based-semaphore
 
 # Build release binary
 cargo build --release
@@ -29,7 +29,7 @@ Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-file-based-semaphore = { git = "https://github.com/tuulbelt/tuulbelt.git", path = "file-based-semaphore" }
+file-based-semaphore = { git = "https://github.com/tuulbelt/file-based-semaphore.git" }
 ```
 
 ## Quick Verification

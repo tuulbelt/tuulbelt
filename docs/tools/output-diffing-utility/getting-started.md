@@ -8,8 +8,8 @@ Get up and running with Output Diffing Utility in minutes.
 
 ```bash
 # Clone the monorepo
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/output-diffing-utility
+git clone https://github.com/tuulbelt/output-diffing-utility.git
+cd output-diffing-utility
 
 # Build release binary
 cargo build --release

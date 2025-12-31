@@ -77,7 +77,7 @@ jobs:
       - name: Check for flakiness
         run: |
           cd test-flakiness-detector
-          if grep -q '"isFlaky": true' flakiness-report.json; then
+          if [ $(jq '.flakyTests | length' flakiness-report.json) -gt 0 ]; then
             echo "❌ Flaky tests detected!"
             exit 1
           fi
@@ -93,7 +93,7 @@ jobs:
 
 ### Pre-commit Hook
 
-``bash
+```bash
 #!/bin/bash
 # .git/hooks/pre-commit
 
@@ -102,7 +102,7 @@ echo "🔍 Checking for flaky tests..."
 cd test-flakiness-detector
 flaky --test "npm test" --runs 10
 
-if grep -q '"isFlaky": true' flakiness-report.json; then
+if [ $(jq '.flakyTests | length' flakiness-report.json) -gt 0 ]; then
   echo "❌ Cannot commit: Flaky tests detected!"
   echo "Run 'cat test-flakiness-detector/flakiness-report.json' for details"
   exit 1
@@ -124,10 +124,15 @@ async function checkFlakiness() {
     runs: 20
   })
 
-  if (result.summary.isFlaky) {
+  if (result.success && result.flakyTests.length > 0) {
     console.error(`⚠️  Flaky tests detected!`)
-    console.error(`Failure rate: ${result.summary.failureRate}%`)
-    console.error(`Failed ${result.summary.failedRuns} out of ${result.summary.totalRuns} runs`)
+    result.flakyTests.forEach(test => {
+      console.error(`  ${test.testName}: ${test.failureRate.toFixed(1)}% failure rate`)
+    })
+    console.error(`Failed ${result.failedRuns} out of ${result.totalRuns} runs`)
+    process.exit(1)
+  } else if (!result.success) {
+    console.error(`Error: ${result.error}`)
     process.exit(1)
   }
 
@@ -150,21 +155,19 @@ async function analyzeFlakiness() {
     verbose: true
   })
 
-  // Calculate statistics
-  const durations = result.runs.map(r => r.duration)
-  const avg = durations.reduce((a, b) => a + b, 0) / durations.length
-  const std = Math.sqrt(
-    durations.reduce((sq, n) => sq + Math.pow(n - avg, 2), 0) / durations.length
-  )
-
+  // Analyze flaky tests
   const report = {
-    ...result,
-    statistics: {
-      averageDuration: Math.round(avg),
-      standardDeviation: Math.round(std),
-      minDuration: Math.min(...durations),
-      maxDuration: Math.max(...durations)
-    }
+    success: result.success,
+    totalRuns: result.totalRuns,
+    passedRuns: result.passedRuns,
+    failedRuns: result.failedRuns,
+    flakyTestCount: result.flakyTests.length,
+    flakyTests: result.flakyTests.map(test => ({
+      name: test.testName,
+      failureRate: `${test.failureRate.toFixed(2)}%`,
+      passed: test.passed,
+      failed: test.failed
+    }))
   }
 
   // Save detailed report
@@ -193,9 +196,9 @@ test('test suite should be deterministic', async () => {
   })
 
   assert.strictEqual(
-    result.summary.isFlaky,
-    false,
-    `Tests are flaky! ${result.summary.failedRuns}/${result.summary.totalRuns} runs failed`
+    result.flakyTests.length,
+    0,
+    `Tests are flaky! ${result.failedRuns}/${result.totalRuns} runs failed`
   )
 }, { timeout: 600000 }) // 10 minute timeout for slow suites
 ```
@@ -205,44 +208,48 @@ test('test suite should be deterministic', async () => {
 ### Reading the JSON Report
 
 ```bash
-# Check overall flakiness
-cat flakiness-report.json | jq '.summary'
+# Check if flaky tests detected
+cat flakiness-report.json | jq '.flakyTests | length'
+
+# List all flaky tests
+cat flakiness-report.json | jq '.flakyTests[]'
 
 # List all failed runs
 cat flakiness-report.json | jq '.runs[] | select(.success == false)'
 
-# Calculate failure rate
-cat flakiness-report.json | jq '.summary.failureRate'
-
-# Get run durations
-cat flakiness-report.json | jq '.runs[].duration'
+# Get overall statistics
+cat flakiness-report.json | jq '{totalRuns, passedRuns, failedRuns, flakyTestCount: (.flakyTests | length)}'
 ```
 
 ### Example Report
 
 ```json
 {
-  "summary": {
-    "totalRuns": 10,
-    "passedRuns": 7,
-    "failedRuns": 3,
-    "isFlaky": true,
-    "failureRate": 30
-  },
+  "success": true,
+  "totalRuns": 10,
+  "passedRuns": 7,
+  "failedRuns": 3,
+  "flakyTests": [
+    {
+      "testName": "Test Suite",
+      "passed": 7,
+      "failed": 3,
+      "totalRuns": 10,
+      "failureRate": 30.0
+    }
+  ],
   "runs": [
     {
-      "runNumber": 1,
       "success": true,
       "exitCode": 0,
-      "duration": 1234,
-      "timestamp": "2025-01-01T00:00:00.000Z"
+      "stdout": "...",
+      "stderr": ""
     },
     {
-      "runNumber": 2,
       "success": false,
       "exitCode": 1,
-      "duration": 1456,
-      "timestamp": "2025-01-01T00:00:01.500Z"
+      "stdout": "...",
+      "stderr": "Error: test failed"
     }
     // ... more runs
   ]

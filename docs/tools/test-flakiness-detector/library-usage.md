@@ -8,7 +8,7 @@ Since this is a standalone tool with zero runtime dependencies, you can either:
 
 1. **Clone and import directly:**
 ```bash
-git clone https://github.com/tuulbelt/tuulbelt.git
+git clone https://github.com/tuulbelt/test-flakiness-detector.git
 ```
 
 2. **Copy the source files** into your project
@@ -24,23 +24,28 @@ const result = await detectFlakiness({
   verbose: false
 })
 
-if (result.summary.isFlaky) {
-  console.log(`⚠️  Flaky tests detected! Failure rate: ${result.summary.failureRate}%`)
-} else {
+if (result.success && result.flakyTests.length > 0) {
+  console.log(`⚠️  Flaky tests detected!`)
+  result.flakyTests.forEach(test => {
+    console.log(`  ${test.testName}: ${test.failureRate.toFixed(1)}% failure rate`)
+  })
+} else if (result.success) {
   console.log('✓ No flakiness detected')
+} else {
+  console.error(`Error: ${result.error}`)
 }
 ```
 
 ## API Reference
 
-### `detectFlakiness(options: DetectionOptions): Promise<DetectionResult>`
+### `detectFlakiness(options: Config): Promise<FlakinessReport>`
 
 Main function to detect test flakiness.
 
 **Parameters:**
 
 ```typescript
-interface DetectionOptions {
+interface Config {
   testCommand: string    // Test command to run (required)
   runs?: number          // Number of runs (default: 10, max: 1000)
   verbose?: boolean      // Enable verbose output (default: false)
@@ -50,23 +55,29 @@ interface DetectionOptions {
 **Returns:**
 
 ```typescript
-interface DetectionResult {
-  summary: {
-    totalRuns: number
-    passedRuns: number
-    failedRuns: number
-    isFlaky: boolean
-    failureRate: number  // Percentage (0-100)
-  }
-  runs: Array<{
-    runNumber: number
-    success: boolean
-    exitCode: number
-    duration: number     // Milliseconds
-    timestamp: string    // ISO 8601
-    stdout?: string      // Only if verbose
-    stderr?: string      // Only if verbose
-  }>
+interface FlakinessReport {
+  success: boolean              // Whether detection completed successfully
+  totalRuns: number            // Total number of test runs
+  passedRuns: number           // Number of runs that passed
+  failedRuns: number           // Number of runs that failed
+  flakyTests: TestFlakiness[]  // List of flaky tests detected
+  runs: TestRunResult[]        // All test run results
+  error?: string               // Error message if detection failed
+}
+
+interface TestFlakiness {
+  testName: string      // Name of the flaky test
+  passed: number        // Number of times it passed
+  failed: number        // Number of times it failed
+  totalRuns: number     // Total runs for this test
+  failureRate: number   // Failure rate percentage (0-100)
+}
+
+interface TestRunResult {
+  success: boolean   // Whether this run passed
+  exitCode: number   // Exit code from test command
+  stdout: string     // Standard output
+  stderr: string     // Standard error
 }
 ```
 
@@ -82,9 +93,9 @@ const result = await detectFlakiness({
 })
 
 // Access detailed run information
-result.runs.forEach(run => {
+result.runs.forEach((run, index) => {
   if (!run.success) {
-    console.log(`Run ${run.runNumber} failed:`)
+    console.log(`Run ${index + 1} failed:`)
     console.log(run.stderr)
   }
 })
@@ -124,9 +135,9 @@ test('CI test suite should not be flaky', async () => {
   })
 
   assert.strictEqual(
-    result.summary.isFlaky,
-    false,
-    `Tests are flaky! Failure rate: ${result.summary.failureRate}%`
+    result.flakyTests.length,
+    0,
+    `Tests are flaky! ${result.flakyTests.length} flaky tests detected`
   )
 })
 ```
@@ -139,18 +150,21 @@ const result = await detectFlakiness({
   runs: 100
 })
 
-// Calculate statistics
-const avgDuration = result.runs.reduce((sum, r) => sum + r.duration, 0) / result.runs.length
-const maxDuration = Math.max(...result.runs.map(r => r.duration))
-const minDuration = Math.min(...result.runs.map(r => r.duration))
+// Analyze flaky tests
+if (result.flakyTests.length > 0) {
+  console.log(`Found ${result.flakyTests.length} flaky tests:`)
 
-console.log(`Average duration: ${avgDuration}ms`)
-console.log(`Max duration: ${maxDuration}ms`)
-console.log(`Min duration: ${minDuration}ms`)
+  result.flakyTests.forEach(test => {
+    console.log(`\n${test.testName}:`)
+    console.log(`  Passed: ${test.passed}/${test.totalRuns}`)
+    console.log(`  Failed: ${test.failed}/${test.totalRuns}`)
+    console.log(`  Failure rate: ${test.failureRate.toFixed(2)}%`)
+  })
+}
 
 // Find failure patterns
 const failures = result.runs.filter(r => !r.success)
-console.log(`Failures occurred at runs: ${failures.map(r => r.runNumber).join(', ')}`)
+console.log(`\nTotal failures: ${failures.length} out of ${result.totalRuns} runs`)
 ```
 
 ## Type Definitions
@@ -159,11 +173,11 @@ The tool provides full TypeScript type definitions. Import them as needed:
 
 ```typescript
 import type {
-  DetectionOptions,
-  DetectionResult,
-  RunResult,
-  Summary
-} from './src/types.ts'
+  Config,
+  FlakinessReport,
+  TestFlakiness,
+  TestRunResult
+} from './src/index.ts'
 ```
 
 ## See Also

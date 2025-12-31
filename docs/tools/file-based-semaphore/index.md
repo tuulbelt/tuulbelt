@@ -10,7 +10,7 @@ File-Based Semaphore provides cross-platform process coordination using lock fil
 
 **Language:** Rust
 
-**Repository:** [tuulbelt/tuulbelt/file-based-semaphore](https://github.com/tuulbelt/tuulbelt/tree/main/file-based-semaphore)
+**Repository:** [tuulbelt/file-based-semaphore](https://github.com/tuulbelt/file-based-semaphore)
 
 ## Features
 
@@ -42,8 +42,8 @@ Uses only Rust standard library. No external crates required at runtime.
 
 ```bash
 # Clone the repository
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/file-based-semaphore
+git clone https://github.com/tuulbelt/file-based-semaphore.git
+cd file-based-semaphore
 
 # Build
 cargo build --release
@@ -165,8 +165,8 @@ See [`DOGFOODING_STRATEGY.md`](https://github.com/tuulbelt/tuulbelt/blob/main/fi
 
 ```bash
 # Clone and build
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/file-based-semaphore
+git clone https://github.com/tuulbelt/file-based-semaphore.git
+cd file-based-semaphore
 cargo build --release
 
 # Run examples
@@ -182,7 +182,7 @@ cargo run --example stale_recovery
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
     <strong>Try it online:</strong>
   </span>
-  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/file-based-semaphore" style="display: inline-block; vertical-align: middle;">
+  <a href="https://stackblitz.com/github/tuulbelt/file-based-semaphore" style="display: inline-block; vertical-align: middle;">
     <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
   </a>
 </div>

@@ -10,7 +10,7 @@ File-Based Semaphore (TypeScript) provides a simple, reliable way to coordinate 
 
 **Language:** TypeScript
 
-**Repository:** [tuulbelt/tuulbelt/file-based-semaphore-ts](https://github.com/tuulbelt/tuulbelt/tree/main/file-based-semaphore-ts)
+**Repository:** [tuulbelt/file-based-semaphore-ts](https://github.com/tuulbelt/file-based-semaphore-ts)
 
 ::: tip Compatible with Rust Implementation
 This tool uses the same lock file format as the [Rust File-Based Semaphore](/tools/file-based-semaphore/), enabling cross-language process coordination.
@@ -40,8 +40,8 @@ Path traversal prevention, symlink resolution, tag sanitization, and cryptograph
 
 ```bash
 # Clone the repository
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/file-based-semaphore-ts
+git clone https://github.com/tuulbelt/file-based-semaphore-ts.git
+cd file-based-semaphore-ts
 
 # Install dev dependencies (for TypeScript)
 npm install
@@ -86,7 +86,7 @@ See the tool in action:
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
     <strong>Try it online:</strong>
   </span>
-  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/file-based-semaphore-ts" style="display: inline-block; vertical-align: middle;">
+  <a href="https://stackblitz.com/github/tuulbelt/file-based-semaphore-ts" style="display: inline-block; vertical-align: middle;">
     <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
   </a>
 </div>

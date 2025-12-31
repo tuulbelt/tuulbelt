@@ -56,6 +56,17 @@ find "$LOGS_DIR" -name "bash-audit-*.log" -type f -mtime +90 -delete 2>/dev/null
 if [ -d "$TUULBELT_ROOT/.git" ]; then
   cd "$TUULBELT_ROOT" || exit 0
 
+  # Web workflow: Auto-commit tracking file if it changed
+  if [ "${CLAUDE_CODE_REMOTE}" = "true" ] && [ -f ".claude/web-session-tracking.json" ]; then
+    if ! git diff --quiet .claude/web-session-tracking.json 2>/dev/null; then
+      echo "Auto-committing Web session tracking file..."
+      git add .claude/web-session-tracking.json
+      git commit -m "chore: update Web session tracking on session stop" 2>/dev/null || true
+      echo "✓ Tracking file committed"
+      echo ""
+    fi
+  fi
+
   # Check if there are uncommitted changes
   if ! git diff --quiet || ! git diff --cached --quiet; then
     echo "Uncommitted changes detected in Tuulbelt repository."
@@ -66,6 +77,14 @@ if [ -d "$TUULBELT_ROOT/.git" ]; then
     echo "Consider committing these changes:"
     echo "  git add ."
     echo "  git commit -m 'chore: work in progress from session'"
+    echo ""
+  fi
+
+  # Web workflow: Show final session status
+  if [ "${CLAUDE_CODE_REMOTE}" = "true" ] && [ -f "scripts/web/show-status.sh" ]; then
+    echo "Final Web session status:"
+    echo ""
+    ./scripts/web/show-status.sh --no-color 2>/dev/null || true
     echo ""
   fi
 fi

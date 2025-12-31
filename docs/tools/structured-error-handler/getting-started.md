@@ -12,8 +12,8 @@ Get up and running with Structured Error Handler in minutes.
 Clone the Tuulbelt repository:
 
 ```bash
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/structured-error-handler
+git clone https://github.com/tuulbelt/structured-error-handler.git
+cd structured-error-handler
 ```
 
 Install dev dependencies and link CLI:

@@ -10,7 +10,7 @@ Test Flakiness Detector helps identify non-deterministic tests by running your t
 
 **Language:** TypeScript
 
-**Repository:** [tuulbelt/tuulbelt/test-flakiness-detector](https://github.com/tuulbelt/tuulbelt/tree/main/test-flakiness-detector)
+**Repository:** [tuulbelt/test-flakiness-detector](https://github.com/tuulbelt/test-flakiness-detector)
 
 ## Features
 
@@ -34,8 +34,8 @@ Uses only Node.js built-ins. No `npm install` required in production.
 
 ```bash
 # Clone the repository
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/test-flakiness-detector
+git clone https://github.com/tuulbelt/test-flakiness-detector.git
+cd test-flakiness-detector
 
 # Install dev dependencies (for TypeScript)
 npm install
@@ -76,7 +76,7 @@ See the tool in action:
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
     <strong>Try it online:</strong>
   </span>
-  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/test-flakiness-detector" style="display: inline-block; vertical-align: middle;">
+  <a href="https://stackblitz.com/github/tuulbelt/test-flakiness-detector" style="display: inline-block; vertical-align: middle;">
     <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
   </a>
 </div>

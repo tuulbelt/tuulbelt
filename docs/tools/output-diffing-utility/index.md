@@ -10,7 +10,7 @@ Output Diffing Utility provides advanced file comparison beyond simple byte-leve
 
 **Language:** Rust
 
-**Repository:** [tuulbelt/tuulbelt/output-diffing-utility](https://github.com/tuulbelt/tuulbelt/tree/main/output-diffing-utility)
+**Repository:** [tuulbelt/output-diffing-utility](https://github.com/tuulbelt/output-diffing-utility)
 
 ## Features
 
@@ -46,8 +46,8 @@ Uses only Rust standard library. No external crates required at runtime.
 
 ```bash
 # Clone the repository
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/output-diffing-utility
+git clone https://github.com/tuulbelt/output-diffing-utility.git
+cd output-diffing-utility
 
 # Build
 cargo build --release
@@ -160,8 +160,8 @@ See [`DOGFOODING_STRATEGY.md`](https://github.com/tuulbelt/tuulbelt/blob/main/ou
 
 ```bash
 # Clone and build
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/output-diffing-utility
+git clone https://github.com/tuulbelt/output-diffing-utility.git
+cd output-diffing-utility
 cargo build --release
 
 # Run examples
@@ -182,7 +182,7 @@ cargo run --release --format summary old.json new.json
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
     <strong>Try it online:</strong>
   </span>
-  <a href="https://stackblitz.com/github/tuulbelt/tuulbelt/tree/main/output-diffing-utility" style="display: inline-block; vertical-align: middle;">
+  <a href="https://stackblitz.com/github/tuulbelt/output-diffing-utility" style="display: inline-block; vertical-align: middle;">
     <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" style="vertical-align: middle;">
   </a>
 </div>

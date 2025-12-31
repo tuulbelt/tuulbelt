@@ -7,8 +7,8 @@ Get up and running with Test Flakiness Detector in minutes.
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/test-flakiness-detector
+git clone https://github.com/tuulbelt/test-flakiness-detector.git
+cd test-flakiness-detector
 ```
 
 ### Install Dev Dependencies

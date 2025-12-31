@@ -10,6 +10,7 @@ This document is the single source of truth for all CI/CD workflows in Tuulbelt.
 
 | Workflow | Trigger | Purpose | Runtime |
 |----------|---------|---------|---------|
+| `submodule-pr-guard.yml` | PR to main | **Block merge if submodule PRs open** | ~30 sec |
 | `test-all-tools.yml` | push, PR, nightly, manual | Test all tools | ~4 min |
 | `update-dashboard.yml` | after test-all-tools, nightly, manual | Generate quality dashboard | ~30 sec |
 | `deploy-docs.yml` | push to docs/*, manual | Build & deploy VitePress | ~2 min |
@@ -50,6 +51,36 @@ This document is the single source of truth for all CI/CD workflows in Tuulbelt.
 ---
 
 ## Root Workflows (`.github/workflows/`)
+
+### submodule-pr-guard.yml
+
+**Purpose:** Enforce correct merge order - block meta repo PR if submodule PRs are open.
+
+**Triggers:**
+- `pull_request` to `main` branch (opened, synchronize, reopened, labeled, unlabeled)
+
+**Features:**
+- ✅ Scans all submodules for open PRs on the same branch
+- ✅ Blocks merge if any submodule has open PRs
+- ✅ Admin override via `override-submodule-check` label
+- ✅ Clear error messages with merge order instructions
+
+**How It Works:**
+1. Checks if PR has `override-submodule-check` label (skip if present)
+2. For each submodule, gets current branch
+3. Queries GitHub API for open PRs from that branch
+4. Fails status check if any open PRs found
+5. Provides instructions on correct merge order
+
+**Branch Protection:**
+- Make this a **required status check** in branch protection rules
+- See [BRANCH_PROTECTION_SETUP.md](BRANCH_PROTECTION_SETUP.md) for configuration
+
+**Admin Override:**
+- Add `override-submodule-check` label to bypass (use with caution)
+- Only repository admins should have access to this label
+
+---
 
 ### test-all-tools.yml
 
@@ -258,6 +289,140 @@ See [QUALITY_CHECKLIST.md](QUALITY_CHECKLIST.md#new-tool-completion-checklist) f
 
 ---
 
+## PR Merge Coordination
+
+**CRITICAL: When you have changes in BOTH meta repo AND submodules, merge order matters.**
+
+### The Dependency Chain
+
+```
+Submodule PR merge → create-demo.yml → demo.gif generated
+                          ↓
+Meta PR merge → sync-demos-to-vitepress.yml → demos synced to VitePress
+                          ↓
+                deploy-docs.yml → VitePress deployed
+```
+
+### **Rule: ALWAYS Merge Submodule PRs First** ✅
+
+**This rule is enforced by the `submodule-pr-guard` workflow (see [BRANCH_PROTECTION_SETUP.md](BRANCH_PROTECTION_SETUP.md)).**
+
+**Why:**
+1. Submodule `create-demo.yml` generates `docs/demo.gif` on merge
+2. Meta repo's `sync-demos-to-vitepress.yml` expects demos to exist
+3. Merging meta first → syncs stale/missing demos → no automatic retry
+
+**Branch Protection:**
+- Meta repo PRs are blocked if submodule PRs are open
+- Required status check: `check-submodule-prs`
+- Admin override available via `override-submodule-check` label
+
+### **Correct Workflow**
+
+When working with Web workflow (`/web-status` shows multiple PRs):
+
+```bash
+# Step 1: Merge ALL submodule PRs
+# For each submodule with a PR:
+1. Go to https://github.com/tuulbelt/{submodule}/pull/{number}
+2. Review and merge PR
+3. Wait for create-demo.yml to complete (~2 min)
+4. Verify demo.gif was generated (check commits)
+
+# Example order:
+✓ Merge tuulbelt/config-file-merger#1
+✓ Merge tuulbelt/cross-platform-path-normalizer#1
+✓ Merge tuulbelt/structured-error-handler#1
+
+# Step 2: Update meta repo submodule references (if needed)
+cd /home/user/tuulbelt
+git submodule update --remote --merge
+git add tools/config-file-merger tools/cross-platform-path-normalizer tools/structured-error-handler
+git commit -m "chore: update submodule references after PR merges"
+git push
+
+# Step 3: Merge meta repo PR (if exists)
+# Go to https://github.com/tuulbelt/tuulbelt/pull/{number}
+# Merge PR
+# → sync-demos-to-vitepress.yml runs automatically
+# → deploy-docs.yml runs automatically
+```
+
+### **What If You Merge Wrong Order?**
+
+**Scenario: Meta PR merged before submodule PRs ❌**
+
+```
+Meta PR merged
+  → sync-demos-to-vitepress.yml runs
+  → Tries to sync demos from submodules
+  → Submodules still on old branch (PRs not merged)
+  → Syncs OLD or MISSING demos
+  ↓
+Submodule PRs merged later
+  → create-demo.yml generates NEW demos
+  → But meta repo doesn't know to re-sync
+  ↓
+❌ VitePress shows stale demos
+❌ Manual fix needed: workflow_dispatch on sync-demos-to-vitepress.yml
+```
+
+**Recovery:**
+```bash
+# Manually trigger demo sync after fixing submodule PRs
+gh workflow run sync-demos-to-vitepress.yml --repo tuulbelt/tuulbelt
+```
+
+### **Web Workflow Integration**
+
+When using `/web-status` command, it shows PR numbers for each submodule:
+
+```
+┌────────────────────────────────────┬─────────┬─────────┬──────────┬───────────┐
+│ Submodule                          │ Changes │ Commits │ PR       │ Merged    │
+├────────────────────────────────────┼─────────┼─────────┼──────────┼───────────┤
+│ config-file-merger                 │ Yes     │ 1       │ #1       │ No        │
+│ cross-platform-path-normalizer     │ Yes     │ 1       │ #1       │ No        │
+│ structured-error-handler           │ Yes     │ 1       │ #1       │ No        │
+└────────────────────────────────────┴─────────┴─────────┴──────────┴───────────┘
+```
+
+**Merge checklist:**
+1. Click each PR link (tuulbelt/{submodule}/pull/{number})
+2. Merge all submodule PRs (wait for demos to generate)
+3. Update meta repo submodule refs if needed
+4. Merge meta repo PR (if exists)
+
+### **Why This Matters**
+
+**Submodule-first merge ensures:**
+- ✅ Demos are fresh and reflect merged code
+- ✅ VitePress documentation is accurate
+- ✅ No manual workflow dispatch needed
+- ✅ Clean CI pipeline execution
+
+**Meta-first merge causes:**
+- ❌ Stale demos in VitePress
+- ❌ Broken demo links
+- ❌ Extra manual steps to fix
+- ❌ Confusion about which version is deployed
+
+### **Exception: Meta-Only Changes**
+
+If changes are ONLY in meta repo (no submodule changes):
+- No coordination needed
+- Merge meta PR normally
+- Workflows trigger independently
+
+### **Exception: Submodule-Only Changes**
+
+If changes are ONLY in submodules (meta repo not touched):
+- Merge submodule PRs normally
+- Demos generate automatically
+- Update meta repo submodule refs separately (if desired)
+
+---
+
 ## Standards & Patterns
 
 ### All Workflows Must Have
@@ -399,6 +564,7 @@ When adding a new tool, ensure:
 
 ## Related Documentation
 
+- [Branch Protection Setup](./BRANCH_PROTECTION_SETUP.md) - **Configure merge guards and status checks**
 - [CI Optimization Proposal](./archive/ci-optimization-proposal-2025-12-25.md) - Detailed analysis (archived - implemented)
 - [Quality Checklist](./QUALITY_CHECKLIST.md) - Pre-commit checks
 - [Testing Standards](./testing-standards.md) - Test requirements
@@ -409,6 +575,8 @@ When adding a new tool, ensure:
 
 | Date | Change |
 |------|--------|
+| 2025-12-31 | Added submodule-pr-guard workflow (enforces merge order with branch protection) |
+| 2025-12-31 | Added PR Merge Coordination section (critical merge order documentation) |
 | 2025-12-28 | Removed dogfood-validation.yml (dogfood is local-only) |
 | 2025-12-25 | Phase 2: Artifact-based dashboard |
 | 2025-12-25 | Phase 1: Path filters, concurrency, caching |

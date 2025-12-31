@@ -8,7 +8,7 @@ Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-file-based-semaphore = { git = "https://github.com/tuulbelt/tuulbelt.git", path = "file-based-semaphore" }
+file-based-semaphore = { git = "https://github.com/tuulbelt/file-based-semaphore.git" }
 ```
 
 ## Basic Usage

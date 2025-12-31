@@ -7,8 +7,8 @@ Get up and running with CLI Progress Reporting in minutes.
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/cli-progress-reporting
+git clone https://github.com/tuulbelt/cli-progress-reporting.git
+cd cli-progress-reporting
 ```
 
 ### Install Dev Dependencies

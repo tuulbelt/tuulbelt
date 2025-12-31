@@ -13,8 +13,8 @@ Get up and running with Snapshot Comparison in minutes.
 
 ```bash
 # Clone the repository
-git clone https://github.com/tuulbelt/tuulbelt.git
-cd tuulbelt/snapshot-comparison
+git clone https://github.com/tuulbelt/snapshot-comparison.git
+cd snapshot-comparison
 
 # Build release binary
 cargo build --release
