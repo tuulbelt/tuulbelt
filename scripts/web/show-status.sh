@@ -103,14 +103,53 @@ echo -e "${CYAN}├────────────────────�
 # Display each submodule
 REPO_ROOT=$(get_repo_root)
 while IFS= read -r submodule; do
-  # Get submodule info from tracking
-  SUBMOD_INFO=$(jq ".sessions[\"$CURRENT_META_BRANCH\"].submodules[\"$submodule\"]" \
-    "$REPO_ROOT/$TRACKING_FILE")
+  # Get REAL-TIME status for each submodule
+  SUBMOD_PATH="$REPO_ROOT/$submodule"
 
-  HAS_CHANGES=$(echo "$SUBMOD_INFO" | jq -r '.has_changes')
-  COMMITS_COUNT=$(echo "$SUBMOD_INFO" | jq -r '.commits_count')
-  PR_NUMBER=$(echo "$SUBMOD_INFO" | jq -r '.pr_number')
-  PR_MERGED=$(echo "$SUBMOD_INFO" | jq -r '.pr_merged')
+  # Get current branch and count commits vs main (real-time)
+  COMMITS_COUNT="0"
+  CURRENT_BRANCH=""
+  if [ -d "$SUBMOD_PATH" ]; then
+    cd "$SUBMOD_PATH"
+    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+    if [ -n "$CURRENT_BRANCH" ] && [ "$CURRENT_BRANCH" != "main" ]; then
+      # Count commits on current branch that aren't on main
+      COMMITS_COUNT=$(git rev-list --count main.."$CURRENT_BRANCH" 2>/dev/null || echo "0")
+    fi
+    cd "$REPO_ROOT"
+  fi
+
+  # Check for ANY changes (real-time)
+  # "Changes" = Yes if branch has commits vs main OR uncommitted changes
+  HAS_CHANGES="false"
+  if [ -d "$SUBMOD_PATH" ]; then
+    cd "$SUBMOD_PATH"
+    # Check for uncommitted changes in working tree
+    if ! git diff --quiet 2>/dev/null || ! git diff --cached --quiet 2>/dev/null; then
+      HAS_CHANGES="true"
+    # Or check if branch has commits compared to main
+    elif [ "$COMMITS_COUNT" != "0" ] && [ "$COMMITS_COUNT" != "null" ]; then
+      HAS_CHANGES="true"
+    fi
+    cd "$REPO_ROOT"
+  fi
+
+  # Check for PR using gh CLI (real-time)
+  PR_NUMBER="null"
+  PR_MERGED="false"
+  if [ -d "$SUBMOD_PATH" ] && [ -n "$CURRENT_BRANCH" ] && [ "$CURRENT_BRANCH" != "main" ]; then
+    cd "$SUBMOD_PATH"
+    # Get PR number for current branch
+    PR_INFO=$(gh pr list --head "$CURRENT_BRANCH" --json number,state --jq '.[0]' 2>/dev/null || echo "null")
+    if [ "$PR_INFO" != "null" ] && [ -n "$PR_INFO" ]; then
+      PR_NUMBER=$(echo "$PR_INFO" | jq -r '.number' 2>/dev/null || echo "null")
+      PR_STATE=$(echo "$PR_INFO" | jq -r '.state' 2>/dev/null || echo "OPEN")
+      if [ "$PR_STATE" = "MERGED" ]; then
+        PR_MERGED="true"
+      fi
+    fi
+    cd "$REPO_ROOT"
+  fi
 
   # Format output
   CHANGES_STR=$([ "$HAS_CHANGES" = "true" ] && echo -e "${YELLOW}Yes${NC}" || echo "No")
