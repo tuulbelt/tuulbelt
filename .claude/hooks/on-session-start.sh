@@ -29,6 +29,11 @@ if ! command -v gh &> /dev/null; then
   echo ""
 fi
 
+# Install hooks in meta repo and all submodules (runs on every session start)
+if [ -f "./scripts/workflow/install-hooks.sh" ]; then
+  ./scripts/workflow/install-hooks.sh > /dev/null 2>&1
+fi
+
 # Only run in Web environment
 if [ "${CLAUDE_CODE_REMOTE}" = "true" ]; then
   echo "🌐 Claude Code Web detected - initializing Web workflow..."
