@@ -121,10 +121,15 @@ None currently. Badge is functional and mostly aligned, just not pixel-perfect.
 - Updated all tool workflows to trigger only on implementation changes
 - Template workflows updated for new tools: `src/**` (and `lib/**` for TypeScript)
 - VitePress documentation structure: links to tool READMEs instead of embedding demos
+- Created `scripts/trigger-all-demos.sh` for manual workflow dispatch across all tools
+
+**Initial Demo Generation:**
+Demos were 43-byte placeholders after migration. Workflows trigger on source code changes only, so updating workflow files didn't trigger demo generation. All 10 demos triggered manually on 2025-12-30 using `scripts/trigger-all-demos.sh`.
 
 **Commits:**
 - Initial migration: `454cb43` - "feat(ci): migrate to standalone demo workflows"
-- Final architecture: TBD - "feat(ci): implement standalone demo architecture (Option 1)"
+- Final architecture: `335801e` - "feat(ci): add standalone demo workflow"
+- Trigger script: `61f4804` - "chore: add script to trigger demo generation for all tools"
 
 ---
 
