@@ -74,7 +74,7 @@ See the tool in action:
 
 ![Config File Merger Demo](/config-file-merger/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/HJNCrUNfaunQanceFM7k2SZiQ)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/ZgKMRt30wIjBSsCxNHDg7jjdB)**
 
 <div style="margin: 20px 0;">
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">

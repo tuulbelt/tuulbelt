@@ -121,7 +121,7 @@ See [`DOGFOODING_STRATEGY.md`](https://github.com/tuulbelt/tuulbelt/blob/main/st
 
 ![Structured Error Handler Demo](/structured-error-handler/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/7hm7wlStFTTF6YXvQFezAuyij)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/0itnmL1VW1DHHO8CKI9NbKiEq)**
 
 ### Try it Locally
 

@@ -78,7 +78,7 @@ See the tool in action:
 
 ![Port Resolver Demo](/port-resolver/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/J7RtxRt5ZqqWMeF5HAnKEwKG8)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/oSg2LQQuexnWqmNSdZpuCL6pX)**
 
 <div style="margin: 20px 0;">
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">

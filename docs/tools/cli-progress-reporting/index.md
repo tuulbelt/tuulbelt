@@ -76,7 +76,7 @@ See the tool in action:
 
 ![CLI Progress Demo](/cli-progress-reporting/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/WaPDFysLjo0hYy1TZvK4MwgZH)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/z38c0oBzISlUNlruqyi1HKbVY)**
 
 <div style="margin: 20px 0;">
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">

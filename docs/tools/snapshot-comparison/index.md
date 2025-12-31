@@ -67,7 +67,7 @@ See the tool in action:
 
 ![Snapshot Comparison Demo](/snapshot-comparison/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/G8C4XUr8rnI7UR1544kwI6ZCn)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/bMuH0jaX9RHOkhtXzJOxh8K8y)**
 
 <div style="margin: 20px 0;">
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
