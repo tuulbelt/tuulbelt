@@ -46,16 +46,108 @@
 
 ---
 
+## Implementation Best Practices
+
+**Lessons learned during Phase 1 and Phase 2 implementation:**
+
+### Best Practice 1: Directory Context in Loops (CRITICAL)
+
+**Problem:** Bash pipes (`|`) create subshells where `cd` commands don't persist between iterations. This causes scripts to run commands from the wrong directory.
+
+**Example Bug (Fixed in Phase 2):**
+```bash
+# WRONG - cd doesn't persist in pipe subshell
+git submodule foreach --quiet 'echo $path' | while read -r submodule; do
+  cd "$REPO_ROOT/$submodule"  # Works for first iteration only
+  git rev-parse --abbrev-ref HEAD  # Subsequent iterations run from wrong directory
+done
+```
+
+**Solution Pattern:**
+```bash
+# CORRECT - Use process substitution and explicit directory management
+REPO_ROOT="$(git rev-parse --show-toplevel)"  # Define base directory
+cd "$REPO_ROOT"  # Start from known location
+
+while read -r submodule; do
+  echo "Processing: $submodule"
+
+  # Change to target directory
+  cd "$REPO_ROOT/$submodule"
+
+  # Run commands in target directory
+  BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+  # CRITICAL: Return to base directory for next iteration
+  cd "$REPO_ROOT"
+
+done < <(git submodule foreach --quiet 'echo $path')
+```
+
+**Key Principles:**
+1. **Define base directory once** at script start: `REPO_ROOT="$(git rev-parse --show-toplevel)"`
+2. **Use process substitution** instead of pipes: `< <(command)` not `command | while`
+3. **Return to base directory** after each iteration: `cd "$REPO_ROOT"`
+4. **Return in all code paths**: Add `cd "$REPO_ROOT"` before `continue`, after function calls, etc.
+
+**Apply This Pattern To:**
+- `create-cli-prs.sh` (Phase 2.5) ✅ Fixed
+- `cleanup-cli-workspace.sh` (Phase 2.6) - if iterating submodules
+- `show-cli-status.sh` (Phase 2.4) - when checking submodule state
+- `regenerate-tracking.sh` (Phase 2.7) - when scanning worktrees
+- Any future script that iterates through git repositories
+
+### Best Practice 2: Resilient Error Handling
+
+**Problem:** Scripts using `set -e` exit immediately on any error, potentially leaving state inconsistent.
+
+**Solution Pattern:**
+```bash
+# Try primary approach, fall back on failure
+if ! git worktree remove "$WORKTREE_DIR" --force; then
+  echo "  ⚠ Primary method failed, attempting fallback..."
+  rm -rf "$WORKTREE_DIR"
+  git worktree prune
+  echo "  ✓ Cleaned up via fallback"
+fi
+```
+
+**Apply This Pattern To:**
+- File operations that might fail (worktree removal, branch deletion)
+- Network operations (git push, gh CLI commands)
+- Cleanup operations (should always succeed, even if partially broken)
+
+### Best Practice 3: Detect and Handle Stale State
+
+**Problem:** Git state can become inconsistent (worktree deleted manually, tracking file references nonexistent paths).
+
+**Solution Pattern:**
+```bash
+# Check if directory exists but git still tracks it (stale entry)
+if [ ! -d "$WORKTREE_DIR" ] && git worktree list | grep -q "$WORKTREE_DIR"; then
+  echo "Pruning stale worktree entry..."
+  git worktree prune
+fi
+```
+
+**Apply This Pattern To:**
+- Worktree operations
+- Branch reference checks
+- Tracking file validation
+
+---
+
 ## Table of Contents
 
 1. [Overview](#overview)
 2. [Core Principles](#core-principles)
 3. [Architecture](#architecture)
 4. [Implementation Phases](#implementation-phases)
-5. [Session Lifecycle](#session-lifecycle)
-6. [Edge Cases](#edge-cases)
-7. [Success Criteria](#success-criteria)
-8. [Migration Path](#migration-path)
+5. [Implementation Best Practices](#implementation-best-practices)
+6. [Session Lifecycle](#session-lifecycle)
+7. [Edge Cases](#edge-cases)
+8. [Success Criteria](#success-criteria)
+9. [Migration Path](#migration-path)
 
 ---
 
