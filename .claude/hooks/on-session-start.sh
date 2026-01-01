@@ -34,14 +34,14 @@ if [ -f "./scripts/workflow/install-hooks.sh" ]; then
   ./scripts/workflow/install-hooks.sh > /dev/null 2>&1
 fi
 
-# Only run in Web environment
+# Environment-specific setup
 if [ "${CLAUDE_CODE_REMOTE}" = "true" ]; then
-  echo "🌐 Claude Code Web detected - initializing Web workflow..."
+  # Web: Resume session
+  echo "🌐 Claude Code Web detected - resuming Web session..."
   echo ""
 
-  # Run web-setup (sets up credentials, tracking, etc.)
-  if [ -f "scripts/web/init-session.sh" ]; then
-    ./scripts/web/init-session.sh
+  if [ -f "scripts/web/resume-session.sh" ]; then
+    ./scripts/web/resume-session.sh
     echo ""
 
     # Show current status
@@ -50,15 +50,30 @@ if [ "${CLAUDE_CODE_REMOTE}" = "true" ]; then
       echo ""
       ./scripts/web/show-status.sh
       echo ""
-      echo "Tip: Run /web-status anytime to see current state"
+      echo "Tip: Run /work-status anytime to see current state"
     fi
   else
     echo "⚠️  Web scripts not found - workflow not initialized"
     echo "This might be an older checkout. Pull latest changes."
   fi
 else
-  # CLI environment - no special setup needed
-  echo "💻 Claude Code CLI detected - using standard workflow"
+  # CLI: Show workspace status
+  echo "💻 Claude Code CLI detected - checking workspace status..."
+  echo ""
+
+  if [ -f ".claude/cli-workspace-tracking.json" ]; then
+    if [ -f "scripts/cli/show-cli-status.sh" ]; then
+      echo "Active workspaces:"
+      echo ""
+      ./scripts/cli/show-cli-status.sh
+      echo ""
+      echo "Tip: Run /work-status anytime to see current state"
+    fi
+  else
+    echo "No active workspaces found."
+    echo ""
+    echo "Create a workspace with: /work-init feature/my-feature"
+  fi
 fi
 
 echo ""
