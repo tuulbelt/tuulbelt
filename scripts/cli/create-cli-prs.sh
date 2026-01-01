@@ -81,12 +81,15 @@ fi
 if [ "$MODE" = "all" ] || [ "$MODE" = "--submodules" ]; then
   echo "Submodules:"
 
+  # Use current directory (worktree location) for submodule paths
+  WORK_DIR="$(pwd)"
+
   # Get list of submodules
   git submodule foreach --quiet 'echo $path' | while read -r submodule; do
     echo "  $submodule"
 
     # Check if submodule has the same branch
-    cd "$REPO_ROOT/$submodule"
+    cd "$WORK_DIR/$submodule"
     SUBMODULE_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
 
     if [ "$SUBMODULE_BRANCH" = "main" ]; then
@@ -98,7 +101,7 @@ if [ "$MODE" = "all" ] || [ "$MODE" = "--submodules" ]; then
     # Extract repo name from submodule path
     REPO_NAME=$(basename "$submodule")
 
-    create_pr "$REPO_ROOT/$submodule" "$SUBMODULE_BRANCH" "$REPO_NAME"
+    create_pr "$WORK_DIR/$submodule" "$SUBMODULE_BRANCH" "$REPO_NAME"
   done
 fi
 
