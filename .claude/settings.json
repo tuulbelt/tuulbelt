@@ -58,6 +58,16 @@
             "timeout": 15000
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/post-bash-audit.sh",
+            "timeout": 5000
+          }
+        ]
       }
     ],
     "Stop": [
