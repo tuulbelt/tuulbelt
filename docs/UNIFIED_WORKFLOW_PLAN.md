@@ -48,11 +48,13 @@
   - Web: Calls `save-session.sh` to persist state
   - CLI: No cleanup needed (worktrees persist)
 
-### Phase 5: Documentation - NOT STARTED
-- [ ] 5.1: FEATURE_BRANCH_WORKFLOW.md
-- [ ] 5.2: CLI_WORKFLOW.md
-- [ ] 5.3: WEB_WORKFLOW.md
-- [ ] 5.4: Update CLAUDE.md
+### Phase 5: Documentation - ✅ COMPLETE
+- [x] 5.1: FEATURE_BRANCH_WORKFLOW.md ✅ Created (core principles, mental model, best practices)
+- [x] 5.2: CLI_WORKFLOW.md ✅ Created (worktree architecture, commands, examples)
+- [x] 5.3: WEB_WORKFLOW.md ✅ Created (session architecture, commands, examples)
+- [x] 5.4: WORKFLOW_TROUBLESHOOTING.md ✅ Created (edge cases, recovery procedures)
+- [x] 5.5: WEB_WORKFLOW_INTEGRATION.md archived ✅ Moved to docs/archive/
+- [x] 5.6: CLAUDE.md updated ✅ Added workflow documentation references
 
 ### Phase 6: Testing & Validation - NOT STARTED
 - [ ] Test matrix execution

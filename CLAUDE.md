@@ -143,6 +143,12 @@ See @README.md for detailed architecture and @PRINCIPLES.md for design philosoph
 - @docs/security-guidelines.md - Security checklist
 - @.claude/rules/code-style.md - Code examples and patterns
 
+**Development Workflow:**
+- @docs/FEATURE_BRANCH_WORKFLOW.md - **Feature branch principles (universal)**
+- @docs/CLI_WORKFLOW.md - **CLI worktree-based development**
+- @docs/WEB_WORKFLOW.md - **Web session-based development**
+- @docs/WORKFLOW_TROUBLESHOOTING.md - **Common issues and solutions**
+
 **Session Continuity:**
 - @.claude/HANDOFF.md - **Session handoff (session → session continuity)**
 - @.claude/NEXT_TASKS.md - **Task backlog and priorities**
