@@ -49,8 +49,21 @@ fi
 if [ -d "$WORKTREE_DIR" ]; then
   echo "Removing worktree..."
   cd "$REPO_ROOT"
-  git worktree remove "$WORKTREE_DIR" --force
-  echo "  ✓ Removed: $WORKTREE_DIR"
+  if git worktree remove "$WORKTREE_DIR" --force; then
+    echo "  ✓ Removed: $WORKTREE_DIR"
+  else
+    echo "  ⚠ Could not remove worktree, attempting manual cleanup..."
+    rm -rf "$WORKTREE_DIR"
+    git worktree prune
+    echo "  ✓ Cleaned up: $WORKTREE_DIR"
+  fi
+  echo ""
+elif git worktree list | grep -q "$WORKTREE_DIR"; then
+  # Worktree directory doesn't exist but git still tracks it (stale entry)
+  echo "Pruning stale worktree entry..."
+  cd "$REPO_ROOT"
+  git worktree prune
+  echo "  ✓ Pruned stale worktree entry"
   echo ""
 fi
 
