@@ -85,7 +85,8 @@ if [ "$MODE" = "all" ] || [ "$MODE" = "--submodules" ]; then
   WORK_DIR="$(pwd)"
 
   # Get list of submodules
-  git submodule foreach --quiet 'echo $path' | while read -r submodule; do
+  # Use process substitution instead of pipe to avoid subshell issues
+  while read -r submodule; do
     echo "  $submodule"
 
     # Check if submodule has the same branch
@@ -102,7 +103,7 @@ if [ "$MODE" = "all" ] || [ "$MODE" = "--submodules" ]; then
     REPO_NAME=$(basename "$submodule")
 
     create_pr "$WORK_DIR/$submodule" "$SUBMODULE_BRANCH" "$REPO_NAME"
-  done
+  done < <(git submodule foreach --quiet 'echo $path')
 fi
 
 echo "✓ Pull request workflow completed!"
