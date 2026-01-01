@@ -29,11 +29,11 @@
 
 **Documentation Archived:** Workflow implementation docs moved to `docs/archive/2026-01-01-workflow-complete/`
 
-**Next:** New Tool Development - Component Prop Validator
+**Next:** New Tool Development - Property Validator
 
 ---
 
-## 🎯 IMMEDIATE PRIORITY: Component Prop Validator
+## 🎯 IMMEDIATE PRIORITY: Property Validator
 
 **Status:** Ready to Start
 **Language:** TypeScript
@@ -42,25 +42,26 @@
 
 ### Tool Specification
 
-**Purpose:** Runtime prop validation for React/Vue components with TypeScript-first design
+**Purpose:** Runtime type validation with TypeScript inference
 
 **Key Features:**
-- Runtime validation of component props
-- TypeScript type inference and integration
-- Clear validation error messages
+- Runtime validation for any JavaScript/TypeScript object
+- Schema-based validation with TypeScript type inference
+- Clear validation error messages with path information
 - Zero external dependencies
-- Framework-agnostic core (works with React, Vue, Svelte)
+- Works anywhere: API responses, user input, config files, function arguments, component props
 
 **Use Cases:**
-- Validate props at component boundaries
-- Catch type mismatches in development
-- Generate helpful error messages for developers
-- Optional production validation with minimal overhead
+- Validate API responses at boundaries
+- Type-check user input and configuration
+- Runtime validation for function arguments
+- Validate data from external sources
+- Type-safe data transformation pipelines
 
 **Implementation Approach:**
-- Use `/new-tool component-prop-validator typescript propval` to scaffold
+- Use `/new-tool property-validator typescript propval` to scaffold
 - Follow quality checklist before commit
-- Dogfood with test-flakiness-detector and other tools
+- Dogfood with test-flakiness-detector
 - Target: 80%+ test coverage, zero runtime dependencies
 
 ---
