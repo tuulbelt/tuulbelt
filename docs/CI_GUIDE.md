@@ -74,7 +74,7 @@ This document is the single source of truth for all CI/CD workflows in Tuulbelt.
 
 **Branch Protection:**
 - Make this a **required status check** in branch protection rules
-- See [BRANCH_PROTECTION_SETUP.md](BRANCH_PROTECTION_SETUP.md) for configuration
+- See [BRANCH_PROTECTION_SETUP.md](archive/2026-01-01-workflow-complete/BRANCH_PROTECTION_SETUP.md) for configuration
 
 **Admin Override:**
 - Add `override-submodule-check` label to bypass (use with caution)
@@ -305,7 +305,7 @@ Meta PR merge → sync-demos-to-vitepress.yml → demos synced to VitePress
 
 ### **Rule: ALWAYS Merge Submodule PRs First** ✅
 
-**This rule is enforced by the `submodule-pr-guard` workflow (see [BRANCH_PROTECTION_SETUP.md](BRANCH_PROTECTION_SETUP.md)).**
+**This rule is enforced by the `submodule-pr-guard` workflow (see [BRANCH_PROTECTION_SETUP.md](archive/2026-01-01-workflow-complete/BRANCH_PROTECTION_SETUP.md)).**
 
 **Why:**
 1. Submodule `create-demo.yml` generates `docs/demo.gif` on merge
@@ -564,7 +564,7 @@ When adding a new tool, ensure:
 
 ## Related Documentation
 
-- [Branch Protection Setup](./BRANCH_PROTECTION_SETUP.md) - **Configure merge guards and status checks**
+- [Branch Protection Setup](./archive/2026-01-01-workflow-complete/BRANCH_PROTECTION_SETUP.md) - **Configure merge guards and status checks**
 - [CI Optimization Proposal](./archive/ci-optimization-proposal-2025-12-25.md) - Detailed analysis (archived - implemented)
 - [Quality Checklist](./QUALITY_CHECKLIST.md) - Pre-commit checks
 - [Testing Standards](./testing-standards.md) - Test requirements
