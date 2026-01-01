@@ -12,6 +12,30 @@
     ]
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/on-session-start.sh",
+            "timeout": 60000
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/on-session-end.sh",
+            "timeout": 30000
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Write",
