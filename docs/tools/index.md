@@ -2,7 +2,7 @@
 
 Tuulbelt provides a curated collection of focused, zero-dependency tools for modern software development.
 
-## Completed Tools (10/33)
+## Completed Tools (11/33)
 
 ### Test Flakiness Detector
 
@@ -202,6 +202,26 @@ Concurrent port allocation for any application. Avoid port conflicts in tests, s
 - Zero runtime dependencies
 
 [View Documentation →](/tools/port-resolver/)
+
+---
+
+### Property Validator
+
+**Status:** <img src="/icons/wrench.svg" class="inline-icon" alt=""> In Development (v0.1.0)
+**Language:** TypeScript
+**Tests:** 32 tests (expanding)
+
+Runtime type validation with TypeScript inference. Validate data from any source with schema-based validation and graceful error handling.
+
+**Features:**
+- Schema-based validation with TypeScript type inference
+- Graceful error handling with result types (no exceptions)
+- Clear error messages with exact paths to invalid fields
+- Works anywhere: API responses, config files, user input, function arguments
+- Framework-agnostic (not tied to React, Vue, etc.)
+- Zero runtime dependencies
+
+[View Documentation →](/tools/property-validator/)
 
 ---
 

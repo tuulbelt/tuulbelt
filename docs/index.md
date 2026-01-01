@@ -80,7 +80,7 @@ Cross-platform file-based semaphore for process coordination with stale lock det
 
 </div>
 
-[**View All 10 Tools →**](/tools/)
+[**View All 11 Tools →**](/tools/)
 
 ### More Tools
 
@@ -194,6 +194,20 @@ Concurrent port allocation for any application - avoid port conflicts in tests, 
 
 </div>
 
+<div class="tool-card">
+
+#### [Property Validator](/tools/property-validator/) <span class="library-badge"><img src="/icons/wrench.svg" class="badge-icon" alt=""><span>In Development</span></span>
+
+Runtime type validation with TypeScript inference - validate data from any source with graceful error handling.
+
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Schema-based validation with automatic type inference
+- <img src="/icons/alert-circle.svg" class="inline-icon" alt=""> Result types (no exceptions) for resilient apps
+- <img src="/icons/target.svg" class="inline-icon" alt=""> Framework-agnostic - works anywhere (API, config, props, args)
+
+[Get Started →](/tools/property-validator/getting-started)
+
+</div>
+
 > <img src="/icons/sparkles.svg" class="inline-icon" alt=""> **Tool Composition**: Snapshot Comparison is the first tool to use library-level composition ([PRINCIPLES.md Exception 2](/guide/principles#zero-external-dependencies)). It imports output-diffing-utility as a path dependency, demonstrating how Tuulbelt tools can build on each other while maintaining zero external dependencies.
 
 ## Progress
@@ -206,15 +220,16 @@ Concurrent port allocation for any application - avoid port conflicts in tests, 
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> File-Based Semaphore (Rust)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Output Diffing Utility (Rust)
 
-**Phase 2: Started** — 5 of 28
+**Phase 2: Started** — 6 of 28
 
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Structured Error Handler (TypeScript)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Config File Merger (TypeScript)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Snapshot Comparison (Rust)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> File-Based Semaphore (TypeScript)
-- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Port Resolver (TypeScript) ✨ NEW
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Port Resolver (TypeScript)
+- <img src="/icons/wrench.svg" class="inline-icon" alt=""> Property Validator (TypeScript) ✨ IN DEVELOPMENT
 
-**Overall Progress:** 10 of 33 tools (30%)
+**Overall Progress:** 11 of 33 tools (33%)
 
 ## Quick Start
 
