@@ -1,4 +1,13 @@
 {
   "version": "1.0",
-  "sessions": {}
+  "sessions": {
+    "claude/resume-work-wZtNr": {
+      "created_at": "2026-01-01T07:19:32Z",
+      "updated_at": "2026-01-01T07:19:32Z",
+      "session_id": "05b7802a-6a67-494c-b008-96f6a9443d64",
+      "environment": "web",
+      "status": "active",
+      "submodules": {}
+    }
+  }
 }
