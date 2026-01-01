@@ -3,7 +3,7 @@
   "sessions": {
     "claude/resume-work-wZtNr": {
       "created_at": "2026-01-01T07:19:32Z",
-      "updated_at": "2026-01-01T08:15:00Z",
+      "updated_at": "2026-01-01T20:10:00Z",
       "session_id": "05b7802a-6a67-494c-b008-96f6a9443d64",
       "environment": "web",
       "status": "active",
@@ -12,8 +12,8 @@
           "branch": "claude/resume-work-wZtNr",
           "created_at": "2026-01-01T08:00:00Z",
           "has_changes": true,
-          "commits_count": 2,
-          "last_commit_sha": "7333977",
+          "commits_count": 8,
+          "last_commit_sha": "df3fab4",
           "pr_url": null,
           "pr_number": null,
           "pr_state": null,
