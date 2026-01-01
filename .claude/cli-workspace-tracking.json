@@ -1,5 +1,25 @@
 {
   "version": "1.0",
   "environment": "cli",
-  "worktrees": {}
+  "worktrees": {
+    "/Users/kofi/_/tuulbelt/.claude/worktrees/feature-test-submodule-tracking": {
+      "meta_branch": "feature/test-submodule-tracking",
+      "created_at": "2026-01-01T00:07:44Z",
+      "updated_at": "2026-01-01T00:07:44Z",
+      "status": "active",
+      "submodules": {
+        "tools/cli-progress-reporting": {
+          "branch": "feature/test-submodule-tracking",
+          "created_at": "2026-01-01T00:10:35Z",
+          "has_changes": true,
+          "commits_count": 1,
+          "last_commit_sha": null,
+          "pr_url": null,
+          "pr_number": null,
+          "pr_state": null,
+          "pr_merged": false
+        }
+      }
+    }
+  }
 }

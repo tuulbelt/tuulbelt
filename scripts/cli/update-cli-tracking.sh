@@ -3,9 +3,46 @@
 
 set -e
 
-ACTION="$1"  # add, update, remove
+ACTION="$1"  # add, update, remove, update-submodule
 WORKTREE_DIR="$2"
 FEATURE_NAME="$3"
+
+# Validate required parameters for each action
+case "$ACTION" in
+  add)
+    if [ -z "$WORKTREE_DIR" ] || [ -z "$FEATURE_NAME" ]; then
+      echo "Error: 'add' requires <worktree-dir> <feature-name>"
+      echo "Usage: $0 add <worktree-dir> <feature-name>"
+      exit 1
+    fi
+    ;;
+  update)
+    if [ -z "$WORKTREE_DIR" ]; then
+      echo "Error: 'update' requires <worktree-dir>"
+      echo "Usage: $0 update <worktree-dir>"
+      exit 1
+    fi
+    ;;
+  remove)
+    if [ -z "$WORKTREE_DIR" ]; then
+      echo "Error: 'remove' requires <worktree-dir>"
+      echo "Usage: $0 remove <worktree-dir>"
+      exit 1
+    fi
+    ;;
+  update-submodule)
+    if [ -z "$WORKTREE_DIR" ] || [ -z "$4" ] || [ -z "$5" ]; then
+      echo "Error: 'update-submodule' requires <worktree-dir> <feature-name> <submodule-path> <submodule-branch>"
+      echo "Usage: $0 update-submodule <worktree-dir> <feature-name> <submodule-path> <submodule-branch> [has-changes] [commits-count]"
+      exit 1
+    fi
+    ;;
+  *)
+    echo "Error: Unknown action '$ACTION'"
+    echo "Usage: $0 <add|update|remove|update-submodule> <worktree-dir> [args...]"
+    exit 1
+    ;;
+esac
 
 # Get main repo root (works from worktrees too)
 COMMON_GIT_DIR="$(git rev-parse --git-common-dir)"
@@ -96,7 +133,4 @@ elif [ "$ACTION" = "update-submodule" ]; then
 
   mv "$TRACKING_FILE.tmp" "$TRACKING_FILE"
 
-else
-  echo "Usage: update-cli-tracking.sh <add|update|remove|update-submodule> <worktree-dir> <feature-name> [submodule-args...]"
-  exit 1
 fi
