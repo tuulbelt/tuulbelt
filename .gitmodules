@@ -28,3 +28,6 @@
 [submodule "tools/port-resolver"]
 	path = tools/port-resolver
 	url = https://github.com/tuulbelt/port-resolver.git
+[submodule "tools/property-validator"]
+	path = tools/property-validator
+	url = https://github.com/tuulbelt/property-validator.git

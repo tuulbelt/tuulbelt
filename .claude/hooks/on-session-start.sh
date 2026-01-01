@@ -31,7 +31,14 @@ fi
 
 # Install hooks in meta repo and all submodules (runs on every session start)
 if [ -f "./scripts/workflow/install-hooks.sh" ]; then
-  ./scripts/workflow/install-hooks.sh > /dev/null 2>&1
+  echo "🔧 Installing git hooks..."
+  if ./scripts/workflow/install-hooks.sh; then
+    echo "✓ Hooks installed successfully"
+  else
+    echo "❌ WARNING: Hook installation failed! Direct commits to main may not be blocked."
+    echo "This is a critical issue - please report it."
+  fi
+  echo ""
 fi
 
 # Environment-specific setup

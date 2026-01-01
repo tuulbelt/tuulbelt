@@ -29,7 +29,8 @@ export default defineConfig({
             { text: 'Config File Merger', link: '/tools/config-file-merger/' },
             { text: 'Snapshot Comparison', link: '/tools/snapshot-comparison/' },
             { text: 'File-Based Semaphore (TS)', link: '/tools/file-based-semaphore-ts/' },
-            { text: 'Port Resolver', link: '/tools/port-resolver/' }
+            { text: 'Port Resolver', link: '/tools/port-resolver/' },
+            { text: 'Property Validator', link: '/tools/property-validator/' }
           ]
         }
       ],
@@ -184,6 +185,19 @@ export default defineConfig({
             { text: 'Library Usage', link: '/tools/port-resolver/library-usage' },
             { text: 'Examples', link: '/tools/port-resolver/examples' },
             { text: 'API Reference', link: '/tools/port-resolver/api-reference' }
+          ]
+        }
+      ],
+      '/tools/property-validator/': [
+        {
+          text: 'Property Validator',
+          items: [
+            { text: 'Overview', link: '/tools/property-validator/' },
+            { text: 'Getting Started', link: '/tools/property-validator/getting-started' },
+            { text: 'CLI Usage', link: '/tools/property-validator/cli-usage' },
+            { text: 'Library Usage', link: '/tools/property-validator/library-usage' },
+            { text: 'Examples', link: '/tools/property-validator/examples' },
+            { text: 'API Reference', link: '/tools/property-validator/api-reference' }
           ]
         }
       ]

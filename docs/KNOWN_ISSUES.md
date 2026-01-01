@@ -20,7 +20,53 @@ This document tracks known bugs, limitations, and cosmetic issues across the Tuu
 
 ## 🟢 Low Priority Issues (Cosmetic)
 
-### 1. StackBlitz Badge Vertical Alignment
+### 1. GitHub Actions Badge Shows Question Mark Before First Merge
+
+**Status:** Open
+**Severity:** Low (Cosmetic)
+**Area:** Tool READMEs - Badge Section
+**Affects:** All new tool repositories before first merge to main
+
+**Description:**
+
+The GitHub Actions test status badge shows a question mark (`?`) icon before the workflow has run on the main branch. This occurs for all new tools during development on feature branches.
+
+**Example:**
+```markdown
+[![Tests](https://github.com/tuulbelt/property-validator/actions/workflows/test.yml/badge.svg)](...)
+```
+Shows `?` because no commits exist on main branch yet.
+
+**Root Cause:**
+
+GitHub Actions status badges query workflow run status from the repository's default branch (main). If the workflow has never run on main (e.g., new tool still on feature branch), the badge returns "unknown" status, displayed as a question mark.
+
+**Workaround (Temporary):**
+
+Add `?branch=feature-branch-name` to badge URL:
+```markdown
+[![Tests](...badge.svg?branch=claude/resume-work-wZtNr)](...)
+```
+
+**Proper Solution:**
+
+This resolves automatically when PR is merged to main and workflow runs. No code changes needed.
+
+**Template Improvement (Future):**
+
+Consider standardizing badge section across all tool READMEs:
+- Consistent badge order
+- Consistent styling (shields.io vs GitHub native)
+- Template includes all standard badges (Tests, Version, Node, Dogfooded, Tests count, Zero Deps, License)
+- Documentation on when badges activate (e.g., Tests badge after first workflow run)
+
+**Related:**
+- property-validator: Tracking in session for v0.1.0 release
+- All tools: Will need badge section review for consistency
+
+---
+
+### 2. StackBlitz Badge Vertical Alignment
 
 **Status:** Open
 **Severity:** Low (Cosmetic)
