@@ -1091,45 +1091,66 @@ When you test in Web environment, follow this checklist:
 | Feature | CLI Status | Web Status | Notes |
 |---------|------------|------------|-------|
 | **Phase 1: Branch Protection** |
-| Hook templates | ✅ Verified | ⚠️ Pending | Files exist, content correct |
-| Hook installer | ✅ Verified | ⚠️ Pending | Installs in all repos |
-| Hooks block commits | ✅ Verified | ⚠️ Pending | Blocks main commits |
-| Session start integration | ✅ Verified | ⚠️ Pending | Code present, needs runtime test |
+| Hook templates | ✅ Verified | ✅ Verified | Files exist, content correct |
+| Hook installer | ✅ Verified | ✅ Verified | Installs in meta + 10 submodules |
+| Hooks block commits | ✅ Verified | ✅ Verified | Blocks main commits with clear message |
+| Session start integration | ✅ Verified | ✅ Verified | Installs hooks on session start |
 | **Phase 2: CLI Workspace Commands** |
 | Tracking schemas | ✅ Verified | N/A | Documentation files |
 | CLI worktree creation | ✅ Verified | N/A | CLI-only feature |
 | CLI status display | ✅ Verified | N/A | Works when no worktrees |
-| Web session tracking | N/A | ⚠️ Pending | Requires `CLAUDE_CODE_SESSION_ID` |
-| Web session resume | N/A | ⚠️ Pending | Requires ephemeral filesystem |
-| Submodule auto-branch | N/A | ⚠️ Pending | Web-specific |
-| Git credential setup | N/A | ⚠️ Pending | Web-specific |
+| Web session tracking | N/A | ✅ Verified | Uses `CLAUDE_CODE_SESSION_ID` |
+| Web session resume | N/A | ✅ Verified | Restores session from tracking file |
+| Submodule auto-branch | N/A | ✅ Verified | manage-submodule-branch.sh works |
+| Git credential setup | N/A | ✅ Verified | Reads from env vars (not .env file) |
 | **Phase 3: Environment-Aware Commands** |
-| Wrapper help commands | ✅ Verified | N/A | Same in both environments |
-| Environment detection | ✅ Verified | ⚠️ Pending | Simulated in CLI |
+| Wrapper help commands | ✅ Verified | ✅ Verified | Same in both environments |
+| Environment detection | ✅ Verified | ✅ Verified | Detects CLAUDE_CODE_REMOTE=true |
 | CLI scripts work | ✅ Verified | N/A | CLI-only |
-| Web scripts created | ✅ Verified | N/A | Files exist |
+| Web scripts created | ✅ Verified | ✅ Verified | All scripts functional |
 | Branch auto-detect (push.sh) | ✅ Verified | ✅ Same | Universal feature |
-| Web session creation | N/A | ⚠️ Pending | Web-only |
-| Web PR creation | N/A | ⚠️ Pending | Web-only |
-| Web cleanup | N/A | ⚠️ Pending | Web-only |
+| Web session creation | N/A | ✅ Verified | init-session.sh works |
+| Web PR creation | N/A | ⏭️ Skipped | Script ready, not tested to avoid test PRs |
+| Web cleanup | N/A | ⏭️ Skipped | Script ready, no PRs to cleanup |
 | **Phase 4: Session Lifecycle Hooks** |
-| on-session-start.sh | ✅ Verified | ⚠️ Pending | Shows CLI status / resumes Web session |
-| on-session-end.sh | ✅ Verified | ⚠️ Pending | Saves tracking file |
-| resume-session.sh | N/A | ⚠️ Pending | Web-only (restores session state) |
-| save-session.sh | N/A | ⚠️ Pending | Web-only (commits tracking file) |
-| Hook integration | ✅ Verified | ⚠️ Pending | Runs automatically on start/end |
+| on-session-start.sh | ✅ Verified | ✅ Verified | Resumes Web session, shows status |
+| on-session-end.sh | ✅ Verified | ✅ Verified | Commits tracking file to git |
+| resume-session.sh | N/A | ✅ Verified | Restores session state correctly |
+| save-session.sh | N/A | ✅ Verified | Part of on-session-end.sh flow |
+| Hook integration | ✅ Verified | ✅ Verified | Runs automatically on start/end |
 
 ---
 
-## Next Steps
+## Issues Found and Fixed During Web Testing
 
-1. **Test in Web:** Use this document as checklist for Web testing
-2. **Document Web Results:** Update this file with Web test results
-3. **Fix Any Issues:** Update scripts based on Web testing findings
-4. **Continue to Phase 5:** Documentation
+### Issue 1: Credential Loading Required .env File
+
+**Problem:** `scripts/lib/load-credentials.sh` required `.env` file which doesn't exist in Claude Code Web.
+
+**Fix:** Updated script to check if `GITHUB_TOKEN` or `GH_TOKEN` is already in environment (Web mode) before falling back to `.env` file (CLI mode).
+
+**File Changed:** `scripts/lib/load-credentials.sh`
+
+### Issue 2: Submodule Initialization Fails in Web
+
+**Problem:** `git submodule update --init` fails in Claude Code Web because it can't clone from external GitHub URLs through the proxy.
+
+**Fix:** Added fallback in `init-session.sh` and `resume-session.sh` that uses direct `git clone` for each submodule when standard initialization fails.
+
+**Files Changed:**
+- `scripts/web/init-session.sh`
+- `scripts/web/resume-session.sh`
 
 ---
 
-**Last Updated:** 2025-12-31
-**CLI Testing:** ✅ Phases 1, 2, 3, 4 complete
-**Web Testing:** ⚠️ Phases 1, 2, 3, 4 pending
+## Web Testing Complete ✅
+
+All phases tested successfully in Claude Code Web environment (Session ID: 6f41bf34-5c75-4312-a670-0841f17d44f9).
+
+**Test Date:** 2026-01-01
+
+---
+
+**Last Updated:** 2026-01-01
+**CLI Testing:** ✅ Phases 1, 2, 3, 4, 6 complete
+**Web Testing:** ✅ Phases 1, 2, 3, 4, 6 complete

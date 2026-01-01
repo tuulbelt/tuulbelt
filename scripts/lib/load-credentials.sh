@@ -6,28 +6,44 @@
 #   source "$(dirname "$0")/../lib/load-credentials.sh"
 #   # or
 #   source "$REPO_ROOT/scripts/lib/load-credentials.sh"
+#
+# Environment-aware:
+#   - Web (CLAUDE_CODE_REMOTE=true): Uses pre-loaded environment variables
+#   - CLI: Loads from .env file
 
 # Detect repository root
 if [ -z "$REPO_ROOT" ]; then
   REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo "$HOME/tuulbelt")"
 fi
 
-# Load .env file
-if [ ! -f "$REPO_ROOT/.env" ]; then
-  echo "❌ ERROR: .env file not found at $REPO_ROOT/.env"
-  echo "Create one from .env.example with your GitHub credentials"
-  exit 1
-fi
+# Check if credentials already in environment (Web mode)
+# In Claude Code Web, GITHUB_TOKEN is pre-loaded
+if [ -n "$GITHUB_TOKEN" ] || [ -n "$GH_TOKEN" ]; then
+  # Credentials already available - ensure both are set
+  if [ -n "$GH_TOKEN" ] && [ -z "$GITHUB_TOKEN" ]; then
+    export GITHUB_TOKEN="$GH_TOKEN"
+  elif [ -n "$GITHUB_TOKEN" ] && [ -z "$GH_TOKEN" ]; then
+    export GH_TOKEN="$GITHUB_TOKEN"
+  fi
+  # Skip .env loading - we're good
+else
+  # CLI mode - load from .env file
+  if [ ! -f "$REPO_ROOT/.env" ]; then
+    echo "❌ ERROR: .env file not found at $REPO_ROOT/.env"
+    echo "Create one from .env.example with your GitHub credentials"
+    exit 1
+  fi
 
-# Source .env
-set -a
-source "$REPO_ROOT/.env"
-set +a
+  # Source .env
+  set -a
+  source "$REPO_ROOT/.env"
+  set +a
 
-# Validate required variables
-if [ -z "$GITHUB_TOKEN" ]; then
-  echo "❌ ERROR: GITHUB_TOKEN not set in .env"
-  exit 1
+  # Validate required variables
+  if [ -z "$GITHUB_TOKEN" ]; then
+    echo "❌ ERROR: GITHUB_TOKEN not set in .env"
+    exit 1
+  fi
 fi
 
 # Export for different tools:

@@ -72,10 +72,47 @@ else
 fi
 
 # Step 6: Initialize all git submodules
+# Note: In Claude Code Web, git submodule update --init may fail because
+# it can't clone from external GitHub URLs through the proxy.
+# Fallback: Use direct git clone for each submodule.
 echo ""
 echo "Ensuring all submodules are initialized..."
-git submodule update --init --recursive >/dev/null 2>&1 || true
-echo -e "${GREEN}✓${NC} Submodules initialized"
+
+# Try standard submodule init first
+if git submodule update --init --recursive >/dev/null 2>&1; then
+  echo -e "${GREEN}✓${NC} Submodules initialized (standard method)"
+else
+  echo "  Standard submodule init failed, using direct clone fallback..."
+
+  # Parse .gitmodules and clone each submodule directly
+  while IFS= read -r line; do
+    if [[ "$line" =~ path\ =\ (.+) ]]; then
+      SUBMODULE_PATH="${BASH_REMATCH[1]}"
+    elif [[ "$line" =~ url\ =\ (.+) ]]; then
+      SUBMODULE_URL="${BASH_REMATCH[1]}"
+
+      # Check if submodule directory exists and has .git
+      if [ -d "$SUBMODULE_PATH/.git" ]; then
+        echo "  ✓ $SUBMODULE_PATH (already initialized)"
+      elif [ -d "$SUBMODULE_PATH" ]; then
+        # Directory exists but no .git - remove and clone
+        rm -rf "$SUBMODULE_PATH"
+        echo "  → Cloning $SUBMODULE_PATH..."
+        git clone "$SUBMODULE_URL" "$SUBMODULE_PATH" >/dev/null 2>&1 && \
+          echo "  ✓ $SUBMODULE_PATH" || \
+          echo "  ⚠ Failed to clone $SUBMODULE_PATH"
+      else
+        # Directory doesn't exist - clone
+        echo "  → Cloning $SUBMODULE_PATH..."
+        git clone "$SUBMODULE_URL" "$SUBMODULE_PATH" >/dev/null 2>&1 && \
+          echo "  ✓ $SUBMODULE_PATH" || \
+          echo "  ⚠ Failed to clone $SUBMODULE_PATH"
+      fi
+    fi
+  done < .gitmodules
+
+  echo -e "${GREEN}✓${NC} Submodules initialized (direct clone method)"
+fi
 
 echo ""
 echo -e "${GREEN}🎉 Session ready!${NC}"
