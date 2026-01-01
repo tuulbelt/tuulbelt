@@ -93,7 +93,23 @@ if [ -f "$REPO_ROOT/.claude/cli-workspace-tracking.json" ]; then
 fi
 
 # Return to main branch
-git checkout main
-git pull origin main
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+if [ "$CURRENT_BRANCH" != "main" ]; then
+  # Check for uncommitted changes before switching
+  if [ -n "$(git status --porcelain)" ]; then
+    echo "⚠ Cannot switch to main branch: You have uncommitted changes"
+    echo ""
+    echo "Cleanup completed successfully, but please commit your changes and run:"
+    echo "  git checkout main"
+    echo "  git pull origin main"
+    echo ""
+    exit 0
+  fi
+
+  git checkout main
+  git pull origin main
+  echo ""
+fi
 
 echo "✓ Workspace cleaned up successfully!"
