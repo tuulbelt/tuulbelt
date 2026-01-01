@@ -39,9 +39,14 @@
   - Now automatically detects and pushes current branch of the repository
   - Falls back to "main" only if branch detection fails
 
-### Phase 4: Session Lifecycle Hooks - NOT STARTED
-- [ ] 4.1: Enhanced on-session-start.sh
-- [ ] 4.2: Enhanced on-session-end.sh
+### Phase 4: Session Lifecycle Hooks - ✅ COMPLETE
+- [x] 4.1: Enhanced on-session-start.sh ✅ Updated with environment-specific setup
+  - Web: Calls `resume-session.sh` to restore session state
+  - CLI: Shows workspace status via `show-cli-status.sh`
+- [x] 4.2: Enhanced on-session-end.sh ✅ Created session cleanup hook
+  - Auto-commits tracking file changes
+  - Web: Calls `save-session.sh` to persist state
+  - CLI: No cleanup needed (worktrees persist)
 
 ### Phase 5: Documentation - NOT STARTED
 - [ ] 5.1: FEATURE_BRANCH_WORKFLOW.md

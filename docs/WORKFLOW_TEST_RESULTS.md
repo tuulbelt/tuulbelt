@@ -15,7 +15,7 @@
 | **Phase 1** | Branch Protection (Universal) | ✅ Complete | ⚠️ Pending | Ready for Web |
 | **Phase 2** | CLI Workspace Commands | ✅ Complete | ⚠️ Pending | Ready for Web |
 | **Phase 3** | Environment-Aware Commands | ✅ Complete | ⚠️ Pending | Ready for Web |
-| **Phase 4** | Session Lifecycle Hooks | ⬜ Not Started | ⬜ Not Started | Not Implemented |
+| **Phase 4** | Session Lifecycle Hooks | ✅ Complete | ⚠️ Pending | Ready for Web |
 | **Phase 5** | Documentation | ⬜ Not Started | ⬜ Not Started | Not Implemented |
 | **Phase 6** | Testing & Validation | ⬜ Not Started | ⬜ Not Started | Not Implemented |
 
@@ -534,6 +534,139 @@ bash scripts/workflow/show-status.sh | head -2
 
 ---
 
+## Phase 4: Session Lifecycle Hooks
+
+**Implementation:** ✅ Complete
+**CLI Testing:** ✅ Complete
+**Web Testing:** ⚠️ Pending
+
+### ✅ Tested in CLI Context
+
+#### 4.1 Enhanced on-session-start.sh
+
+**CLI Mode Verification:**
+```bash
+bash .claude/hooks/on-session-start.sh
+# Output:
+# 💻 Claude Code CLI detected - checking workspace status...
+#
+# Active workspaces:
+#
+# ┌──────────────────────────────────────────────────────────────┐
+# │ CLI Workspace Status                                         │
+# └──────────────────────────────────────────────────────────────┘
+#
+# No active worktrees found.
+#
+# Use /work-init to create a new workspace.
+#
+# Tip: Run /work-status anytime to see current state
+#
+# Session ready! 🚀
+```
+
+**Result:** ✅ CLI shows workspace status correctly
+
+**Scripts Created:**
+- `scripts/web/resume-session.sh` (114 lines) - Restores Web session state
+- `.claude/hooks/on-session-start.sh` updated - Environment-aware setup
+
+**Features Tested:**
+- ✅ Environment detection (`CLAUDE_CODE_REMOTE` variable)
+- ✅ CLI workspace status display (when tracking file exists)
+- ✅ CLI graceful message (when no workspaces)
+- ✅ Hook installer runs (meta + submodules)
+
+#### 4.2 Enhanced on-session-end.sh
+
+**CLI Mode Verification:**
+```bash
+bash .claude/hooks/on-session-end.sh
+# Output:
+# ✓ Session ended (worktrees preserved)
+```
+
+**Result:** ✅ CLI cleanup works correctly (worktrees persist)
+
+**Scripts Created:**
+- `scripts/web/save-session.sh` (40 lines) - Saves Web session to git
+- `.claude/hooks/on-session-end.sh` (38 lines) - Session cleanup hook
+
+**Features Tested:**
+- ✅ Tracking file auto-commit (if changed)
+- ✅ CLI mode: No worktree cleanup
+- ✅ Web mode detection (for save-session.sh call)
+
+#### 4.3 Syntax Validation
+
+All Phase 4 scripts pass bash syntax validation:
+```bash
+bash -n scripts/web/resume-session.sh  # ✅ Syntax OK
+bash -n scripts/web/save-session.sh    # ✅ Syntax OK
+bash -n .claude/hooks/on-session-end.sh # ✅ Syntax OK
+```
+
+### ⚠️ Requires Web Testing
+
+#### 1. Web Session Resumption
+
+**What:** Resuming work after Web session restart (ephemeral filesystem)
+
+**Scripts Affected:**
+- `scripts/web/resume-session.sh` - Restores session from tracking file
+
+**How to Test:**
+1. Start Web session, create feature branch with `/work-init feature/test`
+2. Make commits to meta repo and submodule
+3. Verify session tracked in `.claude/web-session-tracking.json`
+4. End session (filesystem destroyed)
+5. Start new Web session
+6. Verify `resume-session.sh` is called by `on-session-start.sh`
+7. Check that feature branch is checked out automatically
+8. Verify submodule branches restored from tracking file
+9. Verify all submodules initialized
+
+**Expected:** Session fully restored with correct branches checked out
+
+---
+
+#### 2. Web Session State Saving
+
+**What:** Persisting session state to git on session end
+
+**Scripts Affected:**
+- `scripts/web/save-session.sh` - Commits tracking file to git
+- `.claude/hooks/on-session-end.sh` - Calls save-session.sh for Web
+
+**How to Test:**
+1. Create feature branch in Web session
+2. Make changes, verify tracking file updated
+3. End session normally
+4. Verify `on-session-end.sh` runs
+5. Check git log for tracking file commit
+6. Restart session, verify tracking file loaded from git
+
+**Expected:** Tracking file persisted across sessions via git commits
+
+---
+
+#### 3. Hook Integration
+
+**What:** Session hooks run automatically on session start/end
+
+**How to Test:**
+1. Start Web session
+2. Verify `on-session-start.sh` runs (check console output)
+3. Verify hooks installed (meta + submodules)
+4. Verify resume-session.sh called
+5. End session
+6. Verify `on-session-end.sh` runs
+7. Verify save-session.sh called
+
+**Expected:** Hooks run automatically, session state managed transparently
+
+---
+
 ## Complete Testing Checklist (for Web Session)
 
 When you test in Web environment, follow this checklist:
@@ -555,6 +688,15 @@ When you test in Web environment, follow this checklist:
 - [ ] `/work-status` shows session info
 - [ ] `/work-pr` creates PRs from session tracking
 - [ ] `/work-cleanup` removes branch and session
+
+### Phase 4: Session Lifecycle Hooks
+- [ ] `on-session-start.sh` runs automatically
+- [ ] Hooks installed on session start
+- [ ] `resume-session.sh` restores session state
+- [ ] Submodule branches checked out
+- [ ] `on-session-end.sh` runs automatically
+- [ ] `save-session.sh` commits tracking file
+- [ ] Session persists across restarts
 
 ### End-to-End Web Workflow
 - [ ] Create feature branch: `/work-init feature/test-full-workflow`
@@ -595,18 +737,24 @@ When you test in Web environment, follow this checklist:
 | Web session creation | N/A | ⚠️ Pending | Web-only |
 | Web PR creation | N/A | ⚠️ Pending | Web-only |
 | Web cleanup | N/A | ⚠️ Pending | Web-only |
+| **Phase 4: Session Lifecycle Hooks** |
+| on-session-start.sh | ✅ Verified | ⚠️ Pending | Shows CLI status / resumes Web session |
+| on-session-end.sh | ✅ Verified | ⚠️ Pending | Saves tracking file |
+| resume-session.sh | N/A | ⚠️ Pending | Web-only (restores session state) |
+| save-session.sh | N/A | ⚠️ Pending | Web-only (commits tracking file) |
+| Hook integration | ✅ Verified | ⚠️ Pending | Runs automatically on start/end |
 
 ---
 
 ## Next Steps
 
-1. **Create PR for Phase 3:** Branch `feat/implement-phase-3-environment-aware` ready
-2. **Test in Web:** Use this document as checklist for Web testing
-3. **Document Web Results:** Update this file with Web test results
-4. **Fix Any Issues:** Update scripts based on Web testing findings
+1. **Test in Web:** Use this document as checklist for Web testing
+2. **Document Web Results:** Update this file with Web test results
+3. **Fix Any Issues:** Update scripts based on Web testing findings
+4. **Continue to Phase 5:** Documentation
 
 ---
 
 **Last Updated:** 2025-12-31
-**CLI Testing:** ✅ Phases 1, 2, 3 complete
-**Web Testing:** ⚠️ Phases 1, 2, 3 pending
+**CLI Testing:** ✅ Phases 1, 2, 3, 4 complete
+**Web Testing:** ⚠️ Phases 1, 2, 3, 4 pending
