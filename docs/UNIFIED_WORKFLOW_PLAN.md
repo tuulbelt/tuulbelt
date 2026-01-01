@@ -26,9 +26,16 @@
 - [x] 2.6: /work-cleanup command ✅ `.claude/commands/work-cleanup.md`, `scripts/workflow/cleanup-workspace.sh`, `scripts/cli/cleanup-cli-workspace.sh`
 - [x] 2.7: Tracking file regeneration script ✅ `scripts/workflow/regenerate-tracking.sh`
 
-### Phase 3: Environment-Aware Commands - NOT STARTED
-- [ ] 3.1: Unified command interface
-- [ ] 3.2: Update push.sh for feature branches
+### Phase 3: Environment-Aware Commands - ✅ COMPLETE
+- [x] 3.1: Unified command interface ✅ All wrapper scripts detect environment and delegate
+  - Wrapper scripts in `scripts/workflow/` already implemented environment detection in Phase 2
+  - Created missing Web scripts: `create-session-branches.sh`, `show-web-status.sh`, `create-web-prs.sh`, `cleanup-web-session.sh`
+  - Web scripts use branch-based workflow (no worktrees)
+  - All scripts use `$CLAUDE_CODE_REMOTE` environment variable for detection
+- [x] 3.2: Update push.sh for feature branches ✅ Detects current branch instead of defaulting to main
+  - Updated `scripts/push.sh` line 10: `BRANCH="${3:-$(git -C "${REPO_PATH}" rev-parse --abbrev-ref HEAD)}"`
+  - Now automatically detects and pushes current branch of the repository
+  - Falls back to "main" only if branch detection fails
 
 ### Phase 4: Session Lifecycle Hooks - NOT STARTED
 - [ ] 4.1: Enhanced on-session-start.sh
