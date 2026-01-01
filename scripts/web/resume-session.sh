@@ -98,9 +98,8 @@ else
           # Branch exists locally - checkout
           git checkout "$BRANCH" >/dev/null 2>&1
         elif git show-ref --verify --quiet "refs/remotes/origin/$BRANCH" 2>/dev/null; then
-          # Branch exists remotely - fetch and checkout
-          git fetch origin "$BRANCH:$BRANCH" >/dev/null 2>&1
-          git checkout "$BRANCH" >/dev/null 2>&1
+          # Branch exists remotely but not locally - create tracking branch
+          git checkout -b "$BRANCH" "origin/$BRANCH" >/dev/null 2>&1
         else
           echo "    ⚠️  Branch $BRANCH not found (local or remote) - creating new"
           git checkout -b "$BRANCH" >/dev/null 2>&1
