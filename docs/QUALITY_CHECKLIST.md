@@ -443,10 +443,37 @@ Use this checklist when running `/migrate-tool` to ensure complete migration. Re
 
 ### Authentication Checklist
 
-- [ ] **Use MCP server preferred**: Custom GitHub MCP server reads from `.env` automatically
-- [ ] **Fallback: Set GH_TOKEN**: `export GH_TOKEN="$GITHUB_TOKEN"` if using gh CLI directly
-- [ ] **Verify auth**: `gh auth status` shows correct account (from .env)
+**Unified Credential Loading (MANDATORY for all scripts using gh/git):**
+
+All scripts that use `gh` CLI or git operations MUST source the unified credential loader:
+
+```bash
+# At the top of your script, after REPO_ROOT detection
+source "$REPO_ROOT/scripts/lib/load-credentials.sh"
+```
+
+This automatically:
+- Loads credentials from `.env`
+- Exports `GH_TOKEN` (for gh CLI)
+- Exports `GITHUB_TOKEN` (for git/MCP)
+- Sets git user.name and user.email
+- Validates required variables exist
+
+**Checklist:**
+- [ ] **All gh/git scripts source load-credentials.sh**: Check `scripts/lib/load-credentials.sh` is loaded
+- [ ] **MCP server uses .env**: Custom GitHub MCP server reads from `.env` automatically (already configured)
+- [ ] **Verify auth**: `gh auth status` shows correct account (koficodedat from .env)
 - [ ] **Test GitHub operation**: Try `gh repo view tuulbelt/tuulbelt` to verify access
+
+**Authentication Priority (gh CLI):**
+1. `GH_TOKEN` environment variable ✅ (what we use)
+2. `GITHUB_TOKEN` environment variable
+3. Stored credentials in `~/.config/gh/hosts.yml` ⚠️ (can be wrong account)
+
+**Never:**
+- ❌ Call `gh` directly without loading credentials
+- ❌ Manually source `.env` in scripts (use load-credentials.sh instead)
+- ❌ Rely on stored gh credentials (may be wrong account)
 
 ---
 
@@ -834,6 +861,73 @@ fi
 **Verification:**
 - `/quality-check` now automatically checks if branch is behind main
 - Run `git rev-list --count HEAD..origin/main` - should return 0
+
+---
+
+#### GitHub Authentication with Wrong Account (2025-12-31)
+
+**Symptom:**
+```
+pull request create failed: GraphQL: must be a collaborator (createPullRequest)
+```
+Or `gh auth status` shows wrong account:
+```
+✓ Logged in to github.com account kofirc (GITHUB_TOKEN)
+  - Active account: true
+```
+
+**Root Cause:**
+Scripts call `gh` CLI directly without loading credentials from `.env` first. `gh` falls back to stored credentials in `~/.config/gh/hosts.yml` which may be for a different account.
+
+**Authentication Priority (gh CLI):**
+1. `GH_TOKEN` environment variable (correct - uses .env)
+2. `GITHUB_TOKEN` environment variable (correct - uses .env)
+3. Stored credentials in `~/.config/gh/hosts.yml` (wrong - may be different account)
+
+**Prevention:**
+```bash
+#!/bin/bash
+# At the top of any script using gh or git commands
+
+# Detect repository root
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo "$HOME/tuulbelt")"
+
+# Load GitHub credentials from .env
+source "$REPO_ROOT/scripts/lib/load-credentials.sh"
+
+# Now gh and git use correct credentials
+gh pr create --title "..." --body "..."
+```
+
+**What load-credentials.sh does:**
+- Sources `.env` file from repository root
+- Exports both `GH_TOKEN` and `GITHUB_TOKEN`
+- Sets git user.name and user.email
+- Validates required variables exist
+
+**Verification:**
+```bash
+# After sourcing load-credentials.sh
+echo $GH_TOKEN  # Should show token from .env
+
+gh auth status  # Should show:
+# ✓ Logged in to github.com account koficodedat (GH_TOKEN)
+
+gh repo view tuulbelt/tuulbelt  # Should succeed without errors
+```
+
+**Fixed Scripts:**
+- `scripts/cli/create-cli-prs.sh`
+- `scripts/web/create-web-prs.sh`
+- `scripts/web/show-status.sh`
+- `scripts/cli/cleanup-cli-workspace.sh`
+- `scripts/web/cleanup-web-session.sh`
+- `scripts/create-all-repos.sh`
+
+**Never:**
+- ❌ Call `gh` directly without loading credentials
+- ❌ Manually source `.env` in scripts (use load-credentials.sh instead)
+- ❌ Rely on stored gh credentials (can be wrong account)
 
 ---
 

@@ -1,12 +1,57 @@
 # Session Handoff
 
 **Last Updated:** 2025-12-31
-**Session:** Phase 2 CLI Workspace Commands Implementation
-**Status:** ✅ Complete - PR #76 Created
+**Session:** GitHub Authentication Consolidation
+**Status:** ✅ Complete - Unified credential loading across all scripts
 
 ---
 
-## 🎉 COMPLETED: Phase 2 CLI Workspace Commands
+## 🔐 COMPLETED: GitHub Authentication Consolidation
+
+Consolidated all GitHub authentication into a single unified pattern, fixing persistent credential issues.
+
+### What Was Done
+
+**Problem Identified**
+- Scripts using `gh` CLI were authenticating with wrong account (kofirc instead of koficodedat)
+- Multiple fragmented solutions existed (.env, .envrc, GH_CLI_AUTH_GUIDE.md, scripts/gh.sh)
+- No consistent pattern for loading credentials before GitHub operations
+
+**Root Cause**
+- `gh` CLI authentication priority: GH_TOKEN → GITHUB_TOKEN → stored credentials (~/.config/gh/hosts.yml)
+- Scripts called `gh` directly without loading .env first
+- Fell back to stored credentials for wrong account
+
+**Solution: Unified Credential Loading**
+- Created `scripts/lib/load-credentials.sh` - single source of truth for all GitHub operations
+- Exports both `GH_TOKEN` (for gh CLI) and `GITHUB_TOKEN` (for git/MCP)
+- Sets git user.name and user.email automatically
+- Validates .env file exists and has required variables
+- Works from any directory (auto-detects REPO_ROOT)
+
+**Files Updated**
+1. **Created:** `scripts/lib/load-credentials.sh` (48 lines) - Unified credential loader
+2. **Updated:** `scripts/cli/create-cli-prs.sh` - Added credential loading
+3. **Updated:** `scripts/web/create-web-prs.sh` - Added credential loading
+4. **Updated:** `scripts/web/show-status.sh` - Added credential loading
+5. **Updated:** `scripts/cli/cleanup-cli-workspace.sh` - Added credential loading
+6. **Updated:** `scripts/web/cleanup-web-session.sh` - Added credential loading
+7. **Updated:** `scripts/create-all-repos.sh` - Replaced manual .env sourcing with unified loader
+
+**Verification**
+- MCP server already working correctly (loads .env properly)
+- All 6 scripts using `gh` commands now load credentials consistently
+- End-to-end test passed: PR creation now uses correct account (koficodedat)
+
+**Impact**
+- ✅ All GitHub operations now use correct credentials from .env
+- ✅ Consistent pattern across all scripts (DRY principle)
+- ✅ Future scripts can easily adopt by sourcing the library
+- ✅ Eliminates "must be a collaborator" errors from wrong account
+
+---
+
+## Previous Session: Phase 2 CLI Workspace Commands ✅
 
 Implemented complete CLI workspace workflow with bug fixes and best practices documentation.
 

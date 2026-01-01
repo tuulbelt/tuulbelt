@@ -7,6 +7,11 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || dirname "$(dirname "$SCRIPT_DIR")")"
+
+# Load GitHub credentials
+source "$REPO_ROOT/scripts/lib/load-credentials.sh"
+
 source "$SCRIPT_DIR/tracking-lib.sh"
 
 # Auto-detect if we should disable colors
