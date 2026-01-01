@@ -4,6 +4,8 @@
 **Status:** Implementation In Progress
 **Goal:** Unified feature-branch workflow across Claude Code CLI and Web
 
+**Testing Report:** See `docs/WORKFLOW_TEST_RESULTS.md` for comprehensive CLI and Web testing results across all phases.
+
 ---
 
 ## Implementation Progress
