@@ -6,7 +6,8 @@ set -e
 
 REPO_PATH="${1:-.}"
 REMOTE="${2:-origin}"
-BRANCH="${3:-main}"
+# Detect current branch instead of defaulting to main
+BRANCH="${3:-$(git -C "${REPO_PATH}" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")}"
 
 # Load .env from tuulbelt meta repo
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
