@@ -1,6 +1,34 @@
 # Next Tasks
 
-**Last Updated:** 2025-12-30
+**Last Updated:** 2025-12-31
+
+---
+
+## 🚀 Unified Workflow Implementation - IN PROGRESS
+
+**Status:** Phase 2 Complete ✅ - PR #76 Created
+**Document:** `docs/UNIFIED_WORKFLOW_PLAN.md`
+**Priority:** HIGH - Enable feature branch workflow for CLI and Web
+
+### Progress
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| **1** | Branch Protection (Universal) | ✅ Complete |
+| **2** | CLI Workspace Commands | ✅ Complete - PR #76 |
+| **3** | Environment-Aware Commands | ⬜ Next |
+| **4** | Session Lifecycle Hooks | ⬜ Pending |
+| **5** | Documentation | ⬜ Pending |
+| **6** | Testing & Validation | ⬜ Pending |
+
+**Phase 2 Accomplishments:**
+- ✅ 4 CLI commands: `/work-init`, `/work-status`, `/work-pr`, `/work-cleanup`
+- ✅ 7 CLI scripts + 6 wrapper scripts
+- ✅ Fixed Bug #13 (submodule branch detection)
+- ✅ Added best practices documentation (REPO_ROOT pattern)
+- ✅ PR created: https://github.com/tuulbelt/tuulbelt/pull/76
+
+**Next:** Phase 3 - Environment-aware commands and unified interface
 
 ---
 

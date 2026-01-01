@@ -4,17 +4,24 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+# Get main repo root (works from worktrees too)
+COMMON_GIT_DIR="$(git rev-parse --git-common-dir)"
+# Convert to absolute path if relative
+if [[ "$COMMON_GIT_DIR" != /* ]]; then
+  COMMON_GIT_DIR="$(pwd)/$COMMON_GIT_DIR"
+fi
+REPO_ROOT="$(dirname "$COMMON_GIT_DIR")"
 
 META_HOOK_TEMPLATE="$SCRIPT_DIR/templates/meta-pre-commit-hook.sh"
 SUBMODULE_HOOK_TEMPLATE="$SCRIPT_DIR/templates/submodule-pre-commit-hook.sh"
 
 # Install meta repo hook
 echo "Installing pre-commit hook in meta repo..."
-META_HOOK_PATH="$REPO_ROOT/.git/hooks/pre-commit"
+META_HOOK_PATH="$COMMON_GIT_DIR/hooks/pre-commit"
 
-if [ ! -d "$REPO_ROOT/.git/hooks" ]; then
-  mkdir -p "$REPO_ROOT/.git/hooks"
+if [ ! -d "$COMMON_GIT_DIR/hooks" ]; then
+  mkdir -p "$COMMON_GIT_DIR/hooks"
 fi
 
 cp "$META_HOOK_TEMPLATE" "$META_HOOK_PATH"
