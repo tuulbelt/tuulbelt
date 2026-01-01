@@ -1,13 +1,5 @@
 {
   "version": "1.0",
   "environment": "cli",
-  "worktrees": {
-    "/Users/kofi/_/tuulbelt/.claude/worktrees/feature-test-pr-workflow": {
-      "meta_branch": "feature/test-pr-workflow",
-      "created_at": "2025-12-31T23:58:23Z",
-      "updated_at": "2025-12-31T23:58:23Z",
-      "status": "active",
-      "submodules": {}
-    }
-  }
+  "worktrees": {}
 }

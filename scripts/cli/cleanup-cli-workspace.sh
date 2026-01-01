@@ -64,14 +64,21 @@ if git show-ref --verify --quiet "refs/heads/$FEATURE_NAME"; then
   echo "  ✓ Deleted local branch: $FEATURE_NAME"
 fi
 
-# Ask about remote deletion
+# Ask about remote deletion (skip if non-interactive)
 if git show-ref --verify --quiet "refs/remotes/origin/$FEATURE_NAME"; then
   echo ""
-  read -p "Delete remote branch? (y/n) " -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    git push origin --delete "$FEATURE_NAME"
-    echo "  ✓ Deleted remote branch: $FEATURE_NAME"
+  if [ -t 0 ]; then
+    # Interactive mode - ask user
+    read -p "Delete remote branch? (y/n) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      git push origin --delete "$FEATURE_NAME"
+      echo "  ✓ Deleted remote branch: $FEATURE_NAME"
+    fi
+  else
+    # Non-interactive mode - skip remote deletion
+    echo "⚠ Non-interactive mode: Skipping remote branch deletion"
+    echo "  Run manually if needed: git push origin --delete $FEATURE_NAME"
   fi
 fi
 
