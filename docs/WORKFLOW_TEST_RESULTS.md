@@ -375,6 +375,97 @@ bash scripts/workflow/show-status.sh
 # This proves it's calling the Web script (show-web-status.sh → show-status.sh)
 ```
 
+#### 3.7 Error Handling Tests
+All wrapper scripts handle invalid inputs correctly:
+
+**Invalid Branch Name:**
+```bash
+bash scripts/workflow/init-workspace.sh invalid-branch-name
+# ✅ Correctly rejects: "Error: Feature name must start with 'feature/'"
+```
+
+**Missing Parameters:**
+```bash
+bash scripts/workflow/init-workspace.sh
+# ✅ Shows help message and usage examples
+```
+
+**Non-Existent Worktree:**
+```bash
+bash scripts/cli/cleanup-cli-workspace.sh feature/non-existent
+# ✅ Completes gracefully, switches to main (expected behavior)
+```
+
+**No Active Worktrees:**
+```bash
+bash scripts/cli/show-cli-status.sh
+# ✅ Shows: "No active worktrees found." (expected)
+```
+
+#### 3.8 Syntax Validation
+All scripts pass bash syntax validation:
+
+```bash
+bash -n scripts/web/create-session-branches.sh  # ✅ Syntax OK
+bash -n scripts/web/create-web-prs.sh           # ✅ Syntax OK
+bash -n scripts/web/cleanup-web-session.sh      # ✅ Syntax OK
+bash -n scripts/push.sh                         # ✅ Syntax OK (modified)
+```
+
+**Result:** All Phase 3 scripts have no syntax errors.
+
+#### 3.9 Environment Detection Verification
+Tested environment detection with both values:
+
+**CLI Mode (unset):**
+```bash
+unset CLAUDE_CODE_REMOTE
+bash scripts/workflow/show-status.sh | head -2
+# Output: "CLI Workspace Status"
+# ✅ Correctly uses CLI implementation
+```
+
+**Web Mode (CLAUDE_CODE_REMOTE=true):**
+```bash
+export CLAUDE_CODE_REMOTE=true
+bash scripts/workflow/show-status.sh | head -2
+# Output: "No session found for branch: ..."
+# ✅ Correctly uses Web implementation
+```
+
+**Result:** Environment detection works correctly in both modes.
+
+---
+
+### 📋 Phase 3 CLI Testing Summary
+
+**Status:** ✅ All CLI tests completed successfully
+
+**Tests Performed:**
+- ✅ Help commands (4 wrapper scripts)
+- ✅ Environment detection logic (all 4 scripts)
+- ✅ Direct CLI script execution
+- ✅ Branch auto-detection in push.sh
+- ✅ Web scripts existence and permissions
+- ✅ Simulated Web environment (`CLAUDE_CODE_REMOTE=true`)
+- ✅ Error handling (invalid inputs, missing parameters)
+- ✅ Syntax validation (all 4 new/modified scripts)
+- ✅ Environment detection verification (both CLI and Web modes)
+- ✅ Edge cases (non-existent worktrees, no active workspaces)
+
+**Scripts Validated:**
+- `scripts/web/create-session-branches.sh` ✅
+- `scripts/web/create-web-prs.sh` ✅
+- `scripts/web/cleanup-web-session.sh` ✅
+- `scripts/web/show-web-status.sh` (symlink) ✅
+- `scripts/push.sh` (modified) ✅
+
+**Issues Found:** None
+
+**Ready for Web Testing:** Yes
+
+---
+
 ### ⚠️ Requires Web Testing
 
 #### 1. Web Session Branch Creation
