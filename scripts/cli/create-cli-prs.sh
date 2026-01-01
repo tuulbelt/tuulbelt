@@ -84,8 +84,9 @@ if [ "$MODE" = "all" ] || [ "$MODE" = "--submodules" ]; then
   # Use current directory (worktree location) for submodule paths
   WORK_DIR="$(pwd)"
 
-  # Get list of submodules
+  # Get list of submodules (run from work directory)
   # Use process substitution instead of pipe to avoid subshell issues
+  cd "$WORK_DIR"
   while read -r submodule; do
     echo "  $submodule"
 
@@ -96,6 +97,7 @@ if [ "$MODE" = "all" ] || [ "$MODE" = "--submodules" ]; then
     if [ "$SUBMODULE_BRANCH" = "main" ]; then
       echo "    → On main branch, skipping"
       echo ""
+      cd "$WORK_DIR"  # Return to work directory for next iteration
       continue
     fi
 
@@ -103,6 +105,9 @@ if [ "$MODE" = "all" ] || [ "$MODE" = "--submodules" ]; then
     REPO_NAME=$(basename "$submodule")
 
     create_pr "$WORK_DIR/$submodule" "$SUBMODULE_BRANCH" "$REPO_NAME"
+
+    # Return to work directory for next iteration
+    cd "$WORK_DIR"
   done < <(git submodule foreach --quiet 'echo $path')
 fi
 
