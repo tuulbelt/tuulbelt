@@ -32,8 +32,8 @@ create_pr() {
 
   cd "$repo_path"
 
-  # Check if there are commits ahead of main
-  COMMITS_AHEAD=$(git rev-list --count HEAD ^origin/main 2>/dev/null || echo "0")
+  # Check if there are commits ahead of main (use explicit branch, not HEAD)
+  COMMITS_AHEAD=$(git rev-list --count "$branch" ^origin/main 2>/dev/null || echo "0")
 
   if [ "$COMMITS_AHEAD" = "0" ]; then
     echo "  → No commits, skipping"
@@ -49,13 +49,13 @@ create_pr() {
     PR_URL=$(gh pr view "$branch" --json url -q .url)
     echo "  ✓ PR already exists: $PR_URL"
   else
-    # Generate PR title from first commit
-    PR_TITLE=$(git log --format=%s -1)
+    # Generate PR title from first commit (use explicit branch)
+    PR_TITLE=$(git log "$branch" --format=%s -1)
 
-    # Generate PR body
+    # Generate PR body (use explicit branch)
     PR_BODY="## Changes
 
-$(git log origin/main..HEAD --format="- %s")
+$(git log origin/main.."$branch" --format="- %s")
 
 ## Related
 
@@ -74,7 +74,12 @@ See [Unified Workflow Plan](../docs/UNIFIED_WORKFLOW_PLAN.md)"
 # Meta repo PR
 if [ "$MODE" = "all" ] || [ "$MODE" = "--meta" ]; then
   echo "Meta repo:"
-  create_pr "$REPO_ROOT" "$CURRENT_BRANCH" "meta"
+  # If in worktree, use current directory; otherwise use REPO_ROOT
+  if [ "$IN_WORKTREE" = true ]; then
+    create_pr "$(pwd)" "$CURRENT_BRANCH" "meta"
+  else
+    create_pr "$REPO_ROOT" "$CURRENT_BRANCH" "meta"
+  fi
 fi
 
 # Submodule PRs
