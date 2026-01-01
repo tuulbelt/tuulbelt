@@ -201,7 +201,7 @@ Concurrent port allocation for any application - avoid port conflicts in tests, 
 Runtime type validation with TypeScript inference - validate data from any source with graceful error handling.
 
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Schema-based validation with automatic type inference
-- <img src="/icons/alert-circle.svg" class="inline-icon" alt=""> Result types (no exceptions) for resilient apps
+- <img src="/icons/shield.svg" class="inline-icon" alt=""> Result types (no exceptions) for resilient apps
 - <img src="/icons/target.svg" class="inline-icon" alt=""> Framework-agnostic - works anywhere (API, config, props, args)
 
 [Get Started →](/tools/property-validator/getting-started)

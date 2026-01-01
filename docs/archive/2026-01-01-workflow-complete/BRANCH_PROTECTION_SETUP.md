@@ -8,7 +8,7 @@ This document explains how to configure GitHub branch protection rules to enforc
 
 ## Submodule PR Guard
 
-The `submodule-pr-guard.yml` workflow prevents merging meta repo PRs when submodule PRs are still open, enforcing the correct merge order documented in [CI_GUIDE.md](CI_GUIDE.md#pr-merge-coordination).
+The `submodule-pr-guard.yml` workflow prevents merging meta repo PRs when submodule PRs are still open, enforcing the correct merge order documented in [CI_GUIDE.md](../../CI_GUIDE.md#pr-merge-coordination).
 
 ### How It Works
 
@@ -121,7 +121,7 @@ The following submodules have open PRs:
 - config-file-merger: #1: Fix configuration handling
 - structured-error-handler: #1: Add context preservation
 
-📋 Correct merge order (see docs/CI_GUIDE.md):
+📋 Correct merge order (see ../../CI_GUIDE.md):
 1. Merge all submodule PRs first
 2. Wait for create-demo.yml to complete in each submodule
 3. Then merge this meta repo PR
@@ -234,7 +234,7 @@ The workflow checks for the `override-submodule-check` label before running any 
 
 ## Related Documentation
 
-- [CI_GUIDE.md](CI_GUIDE.md#pr-merge-coordination) - Complete merge order documentation
+- [CI_GUIDE.md](../../CI_GUIDE.md#pr-merge-coordination) - Complete merge order documentation
 - [CONTRIBUTING.md](https://github.com/tuulbelt/tuulbelt/blob/main/CONTRIBUTING.md) - Contribution workflow
 
 ---

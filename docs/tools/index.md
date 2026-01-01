@@ -207,7 +207,7 @@ Concurrent port allocation for any application. Avoid port conflicts in tests, s
 
 ### Property Validator
 
-**Status:** <img src="/icons/wrench.svg" class="inline-icon" alt=""> In Development (v0.1.0)
+**Status:** <img src="/icons/tool.svg" class="inline-icon" alt=""> In Development (v0.1.0)
 **Language:** TypeScript
 **Tests:** 32 tests (expanding)
 

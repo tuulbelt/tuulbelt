@@ -6,7 +6,7 @@ Runtime type validation with TypeScript inference for JavaScript and TypeScript 
 
 Property Validator provides schema-based runtime type validation with full TypeScript type inference. Validate data from any source - API responses, user input, config files, function arguments - with clear error messages and graceful failure.
 
-**Status:** <img src="/icons/wrench.svg" class="inline-icon" alt=""> In Development (v0.1.0)
+**Status:** <img src="/icons/tool.svg" class="inline-icon" alt=""> In Development (v0.1.0)
 
 **Language:** TypeScript
 
@@ -18,7 +18,7 @@ Property Validator provides schema-based runtime type validation with full TypeS
 
 Define schemas once, get both runtime validation and TypeScript types automatically. No code duplication between runtime and compile-time types.
 
-### <img src="/icons/alert-circle.svg" class="inline-icon" alt=""> Graceful Error Handling
+### <img src="/icons/shield.svg" class="inline-icon" alt=""> Graceful Error Handling
 
 Returns result types (`{ ok: true, value }` or `{ ok: false, error }`) instead of throwing exceptions. Your code stays resilient.
 
