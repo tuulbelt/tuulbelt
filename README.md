@@ -200,3 +200,4 @@ All tools are MIT licensed unless otherwise specified.
 Found a bug? Have an idea? Open an issue at https://github.com/tuulbelt/tuulbelt/issues
 
 Use labels to indicate which tool: `test-flakiness-detector`, `cli-progress`, etc.
+test
