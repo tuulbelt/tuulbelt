@@ -13,6 +13,10 @@ if [[ "$COMMON_GIT_DIR" != /* ]]; then
   COMMON_GIT_DIR="$(pwd)/$COMMON_GIT_DIR"
 fi
 REPO_ROOT="$(dirname "$COMMON_GIT_DIR")"
+
+# Load GitHub credentials
+source "$REPO_ROOT/scripts/lib/load-credentials.sh"
+
 SANITIZED_NAME=$(echo "$FEATURE_NAME" | tr '/' '-')
 WORKTREE_DIR="$REPO_ROOT/.claude/worktrees/$SANITIZED_NAME"
 

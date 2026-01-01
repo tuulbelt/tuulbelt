@@ -9,6 +9,9 @@ FORCE_FLAG="$2"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 
+# Load GitHub credentials
+source "$REPO_ROOT/scripts/lib/load-credentials.sh"
+
 source "$SCRIPT_DIR/tracking-lib.sh"
 
 if [ -z "$FEATURE_NAME" ]; then
