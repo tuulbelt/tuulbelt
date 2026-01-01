@@ -75,8 +75,10 @@ fi
 if [ "$MODE" = "all" ] || [ "$MODE" = "--submodules" ]; then
   echo "Submodules:"
 
-  # Get list of submodules
-  git submodule foreach --quiet 'echo $path' | while read -r submodule; do
+  # Get list of submodules (run from repo root)
+  # Use process substitution instead of pipe to avoid subshell issues
+  cd "$REPO_ROOT"
+  while read -r submodule; do
     echo "  $submodule"
 
     # Check if submodule has the same branch
@@ -86,6 +88,7 @@ if [ "$MODE" = "all" ] || [ "$MODE" = "--submodules" ]; then
     if [ "$SUBMODULE_BRANCH" = "main" ]; then
       echo "    → On main branch, skipping"
       echo ""
+      cd "$REPO_ROOT"  # Return to repo root for next iteration
       continue
     fi
 
@@ -93,7 +96,10 @@ if [ "$MODE" = "all" ] || [ "$MODE" = "--submodules" ]; then
     REPO_NAME=$(basename "$submodule")
 
     create_pr "$REPO_ROOT/$submodule" "$SUBMODULE_BRANCH" "$REPO_NAME"
-  done
+
+    # Return to repo root for next iteration
+    cd "$REPO_ROOT"
+  done < <(git submodule foreach --quiet 'echo $path')
 fi
 
 echo "✓ Pull request workflow completed!"
