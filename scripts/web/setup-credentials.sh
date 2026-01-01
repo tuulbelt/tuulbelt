@@ -7,11 +7,25 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+# Auto-detect if we should disable colors
+# In Web environment, default to no colors (terminal doesn't interpret ANSI codes)
+NO_COLOR=false
+if [ "${CLAUDE_CODE_REMOTE}" = "true" ]; then
+  NO_COLOR=true
+fi
+
+# Colors (disabled in non-interactive terminals)
+if [ "$NO_COLOR" = true ]; then
+  RED=''
+  GREEN=''
+  YELLOW=''
+  NC=''
+else
+  RED='\033[0;31m'
+  GREEN='\033[0;32m'
+  YELLOW='\033[1;33m'
+  NC='\033[0m'
+fi
 
 echo "🔐 Setting up git credentials for Claude Code Web..."
 echo ""

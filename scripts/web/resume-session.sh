@@ -9,11 +9,25 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/tracking-lib.sh"
 
-# Colors
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+# Auto-detect if we should disable colors
+# In Web environment, default to no colors (terminal doesn't interpret ANSI codes)
+NO_COLOR=false
+if [ "${CLAUDE_CODE_REMOTE}" = "true" ]; then
+  NO_COLOR=true
+fi
+
+# Colors (disabled in non-interactive terminals)
+if [ "$NO_COLOR" = true ]; then
+  GREEN=''
+  YELLOW=''
+  BLUE=''
+  NC=''
+else
+  GREEN='\033[0;32m'
+  YELLOW='\033[1;33m'
+  BLUE='\033[0;34m'
+  NC='\033[0m'
+fi
 
 echo "🔄 Resuming Web Session..."
 echo ""

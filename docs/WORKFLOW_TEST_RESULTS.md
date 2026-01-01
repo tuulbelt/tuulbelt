@@ -1110,8 +1110,8 @@ When you test in Web environment, follow this checklist:
 | Web scripts created | ✅ Verified | ✅ Verified | All scripts functional |
 | Branch auto-detect (push.sh) | ✅ Verified | ✅ Same | Universal feature |
 | Web session creation | N/A | ✅ Verified | init-session.sh works |
-| Web PR creation | N/A | ⏭️ Skipped | Script ready, not tested to avoid test PRs |
-| Web cleanup | N/A | ⏭️ Skipped | Script ready, no PRs to cleanup |
+| Web PR creation | N/A | ✅ Verified | Tested with real PR (tuulbelt/test-flakiness-detector#1) |
+| Web cleanup | N/A | ✅ Verified | PR closed, branch deleted via gh CLI |
 | **Phase 4: Session Lifecycle Hooks** |
 | on-session-start.sh | ✅ Verified | ✅ Verified | Resumes Web session, shows status |
 | on-session-end.sh | ✅ Verified | ✅ Verified | Commits tracking file to git |
@@ -1140,6 +1140,20 @@ When you test in Web environment, follow this checklist:
 **Files Changed:**
 - `scripts/web/init-session.sh`
 - `scripts/web/resume-session.sh`
+
+### Issue 3: Color Codes Not Stripped in Non-Interactive Terminals
+
+**Problem:** ANSI color codes were displayed as raw escape sequences in Claude Code Web's non-interactive terminal output.
+
+**Fix:** Updated all Web scripts to detect `CLAUDE_CODE_REMOTE=true` and disable color output when in Web environment.
+
+**Files Changed:**
+- `scripts/web/init-session.sh`
+- `scripts/web/resume-session.sh`
+- `scripts/web/manage-submodule-branch.sh`
+- `scripts/web/setup-credentials.sh`
+- `scripts/web/save-session.sh`
+- `scripts/web/migrate-commits.sh`
 
 ---
 
