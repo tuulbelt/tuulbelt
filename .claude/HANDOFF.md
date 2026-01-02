@@ -1,37 +1,39 @@
 # Session Handoff
 
-**Last Updated:** 2026-01-01
-**Session:** Property Validator Implementation
-**Status:** 🚀 Ready to Start - Documentation cleanup complete
+**Last Updated:** 2026-01-02
+**Session:** Property Validator v0.2.0 - v1.0.0 Planning & Demo Fixes
+**Status:** 🎯 Planning Complete - Ready to Fix Demos
 
 ---
 
-## 📋 Current Session: Property Validator v0.1.0 - Ready for PR
+## 📋 Current Session: Property Validator Development Roadmap
 
-**Session Branch:** `claude/resume-work-wZtNr` (Web environment)
+**Session Branch (Meta):** `claude/comprehensive-vitepress-fixes-wZtNr` (Web environment)
+**Session Branch (Submodule):** `claude/comprehensive-vitepress-fixes-wZtNr` (property-validator)
 
 **What Was Done:**
-- ✅ Implemented property-validator with 101 passing tests
-- ✅ Complete dogfooding setup (test-flakiness-detector + output-diffing-utility)
-- ✅ Fixed session-start hook to prevent commit loss after compaction
-- ✅ Updated Future Enhancements (removed framework integrations, prioritized roadmap)
-- ✅ Created demo recording and dogfood-diff scripts
-- ✅ Documented GitHub Actions badge issue in KNOWN_ISSUES.md
-- ✅ Ran comprehensive quality check - all passed
+- ✅ Created comprehensive ROADMAP.md (861 lines) in property-validator submodule
+- ✅ Detailed planning for v0.2.0 - v1.0.0 (arrays, tuples, unions, refinements, performance)
+- ✅ Task breakdown with 390 new tests planned (total 491+ tests)
+- ✅ Identified and documented demo link/GIF issues
 
-**Implementation Summary:**
-- **Tests:** 101/101 passing (expanded from 32 to 101)
-- **Test coverage:** Error messages (21), Edge cases (24), Deep nesting (24), Core validators (32)
-- **Zero dependencies:** Runtime dependencies = 0
-- **Dogfooding:** Both test-flakiness-detector and output-diffing-utility integrated
-- **Documentation:** README, DOGFOODING_STRATEGY.md, CLAUDE.md all complete
+**ROADMAP.md Includes:**
+- Progress tracking (101/491 tests, 20.5% complete)
+- **IMMEDIATE:** Demo link fixes (asciinema placeholder + missing GIF in VitePress)
+- **v0.2.0:** Arrays and tuples (+130 tests, 1-2 sessions)
+- **v0.3.0:** Unions, refinements, optional/nullable (+175 tests, 2-3 sessions)
+- **v0.4.0:** Performance, polish, edge cases (+85 tests, 2-3 sessions)
+- **v1.0.0:** Stable API, production ready (491+ tests)
 
-**Issues Fixed:**
-- Session-start hook losing commits after compaction (git fetch overwrite issue)
-- Missing badges in README (Dogfooded, Tests count, propval title)
-- Future Enhancements alignment with implementable roadmap
+**Demo Issues Identified:**
+1. Asciinema link broken - Both README and VitePress show `(#)` placeholder
+   - Real URL: `https://asciinema.org/a/S9zWPiJiKwMNTd8EfoUcZa1xz` (in demo-url.txt)
+2. Demo GIF not showing in VitePress - Using 42-byte placeholder instead of 17KB real recording
+   - Real demo.gif exists in property-validator repo but not synced to meta repo
 
-**Next Work:** Create PR and merge property-validator v0.1.0 to main
+**Reference:** `tools/property-validator/ROADMAP.md`
+
+**Next Work:** Fix demo issues (IMMEDIATE priority), then start v0.2.0 implementation
 
 ---
 
