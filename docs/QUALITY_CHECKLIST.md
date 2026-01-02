@@ -57,6 +57,38 @@ Run these checks **before committing any code**:
 - [ ] **Input size limits**: Large inputs (files, messages, arrays) have reasonable limits
 - [ ] **Security section in README**: Document security considerations for users
 
+### Benchmarking (Optional, Performance-Critical Tools)
+
+**When to benchmark:** See `docs/BENCHMARKING_STANDARDS.md` for full guidelines
+
+- [ ] **Benchmarks directory exists**: `benchmarks/` created with proper structure
+  - TypeScript: `benchmarks/package.json`, `index.bench.ts`, `README.md`
+  - Rust: `benches/benchmark.rs`, `benches/README.md`
+- [ ] **Benchmarks run successfully**: `npm run bench` (TS) or `cargo bench` (Rust)
+- [ ] **Results documented**: `benchmarks/README.md` shows performance data
+- [ ] **Competitor comparisons** (if applicable): Benchmarks vs similar tools documented
+- [ ] **Performance claims verified**: README performance statements match benchmark results
+- [ ] **No performance regressions**: Compare with previous benchmark runs
+
+**TypeScript-specific:**
+```bash
+cd benchmarks
+npm install
+npm run bench        # Run main benchmarks
+npm run bench:compare # Include competitor benchmarks
+```
+
+**Rust-specific:**
+```bash
+cargo bench                    # Run all benchmarks
+cargo bench --bench benchmark  # Run specific benchmark
+```
+
+**Skip benchmarking if:**
+- Tool is I/O bound (network, file operations dominate)
+- Performance differences would be imperceptible
+- No meaningful competitors exist for comparison
+
 ### Documentation (VitePress) Specific
 
 - [ ] **Docs build succeeds**: `npm run docs:build` (no errors)
