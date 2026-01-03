@@ -39,14 +39,21 @@ Benchmarking in Tuulbelt serves three purposes:
 
 ### TypeScript / Node.js
 
-**Primary:** [tinybench](https://github.com/tinylibs/tinybench) (v2.9+)
+**Primary:** [tatami-ng](https://github.com/poolifier/tatami-ng) (v0.8.18+)
 
-**Why tinybench:**
-- Modern (async/await, ESM support)
-- Lightweight (2KB gzipped)
-- Statistical rigor (warm-up, iterations, statistical analysis)
+**Why tatami-ng:**
+- Criterion-equivalent statistical rigor for Node.js
+- Automatic outlier detection and removal
+- Significance testing (p-values, confidence intervals)
+- Variance, standard deviation, error margin built-in
+- Target variance: <5% (vs tinybench's ±10-20%)
+- Modern (async/await, ESM support, TypeScript native)
+- Multi-runtime support (Node.js, Bun, Deno)
 - Zero dependencies (aligns with Tuulbelt principles)
-- Vitest integration (if needed later)
+- API backward compatible with mitata (Rust-based benchmarking)
+
+**Migration from tinybench:**
+Property-validator discovered tinybench had ±19.4% variance for unions and ±10.4% for arrays, making optimization work unreliable. tatami-ng provides statistical rigor needed for trustworthy performance work. See [property-validator's BENCHMARKING_MIGRATION.md](../tools/property-validator/docs/BENCHMARKING_MIGRATION.md) for full rationale.
 
 **Alternative:** Node.js `perf_hooks` for simple cases (no external dep)
 
@@ -91,7 +98,7 @@ c.bench_function("operation", |b| {
 **Problem:** JIT compilation skews initial measurements.
 
 **Prevention:**
-- tinybench: Uses automatic warm-up (default 5 iterations)
+- tatami-ng: Automatic warm-up enabled with `warmup: true` in run() config
 - Criterion: Automatic warm-up (default 3 seconds)
 - Always use default warm-up unless profiling shows otherwise
 
@@ -210,7 +217,8 @@ harness = false
 ### TypeScript Benchmark (`benchmarks/index.bench.ts`)
 
 ```typescript
-import { Bench } from 'tinybench';
+import { bench, baseline, group, run } from 'tatami-ng';
+import { readFileSync } from 'node:fs';
 import * as v from '../src/index.js';
 
 // Load fixtures (do this ONCE, outside bench)
@@ -232,26 +240,35 @@ const schemas = {
   }),
 };
 
-// Create benchmark suite
-const bench = new Bench({ time: 100 }); // 100ms minimum per benchmark
+// Prevent dead code elimination
+let result: any;
 
-// Add benchmarks
-bench
-  .add('validate simple object (valid)', () => {
-    let result = v.validate(schemas.simple, { name: 'Alice', age: 30 });
-  })
-  .add('validate complex nested (valid)', () => {
-    let result = v.validate(schemas.complex, fixtures.medium);
-  })
-  .add('validate complex nested (invalid - early)', () => {
-    let result = v.validate(schemas.complex, { users: null });
+// Group related benchmarks
+group('Validation', () => {
+  baseline('validate simple object (valid)', () => {
+    result = v.validate(schemas.simple, { name: 'Alice', age: 30 });
   });
 
-// Run and report
-await bench.warmup(); // Warm up JIT
-await bench.run();
+  bench('validate complex nested (valid)', () => {
+    result = v.validate(schemas.complex, fixtures.medium);
+  });
 
-console.table(bench.table());
+  bench('validate complex nested (invalid - early)', () => {
+    result = v.validate(schemas.complex, { users: null });
+  });
+});
+
+// Run benchmarks
+await run({
+  units: false,        // Don't show unit reference
+  silent: false,       // Show progress
+  json: false,         // Human-readable output
+  samples: 256,        // More samples = more stable results
+  time: 2_000_000_000, // 2 seconds per benchmark (20x longer than tinybench)
+  warmup: true,        // Enable warm-up iterations for JIT
+  latency: true,       // Show time per iteration
+  throughput: true,    // Show operations per second
+});
 ```
 
 ### Rust Benchmark (`benches/main.rs`)
@@ -299,7 +316,7 @@ criterion_main!(benches);
 
 ```bash
 # In benchmarks/ directory
-npm install                           # Install benchmark deps (tinybench, competitors)
+npm install                           # Install benchmark deps (tatami-ng, competitors)
 npm run bench                         # Run all benchmarks
 npm run bench:compare                 # Run with competitor comparison
 ```
@@ -341,21 +358,24 @@ cargo bench -- --baseline main        # Compare against saved baseline
 
 ### Example Output Interpretation
 
-**tinybench output:**
+**tatami-ng output:**
 ```
-┌─────────┬──────────────┬────────────┬──────────────┬─────────┬─────────┐
-│ (index) │ Task Name    │ ops/sec    │ Average (ns) │ Margin  │ Samples │
-├─────────┼──────────────┼────────────┼──────────────┼─────────┼─────────┤
-│ 0       │ 'our-tool'   │ '1,234,567'│ 810          │ '±0.5%' │ 12345   │
-│ 1       │ 'zod'        │ '987,654'  │ 1,012        │ '±0.8%' │ 9876    │
-└─────────┴──────────────┴────────────┴──────────────┴─────────┴─────────┘
+benchmark                                  time/iter       iters/s
+----------------------------------------------------------------
+• Validation
+primitive: string (valid)              220.18 ns ± 1.07 %  5629749
+primitive: number (valid)              232.24 ns ± 0.93 %  5415341
+
+Validation summary
+  primitive: string (valid)
+    1.05 ± 1.01 % times faster than primitive: number (valid)
 ```
 
 **Interpretation:**
-- **ops/sec:** Higher is better (operations per second)
-- **Average:** Lower is better (nanoseconds per operation)
-- **Margin:** Error margin (lower is better, <1% is excellent)
-- **Samples:** More samples = more reliable
+- **time/iter:** Average time per iteration (lower is better)
+- **± X.XX %:** Error margin / variance (lower is better, <5% target)
+- **iters/s:** Operations per second (higher is better)
+- **summary:** Relative performance vs baseline (first benchmark in group)
 
 **Criterion output:**
 ```
@@ -411,10 +431,14 @@ Our tool performs competitively with established libraries:
 
 ## Methodology
 
-- **Tool:** tinybench v2.9.0
-- **Warm-up:** 5 iterations
-- **Iterations:** Automatic (based on 100ms minimum time)
-- **Runs:** 3 complete benchmark runs, median reported
+- **Tool:** tatami-ng v0.8.18 (criterion-equivalent for Node.js)
+- **Configuration:**
+  - 256 samples per benchmark
+  - 2 seconds per benchmark (vs tinybench's 100ms)
+  - Automatic warmup for JIT optimization
+  - Automatic outlier detection and removal
+- **Target variance:** <5%
+- **Why the change:** Previous tool (tinybench) showed ±19.4% variance, making optimization work unreliable
 
 ## How to Reproduce
 
@@ -448,8 +472,8 @@ npm run bench
 
 Add `benchmarks/` directory with:
 - `benchmarks/README.md` (template above)
-- `benchmarks/package.json` (tinybench dependency)
-- `benchmarks/index.bench.ts` (placeholder benchmark)
+- `benchmarks/package.json` (tatami-ng dependency)
+- `benchmarks/index.bench.ts` (tatami-ng template with group() and run())
 - `benchmarks/fixtures/` (empty directory)
 
 **For `templates/rust-tool-template/` (Rust):**
@@ -560,9 +584,13 @@ npm run bench:compare-versions
 
 ## References
 
+**Migration Documentation:**
+- [property-validator's BENCHMARKING_MIGRATION.md](../tools/property-validator/docs/BENCHMARKING_MIGRATION.md) - Why we switched from tinybench to tatami-ng (±19.4% variance → ±1.54%)
+
 **Research Sources:**
 - [Zod vs Yup Comparison 2025](https://dev.to/dataformathub/zod-vs-yup-vs-typebox-the-ultimate-schema-validation-guide-for-2025-1l4l)
-- [tinybench Documentation](https://github.com/tinylibs/tinybench)
+- [tatami-ng Documentation](https://github.com/poolifier/tatami-ng) - Criterion-equivalent benchmarking for Node.js
+- [mitata benchmarking article](https://steve-adams.me/typescript-benchmarking-mitata.html) - Background on mitata (tatami-ng's predecessor)
 - [Node.js Benchmarking State](https://webpro.nl/articles/the-state-of-benchmarking-in-nodejs)
 - [Criterion.rs Guide](https://bheisler.github.io/criterion.rs/book/getting_started.html)
 - [Microbenchmarking Pitfalls](https://www.oracle.com/technical-resources/articles/java/architect-benchmarking.html)

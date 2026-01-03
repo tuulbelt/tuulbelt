@@ -1,25 +1,25 @@
-#!/usr/bin/env -S npx tsx
+#!/usr/bin/env node --import tsx
 /**
  * TOOL_NAME Benchmarks
  *
- * Measures performance of core operations to:
- * 1. Validate competitive performance
- * 2. Detect performance regressions
- * 3. Guide optimization efforts
+ * Measures performance of core operations using tatami-ng for statistical rigor.
+ *
+ * Run: npm run bench
+ *
+ * Why tatami-ng over tinybench:
+ * - Statistical significance testing (p-values, confidence intervals)
+ * - Automatic outlier detection and removal
+ * - Variance, standard deviation, error margin built-in
+ * - Designed for <5% variance (vs tinybench's ±10-20% variance)
+ * - Criterion-equivalent benchmarking for Node.js
  *
  * See: /docs/BENCHMARKING_STANDARDS.md
  */
 
-import { Bench } from 'tinybench';
+import { bench, baseline, group, run } from 'tatami-ng';
 
 // Import your tool's functions
 // import { yourFunction } from '../src/index.ts';
-
-const bench = new Bench({
-  time: 100,           // Minimum 100ms per benchmark
-  warmupIterations: 5, // Warm up the V8 JIT
-  warmupTime: 100,     // 100ms warmup
-});
 
 // Prevent dead code elimination
 let result: any;
@@ -28,33 +28,33 @@ let result: any;
 // Core Operations Benchmarks
 // ============================================================================
 
-bench.add('operation: basic case', () => {
-  // result = yourFunction('input');
-  result = 'placeholder'; // Replace with actual function call
-});
+group('Core Operations', () => {
+  baseline('operation: basic case', () => {
+    // result = yourFunction('input');
+    result = 'placeholder'; // Replace with actual function call
+  });
 
-bench.add('operation: edge case', () => {
-  // result = yourFunction('');
-  result = 'placeholder'; // Replace with actual function call
+  bench('operation: edge case', () => {
+    // result = yourFunction('');
+    result = 'placeholder'; // Replace with actual function call
+  });
 });
 
 // ============================================================================
 // Run Benchmarks
 // ============================================================================
 
-await bench.warmup();
-await bench.run();
-
-console.table(
-  bench.tasks.map((task) => ({
-    'Benchmark': task.name,
-    'ops/sec': task.result?.hz ? task.result.hz.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : 'N/A',
-    'Average (ns)': task.result?.mean ? (task.result.mean * 1_000_000).toFixed(2) : 'N/A',
-    'Margin': task.result?.rme ? `±${task.result.rme.toFixed(2)}%` : 'N/A',
-    'Samples': task.result?.samples?.length || 'N/A',
-  }))
-);
+await run({
+  units: false,        // Don't show unit reference
+  silent: false,       // Show progress
+  json: false,         // Human-readable output
+  samples: 256,        // More samples = more stable results
+  time: 2_000_000_000, // 2 seconds per benchmark (vs tinybench: 100ms)
+  warmup: true,        // Enable warm-up iterations for JIT
+  latency: true,       // Show time per iteration
+  throughput: true,    // Show operations per second
+});
 
 console.log('\n✨ Benchmarks complete!');
-console.log('💡 Add competitor benchmarks in competitors/ directory');
+console.log('💡 Target variance: <5%');
 console.log('📖 See docs/BENCHMARKING_STANDARDS.md for guidelines');

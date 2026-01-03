@@ -7,7 +7,7 @@
     "bench:compare": "node --import tsx index.bench.ts && echo '\n--- Competitor Comparison ---\n' && node --import tsx competitors/*.bench.ts"
   },
   "devDependencies": {
-    "tinybench": "^2.9.0",
+    "tatami-ng": "^0.8.18",
     "tsx": "^4.19.2"
   }
 }
