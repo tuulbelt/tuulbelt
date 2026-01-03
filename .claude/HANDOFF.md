@@ -1,68 +1,59 @@
 # Session Handoff
 
 **Last Updated:** 2026-01-03
-**Session:** Property Validator v0.7.5 Phase 1 ✅ COMPLETE! 🚀
-**Status:** ✅ Phase 1 Implemented and Benchmarked
+**Session:** Property Validator v0.7.0 Baseline Establishment ✅ COMPLETE
+**Status:** ✅ Ready for v0.7.5 Optimization Work
 
 ---
 
-## 📋 Current Session: Property Validator v0.7.5 Phase 1 ✅ COMPLETE! 🚀
+## 📋 Current Session: Property Validator v0.7.0 Baseline with tatami-ng ✅ COMPLETE
 
 **Session Branch (Meta):** `claude/comprehensive-vitepress-fixes-wZtNr` (Web environment)
 **Session Branch (Submodule):** `claude/comprehensive-vitepress-fixes-wZtNr` (property-validator)
 
-**🚀 IMPLEMENTATION MILESTONE: v0.7.5 Phase 1 Complete!**
+**🎯 BASELINE ESTABLISHMENT COMPLETE: v0.7.0 Performance Baseline with tatami-ng**
 
 **What Was Done This Session:**
-- ✅ Implemented Phase 1 optimization: Skip empty refinement loop
-  - Added zero-cost `refinements.length === 0` check before `Array.every()` call
-  - Applied to 2 locations: createValidator (line 267) and ArrayValidator (line 1014)
-- ✅ Captured v0.7.0 baseline benchmarks (before Phase 1)
-- ✅ Ran Phase 1 benchmarks (after implementation)
-- ✅ Created detailed Phase 1 analysis: benchmarks/v0.7.5-phase1-results.md (108 lines)
-- ✅ Updated OPTIMIZATION_PLAN.md with Phase 1 results (+117 lines)
+- ✅ Migrated all benchmarks from tinybench to tatami-ng v0.8.18
+- ✅ Migrated all competitor benchmarks (zod, yup, valibot) to tatami-ng
+- ✅ Ran complete head-to-head comparison (4 libraries)
+- ✅ Created BASELINE_COMPARISON.md (336 lines) - comprehensive competitor analysis
+- ✅ Updated BASELINE.md with reliable tatami-ng data (replacing unreliable tinybench)
+- ✅ Updated OPTIMIZATION_PLAN.md with performance gap analysis
 - ✅ All 537 tests passing (100%)
 
-**v0.7.5 Phase 1 Results Summary:**
+**Variance Achievement:**
+- **tinybench variance:** ±19.4% (unions), ±10.4% (arrays) - UNRELIABLE for optimization work
+- **tatami-ng variance:** ±0.86% average - **13.1x MORE STABLE** ✅
+- **Target achieved:** <5% variance across all benchmarks
 
-**Performance Improvements (vs v0.7.0 baseline):**
-- ✅ Primitives: **+7.7%** (3.4M → 3.7M ops/sec) - Matches expected +5-10%
-- 🎉 Objects (simple): **+30.7%** (1.79M → 2.35M ops/sec) - 3x EXCEEDS expectation!
-- 🎉 Objects (complex): **+24.5%** (243k → 303k ops/sec) - 2.5x EXCEEDS expectation!
-- 🎉 Arrays (object arrays): **+17.0%** avg - 2x EXCEEDS expectation!
-- 🎉 Arrays (mixed arrays): **+19.8%** avg - 2x EXCEEDS expectation!
-- ⚠️ Unions: -6.5% (minor regression, within acceptable variance)
-- ⚠️ Refinements: -2.2% (minimal regression, within noise)
+**Baseline Comparison Results (vs Competitors):**
+- ✅ **vs zod:** 2-3x faster on primitives, 2-9x faster on objects
+- ✅ **vs yup:** 7-8x faster on primitives, 8-17x faster on objects
+- ⚠️ **vs valibot:** 2.1x slower on primitives (PRIMARY OPTIMIZATION TARGET)
+- ✅ **vs valibot:** 4-5x faster on unions, 1.36x faster on chained refinements
 
-**Why It Exceeded Expectations:**
-- Zero-cost abstraction: Validators with no refinements now have TRULY zero overhead
-- Better V8 optimization: Early return enables more aggressive V8 optimization on hot path
-- Cache-friendly: Fewer function calls = better instruction cache utilization
-
-**Key Achievement:** Phase 1 alone delivered significant improvements beyond the expected +5-10% micro-optimization.
+**Pull Requests:**
+- PR #3 (property-validator): https://github.com/tuulbelt/property-validator/pull/3
+- PR #88 (meta repo): https://github.com/tuulbelt/tuulbelt/pull/88
 
 **Commits:**
-- 2fa36a8: perf(v0.7.5): Phase 1 - Skip empty refinement loop
-- 546ace8: docs(v0.7.5): add Phase 1 benchmark results and analysis
+- 8fdce38: docs(benchmarks): update BASELINE.md with tatami-ng data
+- a31d09f: docs(benchmarks): add v0.7.0 baseline comparison vs competitors
+- bcbfcbe: docs(benchmarks): add v0.7.0 tatami-ng baseline documentation
+- 9187c7e: chore(benchmarks): migrate competitor benchmarks from tinybench to tatami-ng
+- 289c582: docs(benchmarks): establish v0.7.0 baseline with tatami-ng
 
-**Overall Progress:**
-- v0.7.5 Phase 1: ✅ Complete (implementation + benchmarking + documentation)
-- Total: 537/537 tests (100%) - all passing
+**Reference Documentation:**
+- `benchmarks/BASELINE_COMPARISON.md` - Head-to-head analysis vs all competitors
+- `benchmarks/BASELINE.md` - property-validator v0.7.0 standalone baseline
+- `OPTIMIZATION_PLAN.md` - v0.7.5 optimization phases with performance targets
 
-**Deliverables:**
-- benchmarks/v0.7.5-phase1-results.md - Detailed Phase 1 analysis (108 lines)
-- OPTIMIZATION_PLAN.md v0.7.5 section - Phase 1 results documented (+117 lines)
-- src/index.ts - Phase 1 optimization implemented (10 lines added)
-
-**Reference:**
-- `benchmarks/v0.7.5-phase1-results.md` - Isolated Phase 1 impact analysis
-- `OPTIMIZATION_PLAN.md` - v0.7.5 Phase 1 section with full results
-- `ROADMAP.md` - v0.7.5 progress tracking
-
-**Next Work:** Decision point - Proceed to Phase 2 or declare v0.7.5 complete?
-- Phase 2: Eliminate Fast API Result allocation (expected +10-15%)
-- Phase 3: Inline primitive validation (expected +15-20%)
-- OR: Consider Phase 1's +30% improvement on objects sufficient for v0.7.5 goals
+**Next Work:** v0.7.5 Phase 1 - Skip Empty Refinement Loop
+- Target: +5-10% improvement
+- Implementation: Add zero-cost `refinements.length === 0` check
+- Locations: createValidator (line 267), ArrayValidator (line 1014)
+- Goal: Start closing 2.1x performance gap with valibot on primitives
 
 ---
 

@@ -33,35 +33,42 @@
 
 ---
 
-## 🎯 Property Validator v0.7.5 🔬 RESEARCH COMPLETE
+## 🎯 Property Validator v0.7.5 🚀 READY TO START
 
-**Status:** ✅ v0.7.5 Research Complete - Profiling & Optimization Planning
+**Status:** ✅ v0.7.0 Baseline Complete with tatami-ng - Ready for v0.7.5 Implementation
 **Language:** TypeScript
 **Short Name:** `propval`
 **Branch:** `claude/comprehensive-vitepress-fixes-wZtNr`
 
-### v0.7.5 Research Summary
+### v0.7.0 Baseline Establishment ✅ COMPLETE
 
-**Completed Tasks:**
-- ✅ V8 CPU profiling on 4 scenarios (object arrays, primitive arrays, objects, primitives)
-- ✅ Verified 4 bottlenecks via profiling data (not hypotheses)
-- ✅ Created profiling/ANALYSIS.md (480 lines) - comprehensive analysis
-- ✅ Updated OPTIMIZATION_PLAN.md with v0.7.5 phases (+625 lines)
-- ✅ 8 profiling scripts created (TypeScript + JavaScript versions)
-- ✅ 4 V8 profiling reports generated (~94KB total)
-- ✅ Updated ROADMAP.md with v0.7.5 section
+**Completed This Session:**
+- ✅ Migrated all benchmarks from tinybench to tatami-ng v0.8.18
+- ✅ Migrated competitor benchmarks (zod, yup, valibot) to tatami-ng
+- ✅ Ran complete head-to-head comparison (4 libraries)
+- ✅ Created BASELINE_COMPARISON.md (336 lines) - comprehensive analysis
+- ✅ Updated BASELINE.md with reliable tatami-ng data
+- ✅ Updated OPTIMIZATION_PLAN.md with performance gap analysis
+- ✅ Created PR #3 (property-validator) and PR #88 (meta repo)
 
-**Verified Bottlenecks (via V8 profiling):**
-1. validator._validateWithPath overhead - 4.3% CPU
-2. validateWithPath function overhead - 2.5-3.7% CPU
-3. Primitive validator closures - 1.4-3.4% CPU
-4. Fast API refinement loop - 1.6-2.3% CPU
+**Variance Achievement:**
+- tinybench: ±19.4% variance (unreliable for optimization)
+- tatami-ng: ±0.86% average variance - **13.1x MORE STABLE** ✅
 
-**NOT Verified:**
-- WeakSet circular reference checks - 0% CPU (not a bottleneck)
-- Depth/property counting - 0% CPU (not a bottleneck)
+**Performance Baseline (vs Competitors):**
+- ✅ 2-3x faster than zod on primitives, 2-9x on objects
+- ✅ 7-8x faster than yup on primitives, 8-17x on objects
+- ⚠️ 2.1x slower than valibot on primitives (PRIMARY TARGET)
+- ✅ 4-5x faster than valibot on unions
 
-**6 Optimization Phases Designed:**
+### v0.7.5 Optimization Work 📋 NEXT
+
+**Research Complete (Previous Session):**
+- ✅ V8 CPU profiling verified 4 bottlenecks
+- ✅ Created profiling/ANALYSIS.md (480 lines)
+- ✅ Designed 6 optimization phases in OPTIMIZATION_PLAN.md
+
+**6 Optimization Phases:**
 1. **Phase 1:** Skip empty refinement loop (trivial, +5-10%)
 2. **Phase 2:** Eliminate Fast API Result allocation (medium, +10-15%)
 3. **Phase 3:** Inline primitive validation (medium, +15-20%)
@@ -69,18 +76,19 @@
 5. **Phase 5:** Optimize primitive validator closures (low, +5-10%)
 6. **Phase 6:** Inline validateWithPath for plain objects (complex, +10-15%)
 
-**Target:** 10-30% cumulative improvement to close gap with valibot
+**Target:** 10-30% cumulative improvement to close 2.1x gap with valibot
 
 **Progress:**
-- v0.1.0 through v0.7.0: ✅ Complete (537/537 tests)
-- v0.7.5: ✅ Research complete (planning phase, no code changes)
-- v0.8.0: 📋 Next (modular design for bundle size optimization)
+- v0.1.0 through v0.7.0: ✅ Complete (537/537 tests, tatami-ng baseline)
+- v0.7.5: 📋 Ready to start (Phase 1 implementation)
+- v0.8.0: Future (modular design for bundle size optimization)
 
-**Next Steps:**
-1. Execute Phase 1: Skip empty refinement loop
-2. Benchmark after Phase 1 (verify +5-10% gain)
-3. Execute Phase 2 & 3 if needed
-4. Re-profile after Phase 3 to verify improvements
+**Next Steps (v0.7.5 Phase 1):**
+1. Implement: Add `refinements.length === 0` check before `Array.every()`
+2. Locations: createValidator (line 267), ArrayValidator (line 1014)
+3. Benchmark: Run bench:fast to verify +5-10% gain
+4. Document: Create v0.7.5-phase1-results.md
+5. Decision: Proceed to Phase 2 or stop if sufficient improvement
 
 ---
 
