@@ -1,56 +1,96 @@
 # Session Handoff
 
-**Last Updated:** 2026-01-02
-**Session:** Property Validator v0.4.0 ✅ COMPLETE! 🎉
-**Status:** ✅ Ready for v1.0.0 Preparation
+**Last Updated:** 2026-01-03
+**Session:** Property Validator v0.7.5 ✅ RESEARCH COMPLETE! 🔬
+**Status:** ✅ Ready for Phase 1 Implementation
 
 ---
 
-## 📋 Current Session: Property Validator v0.4.0 ✅ COMPLETE! 🎉
+## 📋 Current Session: Property Validator v0.7.5 ✅ RESEARCH COMPLETE! 🔬
 
 **Session Branch (Meta):** `claude/comprehensive-vitepress-fixes-wZtNr` (Web environment)
 **Session Branch (Submodule):** `claude/comprehensive-vitepress-fixes-wZtNr` (property-validator)
 
-**🎉 MAJOR MILESTONE: v0.4.0 100% Complete!**
+**🔬 RESEARCH MILESTONE: v0.7.5 Profiling & Optimization Planning Complete!**
 
 **What Was Done This Session:**
-- ✅ Phase 7: Performance Benchmarks (from previous session)
-- ✅ Phase 3: Error Formatting (15 tests) - Verified complete
-- ✅ Phase 4: Circular Reference Detection (10 tests) - Verified complete
-- ✅ Phase 5: Security Limits (10 tests) - Verified complete
-- ✅ All v0.4.0 phases now complete (85/85 tests)
+- ✅ Fixed profiling script import paths (../src → ../dist)
+- ✅ Created JavaScript versions of profiling scripts (eliminate tsx overhead)
+- ✅ Executed V8 CPU profiling on 4 scenarios:
+  - Object arrays (worst case: 4.2x slower than valibot)
+  - Primitive arrays (2.9x slower than valibot)
+  - Simple objects (1.8x slower than valibot)
+  - Primitives (1.9x slower than valibot)
+- ✅ Generated 4 V8 profiling reports (~94KB total)
+- ✅ Created comprehensive profiling/ANALYSIS.md (480 lines)
+- ✅ Updated OPTIMIZATION_PLAN.md with v0.7.5 phases (+625 lines)
+- ✅ Updated ROADMAP.md with v0.7.5 research completion
+
+**v0.7.5 Research Summary:**
+
+**Verified Bottlenecks (via V8 CPU profiling):**
+1. validator._validateWithPath overhead - 4.3% CPU (Line 1221)
+2. validateWithPath function overhead - 2.5-3.7% CPU (Line 235)
+3. Primitive validator closures - 1.4-3.4% CPU (Lines 744, 752)
+4. Fast API refinement loop - 1.6-2.3% CPU (Line 145)
+
+**NOT Verified (0% CPU in profiling):**
+- WeakSet circular reference checks
+- Depth/property counting
+
+**Key Insight:** JavaScript validation uses only 8-15% of CPU time. Bottlenecks are **overhead per validation call**, not algorithmic complexity.
+
+**6 Optimization Phases Designed:**
+- **Phase 1:** Skip empty refinement loop (trivial, expected +5-10%)
+- **Phase 2:** Eliminate Fast API Result allocation (medium, expected +10-15%)
+- **Phase 3:** Inline primitive validation (medium, expected +15-20%)
+- **Phase 4:** Lazy path building (complex, expected +10-15%)
+- **Phase 5:** Optimize primitive validator closures (low impact, expected +5-10%)
+- **Phase 6:** Inline validateWithPath for plain objects (complex, expected +10-15%)
+
+**Target:** 10-30% cumulative improvement to close gap with valibot from 1.6-4.2x to 1.2-3.0x
+
+**Deliverables:**
+- profiling/ANALYSIS.md (480 lines) - Comprehensive bottleneck analysis
+- OPTIMIZATION_PLAN.md (+625 lines) - 6 detailed optimization phases
+- 4 profiling scripts (TypeScript + JavaScript versions)
+- 4 V8 CPU profiling reports (~25KB each)
+- profiling/run-all-profiling.sh - Automated profiling runner
+
+**Commits:**
+- c0f9392: Profiling research complete (ANALYSIS.md, OPTIMIZATION_PLAN.md, all profiling scripts)
+- f2e74a7: Update ROADMAP.md with v0.7.5 research completion
+
+**Overall Progress:**
+- v0.7.5: Research complete (planning phase, no code changes)
+- Total: 537/537 tests (100%) - maintained during research
+
+**Reference:**
+- `tools/property-validator/ROADMAP.md` - v0.7.5 section
+- `tools/property-validator/profiling/ANALYSIS.md` - Bottleneck analysis
+- `tools/property-validator/OPTIMIZATION_PLAN.md` - Phase details
+
+**Next Work:** v0.7.5 Phase 1 implementation - Skip empty refinement loop (+5-10% expected)
+
+---
+
+## Previous Session: Property Validator v0.4.0 ✅ COMPLETE
 
 **v0.4.0 Complete Summary:**
 - Phase 1: Schema Compilation (30 tests) ✅
 - Phase 2: Fast Path Optimizations (benchmarks) ✅
 - Phase 3: Error Formatting (15 tests) ✅
-  - JSON, text, and color formatting with ANSI codes
-  - Debug traces with validation path and value
 - Phase 4: Circular Reference Detection (10 tests) ✅
-  - v.lazy() for recursive schemas
-  - Circular reference detection prevents infinite loops
 - Phase 5: Security Limits (10 tests) ✅
-  - maxDepth, maxProperties, maxItems config options
-  - Protection against resource exhaustion attacks
-- Phase 6: Edge Case Handling (20 tests) ✅ (already complete)
+- Phase 6: Edge Case Handling (20 tests) ✅
 - Phase 7: Performance Benchmarks (dev-only) ✅
   - 6-10x faster than zod/yup for primitives
   - 2-5x faster for unions
   - 5-15x faster for refinements
 
-**Overall Progress:**
-- v0.4.0: 85/85 tests (100%) ✅✅✅
-- Total: 511/491 tests (104.1% - exceeding target!)
+**Overall:** 85/85 tests (100%), exceeding target of 511/491 tests
 
-**Commits:**
-- ff75c46: Phase 7 - Performance benchmarks complete
-- a77427f: Phase 3 - Error formatting complete
-- b879095: Phase 4 - Circular reference detection complete
-- 5bce894: Phase 5 - Security limits complete + v0.4.0 DONE!
-
-**Reference:** `tools/property-validator/ROADMAP.md`
-
-**Next Work:** v1.0.0 preparation (Phases 8-10: Documentation, API Stability Review, Dogfooding)
+**Commits:** ff75c46, a77427f, b879095, 5bce894
 
 ---
 

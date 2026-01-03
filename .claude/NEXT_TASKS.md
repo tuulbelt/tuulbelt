@@ -1,6 +1,6 @@
 # Next Tasks
 
-**Last Updated:** 2026-01-01
+**Last Updated:** 2026-01-03
 
 ---
 
@@ -33,43 +33,54 @@
 
 ---
 
-## 🎯 Property Validator v0.2.0 ✅ COMPLETE
+## 🎯 Property Validator v0.7.5 🔬 RESEARCH COMPLETE
 
-**Status:** ✅ v0.2.0 Complete - Arrays and Tuples Implementation
+**Status:** ✅ v0.7.5 Research Complete - Profiling & Optimization Planning
 **Language:** TypeScript
 **Short Name:** `propval`
 **Branch:** `claude/comprehensive-vitepress-fixes-wZtNr`
 
-### v0.2.0 Summary
+### v0.7.5 Research Summary
 
-**Implemented:**
-- ✅ Enhanced array validator with fluent API (.min, .max, .length, .nonempty)
-- ✅ New tuple validator with fixed-length and per-index validation
-- ✅ Full TypeScript type inference via TupleType helper
-- ✅ Support for nested arrays (2D, 3D, 4+ levels)
-- ✅ 125 new tests (226 total, up from 101)
-- ✅ Documentation updated (README, ROADMAP, examples)
-- ✅ Dogfooding passed (10/10 runs, deterministic validation)
-- ✅ Zero runtime dependencies maintained
+**Completed Tasks:**
+- ✅ V8 CPU profiling on 4 scenarios (object arrays, primitive arrays, objects, primitives)
+- ✅ Verified 4 bottlenecks via profiling data (not hypotheses)
+- ✅ Created profiling/ANALYSIS.md (480 lines) - comprehensive analysis
+- ✅ Updated OPTIMIZATION_PLAN.md with v0.7.5 phases (+625 lines)
+- ✅ 8 profiling scripts created (TypeScript + JavaScript versions)
+- ✅ 4 V8 profiling reports generated (~94KB total)
+- ✅ Updated ROADMAP.md with v0.7.5 section
 
-**Test Breakdown:**
-- test/arrays.test.ts: 60 tests (basic arrays + length constraints)
-- test/tuples.test.ts: 30 tests (tuple validator)
-- test/nested-arrays.test.ts: 25 tests (2D matrices, deep nesting)
-- examples/arrays.ts: 7 comprehensive examples
-- examples/tuples.ts: 9 comprehensive examples
-- All tests passing: 226/226 (100%)
+**Verified Bottlenecks (via V8 profiling):**
+1. validator._validateWithPath overhead - 4.3% CPU
+2. validateWithPath function overhead - 2.5-3.7% CPU
+3. Primitive validator closures - 1.4-3.4% CPU
+4. Fast API refinement loop - 1.6-2.3% CPU
+
+**NOT Verified:**
+- WeakSet circular reference checks - 0% CPU (not a bottleneck)
+- Depth/property counting - 0% CPU (not a bottleneck)
+
+**6 Optimization Phases Designed:**
+1. **Phase 1:** Skip empty refinement loop (trivial, +5-10%)
+2. **Phase 2:** Eliminate Fast API Result allocation (medium, +10-15%)
+3. **Phase 3:** Inline primitive validation (medium, +15-20%)
+4. **Phase 4:** Lazy path building (complex, +10-15%)
+5. **Phase 5:** Optimize primitive validator closures (low, +5-10%)
+6. **Phase 6:** Inline validateWithPath for plain objects (complex, +10-15%)
+
+**Target:** 10-30% cumulative improvement to close gap with valibot
 
 **Progress:**
-- Overall: 226/491 tests (46.0%, up from 20.5%)
-- v0.1.0: ✅ Complete (101 tests)
-- v0.2.0: ✅ Complete (125 new tests)
-- v0.3.0: 📋 Next (unions, refinements, +175 tests)
+- v0.1.0 through v0.7.0: ✅ Complete (537/537 tests)
+- v0.7.5: ✅ Research complete (planning phase, no code changes)
+- v0.8.0: 📋 Next (modular design for bundle size optimization)
 
 **Next Steps:**
-1. Begin v0.3.0 planning (unions, literals, refinements)
-2. Or continue with additional array/tuple features
-3. Or prepare for v0.2.0 release and PR
+1. Execute Phase 1: Skip empty refinement loop
+2. Benchmark after Phase 1 (verify +5-10% gain)
+3. Execute Phase 2 & 3 if needed
+4. Re-profile after Phase 3 to verify improvements
 
 ---
 
