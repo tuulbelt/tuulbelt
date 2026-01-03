@@ -53,7 +53,7 @@ Benchmarking in Tuulbelt serves three purposes:
 - API backward compatible with mitata (Rust-based benchmarking)
 
 **Migration from tinybench:**
-Property-validator discovered tinybench had ±19.4% variance for unions and ±10.4% for arrays, making optimization work unreliable. tatami-ng provides statistical rigor needed for trustworthy performance work. See [property-validator's BENCHMARKING_MIGRATION.md](../tools/property-validator/docs/BENCHMARKING_MIGRATION.md) for full rationale.
+Property-validator discovered tinybench had ±19.4% variance for unions and ±10.4% for arrays, making optimization work unreliable. tatami-ng provides statistical rigor needed for trustworthy performance work. See [property-validator's BENCHMARKING_MIGRATION.md](https://github.com/tuulbelt/property-validator/blob/main/docs/BENCHMARKING_MIGRATION.md) for full rationale.
 
 **Alternative:** Node.js `perf_hooks` for simple cases (no external dep)
 
@@ -585,7 +585,7 @@ npm run bench:compare-versions
 ## References
 
 **Migration Documentation:**
-- [property-validator's BENCHMARKING_MIGRATION.md](../tools/property-validator/docs/BENCHMARKING_MIGRATION.md) - Why we switched from tinybench to tatami-ng (±19.4% variance → ±1.54%)
+- [property-validator's BENCHMARKING_MIGRATION.md](https://github.com/tuulbelt/property-validator/blob/main/docs/BENCHMARKING_MIGRATION.md) - Why we switched from tinybench to tatami-ng (±19.4% variance → ±1.54%)
 
 **Research Sources:**
 - [Zod vs Yup Comparison 2025](https://dev.to/dataformathub/zod-vs-yup-vs-typebox-the-ultimate-schema-validation-guide-for-2025-1l4l)
