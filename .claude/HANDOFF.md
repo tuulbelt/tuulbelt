@@ -1,37 +1,79 @@
 # Session Handoff
 
-**Last Updated:** 2026-01-01
-**Session:** Property Validator Implementation
-**Status:** 🚀 Ready to Start - Documentation cleanup complete
+**Last Updated:** 2026-01-03
+**Session:** Property Validator v0.7.0 Baseline Establishment ✅ COMPLETE
+**Status:** ✅ Ready for v0.7.5 Optimization Work
 
 ---
 
-## 📋 Current Session: Property Validator v0.1.0 - Ready for PR
+## 📋 Current Session: Property Validator v0.7.0 Baseline with tatami-ng ✅ COMPLETE
 
-**Session Branch:** `claude/resume-work-wZtNr` (Web environment)
+**Session Branch (Meta):** `claude/comprehensive-vitepress-fixes-wZtNr` (Web environment)
+**Session Branch (Submodule):** `claude/comprehensive-vitepress-fixes-wZtNr` (property-validator)
 
-**What Was Done:**
-- ✅ Implemented property-validator with 101 passing tests
-- ✅ Complete dogfooding setup (test-flakiness-detector + output-diffing-utility)
-- ✅ Fixed session-start hook to prevent commit loss after compaction
-- ✅ Updated Future Enhancements (removed framework integrations, prioritized roadmap)
-- ✅ Created demo recording and dogfood-diff scripts
-- ✅ Documented GitHub Actions badge issue in KNOWN_ISSUES.md
-- ✅ Ran comprehensive quality check - all passed
+**🎯 BASELINE ESTABLISHMENT COMPLETE: v0.7.0 Performance Baseline with tatami-ng**
 
-**Implementation Summary:**
-- **Tests:** 101/101 passing (expanded from 32 to 101)
-- **Test coverage:** Error messages (21), Edge cases (24), Deep nesting (24), Core validators (32)
-- **Zero dependencies:** Runtime dependencies = 0
-- **Dogfooding:** Both test-flakiness-detector and output-diffing-utility integrated
-- **Documentation:** README, DOGFOODING_STRATEGY.md, CLAUDE.md all complete
+**What Was Done This Session:**
+- ✅ Migrated all benchmarks from tinybench to tatami-ng v0.8.18
+- ✅ Migrated all competitor benchmarks (zod, yup, valibot) to tatami-ng
+- ✅ Ran complete head-to-head comparison (4 libraries)
+- ✅ Created BASELINE_COMPARISON.md (336 lines) - comprehensive competitor analysis
+- ✅ Updated BASELINE.md with reliable tatami-ng data (replacing unreliable tinybench)
+- ✅ Updated OPTIMIZATION_PLAN.md with performance gap analysis
+- ✅ All 537 tests passing (100%)
 
-**Issues Fixed:**
-- Session-start hook losing commits after compaction (git fetch overwrite issue)
-- Missing badges in README (Dogfooded, Tests count, propval title)
-- Future Enhancements alignment with implementable roadmap
+**Variance Achievement:**
+- **tinybench variance:** ±19.4% (unions), ±10.4% (arrays) - UNRELIABLE for optimization work
+- **tatami-ng variance:** ±0.86% average - **13.1x MORE STABLE** ✅
+- **Target achieved:** <5% variance across all benchmarks
 
-**Next Work:** Create PR and merge property-validator v0.1.0 to main
+**Baseline Comparison Results (vs Competitors):**
+- ✅ **vs zod:** 2-3x faster on primitives, 2-9x faster on objects
+- ✅ **vs yup:** 7-8x faster on primitives, 8-17x faster on objects
+- ⚠️ **vs valibot:** 2.1x slower on primitives (PRIMARY OPTIMIZATION TARGET)
+- ✅ **vs valibot:** 4-5x faster on unions, 1.36x faster on chained refinements
+
+**Pull Requests:**
+- PR #3 (property-validator): https://github.com/tuulbelt/property-validator/pull/3
+- PR #88 (meta repo): https://github.com/tuulbelt/tuulbelt/pull/88
+
+**Commits:**
+- 8fdce38: docs(benchmarks): update BASELINE.md with tatami-ng data
+- a31d09f: docs(benchmarks): add v0.7.0 baseline comparison vs competitors
+- bcbfcbe: docs(benchmarks): add v0.7.0 tatami-ng baseline documentation
+- 9187c7e: chore(benchmarks): migrate competitor benchmarks from tinybench to tatami-ng
+- 289c582: docs(benchmarks): establish v0.7.0 baseline with tatami-ng
+
+**Reference Documentation:**
+- `benchmarks/BASELINE_COMPARISON.md` - Head-to-head analysis vs all competitors
+- `benchmarks/BASELINE.md` - property-validator v0.7.0 standalone baseline
+- `OPTIMIZATION_PLAN.md` - v0.7.5 optimization phases with performance targets
+
+**Next Work:** v0.7.5 Phase 1 - Skip Empty Refinement Loop
+- Target: +5-10% improvement
+- Implementation: Add zero-cost `refinements.length === 0` check
+- Locations: createValidator (line 267), ArrayValidator (line 1014)
+- Goal: Start closing 2.1x performance gap with valibot on primitives
+
+---
+
+## Previous Session: Property Validator v0.4.0 ✅ COMPLETE
+
+**v0.4.0 Complete Summary:**
+- Phase 1: Schema Compilation (30 tests) ✅
+- Phase 2: Fast Path Optimizations (benchmarks) ✅
+- Phase 3: Error Formatting (15 tests) ✅
+- Phase 4: Circular Reference Detection (10 tests) ✅
+- Phase 5: Security Limits (10 tests) ✅
+- Phase 6: Edge Case Handling (20 tests) ✅
+- Phase 7: Performance Benchmarks (dev-only) ✅
+  - 6-10x faster than zod/yup for primitives
+  - 2-5x faster for unions
+  - 5-15x faster for refinements
+
+**Overall:** 85/85 tests (100%), exceeding target of 511/491 tests
+
+**Commits:** ff75c46, a77427f, b879095, 5bce894
 
 ---
 
