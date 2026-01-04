@@ -1,52 +1,65 @@
 # Session Handoff
 
 **Last Updated:** 2026-01-04
-**Session:** Property Validator v0.7.5 Phase 1 ✅ COMPLETE
-**Status:** ✅ Ready for v0.7.5 Phase 2 (Eliminate Fast API Result allocation)
+**Session:** Property Validator v0.7.5 Phase 2 ✅ COMPLETE
+**Status:** ✅ Ready for v0.7.5 Phase 3 (Inline primitive validation)
 
 ---
 
-## 📋 Current Session: Property Validator v0.7.5 Phase 1 ✅ COMPLETE
+## 📋 Current Session: Property Validator v0.7.5 Phase 2 ✅ COMPLETE
 
 **Session Branch (Meta):** `claude/fix-meta-job-failure-L8oeO` (Web environment)
 **Session Branch (Submodule):** `main` (property-validator)
 
-**🎯 PHASE 1 COMPLETE: Skip Empty Refinement Loop**
+**🎯 PHASE 2 COMPLETE: Eliminate Fast API Result Allocation**
 
 **What Was Done This Session:**
-- ✅ Implemented Phase 1 optimization in `createValidator()` (line 267)
-- ✅ Implemented Phase 1 optimization in `ArrayValidator.validate()` (line 1012)
+- ✅ Implemented Phase 2 optimization in `compileArrayValidator()` (line 873)
+- ✅ Changed `validateFast(itemValidator, data[i]).ok` → `itemValidator.validate(data[i])`
+- ✅ Eliminates Result object allocation on every array item
 - ✅ Ran all 537 tests - 100% passing
-- ✅ Ran bench benchmark - all categories improved
-- ✅ Ran bench:fast benchmark - now FASTER than valibot on many scenarios
-- ✅ Ran bench:compare benchmark - full competitor comparison
-- ✅ Updated BASELINE.md with Phase 1 results
+- ✅ Ran bench, bench:fast, bench:compare benchmarks
+- ✅ Created v0.7.5-phase2-results.md with detailed analysis
+- ✅ Updated BASELINE.md with Phase 2 results
 
-**Phase 1 Performance Results:**
+**Phase 2 Performance Results (vs v0.7.0 Baseline):**
 
-| Category | v0.7.0 → Phase 1 | Improvement |
+| Category | v0.7.0 → Phase 2 | Improvement |
 |----------|------------------|-------------|
-| Primitives (string) | 210.25 ns → 187.36 ns | **+10.9%** ✅ |
-| Primitives (number) | 218.19 ns → 185.70 ns | **+14.9%** ✅ |
-| Simple objects | 386.67 ns → 334.88 ns | **+13.4%** ✅ |
-| Complex nested | 3.14 µs → 2.87 µs | **+8.6%** ✅ |
-| Arrays (small) | 5.63 µs → 4.63 µs | **+17.8%** ✅ |
-| Compiled validators | 416.20 ns → 333.49 ns | **+19.9%** ✅ |
+| Arrays (small) | 3.18 µs → 2.68 µs | **+15.7%** ✅ |
+| Arrays (medium) | 19.46 µs → 16.06 µs | **+17.5%** ✅ |
+| Arrays (large) | 176.95 µs → 154.12 µs | **+12.9%** ✅ |
+| OBJECTS small | 5.63 µs → 4.92 µs | **+12.6%** ✅ |
+| OBJECTS medium | 52.49 µs → 42.56 µs | **+18.9%** ✅ |
+| Compiled validators | 416.20 ns → 323.99 ns | **+22.2%** ✅ |
 
-**valibot Gap Closure:**
-- Primitives: 2.08x slower → 1.96x slower (6% improvement)
-- Simple objects: 1.79x slower → 1.51x slower (16% improvement)
-- Unions: Still 4.6x FASTER than valibot ✅
+**Competitor Status (Post-Phase 2):**
+- vs zod: 6.3x faster on primitives, 2.2x faster on objects, 3.3x faster on arrays
+- vs yup: 7.2x faster on primitives, 17.7x faster on objects, 31.5x faster on arrays
+- vs valibot: ~2x slower on primitives, ~1.5x slower on objects, ~1.2x slower on arrays
+- Unions: 4.5x FASTER than valibot (maintained advantage!)
 
 **Reference Documentation:**
-- `benchmarks/BASELINE.md` - Updated with Phase 1 results
-- `benchmarks/v0.7.5-phase1-results.md` - Detailed Phase 1 analysis
-- `docs/v0_7_5_PHASE1_RESEARCH.md` - V8 optimization research
+- `benchmarks/BASELINE.md` - Updated with Phase 1+2 results
+- `benchmarks/v0.7.5-phase2-results.md` - Detailed Phase 2 analysis
+- `benchmarks/v0.7.5-phase1-results.md` - Phase 1 analysis
 
-**Next Work:** v0.7.5 Phase 2 - Eliminate Fast API Result allocation
-- Target: +10-15% improvement
-- Implementation: Return boolean directly, lazy result construction
-- Goal: Further close valibot gap on primitives
+**Next Work:** v0.7.5 Phase 3 - Inline primitive validation
+- Target: +15-20% improvement on primitives
+- Goal: Further close valibot gap
+
+---
+
+## Previous Session: Property Validator v0.7.5 Phase 1 ✅ COMPLETE
+
+**What Was Done:**
+- ✅ Implemented Phase 1 optimization in `createValidator()` (line 267)
+- ✅ Implemented Phase 1 optimization in `ArrayValidator.validate()` (line 1012)
+- ✅ Added `refinements.length === 0` early return check
+- ✅ All 537 tests passing (100%)
+- ✅ Phase 1 results: +7.7% primitives, +27.6% objects, +17-20% arrays
+
+**Phase 1 Note:** Minor union regression (-6.5%) was accepted as trade-off. Phase 2 recovered this.
 
 ---
 
