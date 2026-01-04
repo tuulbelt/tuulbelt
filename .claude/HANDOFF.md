@@ -1,41 +1,39 @@
 # Session Handoff
 
 **Last Updated:** 2026-01-04
-**Session:** Property Validator v0.7.5 Phase 5 ✅ COMPLETE
-**Status:** All feasible optimizations complete (Phases 1, 2, 4, 5). Phase 6 optional.
+**Session:** Property Validator v0.7.5 Phase 6 ✅ COMPLETE
+**Status:** ALL 6 optimization phases complete! v0.7.5 ready for release.
 
 ---
 
-## 📋 Current Session: Property Validator v0.7.5 Phase 5 ✅ COMPLETE
+## 📋 Current Session: Property Validator v0.7.5 Phase 6 ✅ COMPLETE
 
 **Session Branch (Meta):** `claude/fix-meta-job-failure-L8oeO` (Web environment)
 **Session Branch (Submodule):** `main` (property-validator)
 
-**🎯 PHASE 5 COMPLETE: Shared Primitive Validator Functions**
+**🎯 PHASE 6 COMPLETE: Inline validateWithPath for Plain Objects**
 
 **What Was Done This Session:**
-- ✅ Implemented Phase 5: Extracted shared validator functions at module level
-- ✅ Added `validateString()`, `stringError()`, `validateNumber()`, `numberError()`, `validateBoolean()`, `booleanError()` as module-level functions
-- ✅ Updated `v.string()`, `v.number()`, `v.boolean()` to use shared functions
+- ✅ Implemented Phase 6: Pre-compile object validators and use fast path for plain objects
+- ✅ Added `compiledValidator` and `isPlainObject` at object creation time
+- ✅ Added fast path in `_validateWithPath` that skips full machinery when:
+  - Object is plain (no transforms/defaults/refinements)
+  - No security options needed (maxProperties, circular detection)
+  - Data is valid (compiled validator returns true)
 - ✅ All 537 tests passing (100%)
 - ✅ Ran all benchmarks (bench, bench:fast, bench:compare)
-- ✅ Updated OPTIMIZATION_PLAN.md and BASELINE.md with Phase 5 results
+- ✅ Updated OPTIMIZATION_PLAN.md with Phase 6 results
 
-**Phase 5 Results (vs Phase 4):**
+**Phase 6 Results (vs v0.7.0 Baseline):**
 
-| Category | Phase 4 | Phase 5 | Change |
-|----------|---------|---------|--------|
-| string (valid) | 179.97 ns | 174-186 ns | ±3% (within variance) |
-| number (valid) | 186.70 ns | 178-184 ns | ±3% (within variance) |
-| boolean (valid) | 193.35 ns | 165-169 ns | ~+12% (anomaly) |
-| Objects simple | 332.10 ns | 337 ns | -1.5% (within variance) |
-| Unions | 101.24 ns | 106-108 ns | -5% (within variance) |
+| Category | v0.7.0 Baseline | Phase 6 | Improvement |
+|----------|-----------------|---------|-------------|
+| object: simple (valid) | 386.67 ns | 116-123 ns | **+214% (+3.1-3.3x)** |
+| object: complex nested | 3.14 µs | 2.51-2.65 µs | **+18-25%** |
+| primitives | ~210 ns | ~180-200 ns | **+5-15%** |
+| unions | 113.50 ns | 107-118 ns | **No regression** ✅ |
 
-**Key Finding:**
-- Phase 5 provides **NO measurable validation speed improvement**
-- Optimization reduces closure allocation at **validator creation time**, not validation time
-- Benchmarks measure validation speed where validators are created once and used millions of times
-- One-time allocation savings are amortized to near-zero in benchmarks
+**KEY ACHIEVEMENT:** Phase 6 achieved **+214% (+3.1x)** for simple objects - FAR EXCEEDS the expected +10-15%!
 
 **v0.7.5 Final Status:**
 1. ✅ Phase 1: Skip empty refinement loop - COMPLETE (+8-20%)
@@ -43,14 +41,14 @@
 3. ❌ Phase 3: Inline primitive validation - REJECTED (union regression)
 4. ✅ Phase 4: Lazy path building - COMPLETE (+24-30%)
 5. ✅ Phase 5: Shared primitive validator functions - COMPLETE (no perf benefit)
-6. 📋 Phase 6: Inline validateWithPath (optional, complex)
+6. ✅ Phase 6: Inline validateWithPath for plain objects - COMPLETE (+214%!)
 
-**Valibot Comparison Assessment:**
-- property-validator is ~1.8x slower on primitives, ~1.5x slower on objects
-- property-validator is 4.5x FASTER on unions (competitive advantage)
-- To surpass valibot on primitives would require architectural changes (Phase 6 or beyond)
+**Valibot Comparison (Updated):**
+- property-validator now ~1.5x slower on primitives (was ~1.8x)
+- property-validator now **~1.0x on objects** (was ~1.5x slower) - NOW COMPETITIVE!
+- property-validator is **4.5x FASTER on unions** (maintained competitive advantage)
 
-**Next Work:** v0.7.5 is ready for release. Consider documenting competitive positioning.
+**Next Work:** v0.7.5 is ready for release with all optimizations complete.
 
 ---
 
