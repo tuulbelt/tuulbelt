@@ -1,56 +1,69 @@
 # Session Handoff
 
 **Last Updated:** 2026-01-04
-**Session:** Property Validator v0.7.5 Phase 4 ✅ COMPLETE
-**Status:** Phase 4 implemented with exceptional results. Phases 1, 2, 4 complete. Phase 5/6 optional.
+**Session:** Property Validator v0.7.5 Phase 5 ✅ COMPLETE
+**Status:** All feasible optimizations complete (Phases 1, 2, 4, 5). Phase 6 optional.
 
 ---
 
-## 📋 Current Session: Property Validator v0.7.5 Phase 4 ✅ COMPLETE
+## 📋 Current Session: Property Validator v0.7.5 Phase 5 ✅ COMPLETE
 
 **Session Branch (Meta):** `claude/fix-meta-job-failure-L8oeO` (Web environment)
 **Session Branch (Submodule):** `main` (property-validator)
 
-**🎯 PHASE 4 COMPLETE: Lazy Path Building**
+**🎯 PHASE 5 COMPLETE: Shared Primitive Validator Functions**
 
 **What Was Done This Session:**
+- ✅ Implemented Phase 5: Extracted shared validator functions at module level
+- ✅ Added `validateString()`, `stringError()`, `validateNumber()`, `numberError()`, `validateBoolean()`, `booleanError()` as module-level functions
+- ✅ Updated `v.string()`, `v.number()`, `v.boolean()` to use shared functions
+- ✅ All 537 tests passing (100%)
+- ✅ Ran all benchmarks (bench, bench:fast, bench:compare)
+- ✅ Updated OPTIMIZATION_PLAN.md and BASELINE.md with Phase 5 results
+
+**Phase 5 Results (vs Phase 4):**
+
+| Category | Phase 4 | Phase 5 | Change |
+|----------|---------|---------|--------|
+| string (valid) | 179.97 ns | 174-186 ns | ±3% (within variance) |
+| number (valid) | 186.70 ns | 178-184 ns | ±3% (within variance) |
+| boolean (valid) | 193.35 ns | 165-169 ns | ~+12% (anomaly) |
+| Objects simple | 332.10 ns | 337 ns | -1.5% (within variance) |
+| Unions | 101.24 ns | 106-108 ns | -5% (within variance) |
+
+**Key Finding:**
+- Phase 5 provides **NO measurable validation speed improvement**
+- Optimization reduces closure allocation at **validator creation time**, not validation time
+- Benchmarks measure validation speed where validators are created once and used millions of times
+- One-time allocation savings are amortized to near-zero in benchmarks
+
+**v0.7.5 Final Status:**
+1. ✅ Phase 1: Skip empty refinement loop - COMPLETE (+8-20%)
+2. ✅ Phase 2: Eliminate Fast API Result allocation - COMPLETE (+12-22%)
+3. ❌ Phase 3: Inline primitive validation - REJECTED (union regression)
+4. ✅ Phase 4: Lazy path building - COMPLETE (+24-30%)
+5. ✅ Phase 5: Shared primitive validator functions - COMPLETE (no perf benefit)
+6. 📋 Phase 6: Inline validateWithPath (optional, complex)
+
+**Valibot Comparison Assessment:**
+- property-validator is ~1.8x slower on primitives, ~1.5x slower on objects
+- property-validator is 4.5x FASTER on unions (competitive advantage)
+- To surpass valibot on primitives would require architectural changes (Phase 6 or beyond)
+
+**Next Work:** v0.7.5 is ready for release. Consider documenting competitive positioning.
+
+---
+
+## Previous Session: Property Validator v0.7.5 Phase 4 ✅ COMPLETE
+
+**What Was Done:**
 - ✅ Implemented Phase 4: Changed path from `string[]` to `(string|number)[]`
 - ✅ Added `PathSegment` type alias
 - ✅ Array validators now push raw numbers instead of `"[${i}]"` strings
 - ✅ Added `formatPathString()` method to ValidationError for on-demand path formatting
 - ✅ All 537 tests passing (100%)
 - ✅ Ran all benchmarks (bench, bench:fast, bench:compare)
-- ✅ Verified NO union regression (101.24 ns vs 99.43 ns - within variance)
-- ✅ Updated OPTIMIZATION_PLAN.md and BASELINE.md with Phase 4 results
-
-**Phase 4 Results (vs v0.7.0 Baseline):**
-
-| Category | v0.7.0 | Phase 4 | Improvement |
-|----------|--------|---------|-------------|
-| Arrays large | 176.95 µs | 124.56 µs | **+29.6%** ✅ |
-| Arrays medium | 19.46 µs | 13.93 µs | **+28.4%** ✅ |
-| OBJECTS small | 5.63 µs | 4.17 µs | **+25.9%** ✅ |
-| OBJECTS medium | 52.49 µs | 37.38 µs | **+28.8%** ✅ |
-| Objects simple | 386.67 ns | 332.10 ns | **+14.1%** ✅ |
-| Unions | 113.50 ns | 101.24 ns | **+10.8%** ✅ |
-
-**Key Achievement:**
-- Target: +10-15% on arrays → Achieved: +24-30% (EXCEEDS expectations!)
-- No union regression (our competitive advantage preserved)
-
-**Reference Documentation:**
-- `OPTIMIZATION_PLAN.md` - Phase 4 marked complete with results (lines 1025-1149)
-- `benchmarks/BASELINE.md` - Updated with Phase 4 results
-
-**v0.7.5 Optimization Status:**
-1. ✅ Phase 1: Skip empty refinement loop - COMPLETE
-2. ✅ Phase 2: Eliminate Fast API Result allocation - COMPLETE
-3. ❌ Phase 3: Inline primitive validation - REJECTED (union regression)
-4. ✅ Phase 4: Lazy path building - COMPLETE
-5. 📋 Phase 5: Optimize primitive closures (optional, +5-10%)
-6. 📋 Phase 6: Inline validateWithPath (optional, +10-15%)
-
-**Next Work:** v0.7.5 is ready for release. Consider Phase 5/6 for further optimization.
+- ✅ Achieved +24-30% on arrays (exceeds +10-15% target)
 
 ---
 
