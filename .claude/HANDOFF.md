@@ -1,30 +1,61 @@
 # Session Handoff
 
 **Last Updated:** 2026-01-04
-**Session:** Property Validator v0.8.0 Phases 8-10 Implementation
-**Status:** v0.8.0 COMPLETE - 6 wins, 1 loss vs valibot! 🎉
+**Session:** Property Validator v0.8.0 Phases 8-11 Implementation
+**Status:** v0.8.0 COMPLETE - 6 wins, 1 near-tie vs valibot! 🎉
 
 ---
 
-## 📋 Current Session: Property Validator v0.8.0 Complete!
+## 📋 Current Session: Property Validator v0.8.0 Phase 11 Complete!
 
 **Session Branch (Meta):** `claude/analyze-codebase-priorities-V1sLF` (Web environment)
 **Session Branch (propval):** `claude/analyze-codebase-priorities-V1sLF`
 **Goal:** Implement JIT bypass optimization for massive performance gains
 
-**🎯 FINAL v0.8.0 vs Valibot:**
+**🎯 FINAL v0.8.0 vs Valibot (after Phase 11):**
 
 | Category | propval | valibot | Winner |
 |----------|---------|---------|--------|
-| Primitives (string) | 66.77 ns | 69.33 ns | **propval 1.04x** ✅ |
-| Primitives (number) | 64.62 ns | 71.14 ns | **propval 1.10x** ✅ |
-| Simple Object | 63.61 ns | 202.49 ns | **propval 3.18x** ✅ |
-| Complex Nested | 233.69 ns | 1.03 µs | **propval 4.41x** ✅ |
-| Number Array [100] | 114.36 ns | 650.79 ns | **propval 5.69x** ✅ |
-| String Array [100] | 157.77 ns | 644.24 ns | **propval 4.08x** ✅ |
-| Union (3 types) | 92.10 ns | 82.48 ns | valibot 1.12x |
+| Primitives (string) | 66.60 ns | 67.86 ns | **propval 1.02x** ✅ |
+| Primitives (number) | 63.70 ns | 64.48 ns | **propval 1.01x** ✅ |
+| Simple Object | 65.17 ns | 201.08 ns | **propval 3.09x** ✅ |
+| Complex Nested | 174.15 ns | 932.64 ns | **propval 5.36x** ✅ |
+| Number Array [100] | 112.40 ns | 671.44 ns | **propval 5.97x** ✅ |
+| String Array [100] | 157.38 ns | 664.97 ns | **propval 4.23x** ✅ |
+| Union (3 types) | 87.76 ns | 83.37 ns | valibot 1.05x |
 
-**Score: 6 wins, 1 loss (was 2 wins, 3 losses in v0.7.5)**
+**Score: 6 wins, 1 near-tie (was 2 wins, 3 losses in v0.7.5)**
+
+---
+
+### Phase 11: Union JIT Bypass ✅ COMPLETE
+
+**Problem:** After Phase 10, unions were still 1.12x slower than valibot.
+
+**Root Cause:** Unions, primitives, and literals lacked `_compiled` property - validateFast() bypass couldn't apply.
+
+**Implementation:**
+1. Added `_compiled` to string(), number(), boolean() primitives
+2. Added `_compiled` to literal() validator
+3. Added `_compiled` to union() with child JIT function chaining
+4. Unions now use `allHaveCompiled` check to enable fast path
+
+**Performance Results (Union Scenarios):**
+
+| Scenario | propval | valibot | Winner |
+|----------|---------|---------|--------|
+| String (1st match) | 84.61 ns | 73.15 ns | valibot 1.16x |
+| Number (2nd match) | 86.76 ns | 187.79 ns | **propval 2.16x** ✅ |
+| Literal union | 88.75 ns | 218.48 ns | **propval 2.46x** ✅ |
+| Object union | 73.90 ns | 209.72 ns | **propval 2.84x** ✅ |
+
+**3 out of 4 union scenarios now faster than valibot!**
+
+**All 537 tests passing.**
+
+**Commits:**
+- `a18545b` - "v0.8.0 Phase 11: JIT bypass for unions, primitives, and literals"
+- `9033a51` - "docs: update v0.8.0 JIT research with Phase 11 results"
 
 ---
 
