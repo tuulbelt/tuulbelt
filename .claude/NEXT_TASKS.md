@@ -1,6 +1,88 @@
 # Next Tasks
 
-**Last Updated:** 2026-01-03
+**Last Updated:** 2026-01-04
+
+---
+
+## 🏷️ Property Validator v0.7.5 - COMPLETE & TAGGED ✅
+
+**Status:** v0.7.5 TAGGED and pushed to origin
+**Tag:** `v0.7.5`
+**Language:** TypeScript
+**Short Name:** `propval`
+
+### v0.7.5 Final Summary
+
+All 6 optimization phases addressed (5 implemented, 1 rejected):
+
+| Phase | Status | Actual Impact |
+|-------|--------|---------------|
+| Phase 1: Skip empty refinement loop | ✅ COMPLETE | +8-20% |
+| Phase 2: Eliminate Fast API Result allocation | ✅ COMPLETE | +12-22% |
+| Phase 3: Inline primitive validation | ❌ REJECTED | -24% union regression |
+| Phase 4: Lazy path building | ✅ COMPLETE | +24-30% |
+| Phase 5: Shared primitive validator functions | ✅ COMPLETE | No runtime benefit |
+| Phase 6: Inline validateWithPath for plain objects | ✅ COMPLETE | **+214% (+3.1x)** |
+
+### v0.7.5 vs Competition
+
+**vs Zod: 6/6 categories won** ✅
+
+**vs Valibot:**
+| Category | propval | valibot | Winner |
+|----------|---------|---------|--------|
+| Simple objects | 120 ns | 207 ns | **propval 1.7x** ✅ |
+| Unions | 107 ns | 450 ns | **propval 4.5x** ✅ |
+| Primitives | 180 ns | 101 ns | valibot 1.8x |
+| Complex nested | 2.5 µs | 1.05 µs | valibot 2.4x |
+| Primitive arrays | 1.1 µs | 296 ns | valibot 3.8x |
+
+**Score: 2 wins, 3 losses (Valibot-tier performance)**
+
+---
+
+## 🎯 Property Validator v0.8.0 - JIT Compilation 📋 NEXT
+
+**Status:** Research complete, planning done, ready for implementation
+**Goal:** Close performance gaps with Valibot on primitives, complex objects, and arrays
+**Target:** Match or beat Valibot in 4/6 categories (currently 2/6)
+
+### Competitor Landscape (Research Complete)
+
+| Library | Ops/sec | Approach | DX Trade-off |
+|---------|---------|----------|--------------|
+| **Typia** | 9.6M | AOT (TypeScript transformer) | Requires build step |
+| **TypeBox** | 16.5M | JIT (`new Function()`) | JSON Schema only |
+| **ArkType** | ~10M | JIT (`new Function()`) | Different API |
+| **Valibot** | 4.1M | Closure-based | Good DX, modular |
+| **Zod** | 2.0M | Closure-based | Best DX, slowest |
+| **property-validator** | ~5M | Closure-based | Zod-like DX |
+
+### v0.8.0 Phases
+
+1. **Phase 7: JIT Primitive Validators** 🔥 HIGHEST
+   - Expected: +50-100% on primitives (close 1.8x gap with Valibot)
+   - Use `new Function()` instead of closures
+   - V8 can better optimize JIT-generated code
+
+2. **Phase 8: JIT Object Validators** 🔥 HIGH
+   - Expected: +30-50% on complex objects (close 2.4x gap)
+   - Generate custom validation code per schema shape
+   - Direct property access (no dynamic lookup)
+
+3. **Phase 9: JIT Array Validators** MEDIUM
+   - Expected: +20-40% on primitive arrays (close 3.8x gap)
+   - Loop unrolling for small arrays
+   - Specialized code generation
+
+### v0.8.0 Research Tasks (Before Implementation)
+
+- [ ] Profile current primitive validators with `node --prof`
+- [ ] Benchmark `new Function()` vs closure in isolation
+- [ ] Study TypeBox's TypeCompiler source code
+- [ ] Study ArkType's shift-reduce parser approach
+- [ ] Test JIT approach in browsers with CSP
+- [ ] Measure memory impact of JIT code strings
 
 ---
 
@@ -8,87 +90,6 @@
 
 **Status:** All 6 Phases Complete - Web Testing Verified
 **Archived:** `docs/archive/2026-01-01-workflow-complete/`
-
-### Progress
-
-| Phase | Description | Status |
-|-------|-------------|--------|
-| **1** | Branch Protection (Universal) | ✅ Complete |
-| **2** | CLI Workspace Commands | ✅ Complete - PR #76 |
-| **3** | Environment-Aware Commands | ✅ Complete |
-| **4** | Session Lifecycle Hooks | ✅ Complete |
-| **5** | Documentation | ✅ Complete |
-| **6** | Testing & Validation | ✅ Complete (Web verified 2026-01-01) |
-
-**Web Testing Accomplishments (2026-01-01):**
-- ✅ All 6 phases verified in Claude Code Web environment
-- ✅ Fixed credential loading for Web (env vars vs .env file)
-- ✅ Fixed submodule initialization fallback (direct clone)
-- ✅ Fixed color output for non-interactive terminals (6 scripts)
-- ✅ Real PR creation/cleanup verified (test-flakiness-detector#1)
-
-**Documentation Archived:** Workflow implementation docs moved to `docs/archive/2026-01-01-workflow-complete/`
-
-**Next:** New Tool Development - Property Validator
-
----
-
-## 🎯 Property Validator v0.7.5 🚀 READY TO START
-
-**Status:** ✅ v0.7.0 Baseline Complete with tatami-ng - Ready for v0.7.5 Implementation
-**Language:** TypeScript
-**Short Name:** `propval`
-**Branch:** `claude/comprehensive-vitepress-fixes-wZtNr`
-
-### v0.7.0 Baseline Establishment ✅ COMPLETE
-
-**Completed This Session:**
-- ✅ Migrated all benchmarks from tinybench to tatami-ng v0.8.18
-- ✅ Migrated competitor benchmarks (zod, yup, valibot) to tatami-ng
-- ✅ Ran complete head-to-head comparison (4 libraries)
-- ✅ Created BASELINE_COMPARISON.md (336 lines) - comprehensive analysis
-- ✅ Updated BASELINE.md with reliable tatami-ng data
-- ✅ Updated OPTIMIZATION_PLAN.md with performance gap analysis
-- ✅ Created PR #3 (property-validator) and PR #88 (meta repo)
-
-**Variance Achievement:**
-- tinybench: ±19.4% variance (unreliable for optimization)
-- tatami-ng: ±0.86% average variance - **13.1x MORE STABLE** ✅
-
-**Performance Baseline (vs Competitors):**
-- ✅ 2-3x faster than zod on primitives, 2-9x on objects
-- ✅ 7-8x faster than yup on primitives, 8-17x on objects
-- ⚠️ 2.1x slower than valibot on primitives (PRIMARY TARGET)
-- ✅ 4-5x faster than valibot on unions
-
-### v0.7.5 Optimization Work 📋 NEXT
-
-**Research Complete (Previous Session):**
-- ✅ V8 CPU profiling verified 4 bottlenecks
-- ✅ Created profiling/ANALYSIS.md (480 lines)
-- ✅ Designed 6 optimization phases in OPTIMIZATION_PLAN.md
-
-**6 Optimization Phases:**
-1. **Phase 1:** Skip empty refinement loop (trivial, +5-10%)
-2. **Phase 2:** Eliminate Fast API Result allocation (medium, +10-15%)
-3. **Phase 3:** Inline primitive validation (medium, +15-20%)
-4. **Phase 4:** Lazy path building (complex, +10-15%)
-5. **Phase 5:** Optimize primitive validator closures (low, +5-10%)
-6. **Phase 6:** Inline validateWithPath for plain objects (complex, +10-15%)
-
-**Target:** 10-30% cumulative improvement to close 2.1x gap with valibot
-
-**Progress:**
-- v0.1.0 through v0.7.0: ✅ Complete (537/537 tests, tatami-ng baseline)
-- v0.7.5: 📋 Ready to start (Phase 1 implementation)
-- v0.8.0: Future (modular design for bundle size optimization)
-
-**Next Steps (v0.7.5 Phase 1):**
-1. Implement: Add `refinements.length === 0` check before `Array.every()`
-2. Locations: createValidator (line 267), ArrayValidator (line 1014)
-3. Benchmark: Run bench:fast to verify +5-10% gain
-4. Document: Create v0.7.5-phase1-results.md
-5. Decision: Proceed to Phase 2 or stop if sufficient improvement
 
 ---
 

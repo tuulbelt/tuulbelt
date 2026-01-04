@@ -1,59 +1,127 @@
 # Session Handoff
 
-**Last Updated:** 2026-01-03
-**Session:** Property Validator v0.7.0 Baseline Establishment ✅ COMPLETE
-**Status:** ✅ Ready for v0.7.5 Optimization Work
+**Last Updated:** 2026-01-04
+**Session:** Property Validator v0.7.5 Tagged + v0.8.0 Roadmap Complete
+**Status:** v0.7.5 TAGGED 🏷️ | Comprehensive v0.8.0+ optimization roadmap created
 
 ---
 
-## 📋 Current Session: Property Validator v0.7.0 Baseline with tatami-ng ✅ COMPLETE
+## 📋 Current Session: v0.7.5 Tagged + v0.8.0 Roadmap
 
-**Session Branch (Meta):** `claude/comprehensive-vitepress-fixes-wZtNr` (Web environment)
-**Session Branch (Submodule):** `claude/comprehensive-vitepress-fixes-wZtNr` (property-validator)
+**Session Branch (Meta):** `claude/fix-meta-job-failure-L8oeO` (Web environment)
+**Session Branch (Submodule):** `claude/fix-meta-job-failure-L8oeO` (property-validator)
+**v0.7.5 Tag:** ✅ Pushed to origin
 
-**🎯 BASELINE ESTABLISHMENT COMPLETE: v0.7.0 Performance Baseline with tatami-ng**
+**🎯 SESSION ACCOMPLISHMENTS:**
 
-**What Was Done This Session:**
+1. **Verified v0.7.5 Results (apples-to-apples)**
+   - Confirmed 3.0x improvement vs v0.7.0 baseline (361.80 ns → 120.52 ns)
+   - Confirmed valibot uses identical schemas/data for fair comparison
+   - property-validator now 1.7x FASTER than valibot on simple objects!
+
+2. **Researched Competitor Landscape**
+   - Typia: AOT compilation via TypeScript transformer (~9.6M ops/sec)
+   - TypeBox: JIT compilation via `new Function()` (~16.5M ops/sec)
+   - ArkType: Shift-reduce parser + JIT (~10M ops/sec)
+   - Valibot: Closure-based, modular design (~4.1M ops/sec)
+   - Zod: Closure-based, best DX (~2.0M ops/sec)
+
+3. **Created v0.8.0+ Optimization Roadmap**
+   - **v0.8.0:** JIT Compilation (Phases 7-9) - close valibot gaps
+     - Phase 7: JIT primitive validators (+50-100% expected)
+     - Phase 8: JIT object validators (+30-50% expected)
+     - Phase 9: JIT array validators (+20-40% expected)
+   - **v0.9.0:** Modular Design (bundle size: 13.5 kB → 1-2 kB)
+   - **v1.0.0:** Features + Stable release
+
+4. **Updated README**
+   - Version badge: 0.6.0 → 0.7.5
+   - Tests badge: 526 → 537
+   - Replaced "vs zod - 71% win rate" with "Valibot-tier" holistic badge
+   - Updated Performance section with v0.7.5 benchmarks
+   - Added competitor landscape and performance tiers
+
+5. **Tagged v0.7.5**
+   - Tag pushed to origin with full release notes
+   - All 6 optimization phases documented
+
+**v0.7.5 vs Valibot (Final):**
+| Category | propval | valibot | Winner |
+|----------|---------|---------|--------|
+| Simple objects | 120 ns | 207 ns | **propval 1.7x** ✅ |
+| Unions | 107 ns | 450 ns | **propval 4.5x** ✅ |
+| Primitives | 180 ns | 101 ns | valibot 1.8x |
+| Complex nested | 2.5 µs | 1.05 µs | valibot 2.4x |
+| Primitive arrays | 1.1 µs | 296 ns | valibot 3.8x |
+
+**Score: 2 wins, 3 losses (competitive tier)**
+
+**Next Work:** v0.8.0 JIT compilation research tasks before implementation
+
+---
+
+## Previous Session: Property Validator v0.7.5 Phase 4 ✅ COMPLETE
+
+**What Was Done:**
+- ✅ Implemented Phase 4: Changed path from `string[]` to `(string|number)[]`
+- ✅ Added `PathSegment` type alias
+- ✅ Array validators now push raw numbers instead of `"[${i}]"` strings
+- ✅ Added `formatPathString()` method to ValidationError for on-demand path formatting
+- ✅ All 537 tests passing (100%)
+- ✅ Ran all benchmarks (bench, bench:fast, bench:compare)
+- ✅ Achieved +24-30% on arrays (exceeds +10-15% target)
+
+---
+
+## Previous Session: Property Validator v0.7.5 Phase 3 ❌ REJECTED
+
+**What Was Done:**
+- ✅ Implemented Phase 3 v1: Inline typeof checks in `validate()` function
+- ❌ Discovered -24% to -40% union regression
+- ✅ **REVERTED** Phase 3 - trade-off unacceptable
+- Key learning: Any code at start of `validate()` affects ALL validators
+
+---
+
+## Previous Session: Property Validator v0.7.5 Phase 2 ✅ COMPLETE
+
+**What Was Done:**
+- ✅ Implemented Phase 2 optimization in `compileArrayValidator()` (line 873)
+- ✅ Changed `validateFast(itemValidator, data[i]).ok` → `itemValidator.validate(data[i])`
+- ✅ Eliminates Result object allocation on every array item
+- ✅ All 537 tests passing (100%)
+
+**Phase 2 Results (vs v0.7.0 Baseline):**
+- Arrays: +12.9% to +18.9% improvement (exceeded +10-15% target)
+- Compiled validators: +22.2%
+- Unions maintained at 99.43 ns (4.5x faster than valibot)
+
+---
+
+## Previous Session: Property Validator v0.7.5 Phase 1 ✅ COMPLETE
+
+**What Was Done:**
+- ✅ Implemented Phase 1 optimization in `createValidator()` (line 267)
+- ✅ Implemented Phase 1 optimization in `ArrayValidator.validate()` (line 1012)
+- ✅ Added `refinements.length === 0` early return check
+- ✅ All 537 tests passing (100%)
+- ✅ Phase 1 results: +7.7% primitives, +27.6% objects, +17-20% arrays
+
+**Phase 1 Note:** Minor union regression (-6.5%) was accepted as trade-off. Phase 2 recovered this.
+
+---
+
+## Previous Session: Property Validator v0.7.0 Baseline ✅ COMPLETE
+
+**What Was Done:**
 - ✅ Migrated all benchmarks from tinybench to tatami-ng v0.8.18
 - ✅ Migrated all competitor benchmarks (zod, yup, valibot) to tatami-ng
 - ✅ Ran complete head-to-head comparison (4 libraries)
-- ✅ Created BASELINE_COMPARISON.md (336 lines) - comprehensive competitor analysis
-- ✅ Updated BASELINE.md with reliable tatami-ng data (replacing unreliable tinybench)
-- ✅ Updated OPTIMIZATION_PLAN.md with performance gap analysis
+- ✅ Created BASELINE_COMPARISON.md (336 lines)
+- ✅ Updated BASELINE.md with reliable tatami-ng data
 - ✅ All 537 tests passing (100%)
 
-**Variance Achievement:**
-- **tinybench variance:** ±19.4% (unions), ±10.4% (arrays) - UNRELIABLE for optimization work
-- **tatami-ng variance:** ±0.86% average - **13.1x MORE STABLE** ✅
-- **Target achieved:** <5% variance across all benchmarks
-
-**Baseline Comparison Results (vs Competitors):**
-- ✅ **vs zod:** 2-3x faster on primitives, 2-9x faster on objects
-- ✅ **vs yup:** 7-8x faster on primitives, 8-17x faster on objects
-- ⚠️ **vs valibot:** 2.1x slower on primitives (PRIMARY OPTIMIZATION TARGET)
-- ✅ **vs valibot:** 4-5x faster on unions, 1.36x faster on chained refinements
-
-**Pull Requests:**
-- PR #3 (property-validator): https://github.com/tuulbelt/property-validator/pull/3
-- PR #88 (meta repo): https://github.com/tuulbelt/tuulbelt/pull/88
-
-**Commits:**
-- 8fdce38: docs(benchmarks): update BASELINE.md with tatami-ng data
-- a31d09f: docs(benchmarks): add v0.7.0 baseline comparison vs competitors
-- bcbfcbe: docs(benchmarks): add v0.7.0 tatami-ng baseline documentation
-- 9187c7e: chore(benchmarks): migrate competitor benchmarks from tinybench to tatami-ng
-- 289c582: docs(benchmarks): establish v0.7.0 baseline with tatami-ng
-
-**Reference Documentation:**
-- `benchmarks/BASELINE_COMPARISON.md` - Head-to-head analysis vs all competitors
-- `benchmarks/BASELINE.md` - property-validator v0.7.0 standalone baseline
-- `OPTIMIZATION_PLAN.md` - v0.7.5 optimization phases with performance targets
-
-**Next Work:** v0.7.5 Phase 1 - Skip Empty Refinement Loop
-- Target: +5-10% improvement
-- Implementation: Add zero-cost `refinements.length === 0` check
-- Locations: createValidator (line 267), ArrayValidator (line 1014)
-- Goal: Start closing 2.1x performance gap with valibot on primitives
+**Variance Achievement:** ±0.86% average (13.1x better than tinybench)
 
 ---
 
