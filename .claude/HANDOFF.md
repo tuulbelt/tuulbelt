@@ -1,52 +1,61 @@
 # Session Handoff
 
 **Last Updated:** 2026-01-04
-**Session:** Property Validator v0.7.5 Phase 2 ✅ COMPLETE
-**Status:** ✅ Ready for v0.7.5 Phase 3 (Inline primitive validation)
+**Session:** Property Validator v0.7.5 Phase 3 ❌ REJECTED
+**Status:** Phase 3 investigated - unacceptable union regression. Consider Phase 4 next.
 
 ---
 
-## 📋 Current Session: Property Validator v0.7.5 Phase 2 ✅ COMPLETE
+## 📋 Current Session: Property Validator v0.7.5 Phase 3 ❌ REJECTED
 
 **Session Branch (Meta):** `claude/fix-meta-job-failure-L8oeO` (Web environment)
 **Session Branch (Submodule):** `main` (property-validator)
 
-**🎯 PHASE 2 COMPLETE: Eliminate Fast API Result Allocation**
+**🎯 PHASE 3 REJECTED: Inline Primitive Validation**
 
 **What Was Done This Session:**
+- ✅ Implemented Phase 3 v1: Inline typeof checks in `validate()` function
+- ✅ Ran all 537 tests - 100% passing
+- ❌ Discovered -24% union regression (99.43 ns → 123.81 ns)
+- ✅ Investigated root cause: Property checks run for ALL validators
+- ✅ Implemented Phase 3 v2: Check `_type` first, then properties
+- ❌ Still showed -40% union regression (99.43 ns → 139.57 ns)
+- ✅ **REVERTED** Phase 3 - trade-off unacceptable
+- ✅ Verified tests still pass (537/537)
+- ✅ Verified Phase 2 performance restored (unions ~101 ns)
+- ✅ Updated OPTIMIZATION_PLAN.md with investigation details
+
+**Why Phase 3 Was Rejected:**
+- ANY code at start of `validate()` affects ALL validators
+- Even `_type` property access adds ~40 ns overhead per call
+- Unions are our competitive advantage (4.5x faster than valibot)
+- Trade-off: +15% primitives vs -40% unions = UNACCEPTABLE
+
+**Key Learning:**
+Hot path optimizations in `validate()` cannot be done without regressing unions. Future primitive optimizations should target deeper in the call stack (e.g., within `validateFast` or individual validators).
+
+**Reference Documentation:**
+- `OPTIMIZATION_PLAN.md` - Updated with Phase 3 rejection details (lines 909-1021)
+- `benchmarks/BASELINE.md` - Phase 1+2 results remain current baseline
+
+**Next Work:** Consider Phase 4 (Lazy Path Building) or Phase 5 (Optimize Primitive Closures)
+- These target different parts of the call stack
+- Less risk of union regression
+
+---
+
+## Previous Session: Property Validator v0.7.5 Phase 2 ✅ COMPLETE
+
+**What Was Done:**
 - ✅ Implemented Phase 2 optimization in `compileArrayValidator()` (line 873)
 - ✅ Changed `validateFast(itemValidator, data[i]).ok` → `itemValidator.validate(data[i])`
 - ✅ Eliminates Result object allocation on every array item
-- ✅ Ran all 537 tests - 100% passing
-- ✅ Ran bench, bench:fast, bench:compare benchmarks
-- ✅ Created v0.7.5-phase2-results.md with detailed analysis
-- ✅ Updated BASELINE.md with Phase 2 results
+- ✅ All 537 tests passing (100%)
 
-**Phase 2 Performance Results (vs v0.7.0 Baseline):**
-
-| Category | v0.7.0 → Phase 2 | Improvement |
-|----------|------------------|-------------|
-| Arrays (small) | 3.18 µs → 2.68 µs | **+15.7%** ✅ |
-| Arrays (medium) | 19.46 µs → 16.06 µs | **+17.5%** ✅ |
-| Arrays (large) | 176.95 µs → 154.12 µs | **+12.9%** ✅ |
-| OBJECTS small | 5.63 µs → 4.92 µs | **+12.6%** ✅ |
-| OBJECTS medium | 52.49 µs → 42.56 µs | **+18.9%** ✅ |
-| Compiled validators | 416.20 ns → 323.99 ns | **+22.2%** ✅ |
-
-**Competitor Status (Post-Phase 2):**
-- vs zod: 6.3x faster on primitives, 2.2x faster on objects, 3.3x faster on arrays
-- vs yup: 7.2x faster on primitives, 17.7x faster on objects, 31.5x faster on arrays
-- vs valibot: ~2x slower on primitives, ~1.5x slower on objects, ~1.2x slower on arrays
-- Unions: 4.5x FASTER than valibot (maintained advantage!)
-
-**Reference Documentation:**
-- `benchmarks/BASELINE.md` - Updated with Phase 1+2 results
-- `benchmarks/v0.7.5-phase2-results.md` - Detailed Phase 2 analysis
-- `benchmarks/v0.7.5-phase1-results.md` - Phase 1 analysis
-
-**Next Work:** v0.7.5 Phase 3 - Inline primitive validation
-- Target: +15-20% improvement on primitives
-- Goal: Further close valibot gap
+**Phase 2 Results (vs v0.7.0 Baseline):**
+- Arrays: +12.9% to +18.9% improvement (exceeded +10-15% target)
+- Compiled validators: +22.2%
+- Unions maintained at 99.43 ns (4.5x faster than valibot)
 
 ---
 
