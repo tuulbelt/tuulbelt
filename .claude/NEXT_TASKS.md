@@ -1,6 +1,6 @@
 # Next Tasks
 
-**Last Updated:** 2026-01-01
+**Last Updated:** 2026-01-03
 
 ---
 
@@ -33,40 +33,62 @@
 
 ---
 
-## 🎯 IMMEDIATE PRIORITY: Property Validator ✅ COMPLETE
+## 🎯 Property Validator v0.7.5 🚀 READY TO START
 
-**Status:** ✅ Implementation Complete - Ready for PR
+**Status:** ✅ v0.7.0 Baseline Complete with tatami-ng - Ready for v0.7.5 Implementation
 **Language:** TypeScript
 **Short Name:** `propval`
-**Branch:** `claude/resume-work-wZtNr`
+**Branch:** `claude/comprehensive-vitepress-fixes-wZtNr`
 
-### Implementation Summary
+### v0.7.0 Baseline Establishment ✅ COMPLETE
 
-**Completed:**
-- ✅ 101 tests passing (error messages, edge cases, deep nesting, core validators)
-- ✅ Zero runtime dependencies
-- ✅ Complete dogfooding setup (test-flakiness-detector + output-diffing-utility)
-- ✅ README with badges, dogfooding section, Future Enhancements
-- ✅ DOGFOODING_STRATEGY.md with all questions answered
-- ✅ Demo recording script (scripts/record-demo.sh)
-- ✅ Dogfood validation script (scripts/dogfood-diff.sh)
-- ✅ All quality checks passed
+**Completed This Session:**
+- ✅ Migrated all benchmarks from tinybench to tatami-ng v0.8.18
+- ✅ Migrated competitor benchmarks (zod, yup, valibot) to tatami-ng
+- ✅ Ran complete head-to-head comparison (4 libraries)
+- ✅ Created BASELINE_COMPARISON.md (336 lines) - comprehensive analysis
+- ✅ Updated BASELINE.md with reliable tatami-ng data
+- ✅ Updated OPTIMIZATION_PLAN.md with performance gap analysis
+- ✅ Created PR #3 (property-validator) and PR #88 (meta repo)
 
-**Quality Check Results:**
-- TypeScript type check: ✅ PASSED
-- Build: ✅ PASSED
-- Tests: ✅ 101/101 PASSED
-- Zero dependencies: ✅ VERIFIED
-- No secrets: ✅ VERIFIED
-- Dogfooding scripts: ✅ WORKING
-- Git status: ✅ CLEAN
+**Variance Achievement:**
+- tinybench: ±19.4% variance (unreliable for optimization)
+- tatami-ng: ±0.86% average variance - **13.1x MORE STABLE** ✅
 
-**Next Steps:**
-1. Create PR from `claude/resume-work-wZtNr` → `main`
-2. Merge to main
-3. Verify GitHub Actions workflow runs
-4. Test demo recording workflow
-5. Monitor for any issues in v0.1.0
+**Performance Baseline (vs Competitors):**
+- ✅ 2-3x faster than zod on primitives, 2-9x on objects
+- ✅ 7-8x faster than yup on primitives, 8-17x on objects
+- ⚠️ 2.1x slower than valibot on primitives (PRIMARY TARGET)
+- ✅ 4-5x faster than valibot on unions
+
+### v0.7.5 Optimization Work 📋 NEXT
+
+**Research Complete (Previous Session):**
+- ✅ V8 CPU profiling verified 4 bottlenecks
+- ✅ Created profiling/ANALYSIS.md (480 lines)
+- ✅ Designed 6 optimization phases in OPTIMIZATION_PLAN.md
+
+**6 Optimization Phases:**
+1. **Phase 1:** Skip empty refinement loop (trivial, +5-10%)
+2. **Phase 2:** Eliminate Fast API Result allocation (medium, +10-15%)
+3. **Phase 3:** Inline primitive validation (medium, +15-20%)
+4. **Phase 4:** Lazy path building (complex, +10-15%)
+5. **Phase 5:** Optimize primitive validator closures (low, +5-10%)
+6. **Phase 6:** Inline validateWithPath for plain objects (complex, +10-15%)
+
+**Target:** 10-30% cumulative improvement to close 2.1x gap with valibot
+
+**Progress:**
+- v0.1.0 through v0.7.0: ✅ Complete (537/537 tests, tatami-ng baseline)
+- v0.7.5: 📋 Ready to start (Phase 1 implementation)
+- v0.8.0: Future (modular design for bundle size optimization)
+
+**Next Steps (v0.7.5 Phase 1):**
+1. Implement: Add `refinements.length === 0` check before `Array.every()`
+2. Locations: createValidator (line 267), ArrayValidator (line 1014)
+3. Benchmark: Run bench:fast to verify +5-10% gain
+4. Document: Create v0.7.5-phase1-results.md
+5. Decision: Proceed to Phase 2 or stop if sufficient improvement
 
 ---
 

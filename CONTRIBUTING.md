@@ -119,6 +119,54 @@ Each standalone tool repository has its own CI/CD workflow (`.github/workflows/t
 - **TypeScript tools:** `npm ci`, `npm test`, `npm run build`
 - **Rust tools:** `cargo test`, `cargo clippy -- -D warnings`, `cargo fmt --check`, `cargo build --release`
 
+### Step 4.5: Performance Benchmarking (Optional)
+
+**When to add benchmarks:**
+- Tool performance is a primary selling point (validation, parsing, diffing, etc.)
+- Comparing against established competitors (zod, yup, serde, etc.)
+- Tool processes large datasets or high-frequency operations
+
+**When to skip:**
+- Tool is I/O bound (network, file operations dominate)
+- Performance differences would be imperceptible
+- No meaningful competitors exist
+
+**TypeScript Setup:**
+```bash
+# Copy benchmark template from meta repo
+cp -r templates/tool-repo-template/benchmarks/ .
+
+# Install dependencies
+cd benchmarks
+npm install
+
+# Create your benchmarks in index.bench.ts
+# Run benchmarks
+npm run bench
+```
+
+**Rust Setup:**
+```bash
+# Copy benchmark template
+cp -r templates/rust-tool-template/benches/ .
+
+# Update Cargo.toml dev-dependencies
+# (Already included in template)
+
+# Create your benchmarks in benches/benchmark.rs
+# Run benchmarks
+cargo bench
+```
+
+**Best Practices:**
+- Benchmark common use cases, not edge cases
+- Include competitor comparisons when relevant
+- Document results in `benchmarks/README.md`
+- Use appropriate statistical rigor (warmup, iterations)
+- Verify performance claims in main README match actual benchmarks
+
+See [@docs/BENCHMARKING_STANDARDS.md](docs/BENCHMARKING_STANDARDS.md) for complete benchmarking guidelines and examples.
+
 ### Step 5: Documentation
 
 **README.md** — One page, includes:

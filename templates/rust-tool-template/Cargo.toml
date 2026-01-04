@@ -21,7 +21,11 @@ path = "src/main.rs"
 # Zero runtime dependencies - uses only std library
 
 [dev-dependencies]
-# None - uses built-in test framework
+criterion = "0.5"
+
+[[bench]]
+name = "benchmark"
+harness = false
 
 [profile.release]
 opt-level = 3
