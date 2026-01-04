@@ -158,7 +158,7 @@ Each tool is now:
 
 ## 🎯 Short CLI Names Reference
 
-All 10 implemented tools have short CLI names:
+All 11 implemented tools have short CLI names:
 
 | Tool | Short Name | Long Name |
 |------|------------|-----------|
@@ -172,9 +172,9 @@ All 10 implemented tools have short CLI names:
 | Snapshot Comparison | `snapcmp` | `snapshot-comparison` |
 | File-Based Semaphore (TS) | `semats` | `file-semaphore-ts` |
 | Test Port Resolver | `portres` | `test-port-resolver` |
+| Property Validator | `propval` | `property-validator` |
 
 **Proposed for next tools:**
-- Component Prop Validator → `propval`
 - Exhaustiveness Checker → `excheck`
 - Content-Addressable Blob Store → `blobstore`
 
@@ -190,18 +190,18 @@ All 10 implemented tools have short CLI names:
 ✅ File-Based Semaphore (Rust)
 ✅ Output Diffing Utility (Rust)
 
-### Phase 2: Completed (5/28)
+### Phase 2: Completed (6/28)
 
 ✅ Structured Error Handler (TypeScript)
 ✅ Configuration File Merger (TypeScript)
 ✅ Snapshot Comparison (Rust)
 ✅ File-Based Semaphore (TS) (TypeScript)
 ✅ Test Port Resolver (TypeScript)
+✅ Property Validator (TypeScript) - v0.7.5, 537 tests, Valibot-tier performance
 
 ### Phase 2: Next Up
 
-**Recommended Next (after migration):**
-- **Component Prop Validator** (`propval`) - TypeScript runtime validation
+**Recommended Next:**
 - **Exhaustiveness Checker** (`excheck`) - Union case coverage for TS/JS
 - **Content-Addressable Blob Store** (`blobstore`) - SHA-256 hash-based storage
 

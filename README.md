@@ -26,8 +26,10 @@ Each tool in Tuulbelt:
 - **[Snapshot Comparison](https://github.com/tuulbelt/snapshot-comparison)** — Snapshot testing with integrated diffs 🟢 v0.1.0 🐕 | [📖 Docs](https://github.com/tuulbelt/snapshot-comparison#readme) | [🚀 Examples](https://github.com/tuulbelt/snapshot-comparison/tree/main/examples/)
 - **[Test Port Resolver](https://github.com/tuulbelt/port-resolver)** — Concurrent test port allocation 🟢 v0.1.0 🐕 | [📖 Docs](https://github.com/tuulbelt/port-resolver#readme) | [🚀 Examples](https://github.com/tuulbelt/port-resolver/tree/main/examples/)
 
+### Validation
+- **[Property Validator](https://github.com/tuulbelt/property-validator)** — Schema-based runtime validation with TypeScript inference 🟢 v0.7.5 🐕 | [📖 Docs](https://github.com/tuulbelt/property-validator#readme) | [🚀 Examples](https://github.com/tuulbelt/property-validator/tree/main/examples/)
+
 ### Frontend
-- **[Component Prop Validator](https://github.com/tuulbelt/component-prop-validator)** — TypeScript runtime validation (TBD)
 - **[Exhaustiveness Checker](https://github.com/tuulbelt/exhaustiveness-checker)** — Union case coverage for TS/JS (TBD)
 
 ### Data & Protocol
@@ -132,6 +134,27 @@ portres get --tag "api-server"
 
 [📖 Docs](https://github.com/tuulbelt/port-resolver#readme) | [🚀 Examples](https://github.com/tuulbelt/port-resolver/tree/main/examples/)
 
+---
+
+### Property Validator
+
+```typescript
+import { v, validate } from 'property-validator';
+
+const UserSchema = v.object({
+  name: v.string(),
+  age: v.number(),
+  email: v.optional(v.string())
+});
+
+const result = validate(userData, UserSchema);
+if (result.ok) {
+  console.log(result.value.name); // TypeScript knows the type!
+}
+```
+
+[📖 Docs](https://github.com/tuulbelt/property-validator#readme) | [🚀 Examples](https://github.com/tuulbelt/property-validator/tree/main/examples/)
+
 _[See all 33 tools →](#current-tools)_
 
 ## Dogfooding: Tools Working Together
@@ -181,15 +204,15 @@ This creates a **bidirectional validation network** where tools prove their reli
 
 ## Status
 
-🟢 = Implemented (10/33)
+🟢 = Implemented (11/33)
 🟡 = In progress (0/33)
-🔴 = TBD (23/33)
+🔴 = TBD (22/33)
 
-**Recently Completed:** Test Port Resolver v0.1.0 (2025-12-29)
+**Recently Completed:** Property Validator v0.7.5 (2026-01-04)
 
-**Next Up:** Component Prop Validator 🎯
+**Next Up:** Exhaustiveness Checker 🎯
 
-**Progress:** 10 of 33 tools implemented (30%) | Phase 1 Quick Tools: 5/5 (100% ✅) | Phase 2: 5/28
+**Progress:** 11 of 33 tools implemented (33%) | Phase 1 Quick Tools: 5/5 (100% ✅) | Phase 2: 6/28
 
 ## License
 
@@ -200,4 +223,3 @@ All tools are MIT licensed unless otherwise specified.
 Found a bug? Have an idea? Open an issue at https://github.com/tuulbelt/tuulbelt/issues
 
 Use labels to indicate which tool: `test-flakiness-detector`, `cli-progress`, etc.
-test

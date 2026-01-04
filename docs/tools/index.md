@@ -207,15 +207,16 @@ Concurrent port allocation for any application. Avoid port conflicts in tests, s
 
 ### Property Validator
 
-**Status:** <img src="/icons/tool.svg" class="inline-icon" alt=""> In Development (v0.1.0)
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.7.5)
 **Language:** TypeScript
-**Tests:** 32 tests (expanding)
+**Tests:** 537 tests, Valibot-tier performance
 
-Runtime type validation with TypeScript inference. Validate data from any source with schema-based validation and graceful error handling.
+Runtime type validation with TypeScript inference. Schema-based validation with Valibot-competitive performance - 1.7x faster on simple objects, 4.5x faster on unions.
 
 **Features:**
 - Schema-based validation with TypeScript type inference
 - Graceful error handling with result types (no exceptions)
+- Valibot-tier performance (beats Zod 6/6 categories, competitive with Valibot)
 - Clear error messages with exact paths to invalid fields
 - Works anywhere: API responses, config files, user input, function arguments
 - Framework-agnostic (not tied to React, Vue, etc.)

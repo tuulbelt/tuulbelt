@@ -196,13 +196,13 @@ Concurrent port allocation for any application - avoid port conflicts in tests, 
 
 <div class="tool-card">
 
-#### [Property Validator](/tools/property-validator/) <span class="library-badge"><img src="/icons/tool.svg" class="badge-icon" alt=""><span>In Development</span></span>
+#### [Property Validator](/tools/property-validator/) <span class="library-badge"><img src="/icons/check-circle.svg" class="badge-icon" alt=""><span>v0.7.5</span></span>
 
-Runtime type validation with TypeScript inference - validate data from any source with graceful error handling.
+Runtime type validation with TypeScript inference - Valibot-tier performance (1.7x faster on simple objects, 4.5x on unions).
 
+- <img src="/icons/zap.svg" class="inline-icon" alt=""> Valibot-tier performance (beats Zod 6/6, competitive with Valibot)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Schema-based validation with automatic type inference
 - <img src="/icons/shield.svg" class="inline-icon" alt=""> Result types (no exceptions) for resilient apps
-- <img src="/icons/target.svg" class="inline-icon" alt=""> Framework-agnostic - works anywhere (API, config, props, args)
 
 [Get Started →](/tools/property-validator/getting-started)
 
@@ -227,7 +227,7 @@ Runtime type validation with TypeScript inference - validate data from any sourc
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Snapshot Comparison (Rust)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> File-Based Semaphore (TypeScript)
 - <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Port Resolver (TypeScript)
-- <img src="/icons/tool.svg" class="inline-icon" alt=""> Property Validator (TypeScript) ✨ IN DEVELOPMENT
+- <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Property Validator (TypeScript) v0.7.5 ✅
 
 **Overall Progress:** 11 of 33 tools (33%)
 
