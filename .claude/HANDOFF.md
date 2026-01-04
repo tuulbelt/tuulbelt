@@ -1,47 +1,48 @@
 # Session Handoff
 
 **Last Updated:** 2026-01-04
-**Session:** Documentation Update - Property Validator v0.7.5 as 11th Tool
-**Status:** Updating docs to reflect Property Validator replacing Component Prop Validator
+**Session:** Property Validator v0.8.0 Phase 8 Implementation
+**Status:** Phase 8 COMPLETE - 5x improvement on simple objects!
 
 ---
 
-## 📋 Current Session: Documentation Update for Property Validator v0.7.5
+## 📋 Current Session: Property Validator v0.8.0 Phase 8
 
 **Session Branch (Meta):** `claude/analyze-codebase-priorities-V1sLF` (Web environment)
-**Goal:** Update all documentation to show Property Validator as the 11th completed tool
+**Session Branch (propval):** `claude/analyze-codebase-priorities-V1sLF`
+**Goal:** Implement JIT bypass optimization for massive performance gains
 
 **🎯 SESSION ACCOMPLISHMENTS:**
 
-1. **Meta README.md Updates**
-   - Created new "Validation" category for Property Validator
-   - Added Property Validator as v0.7.5 implemented (replacing Component Prop Validator TBD)
-   - Updated status: 11/33 tools (33%)
-   - Added Property Validator quick example
-   - Updated "Next Up" to Exhaustiveness Checker
+### Phase 8: JIT Object Validator Bypass ✅ COMPLETE
 
-2. **NEXT_TASKS.md Updates**
-   - Added Property Validator to CLI names table (11 tools now)
-   - Updated Phase 2 count: 6/28 complete
-   - Removed Component Prop Validator from "proposed next"
-   - Added Property Validator to Phase 2 completed list
+**Key Discovery:** JIT compilation already existed in v0.7.5 via `compileObjectValidator()`. The bottleneck was wrapper overhead (validateWithPath machinery, Result allocation, function call chain), not lack of JIT.
 
-3. **VitePress Documentation Updates**
-   - Updated docs/tools/index.md: v0.7.5, 537 tests, Production Ready
-   - Updated docs/index.md: Changed "In Development" badge to "v0.7.5", updated Progress section
-   - Updated docs/tools/property-validator/index.md: Added Performance section with benchmark comparisons
-   - Expanded API Reference: Added union, literal, record, tuple, refine, validateFast
+**Implementation:**
+1. Added `_compiled` property to Validator interface for JIT function access
+2. Exposed `compiledValidator` as `validator._compiled` for plain objects in `v.object()`
+3. Added fast path in `validateFast()` to bypass `validateWithPath` for plain objects
+4. Added `&& !validator._hasRefinements` check for refinement safety
 
-**Files Modified:**
-- README.md (meta)
-- .claude/NEXT_TASKS.md
-- .claude/HANDOFF.md
-- docs/tools/index.md
-- docs/index.md
-- docs/tools/property-validator/index.md
-- docs/tools/property-validator/api-reference.md
+**Files Modified (property-validator):**
+- `src/index.ts` - Added `_compiled` property and validateFast bypass
+- `docs/V0_8_0_JIT_RESEARCH.md` - Updated with Phase 8 results
+- `profiling/phase8-analysis.ts` - Created benchmark script
 
-**Next Work:** Verify docs build, commit to feature branch, then start v0.8.0 research
+**Performance Results:**
+
+| Benchmark | v0.7.5 | v0.8.0 | Improvement |
+|-----------|--------|--------|-------------|
+| simple object (valid) | 332.10 ns | 62.59 ns | **5.3x faster** ✅ |
+| `validate()` API call | 37.20 ns | 9.13 ns | **4.1x faster** ✅ |
+
+**Competitive Position Reversal:**
+- v0.7.5: 1.5x SLOWER than valibot on objects
+- v0.8.0: 3.4x FASTER than valibot on objects
+
+**All 537 tests passing.**
+
+**Commit:** `f595dd2` - "v0.8.0 Phase 8.2: Direct JIT bypass in validateFast() - 5x improvement"
 
 ---
 
