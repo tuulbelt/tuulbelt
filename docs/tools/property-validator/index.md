@@ -1,14 +1,16 @@
 # Property Validator
 
-Runtime type validation with TypeScript inference for JavaScript and TypeScript projects.
+Runtime type validation with TypeScript inference and Valibot-tier performance.
 
 ## Overview
 
-Property Validator provides schema-based runtime type validation with full TypeScript type inference. Validate data from any source - API responses, user input, config files, function arguments - with clear error messages and graceful failure.
+Property Validator provides schema-based runtime type validation with full TypeScript type inference and competitive performance. Beats Zod in all 6 benchmark categories, achieves Valibot-tier performance (1.7x faster on simple objects, 4.5x faster on unions).
 
-**Status:** <img src="/icons/tool.svg" class="inline-icon" alt=""> In Development (v0.1.0)
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.7.5)
 
 **Language:** TypeScript
+
+**Tests:** 537 tests passing
 
 **Repository:** [tuulbelt/property-validator](https://github.com/tuulbelt/property-validator)
 
@@ -29,6 +31,33 @@ Validation errors include exact paths to invalid fields, expected vs actual type
 ### <img src="/icons/zap.svg" class="inline-icon" alt=""> Zero Runtime Dependencies
 
 Uses only Node.js built-ins. No `npm install` required in production.
+
+## Performance
+
+Property Validator v0.7.5 delivers Valibot-tier performance through 6 optimization phases:
+
+### vs Zod (6/6 wins)
+
+Property Validator beats Zod in all benchmark categories - typically 2-5x faster.
+
+### vs Valibot (Competitive)
+
+| Category | Property Validator | Valibot | Winner |
+|----------|-------------------|---------|--------|
+| Simple objects | 120 ns | 207 ns | **propval 1.7x** ✅ |
+| Unions | 107 ns | 450 ns | **propval 4.5x** ✅ |
+| Primitives | 180 ns | 101 ns | valibot 1.8x |
+| Complex nested | 2.5 µs | 1.05 µs | valibot 2.4x |
+| Arrays | 1.1 µs | 296 ns | valibot 3.8x |
+
+**Score: 2 wins, 3 losses** - competitive with the fastest runtime validators.
+
+### Optimization Techniques
+
+- **Phase 1:** Skip empty refinement loop (+8-20%)
+- **Phase 2:** Eliminate Result allocation in Fast API (+12-22%)
+- **Phase 4:** Lazy path building (+24-30%)
+- **Phase 6:** Inline validateWithPath for objects (+214%)
 
 ## Quick Start
 

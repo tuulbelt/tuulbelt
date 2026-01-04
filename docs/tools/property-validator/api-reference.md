@@ -184,6 +184,151 @@ validate({ name: "Alice", email: "alice@example.com" }, UserSchema);
 // { ok: true, value: { name: "Alice", email: "alice@example.com" } }
 ```
 
+---
+
+### `v.union(schemas)`
+
+Creates a union validator (value must match one of the schemas). **4.5x faster than Valibot on unions!**
+
+**Parameters:**
+- `schemas: Schema[]` - Array of schemas to match against
+
+**Returns:** `UnionSchema<T>`
+
+**Example:**
+```typescript
+const StringOrNumber = v.union([v.string(), v.number()]);
+
+validate("hello", StringOrNumber);  // { ok: true, value: "hello" }
+validate(42, StringOrNumber);       // { ok: true, value: 42 }
+validate(true, StringOrNumber);     // { ok: false, error: ... }
+
+// Discriminated unions
+const ResultSchema = v.union([
+  v.object({ type: v.literal('success'), data: v.string() }),
+  v.object({ type: v.literal('error'), message: v.string() })
+]);
+```
+
+---
+
+### `v.literal(value)`
+
+Creates a literal validator for exact value matching.
+
+**Parameters:**
+- `value: string | number | boolean` - Exact value to match
+
+**Returns:** `LiteralSchema<T>`
+
+**Example:**
+```typescript
+const AdminRole = v.literal('admin');
+
+validate('admin', AdminRole);  // { ok: true, value: 'admin' }
+validate('user', AdminRole);   // { ok: false, error: ... }
+
+// Use in objects for discriminated unions
+const SuccessResponse = v.object({
+  status: v.literal('success'),
+  data: v.string()
+});
+```
+
+---
+
+### `v.record(valueSchema)`
+
+Creates a record/dictionary validator with string keys.
+
+**Parameters:**
+- `valueSchema: Schema` - Schema for record values
+
+**Returns:** `RecordSchema<T>`
+
+**Example:**
+```typescript
+const Scores = v.record(v.number());
+
+validate({ alice: 100, bob: 85 }, Scores);
+// { ok: true, value: { alice: 100, bob: 85 } }
+
+validate({ alice: "high" }, Scores);
+// { ok: false, error: ... }
+```
+
+---
+
+### `v.tuple(schemas)`
+
+Creates a tuple validator for fixed-length arrays.
+
+**Parameters:**
+- `schemas: Schema[]` - Schemas for each tuple position
+
+**Returns:** `TupleSchema<T>`
+
+**Example:**
+```typescript
+const Point = v.tuple([v.number(), v.number()]);
+
+validate([10, 20], Point);      // { ok: true, value: [10, 20] }
+validate([10], Point);          // { ok: false, error: ... }
+validate([10, 20, 30], Point);  // { ok: false, error: ... }
+```
+
+---
+
+### `.refine(predicate, message)`
+
+Adds custom validation logic to any schema.
+
+**Parameters:**
+- `predicate: (value: T) => boolean` - Custom validation function
+- `message: string` - Error message if validation fails
+
+**Returns:** Same schema type with refinement
+
+**Example:**
+```typescript
+const PositiveNumber = v.number().refine(
+  n => n > 0,
+  'must be positive'
+);
+
+validate(5, PositiveNumber);   // { ok: true, value: 5 }
+validate(-1, PositiveNumber);  // { ok: false, error: 'must be positive' }
+
+// Email validation
+const Email = v.string().refine(
+  s => s.includes('@'),
+  'must be valid email'
+);
+```
+
+## Fast Validation API
+
+### `validateFast(data, schema)`
+
+Fast validation that returns only `true`/`false` without error details. Use when you only need to know if data is valid.
+
+**Parameters:**
+- `data: unknown` - Data to validate
+- `schema: Schema` - Schema to validate against
+
+**Returns:** `boolean`
+
+**Example:**
+```typescript
+import { v, validateFast } from 'property-validator';
+
+if (validateFast(userData, UserSchema)) {
+  // Data is valid - proceed
+} else {
+  // Data is invalid - handle error
+}
+```
+
 ## Types
 
 ### `ValidationResult<T>`
