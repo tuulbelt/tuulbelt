@@ -1,46 +1,66 @@
 # Session Handoff
 
 **Last Updated:** 2026-01-04
-**Session:** Property Validator v0.7.5 Phase 3 ❌ REJECTED
-**Status:** Phase 3 investigated - unacceptable union regression. Consider Phase 4 next.
+**Session:** Property Validator v0.7.5 Phase 4 ✅ COMPLETE
+**Status:** Phase 4 implemented with exceptional results. Phases 1, 2, 4 complete. Phase 5/6 optional.
 
 ---
 
-## 📋 Current Session: Property Validator v0.7.5 Phase 3 ❌ REJECTED
+## 📋 Current Session: Property Validator v0.7.5 Phase 4 ✅ COMPLETE
 
 **Session Branch (Meta):** `claude/fix-meta-job-failure-L8oeO` (Web environment)
 **Session Branch (Submodule):** `main` (property-validator)
 
-**🎯 PHASE 3 REJECTED: Inline Primitive Validation**
+**🎯 PHASE 4 COMPLETE: Lazy Path Building**
 
 **What Was Done This Session:**
-- ✅ Implemented Phase 3 v1: Inline typeof checks in `validate()` function
-- ✅ Ran all 537 tests - 100% passing
-- ❌ Discovered -24% union regression (99.43 ns → 123.81 ns)
-- ✅ Investigated root cause: Property checks run for ALL validators
-- ✅ Implemented Phase 3 v2: Check `_type` first, then properties
-- ❌ Still showed -40% union regression (99.43 ns → 139.57 ns)
-- ✅ **REVERTED** Phase 3 - trade-off unacceptable
-- ✅ Verified tests still pass (537/537)
-- ✅ Verified Phase 2 performance restored (unions ~101 ns)
-- ✅ Updated OPTIMIZATION_PLAN.md with investigation details
+- ✅ Implemented Phase 4: Changed path from `string[]` to `(string|number)[]`
+- ✅ Added `PathSegment` type alias
+- ✅ Array validators now push raw numbers instead of `"[${i}]"` strings
+- ✅ Added `formatPathString()` method to ValidationError for on-demand path formatting
+- ✅ All 537 tests passing (100%)
+- ✅ Ran all benchmarks (bench, bench:fast, bench:compare)
+- ✅ Verified NO union regression (101.24 ns vs 99.43 ns - within variance)
+- ✅ Updated OPTIMIZATION_PLAN.md and BASELINE.md with Phase 4 results
 
-**Why Phase 3 Was Rejected:**
-- ANY code at start of `validate()` affects ALL validators
-- Even `_type` property access adds ~40 ns overhead per call
-- Unions are our competitive advantage (4.5x faster than valibot)
-- Trade-off: +15% primitives vs -40% unions = UNACCEPTABLE
+**Phase 4 Results (vs v0.7.0 Baseline):**
 
-**Key Learning:**
-Hot path optimizations in `validate()` cannot be done without regressing unions. Future primitive optimizations should target deeper in the call stack (e.g., within `validateFast` or individual validators).
+| Category | v0.7.0 | Phase 4 | Improvement |
+|----------|--------|---------|-------------|
+| Arrays large | 176.95 µs | 124.56 µs | **+29.6%** ✅ |
+| Arrays medium | 19.46 µs | 13.93 µs | **+28.4%** ✅ |
+| OBJECTS small | 5.63 µs | 4.17 µs | **+25.9%** ✅ |
+| OBJECTS medium | 52.49 µs | 37.38 µs | **+28.8%** ✅ |
+| Objects simple | 386.67 ns | 332.10 ns | **+14.1%** ✅ |
+| Unions | 113.50 ns | 101.24 ns | **+10.8%** ✅ |
+
+**Key Achievement:**
+- Target: +10-15% on arrays → Achieved: +24-30% (EXCEEDS expectations!)
+- No union regression (our competitive advantage preserved)
 
 **Reference Documentation:**
-- `OPTIMIZATION_PLAN.md` - Updated with Phase 3 rejection details (lines 909-1021)
-- `benchmarks/BASELINE.md` - Phase 1+2 results remain current baseline
+- `OPTIMIZATION_PLAN.md` - Phase 4 marked complete with results (lines 1025-1149)
+- `benchmarks/BASELINE.md` - Updated with Phase 4 results
 
-**Next Work:** Consider Phase 4 (Lazy Path Building) or Phase 5 (Optimize Primitive Closures)
-- These target different parts of the call stack
-- Less risk of union regression
+**v0.7.5 Optimization Status:**
+1. ✅ Phase 1: Skip empty refinement loop - COMPLETE
+2. ✅ Phase 2: Eliminate Fast API Result allocation - COMPLETE
+3. ❌ Phase 3: Inline primitive validation - REJECTED (union regression)
+4. ✅ Phase 4: Lazy path building - COMPLETE
+5. 📋 Phase 5: Optimize primitive closures (optional, +5-10%)
+6. 📋 Phase 6: Inline validateWithPath (optional, +10-15%)
+
+**Next Work:** v0.7.5 is ready for release. Consider Phase 5/6 for further optimization.
+
+---
+
+## Previous Session: Property Validator v0.7.5 Phase 3 ❌ REJECTED
+
+**What Was Done:**
+- ✅ Implemented Phase 3 v1: Inline typeof checks in `validate()` function
+- ❌ Discovered -24% to -40% union regression
+- ✅ **REVERTED** Phase 3 - trade-off unacceptable
+- Key learning: Any code at start of `validate()` affects ALL validators
 
 ---
 
