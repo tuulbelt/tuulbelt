@@ -1,16 +1,22 @@
 # Session Handoff
 
 **Last Updated:** 2026-01-04
-**Session:** Property Validator v0.8.0 Phases 8-11 Implementation
-**Status:** v0.8.0 COMPLETE - 6 wins, 1 near-tie vs valibot! 🎉
+**Session:** Property Validator v0.8.5 Performance Roadmap
+**Status:** v0.8.0 COMPLETE & BASELINED - Ready for v0.8.5 implementation
 
 ---
 
-## 📋 Current Session: Property Validator v0.8.0 Phase 11 Complete!
+## 📋 Current Session: v0.8.5 Roadmap Established
 
 **Session Branch (Meta):** `claude/analyze-codebase-priorities-V1sLF` (Web environment)
 **Session Branch (propval):** `claude/analyze-codebase-priorities-V1sLF`
-**Goal:** Implement JIT bypass optimization for massive performance gains
+**Goal:** Achieve TypeBox-level performance (~16M ops/sec) while maintaining Zod-like DX
+
+### v0.8.0 Is Now The Baseline
+
+All future optimizations will be compared against v0.8.0:
+- **Baseline doc:** `/tmp/property-validator/benchmarks/BASELINE.md`
+- **Roadmap:** `/tmp/property-validator/docs/V0_8_5_PERFORMANCE_ROADMAP.md`
 
 **🎯 FINAL v0.8.0 vs Valibot (after Phase 11):**
 
@@ -25,6 +31,30 @@
 | Union (3 types) | 87.76 ns | 83.37 ns | valibot 1.05x |
 
 **Score: 6 wins, 1 near-tie (was 2 wins, 3 losses in v0.7.5)**
+
+---
+
+### 🚀 v0.8.5 Next Steps (For New Sessions)
+
+**Goal:** Achieve TypeBox-level performance (~16M ops/sec)
+
+**Implementation Order:**
+1. **Phase 1: v.check() API** - Boolean-only fast path (no Result allocation)
+2. **Phase 2: Inlined Primitive JIT** - Use `new Function()` for V8 optimization
+3. **Phase 3: Fully Inlined Object Validation** - Single-function JIT generation
+4. **Phase 4: v.compile() API** - Explicit pre-compilation for hot paths
+
+**Target Performance:**
+| API | Target |
+|-----|--------|
+| `v.validate()` | Maintain ~17M ops/sec |
+| `v.check()` | 12-15M ops/sec |
+| `v.compile()` | 15-18M ops/sec |
+
+**Unions:** Already 3/4 wins in v0.8.0. New APIs will benefit unions naturally.
+A dedicated union Phase 5 can be added if needed for the remaining "string 1st match" gap.
+
+**Start with:** Read `docs/V0_8_5_PERFORMANCE_ROADMAP.md` for full implementation details.
 
 ---
 
