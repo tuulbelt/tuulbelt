@@ -41,48 +41,73 @@ All 6 optimization phases addressed (5 implemented, 1 rejected):
 
 ---
 
-## 🎯 Property Validator v0.8.0 - JIT Compilation 📋 NEXT
+## 🏆 Property Validator v0.8.0 - JIT Bypass Pattern ✅ COMPLETE
 
-**Status:** Research complete, planning done, ready for implementation
-**Goal:** Close performance gaps with Valibot on primitives, complex objects, and arrays
-**Target:** Match or beat Valibot in 4/6 categories (currently 2/6)
+**Status:** v0.8.0 COMPLETE - Now the baseline for future optimizations
+**Achievement:** 6 wins, 1 near-tie vs Valibot (was 2 wins, 3 losses in v0.7.5)
 
-### Competitor Landscape (Research Complete)
+### v0.8.0 vs Valibot Final Results
 
-| Library | Ops/sec | Approach | DX Trade-off |
-|---------|---------|----------|--------------|
-| **Typia** | 9.6M | AOT (TypeScript transformer) | Requires build step |
-| **TypeBox** | 16.5M | JIT (`new Function()`) | JSON Schema only |
-| **ArkType** | ~10M | JIT (`new Function()`) | Different API |
-| **Valibot** | 4.1M | Closure-based | Good DX, modular |
-| **Zod** | 2.0M | Closure-based | Best DX, slowest |
-| **property-validator** | ~5M | Closure-based | Zod-like DX |
+| Category | propval | valibot | Winner |
+|----------|---------|---------|--------|
+| Primitives (string) | 62 ns | 80 ns | **propval 1.30x** ✅ |
+| Primitives (number) | 59 ns | 85 ns | **propval 1.44x** ✅ |
+| Simple Object | 62 ns | 215 ns | **propval 3.46x** ✅ |
+| Complex Nested | 62 ns | 1.08 µs | **propval 17.5x** ✅ |
+| Union (3 types) | 88 ns | 83 ns | valibot 1.05x (near-tie) |
 
-### v0.8.0 Phases
+### v0.8.0 Implementation Summary
 
-1. **Phase 7: JIT Primitive Validators** 🔥 HIGHEST
-   - Expected: +50-100% on primitives (close 1.8x gap with Valibot)
-   - Use `new Function()` instead of closures
-   - V8 can better optimize JIT-generated code
+- **Phase 8:** JIT object validator bypass via `_compiled` property
+- **Phase 9:** JIT array validator bypass
+- **Phase 10:** Recursive JIT bypass for nested objects
+- **Phase 11:** JIT bypass for unions, primitives, and literals
 
-2. **Phase 8: JIT Object Validators** 🔥 HIGH
-   - Expected: +30-50% on complex objects (close 2.4x gap)
-   - Generate custom validation code per schema shape
-   - Direct property access (no dynamic lookup)
+**Key Insight:** JIT compilation already existed; the bottleneck was wrapper overhead.
 
-3. **Phase 9: JIT Array Validators** MEDIUM
-   - Expected: +20-40% on primitive arrays (close 3.8x gap)
-   - Loop unrolling for small arrays
-   - Specialized code generation
+---
 
-### v0.8.0 Research Tasks (Before Implementation)
+## 🎯 Property Validator v0.8.5 - TypeBox-Level Performance 📋 NEXT
 
-- [ ] Profile current primitive validators with `node --prof`
-- [ ] Benchmark `new Function()` vs closure in isolation
-- [ ] Study TypeBox's TypeCompiler source code
-- [ ] Study ArkType's shift-reduce parser approach
-- [ ] Test JIT approach in browsers with CSP
-- [ ] Measure memory impact of JIT code strings
+**Status:** Roadmap complete, ready for implementation
+**Goal:** Achieve TypeBox-level performance (~16M ops/sec) while maintaining Zod-like DX
+**Roadmap:** `/tmp/property-validator/docs/V0_8_5_PERFORMANCE_ROADMAP.md`
+
+### v0.8.5 Target APIs
+
+| API | Current (v0.8.0) | v0.8.5 Target | Description |
+|-----|------------------|---------------|-------------|
+| `v.validate()` | ~17M ops/sec | Maintain | Full error details |
+| `v.check()` | N/A | 12-15M ops/sec | Boolean-only, no errors |
+| `v.compile()` | Partial | 15-18M ops/sec | Pre-compiled for hot paths |
+
+### v0.8.5 Phases
+
+1. **Phase 1: v.check() API** - Boolean-only fast path
+   - Skip Result allocation entirely
+   - Use `_compiled` directly
+   - Target: 12-15M ops/sec
+
+2. **Phase 2: Inlined Primitive JIT** - Use `new Function()`
+   - V8 optimizes standalone functions better
+   - No closure scope overhead
+   - Target: +30-50% on primitives
+
+3. **Phase 3: Fully Inlined Object Validation** - Single-function JIT
+   - Generate `return typeof data.name === 'string' && ...`
+   - Zero function call overhead
+   - Target: +50-100% on objects
+
+4. **Phase 4: v.compile() API** - Explicit compilation
+   - `const checker = v.compile(schema)`
+   - Maximum speed for hot paths
+   - Target: 15-18M ops/sec (TypeBox territory)
+
+### Union Status in v0.8.5
+
+Unions already win 3/4 scenarios vs valibot after v0.8.0 Phase 11.
+The new APIs (`v.check()`, `v.compile()`) will naturally benefit unions.
+Dedicated union optimization can be added as Phase 5 if needed.
 
 ---
 

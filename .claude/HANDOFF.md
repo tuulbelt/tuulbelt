@@ -1,47 +1,172 @@
 # Session Handoff
 
 **Last Updated:** 2026-01-04
-**Session:** Documentation Update - Property Validator v0.7.5 as 11th Tool
-**Status:** Updating docs to reflect Property Validator replacing Component Prop Validator
+**Session:** Property Validator v0.8.5 Performance Roadmap
+**Status:** v0.8.0 COMPLETE & BASELINED - Ready for v0.8.5 implementation
 
 ---
 
-## 📋 Current Session: Documentation Update for Property Validator v0.7.5
+## 📋 Current Session: v0.8.5 Roadmap Established
 
 **Session Branch (Meta):** `claude/analyze-codebase-priorities-V1sLF` (Web environment)
-**Goal:** Update all documentation to show Property Validator as the 11th completed tool
+**Session Branch (propval):** `claude/analyze-codebase-priorities-V1sLF`
+**Goal:** Achieve TypeBox-level performance (~16M ops/sec) while maintaining Zod-like DX
 
-**🎯 SESSION ACCOMPLISHMENTS:**
+### v0.8.0 Is Now The Baseline
 
-1. **Meta README.md Updates**
-   - Created new "Validation" category for Property Validator
-   - Added Property Validator as v0.7.5 implemented (replacing Component Prop Validator TBD)
-   - Updated status: 11/33 tools (33%)
-   - Added Property Validator quick example
-   - Updated "Next Up" to Exhaustiveness Checker
+All future optimizations will be compared against v0.8.0:
+- **Baseline doc:** `/tmp/property-validator/benchmarks/BASELINE.md`
+- **Roadmap:** `/tmp/property-validator/docs/V0_8_5_PERFORMANCE_ROADMAP.md`
 
-2. **NEXT_TASKS.md Updates**
-   - Added Property Validator to CLI names table (11 tools now)
-   - Updated Phase 2 count: 6/28 complete
-   - Removed Component Prop Validator from "proposed next"
-   - Added Property Validator to Phase 2 completed list
+**🎯 FINAL v0.8.0 vs Valibot (after Phase 11):**
 
-3. **VitePress Documentation Updates**
-   - Updated docs/tools/index.md: v0.7.5, 537 tests, Production Ready
-   - Updated docs/index.md: Changed "In Development" badge to "v0.7.5", updated Progress section
-   - Updated docs/tools/property-validator/index.md: Added Performance section with benchmark comparisons
-   - Expanded API Reference: Added union, literal, record, tuple, refine, validateFast
+| Category | propval | valibot | Winner |
+|----------|---------|---------|--------|
+| Primitives (string) | 66.60 ns | 67.86 ns | **propval 1.02x** ✅ |
+| Primitives (number) | 63.70 ns | 64.48 ns | **propval 1.01x** ✅ |
+| Simple Object | 65.17 ns | 201.08 ns | **propval 3.09x** ✅ |
+| Complex Nested | 174.15 ns | 932.64 ns | **propval 5.36x** ✅ |
+| Number Array [100] | 112.40 ns | 671.44 ns | **propval 5.97x** ✅ |
+| String Array [100] | 157.38 ns | 664.97 ns | **propval 4.23x** ✅ |
+| Union (3 types) | 87.76 ns | 83.37 ns | valibot 1.05x |
 
-**Files Modified:**
-- README.md (meta)
-- .claude/NEXT_TASKS.md
-- .claude/HANDOFF.md
-- docs/tools/index.md
-- docs/index.md
-- docs/tools/property-validator/index.md
-- docs/tools/property-validator/api-reference.md
+**Score: 6 wins, 1 near-tie (was 2 wins, 3 losses in v0.7.5)**
 
-**Next Work:** Verify docs build, commit to feature branch, then start v0.8.0 research
+---
+
+### 🚀 v0.8.5 Next Steps (For New Sessions)
+
+**Goal:** Achieve TypeBox-level performance (~16M ops/sec)
+
+**Implementation Order:**
+1. **Phase 1: v.check() API** - Boolean-only fast path (no Result allocation)
+2. **Phase 2: Inlined Primitive JIT** - Use `new Function()` for V8 optimization
+3. **Phase 3: Fully Inlined Object Validation** - Single-function JIT generation
+4. **Phase 4: v.compile() API** - Explicit pre-compilation for hot paths
+
+**Target Performance:**
+| API | Target |
+|-----|--------|
+| `v.validate()` | Maintain ~17M ops/sec |
+| `v.check()` | 12-15M ops/sec |
+| `v.compile()` | 15-18M ops/sec |
+
+**Unions:** Already 3/4 wins in v0.8.0. New APIs will benefit unions naturally.
+A dedicated union Phase 5 can be added if needed for the remaining "string 1st match" gap.
+
+**Start with:** Read `docs/V0_8_5_PERFORMANCE_ROADMAP.md` for full implementation details.
+
+---
+
+### Phase 11: Union JIT Bypass ✅ COMPLETE
+
+**Problem:** After Phase 10, unions were still 1.12x slower than valibot.
+
+**Root Cause:** Unions, primitives, and literals lacked `_compiled` property - validateFast() bypass couldn't apply.
+
+**Implementation:**
+1. Added `_compiled` to string(), number(), boolean() primitives
+2. Added `_compiled` to literal() validator
+3. Added `_compiled` to union() with child JIT function chaining
+4. Unions now use `allHaveCompiled` check to enable fast path
+
+**Performance Results (Union Scenarios):**
+
+| Scenario | propval | valibot | Winner |
+|----------|---------|---------|--------|
+| String (1st match) | 84.61 ns | 73.15 ns | valibot 1.16x |
+| Number (2nd match) | 86.76 ns | 187.79 ns | **propval 2.16x** ✅ |
+| Literal union | 88.75 ns | 218.48 ns | **propval 2.46x** ✅ |
+| Object union | 73.90 ns | 209.72 ns | **propval 2.84x** ✅ |
+
+**3 out of 4 union scenarios now faster than valibot!**
+
+**All 537 tests passing.**
+
+**Commits:**
+- `a18545b` - "v0.8.0 Phase 11: JIT bypass for unions, primitives, and literals"
+- `9033a51` - "docs: update v0.8.0 JIT research with Phase 11 results"
+
+---
+
+### Phase 10: Recursive JIT Bypass ✅ COMPLETE
+
+**Root Causes Fixed:**
+1. `compilePropertyValidator()` didn't use `_compiled` for nested validators
+2. Arrays ALWAYS had `_transform` defined, blocking parent JIT bypass
+
+**Implementation:**
+1. Chain `_compiled` for nested validators in `compilePropertyValidator()`
+2. Only define `_transform` on arrays when item validators need transforms
+
+**Performance Results:**
+| Metric | Before | After | Improvement |
+|--------|--------|-------|-------------|
+| 5 props + nested metadata | 1.37 µs | 69.99 ns | **20x faster** |
+| Full complex | 1.85 µs | 225.34 ns | **8.2x faster** |
+| validate() API | 1.94 µs | 245.86 ns | **7.9x faster** |
+
+**Commit:** `b0d9e9d` - "v0.8.0 Phase 10: Recursive JIT bypass for nested objects"
+
+---
+
+### Phase 8: JIT Object Validator Bypass ✅ COMPLETE
+
+**Key Discovery:** JIT compilation already existed in v0.7.5 via `compileObjectValidator()`. The bottleneck was wrapper overhead (validateWithPath machinery, Result allocation, function call chain), not lack of JIT.
+
+**Implementation:**
+1. Added `_compiled` property to Validator interface for JIT function access
+2. Exposed `compiledValidator` as `validator._compiled` for plain objects in `v.object()`
+3. Added fast path in `validateFast()` to bypass `validateWithPath` for plain objects
+4. Added `&& !validator._hasRefinements` check for refinement safety
+
+**Files Modified (property-validator):**
+- `src/index.ts` - Added `_compiled` property and validateFast bypass
+- `docs/V0_8_0_JIT_RESEARCH.md` - Updated with Phase 8 results
+- `profiling/phase8-analysis.ts` - Created benchmark script
+
+**Performance Results:**
+
+| Benchmark | v0.7.5 | v0.8.0 | Improvement |
+|-----------|--------|--------|-------------|
+| simple object (valid) | 332.10 ns | 62.59 ns | **5.3x faster** ✅ |
+| `validate()` API call | 37.20 ns | 9.13 ns | **4.1x faster** ✅ |
+
+**Competitive Position Reversal:**
+- v0.7.5: 1.5x SLOWER than valibot on objects
+- v0.8.0: 3.4x FASTER than valibot on objects
+
+**All 537 tests passing.**
+
+**Commit:** `f595dd2` - "v0.8.0 Phase 8.2: Direct JIT bypass in validateFast() - 5x improvement"
+
+### Phase 9: JIT Array Validator Bypass ✅ COMPLETE
+
+**Applied same bypass pattern to arrays:**
+
+1. Added `_compiled` property to plain array validators
+2. `_compiled` wraps `Array.isArray()` + `compiledValidate()`
+3. Added `hasItemTransform` safety check for transform preservation
+
+**Performance Results:**
+
+| Array Size | v0.7.5 | v0.8.0 | Improvement |
+|------------|--------|--------|-------------|
+| Number[10] | ~144 ns | 67.37 ns | **2.1x faster** |
+| Number[100] | ~1.1 µs | 109.35 ns | **~10x faster** |
+
+**vs Valibot (100-element arrays):**
+
+| Array Type | property-validator | valibot | Winner |
+|------------|-------------------|---------|--------|
+| Number[100] | 109.35 ns | 674.39 ns | **propval 6.17x faster** ✅ |
+| String[100] | 163.03 ns | 679.65 ns | **propval 4.17x faster** ✅ |
+
+**Competitive Position Reversal:**
+- v0.7.5: 3.8x SLOWER than valibot on arrays
+- v0.8.0: 4-6x FASTER than valibot on arrays!
+
+**Commit:** `1d1e30e` - "v0.8.0 Phase 9: JIT bypass for arrays"
 
 ---
 
