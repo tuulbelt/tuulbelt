@@ -14,9 +14,9 @@
           "has_changes": true,
           "commits_count": 5,
           "last_commit_sha": "9099d66",
-          "pr_url": null,
-          "pr_number": null,
-          "pr_state": null,
+          "pr_url": "https://github.com/tuulbelt/property-validator/pull/5",
+          "pr_number": 5,
+          "pr_state": "OPEN",
           "pr_merged": false
         }
       }
