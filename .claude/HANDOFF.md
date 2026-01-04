@@ -1,18 +1,53 @@
 # Session Handoff
 
 **Last Updated:** 2026-01-04
-**Session:** Property Validator v0.8.0 Phase 8 & 9 Implementation
-**Status:** Phase 8 & 9 COMPLETE - Objects 5x, Arrays 4-6x faster than valibot!
+**Session:** Property Validator v0.8.0 Phases 8-10 Implementation
+**Status:** v0.8.0 COMPLETE - 6 wins, 1 loss vs valibot! 🎉
 
 ---
 
-## 📋 Current Session: Property Validator v0.8.0 Phase 8
+## 📋 Current Session: Property Validator v0.8.0 Complete!
 
 **Session Branch (Meta):** `claude/analyze-codebase-priorities-V1sLF` (Web environment)
 **Session Branch (propval):** `claude/analyze-codebase-priorities-V1sLF`
 **Goal:** Implement JIT bypass optimization for massive performance gains
 
-**🎯 SESSION ACCOMPLISHMENTS:**
+**🎯 FINAL v0.8.0 vs Valibot:**
+
+| Category | propval | valibot | Winner |
+|----------|---------|---------|--------|
+| Primitives (string) | 66.77 ns | 69.33 ns | **propval 1.04x** ✅ |
+| Primitives (number) | 64.62 ns | 71.14 ns | **propval 1.10x** ✅ |
+| Simple Object | 63.61 ns | 202.49 ns | **propval 3.18x** ✅ |
+| Complex Nested | 233.69 ns | 1.03 µs | **propval 4.41x** ✅ |
+| Number Array [100] | 114.36 ns | 650.79 ns | **propval 5.69x** ✅ |
+| String Array [100] | 157.77 ns | 644.24 ns | **propval 4.08x** ✅ |
+| Union (3 types) | 92.10 ns | 82.48 ns | valibot 1.12x |
+
+**Score: 6 wins, 1 loss (was 2 wins, 3 losses in v0.7.5)**
+
+---
+
+### Phase 10: Recursive JIT Bypass ✅ COMPLETE
+
+**Root Causes Fixed:**
+1. `compilePropertyValidator()` didn't use `_compiled` for nested validators
+2. Arrays ALWAYS had `_transform` defined, blocking parent JIT bypass
+
+**Implementation:**
+1. Chain `_compiled` for nested validators in `compilePropertyValidator()`
+2. Only define `_transform` on arrays when item validators need transforms
+
+**Performance Results:**
+| Metric | Before | After | Improvement |
+|--------|--------|-------|-------------|
+| 5 props + nested metadata | 1.37 µs | 69.99 ns | **20x faster** |
+| Full complex | 1.85 µs | 225.34 ns | **8.2x faster** |
+| validate() API | 1.94 µs | 245.86 ns | **7.9x faster** |
+
+**Commit:** `b0d9e9d` - "v0.8.0 Phase 10: Recursive JIT bypass for nested objects"
+
+---
 
 ### Phase 8: JIT Object Validator Bypass ✅ COMPLETE
 
