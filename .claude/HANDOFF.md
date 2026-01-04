@@ -1,8 +1,8 @@
 # Session Handoff
 
 **Last Updated:** 2026-01-04
-**Session:** Property Validator v0.8.0 Phase 8 Implementation
-**Status:** Phase 8 COMPLETE - 5x improvement on simple objects!
+**Session:** Property Validator v0.8.0 Phase 8 & 9 Implementation
+**Status:** Phase 8 & 9 COMPLETE - Objects 5x, Arrays 4-6x faster than valibot!
 
 ---
 
@@ -43,6 +43,34 @@
 **All 537 tests passing.**
 
 **Commit:** `f595dd2` - "v0.8.0 Phase 8.2: Direct JIT bypass in validateFast() - 5x improvement"
+
+### Phase 9: JIT Array Validator Bypass ✅ COMPLETE
+
+**Applied same bypass pattern to arrays:**
+
+1. Added `_compiled` property to plain array validators
+2. `_compiled` wraps `Array.isArray()` + `compiledValidate()`
+3. Added `hasItemTransform` safety check for transform preservation
+
+**Performance Results:**
+
+| Array Size | v0.7.5 | v0.8.0 | Improvement |
+|------------|--------|--------|-------------|
+| Number[10] | ~144 ns | 67.37 ns | **2.1x faster** |
+| Number[100] | ~1.1 µs | 109.35 ns | **~10x faster** |
+
+**vs Valibot (100-element arrays):**
+
+| Array Type | property-validator | valibot | Winner |
+|------------|-------------------|---------|--------|
+| Number[100] | 109.35 ns | 674.39 ns | **propval 6.17x faster** ✅ |
+| String[100] | 163.03 ns | 679.65 ns | **propval 4.17x faster** ✅ |
+
+**Competitive Position Reversal:**
+- v0.7.5: 3.8x SLOWER than valibot on arrays
+- v0.8.0: 4-6x FASTER than valibot on arrays!
+
+**Commit:** `1d1e30e` - "v0.8.0 Phase 9: JIT bypass for arrays"
 
 ---
 
