@@ -82,14 +82,21 @@ tokio = { version = "1", features = ["test-util"] }  # OK for tests
 ### TypeScript Validation
 
 ```bash
-# Check for runtime dependencies
-deps=$(jq -r '.dependencies // {} | length' package.json)
-if [ "$deps" -gt 0 ]; then
-  echo "❌ VIOLATION: Found $deps runtime dependencies"
-  jq -r '.dependencies' package.json
+# Check for external runtime dependencies (excludes @tuulbelt/* packages)
+external_deps=$(jq -r '.dependencies // {} | keys | map(select(startswith("@tuulbelt/") | not)) | length' package.json)
+if [ "$external_deps" -gt 0 ]; then
+  echo "❌ VIOLATION: Found $external_deps external runtime dependencies"
+  jq -r '.dependencies | to_entries | map(select(.key | startswith("@tuulbelt/") | not)) | from_entries' package.json
   exit 1
 else
-  echo "✅ Zero runtime dependencies (TypeScript)"
+  echo "✅ Zero external dependencies (TypeScript)"
+fi
+
+# Show Tuulbelt dependencies (informational)
+tuulbelt_deps=$(jq -r '.dependencies // {} | keys | map(select(startswith("@tuulbelt/"))) | length' package.json)
+if [ "$tuulbelt_deps" -gt 0 ]; then
+  echo "ℹ️  Found $tuulbelt_deps Tuulbelt dependencies (allowed per Exception 2)"
+  jq -r '.dependencies | to_entries | map(select(.key | startswith("@tuulbelt/"))) | .[].key' package.json
 fi
 
 # Check for peer dependencies
@@ -103,13 +110,23 @@ fi
 ### Rust Validation
 
 ```bash
-# Check for runtime dependencies
-if grep -A 100 "^\[dependencies\]" Cargo.toml | grep -v "^\[" | grep -v "^#" | grep -v "^$" | grep -q "."; then
-  echo "❌ VIOLATION: Found runtime dependencies in Cargo.toml"
-  grep -A 100 "^\[dependencies\]" Cargo.toml | grep -v "^\[" | head -20
+# Check for external runtime dependencies (excludes Tuulbelt git dependencies)
+deps_section=$(awk '/^\[dependencies\]/,/^\[/' Cargo.toml | grep -v "^\[" | grep -v "^#" | grep -v "^$")
+external_deps=$(echo "$deps_section" | grep -v "github.com/tuulbelt/" | grep -c "." || echo "0")
+
+if [ "$external_deps" -gt 0 ]; then
+  echo "❌ VIOLATION: Found $external_deps external runtime dependencies in Cargo.toml"
+  echo "$deps_section" | grep -v "github.com/tuulbelt/"
   exit 1
 else
-  echo "✅ Zero runtime dependencies (Rust)"
+  echo "✅ Zero external dependencies (Rust)"
+fi
+
+# Show Tuulbelt dependencies (informational)
+tuulbelt_deps=$(echo "$deps_section" | grep -c "github.com/tuulbelt/" || echo "0")
+if [ "$tuulbelt_deps" -gt 0 ]; then
+  echo "ℹ️  Found $tuulbelt_deps Tuulbelt dependencies (allowed per Exception 2)"
+  echo "$deps_section" | grep "github.com/tuulbelt/"
 fi
 
 # Check dev-dependencies (informational)
@@ -309,20 +326,28 @@ jobs:
       - name: Check TypeScript dependencies
         if: hashFiles('package.json')
         run: |
-          deps=$(jq -r '.dependencies // {} | length' package.json)
-          if [ "$deps" -gt 0 ]; then
-            echo "Error: Found runtime dependencies"
-            jq -r '.dependencies' package.json
-            exit 1
-          fi
+          # Filter out @tuulbelt/* packages (allowed per Exception 2)
+          external=$(node -e "
+            const p = require('./package.json');
+            const deps = Object.keys(p.dependencies || {}).filter(d => !d.startsWith('@tuulbelt/'));
+            if (deps.length > 0) {
+              console.error('Found external dependencies:', deps);
+              process.exit(1);
+            }
+            console.log('✅ Zero external dependencies');
+          ")
 
       - name: Check Rust dependencies
         if: hashFiles('Cargo.toml')
         run: |
-          if grep -A 100 "^\[dependencies\]" Cargo.toml | grep -v "^\[" | grep -v "^#" | grep -v "^$" | grep -q "."; then
-            echo "Error: Found runtime dependencies"
+          # Filter out Tuulbelt git dependencies (allowed per Exception 2)
+          deps=$(awk '/^\[dependencies\]/,/^\[/' Cargo.toml | grep -v "^\[" | grep -v "^#" | grep -v "^$" | grep -v "github.com/tuulbelt/")
+          if [ -n "$deps" ]; then
+            echo "Error: Found external runtime dependencies"
+            echo "$deps"
             exit 1
           fi
+          echo "✅ Zero external dependencies"
 ```
 
 ## Pre-commit Hook
@@ -332,35 +357,70 @@ Create `.git/hooks/pre-commit`:
 ```bash
 #!/bin/bash
 
-# TypeScript check
+# TypeScript check (excludes @tuulbelt/* packages per Exception 2)
 if [ -f package.json ]; then
-  deps=$(jq -r '.dependencies // {} | length' package.json)
-  if [ "$deps" -gt 0 ]; then
-    echo "❌ Cannot commit: Runtime dependencies found in package.json"
-    jq -r '.dependencies' package.json
+  external_deps=$(jq -r '.dependencies // {} | keys | map(select(startswith("@tuulbelt/") | not)) | length' package.json)
+  if [ "$external_deps" -gt 0 ]; then
+    echo "❌ Cannot commit: External runtime dependencies found in package.json"
+    jq -r '.dependencies | to_entries | map(select(.key | startswith("@tuulbelt/") | not)) | from_entries' package.json
     exit 1
   fi
 fi
 
-# Rust check
+# Rust check (excludes Tuulbelt git dependencies per Exception 2)
 if [ -f Cargo.toml ]; then
-  if grep -A 100 "^\[dependencies\]" Cargo.toml | grep -v "^\[" | grep -v "^#" | grep -v "^$" | grep -q "."; then
-    echo "❌ Cannot commit: Runtime dependencies found in Cargo.toml"
-    grep -A 20 "^\[dependencies\]" Cargo.toml
+  deps=$(awk '/^\[dependencies\]/,/^\[/' Cargo.toml | grep -v "^\[" | grep -v "^#" | grep -v "^$" | grep -v "github.com/tuulbelt/")
+  if [ -n "$deps" ]; then
+    echo "❌ Cannot commit: External runtime dependencies found in Cargo.toml"
+    echo "$deps"
     exit 1
   fi
 fi
 
-echo "✅ Zero dependency check passed"
+echo "✅ Zero external dependency check passed"
 ```
 
-## Exceptions and Override Process
+## Exceptions
 
-### When to Consider an Exception
+### Exception 2: Tuulbelt-to-Tuulbelt Composition
 
-**NEVER** - The zero-dependency principle has no exceptions.
+Per [PRINCIPLES.md](../../../PRINCIPLES.md), Tuulbelt tools **MAY** depend on other Tuulbelt tools via git URL dependencies.
 
-If a tool genuinely requires external dependencies:
+**Why this is allowed:**
+- All Tuulbelt tools are themselves zero-dependency
+- Composition preserves the zero-dep guarantee transitively
+- Enables richer functionality without external dependency chains
+- No supply chain risk (we control all dependencies)
+
+**Allowed patterns (TypeScript):**
+```json
+{
+  "dependencies": {
+    "@tuulbelt/cli-progress-reporting": "git+https://github.com/tuulbelt/cli-progress-reporting.git"
+  }
+}
+```
+
+**Allowed patterns (Rust):**
+```toml
+[dependencies]
+output_diffing_utility = { git = "https://github.com/tuulbelt/output-diffing-utility.git" }
+```
+
+**Examples in production:**
+- `test-flakiness-detector` → depends on `@tuulbelt/cli-progress-reporting`
+- `port-resolver` → depends on `@tuulbelt/file-based-semaphore-ts`
+- `snapshot-comparison` → depends on `output_diffing_utility`
+
+**Validation:** When checking for violations, filter out:
+- TypeScript: packages starting with `@tuulbelt/`
+- Rust: git dependencies pointing to `github.com/tuulbelt/`
+
+### External Dependencies
+
+**External dependencies remain PROHIBITED.**
+
+If a tool requires non-Tuulbelt external dependencies:
 1. It doesn't belong in Tuulbelt
 2. Consider splitting: core tool (zero deps) + optional wrapper
 3. Re-evaluate if the problem is narrow enough
@@ -420,12 +480,15 @@ Choose Option A whenever possible.
 
 ## Remember
 
-**Zero dependencies is not negotiable for Tuulbelt tools.**
+**Zero external dependencies is non-negotiable for Tuulbelt tools.**
 
-If you find yourself reaching for a dependency:
+Tuulbelt-to-Tuulbelt composition is allowed (Exception 2), but external dependencies are prohibited.
+
+If you find yourself reaching for an external dependency:
 1. Check if std library has the functionality
-2. Implement minimal version yourself
-3. Use system tools as fallback
-4. Re-evaluate if tool scope is too broad
+2. Check if a Tuulbelt tool already solves this (use it!)
+3. Implement minimal version yourself
+4. Use system tools as fallback
+5. Re-evaluate if tool scope is too broad
 
 This skill should be invoked automatically when examining package.json or Cargo.toml files.
