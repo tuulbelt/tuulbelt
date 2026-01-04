@@ -71,7 +71,7 @@ See the tool in action:
 
 ![Property Validator Demo](/property-validator/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/S9zWPiJiKwMNTd8EfoUcZa1xz)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/nRuBfCwBqohXjhDrWyvxB9MHi)**
 
 <div style="margin: 20px 0;">
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">
