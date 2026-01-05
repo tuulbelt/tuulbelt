@@ -6,7 +6,7 @@ Runtime type validation with TypeScript inference and high performance.
 
 Property Validator provides schema-based runtime type validation with full TypeScript type inference and competitive performance. Beats Zod in all benchmark categories, achieves Valibot-tier performance with JIT optimization.
 
-**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.9.1)
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.9.2)
 
 **Language:** TypeScript
 
@@ -186,6 +186,12 @@ See the tool in action:
 </div>
 
 ## What's New
+
+### v0.9.2 - Multiple Entry Points
+- `/v` entry point for fluent API: `import { v } from '@tuulbelt/property-validator/v'`
+- `/lite` entry point for functional API: `import { string, email } from '@tuulbelt/property-validator/lite'`
+- Bundle size benchmark script for measuring tree-shaking impact
+- Documentation for choosing the right entry point
 
 ### v0.9.1 - Functional Refinement API
 - Tree-shakeable refinement functions: `email()`, `int()`, `positive()`, etc.
