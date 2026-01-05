@@ -1,77 +1,77 @@
 # Session Handoff
 
 **Last Updated:** 2026-01-05
-**Session:** Property Validator v0.8.5 Complete - v0.9.0 Planning
-**Status:** v0.8.5 COMPLETE - PRs created for merge
+**Session:** Property Validator v0.9.3 - Benchmark CI
+**Status:** v0.9.2 COMPLETE - Starting v0.9.3
 
 ---
 
-## 📋 Current Session: v0.8.5 Release Complete
+## 📋 Current Session: v0.9.3 Benchmark CI
 
-**Session Branch (Meta):** `claude/review-meta-propval-IaoRK` (Web environment)
-**Session Branch (propval):** `claude/review-meta-propval-IaoRK`
+**Session Branch (Meta):** `claude/resume-work-check-HeepT` (Web environment)
+**Goal:** GitHub Action for regression detection, alerts, historical tracking
 
-### v0.8.5 Release PRs
+### Session Setup Completed
 
-| Repository | PR | URL |
-|------------|-----|-----|
-| **property-validator** | #9 | https://github.com/tuulbelt/property-validator/pull/9 |
-| **tuulbelt (meta)** | #95 | https://github.com/tuulbelt/tuulbelt/pull/95 |
+- ✅ Fixed Claude Code Web submodule initialization (broken .git detection)
+- ✅ Updated `scripts/web/init-session.sh` and `scripts/web/resume-session.sh`
+- ✅ Cleaned up old session tracking
+- ✅ All 11 submodules properly cloned and hooks installed
 
-### v0.8.5 What Was Delivered
+### v0.9.3 Deliverables (TODO)
 
-**New APIs:**
-- `check(schema, data)` — Boolean-only validation (~10-18% faster)
-- `compileCheck(schema)` — Pre-compiled boolean validator (+5-15% on unions)
+1. **GitHub Action for Regression Detection**
+   - Run benchmarks on PR
+   - Compare against baseline
+   - Comment on PR with results
+   - Block merge if regression > threshold
 
-**Benchmark Restructuring:**
-- Internal benchmarks: `benchmarks/internal/` (API tier comparison)
-- External benchmarks: `benchmarks/external/` (competitor comparison with API equivalence)
+2. **Alert System**
+   - Slack/Discord webhook integration
+   - Email notification option
+   - Configurable thresholds
 
-**Performance Results:**
-
-| Scenario | validate() | check() | compileCheck() |
-|----------|------------|---------|----------------|
-| Simple Object | ~62 ns | ~57 ns | ~57 ns |
-| Complex Nested | ~154 ns | ~145 ns | ~143 ns |
-| Union (3 types) | ~74 ns | ~62 ns | ~55 ns |
-| Invalid Data | ~357 ns | ~55 ns | ~55 ns |
-
-**Key Insight:** Invalid data is **6.4x faster** with check/compileCheck (skip error path)
-
-**Phase 7: Built-in Validators:**
-- String: email(), url(), uuid(), pattern(), min(), max(), length(), nonempty(), startsWith(), endsWith(), includes()
-- Number: int(), positive(), negative(), nonnegative(), nonpositive(), min(), max(), range(), finite(), safeInt()
-- CLI: --check flag for boolean-only validation, --api flag for displaying available validators
-
-**Tests:** 595 total (58 new for built-in validators)
+3. **Historical Baseline Tracking**
+   - Store baseline results per version
+   - Track trends over time
+   - Generate performance dashboard
 
 ---
 
-## 🚀 v0.9.0 Next Steps (For New Sessions)
+## ✅ Property Validator v0.9.0-0.9.2 COMPLETE
 
-**Goal:** Modular architecture with tree-shakeable validators
+**Tags:** v0.9.2 (latest), v0.8.0, v0.7.5
+**PRs Merged:** property-validator #10, tuulbelt (meta PR merged)
 
-### v0.9.0 Deliverables
+### v0.9.0: Modularization (5 Phases)
 
-1. **Modular Architecture**
-   - Split validators into separate ES modules
-   - Named exports: `import { string, number, object } from 'property-validator'`
-   - Maintain backwards compatibility with `v` namespace
+1. **Phase 1:** Extract types to `src/types.ts`
+2. **Phase 2:** Refactor for named exports
+3. **Phase 3:** Add named exports for tree-shaking
+4. **Phase 4:** Update package.json exports
+5. **Phase 5:** Documentation and bundle size docs
 
-2. **Tree-Shaking Support**
-   - Ensure bundlers can eliminate unused validators
-   - Validators as pure functions (no side effects)
-   - Benchmark bundle size reduction
+**Result:** Full tree-shaking support with bundlers
 
-3. **Benchmark CI Phase 2**
-   - [ ] GitHub Action for automatic regression detection on PRs
-   - [ ] Alert/notification system (Slack/Discord webhook)
-   - [ ] Trend tracking across versions (historical baselines)
+### v0.9.1: Functional Refinement API
+
+- Added functional refinement API for tree-shaking
+- Enables: `string().pipe(minLength(3))`
+
+### v0.9.2: Entry Points & TypeBox Comparison
+
+- `/v` entry point: Full namespace import
+- `/lite` entry point: Minimal import for tree-shaking
+- TypeBox comparison benchmarks added
+- Performance dashboard generator
+
+**Bundle Size Results:**
+- Full bundle: ~15KB (minified)
+- Tree-shaken (single validator): ~2KB
 
 ---
 
-## 🔮 v0.9.5 Future (Extended Validators & JIT)
+## 🔮 Future: v0.9.5 Extended Validators & JIT
 
 **Extended String Validators:**
 - `cuid()`, `cuid2()`, `ulid()`, `nanoid()`, `base64()`, `hex()`, `jwt()`
@@ -81,421 +81,55 @@
 - `port()`, `latitude()`, `longitude()`, `percentage()`
 
 **JIT Compilation (Optional):**
-- Phase 2: Inlined Primitive JIT (`new Function()`)
-- Phase 3: Fully Inlined Object Validation
 - Target: 15-18M ops/sec (TypeBox territory)
 
 ---
 
-### v0.8.0 Phase 11: Union JIT Bypass ✅ COMPLETE
+## Previous: v0.8.5 Summary
 
-**Problem:** After Phase 10, unions were still 1.12x slower than valibot.
+**New APIs:**
+- `check(schema, data)` — Boolean-only validation
+- `compileCheck(schema)` — Pre-compiled boolean validator
 
-**Root Cause:** Unions, primitives, and literals lacked `_compiled` property - validateFast() bypass couldn't apply.
+**Built-in Validators:**
+- String: email(), url(), uuid(), datetime(), ip(), etc.
+- Number: int(), positive(), range(), multipleOf(), etc.
 
-**Implementation:**
-1. Added `_compiled` to string(), number(), boolean() primitives
-2. Added `_compiled` to literal() validator
-3. Added `_compiled` to union() with child JIT function chaining
-4. Unions now use `allHaveCompiled` check to enable fast path
-
-**Performance Results (Union Scenarios):**
-
-| Scenario | propval | valibot | Winner |
-|----------|---------|---------|--------|
-| String (1st match) | 84.61 ns | 73.15 ns | valibot 1.16x |
-| Number (2nd match) | 86.76 ns | 187.79 ns | **propval 2.16x** ✅ |
-| Literal union | 88.75 ns | 218.48 ns | **propval 2.46x** ✅ |
-| Object union | 73.90 ns | 209.72 ns | **propval 2.84x** ✅ |
-
-**3 out of 4 union scenarios now faster than valibot!**
-
-**All 537 tests passing.**
-
-**Commits:**
-- `a18545b` - "v0.8.0 Phase 11: JIT bypass for unions, primitives, and literals"
-- `9033a51` - "docs: update v0.8.0 JIT research with Phase 11 results"
+**Tests:** 595 total
 
 ---
 
-### Phase 10: Recursive JIT Bypass ✅ COMPLETE
+## Claude Code Web Fixes (This Session)
 
-**Root Causes Fixed:**
-1. `compilePropertyValidator()` didn't use `_compiled` for nested validators
-2. Arrays ALWAYS had `_transform` defined, blocking parent JIT bypass
+**Issue:** Submodules reported "already initialized" but were broken (incomplete .git directories with only hooks folder).
 
-**Implementation:**
-1. Chain `_compiled` for nested validators in `compilePropertyValidator()`
-2. Only define `_transform` on arrays when item validators need transforms
+**Root Cause:** The initialization scripts checked `[ -d "$SUBMODULE_PATH/.git" ]` but didn't verify the .git was a valid git repository.
 
-**Performance Results:**
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| 5 props + nested metadata | 1.37 µs | 69.99 ns | **20x faster** |
-| Full complex | 1.85 µs | 225.34 ns | **8.2x faster** |
-| validate() API | 1.94 µs | 245.86 ns | **7.9x faster** |
+**Fix:** Changed to use `git -C "$submodule" rev-parse --git-dir` to verify the repository is actually valid before skipping clone.
 
-**Commit:** `b0d9e9d` - "v0.8.0 Phase 10: Recursive JIT bypass for nested objects"
+**Files Updated:**
+- `scripts/web/init-session.sh`
+- `scripts/web/resume-session.sh`
 
 ---
 
-### Phase 8: JIT Object Validator Bypass ✅ COMPLETE
-
-**Key Discovery:** JIT compilation already existed in v0.7.5 via `compileObjectValidator()`. The bottleneck was wrapper overhead (validateWithPath machinery, Result allocation, function call chain), not lack of JIT.
-
-**Implementation:**
-1. Added `_compiled` property to Validator interface for JIT function access
-2. Exposed `compiledValidator` as `validator._compiled` for plain objects in `v.object()`
-3. Added fast path in `validateFast()` to bypass `validateWithPath` for plain objects
-4. Added `&& !validator._hasRefinements` check for refinement safety
-
-**Files Modified (property-validator):**
-- `src/index.ts` - Added `_compiled` property and validateFast bypass
-- `docs/V0_8_0_JIT_RESEARCH.md` - Updated with Phase 8 results
-- `profiling/phase8-analysis.ts` - Created benchmark script
-
-**Performance Results:**
-
-| Benchmark | v0.7.5 | v0.8.0 | Improvement |
-|-----------|--------|--------|-------------|
-| simple object (valid) | 332.10 ns | 62.59 ns | **5.3x faster** ✅ |
-| `validate()` API call | 37.20 ns | 9.13 ns | **4.1x faster** ✅ |
-
-**Competitive Position Reversal:**
-- v0.7.5: 1.5x SLOWER than valibot on objects
-- v0.8.0: 3.4x FASTER than valibot on objects
-
-**All 537 tests passing.**
-
-**Commit:** `f595dd2` - "v0.8.0 Phase 8.2: Direct JIT bypass in validateFast() - 5x improvement"
-
-### Phase 9: JIT Array Validator Bypass ✅ COMPLETE
-
-**Applied same bypass pattern to arrays:**
-
-1. Added `_compiled` property to plain array validators
-2. `_compiled` wraps `Array.isArray()` + `compiledValidate()`
-3. Added `hasItemTransform` safety check for transform preservation
-
-**Performance Results:**
-
-| Array Size | v0.7.5 | v0.8.0 | Improvement |
-|------------|--------|--------|-------------|
-| Number[10] | ~144 ns | 67.37 ns | **2.1x faster** |
-| Number[100] | ~1.1 µs | 109.35 ns | **~10x faster** |
-
-**vs Valibot (100-element arrays):**
-
-| Array Type | property-validator | valibot | Winner |
-|------------|-------------------|---------|--------|
-| Number[100] | 109.35 ns | 674.39 ns | **propval 6.17x faster** ✅ |
-| String[100] | 163.03 ns | 679.65 ns | **propval 4.17x faster** ✅ |
-
-**Competitive Position Reversal:**
-- v0.7.5: 3.8x SLOWER than valibot on arrays
-- v0.8.0: 4-6x FASTER than valibot on arrays!
-
-**Commit:** `1d1e30e` - "v0.8.0 Phase 9: JIT bypass for arrays"
-
----
-
-## Previous Session: v0.7.5 Tagged + v0.8.0 Roadmap
-
-**v0.7.5 Tag:** ✅ Pushed to origin
-
-**v0.7.5 vs Valibot (Final):**
-| Category | propval | valibot | Winner |
-|----------|---------|---------|--------|
-| Simple objects | 120 ns | 207 ns | **propval 1.7x** ✅ |
-| Unions | 107 ns | 450 ns | **propval 4.5x** ✅ |
-| Primitives | 180 ns | 101 ns | valibot 1.8x |
-| Complex nested | 2.5 µs | 1.05 µs | valibot 2.4x |
-| Primitive arrays | 1.1 µs | 296 ns | valibot 3.8x |
-
-**Score: 2 wins, 3 losses (competitive tier)**
-
----
-
-## Previous Session: Property Validator v0.7.5 Phase 4 ✅ COMPLETE
-
-**What Was Done:**
-- ✅ Implemented Phase 4: Changed path from `string[]` to `(string|number)[]`
-- ✅ Added `PathSegment` type alias
-- ✅ Array validators now push raw numbers instead of `"[${i}]"` strings
-- ✅ Added `formatPathString()` method to ValidationError for on-demand path formatting
-- ✅ All 537 tests passing (100%)
-- ✅ Ran all benchmarks (bench, bench:fast, bench:compare)
-- ✅ Achieved +24-30% on arrays (exceeds +10-15% target)
-
----
-
-## Previous Session: Property Validator v0.7.5 Phase 3 ❌ REJECTED
-
-**What Was Done:**
-- ✅ Implemented Phase 3 v1: Inline typeof checks in `validate()` function
-- ❌ Discovered -24% to -40% union regression
-- ✅ **REVERTED** Phase 3 - trade-off unacceptable
-- Key learning: Any code at start of `validate()` affects ALL validators
-
----
-
-## Previous Session: Property Validator v0.7.5 Phase 2 ✅ COMPLETE
-
-**What Was Done:**
-- ✅ Implemented Phase 2 optimization in `compileArrayValidator()` (line 873)
-- ✅ Changed `validateFast(itemValidator, data[i]).ok` → `itemValidator.validate(data[i])`
-- ✅ Eliminates Result object allocation on every array item
-- ✅ All 537 tests passing (100%)
-
-**Phase 2 Results (vs v0.7.0 Baseline):**
-- Arrays: +12.9% to +18.9% improvement (exceeded +10-15% target)
-- Compiled validators: +22.2%
-- Unions maintained at 99.43 ns (4.5x faster than valibot)
-
----
-
-## Previous Session: Property Validator v0.7.5 Phase 1 ✅ COMPLETE
-
-**What Was Done:**
-- ✅ Implemented Phase 1 optimization in `createValidator()` (line 267)
-- ✅ Implemented Phase 1 optimization in `ArrayValidator.validate()` (line 1012)
-- ✅ Added `refinements.length === 0` early return check
-- ✅ All 537 tests passing (100%)
-- ✅ Phase 1 results: +7.7% primitives, +27.6% objects, +17-20% arrays
-
-**Phase 1 Note:** Minor union regression (-6.5%) was accepted as trade-off. Phase 2 recovered this.
-
----
-
-## Previous Session: Property Validator v0.7.0 Baseline ✅ COMPLETE
-
-**What Was Done:**
-- ✅ Migrated all benchmarks from tinybench to tatami-ng v0.8.18
-- ✅ Migrated all competitor benchmarks (zod, yup, valibot) to tatami-ng
-- ✅ Ran complete head-to-head comparison (4 libraries)
-- ✅ Created BASELINE_COMPARISON.md (336 lines)
-- ✅ Updated BASELINE.md with reliable tatami-ng data
-- ✅ All 537 tests passing (100%)
-
-**Variance Achievement:** ±0.86% average (13.1x better than tinybench)
-
----
-
-## Previous Session: Property Validator v0.4.0 ✅ COMPLETE
-
-**v0.4.0 Complete Summary:**
-- Phase 1: Schema Compilation (30 tests) ✅
-- Phase 2: Fast Path Optimizations (benchmarks) ✅
-- Phase 3: Error Formatting (15 tests) ✅
-- Phase 4: Circular Reference Detection (10 tests) ✅
-- Phase 5: Security Limits (10 tests) ✅
-- Phase 6: Edge Case Handling (20 tests) ✅
-- Phase 7: Performance Benchmarks (dev-only) ✅
-  - 6-10x faster than zod/yup for primitives
-  - 2-5x faster for unions
-  - 5-15x faster for refinements
-
-**Overall:** 85/85 tests (100%), exceeding target of 511/491 tests
-
-**Commits:** ff75c46, a77427f, b879095, 5bce894
-
----
-
-## Previous Session: Web Workflow Testing & Fixes ✅
-
-Tested all unified workflow phases in Claude Code Web environment and fixed discovered issues.
-
-### What Was Done
-
-**Phase 1: Branch Protection** ✅
-- Verified hook installation works in Web environment
-- Pre-commit hook blocks commits to main correctly
-- All 10 submodule hooks installed
-
-**Phase 2: Session Tracking** ✅
-- Session init/status/save scripts work
-- Submodule branch management works
-- **Fixed:** Credential loading now checks environment variables first (Web mode) before requiring .env file
-
-**Phase 3: Environment-Aware Commands** ✅
-- Wrapper scripts properly delegate to Web implementations
-- Environment detection (`CLAUDE_CODE_REMOTE=true`) works correctly
-
-**Phase 4: Session Lifecycle Hooks** ✅
-- on-session-start.sh detects Web, resumes session, shows status
-- on-session-end.sh commits tracking file
-
-**Phase 6: End-to-End Workflow** ✅
-- Created real test PR (test-flakiness-detector#1)
-- PR creation, branch push, and cleanup all verified
-- Closed and cleaned up test PR successfully
-
-### Issues Fixed
-
-**Issue 1: Credential Loading in Web**
-- Problem: Scripts required .env file, but Web has credentials in environment
-- Fix: Updated `scripts/lib/load-credentials.sh` to check env vars first
-
-**Issue 2: Submodule Initialization Fails**
-- Problem: `git submodule update --init` fails through Web proxy
-- Fix: Added fallback in init-session.sh and resume-session.sh to use direct `git clone`
-
-**Issue 3: Color Codes in Non-Interactive Terminals**
-- Problem: ANSI escape codes displayed as raw text in Web terminal
-- Fix: Updated 6 scripts to detect `CLAUDE_CODE_REMOTE=true` and disable colors:
-  - scripts/web/init-session.sh
-  - scripts/web/resume-session.sh
-  - scripts/web/manage-submodule-branch.sh
-  - scripts/web/setup-credentials.sh
-  - scripts/web/save-session.sh
-  - scripts/web/migrate-commits.sh
-
-### Verification
-
-- ✅ All 6 workflow phases tested and working
-- ✅ Real PR created and cleaned up (test-flakiness-detector#1)
-- ✅ Color output properly stripped in Web terminal
-- ✅ docs/WORKFLOW_TEST_RESULTS.md updated with all results
-
----
-
-## Previous Session: GitHub Authentication Consolidation ✅
-
-Consolidated all GitHub authentication into a single unified pattern, fixing persistent credential issues.
-
-### What Was Done
-
-**Problem Identified**
-- Scripts using `gh` CLI were authenticating with wrong account (kofirc instead of koficodedat)
-- Multiple fragmented solutions existed (.env, .envrc, GH_CLI_AUTH_GUIDE.md, scripts/gh.sh)
-- No consistent pattern for loading credentials before GitHub operations
-
-**Root Cause**
-- `gh` CLI authentication priority: GH_TOKEN → GITHUB_TOKEN → stored credentials (~/.config/gh/hosts.yml)
-- Scripts called `gh` directly without loading .env first
-- Fell back to stored credentials for wrong account
-
-**Solution: Unified Credential Loading**
-- Created `scripts/lib/load-credentials.sh` - single source of truth for all GitHub operations
-- Exports both `GH_TOKEN` (for gh CLI) and `GITHUB_TOKEN` (for git/MCP)
-- Sets git user.name and user.email automatically
-- Validates .env file exists and has required variables
-- Works from any directory (auto-detects REPO_ROOT)
-
-**Files Updated**
-1. **Created:** `scripts/lib/load-credentials.sh` (48 lines) - Unified credential loader
-2. **Updated:** `scripts/cli/create-cli-prs.sh` - Added credential loading
-3. **Updated:** `scripts/web/create-web-prs.sh` - Added credential loading
-4. **Updated:** `scripts/web/show-status.sh` - Added credential loading
-5. **Updated:** `scripts/cli/cleanup-cli-workspace.sh` - Added credential loading
-6. **Updated:** `scripts/web/cleanup-web-session.sh` - Added credential loading
-7. **Updated:** `scripts/create-all-repos.sh` - Replaced manual .env sourcing with unified loader
-
-**Verification**
-- MCP server already working correctly (loads .env properly)
-- All 6 scripts using `gh` commands now load credentials consistently
-- End-to-end test passed: PR creation now uses correct account (koficodedat)
-
-**Impact**
-- ✅ All GitHub operations now use correct credentials from .env
-- ✅ Consistent pattern across all scripts (DRY principle)
-- ✅ Future scripts can easily adopt by sourcing the library
-- ✅ Eliminates "must be a collaborator" errors from wrong account
-
----
-
-## Previous Session: Phase 2 CLI Workspace Commands ✅
-
-Implemented complete CLI workspace workflow with bug fixes and best practices documentation.
-
-### What Was Done
-
-**Phase 2 Implementation**
-- ✅ `/work-init` - Initialize feature workspace with worktree
-- ✅ `/work-status` - Show workspace status and uncommitted changes
-- ✅ `/work-pr` - Create PRs for meta repo and submodules
-- ✅ `/work-cleanup` - Clean up workspace and delete branches
-- ✅ Tracking file schemas (CLI and Web)
-- ✅ 7 CLI scripts + 6 wrapper scripts
-
-**Bug Fixes**
-- **Bug #13**: Fixed submodule branch detection in `create-cli-prs.sh`
-  - Root cause: Bash pipe creating subshell, `cd` commands not persisting
-  - Solution: Process substitution + explicit directory management with REPO_ROOT variable
-- **Resilient cleanup**: Updated `cleanup-cli-workspace.sh` to handle worktree removal failures gracefully
-
-**Best Practices Documentation**
-- Added "Implementation Best Practices" section to `UNIFIED_WORKFLOW_PLAN.md`
-- Documented 3 key patterns:
-  1. Directory Context in Loops (REPO_ROOT pattern)
-  2. Resilient Error Handling
-  3. Detect and Handle Stale State
-
-**Pull Request**
-- Created PR #76: https://github.com/tuulbelt/tuulbelt/pull/76
-- Branch: `feat/implement-phase-2-cli-commands`
-- Status: Ready for review
-- Note: PR #75 was created from test branch by mistake and closed
-
----
-
-## Previous Session: Documentation Cleanup & YAML Workflow Fixes ✅
-
-Fixed GitHub Actions workflow failures across all 10 tool repositories and archived completed documentation.
-
----
-
-## Previous Session: Demo Script Consolidation ✅
-
-Created shared demo recording framework (243 lines) that eliminated ~80% boilerplate duplication across 10 demo scripts.
-
----
-
-## Previous Session: Phase 2 Migration COMPLETE 🎉
-
-All 10 tools successfully migrated to standalone repositories:
-- Wave 1: 7/7 independent tools ✅
-- Wave 2: 3/3 tools with dependencies ✅
-
-**Total: 1,141 tests across 10 tools (all dogfooded)**
-
----
-
-## Test Counts (All Tools)
-
-| Tool | Tests | Status |
-|------|-------|--------|
-| Test Flakiness Detector | 132 | ✅ 🐕 |
-| CLI Progress Reporting | 121 | ✅ 🐕 |
-| Cross-Platform Path Normalizer | 141 | ✅ 🐕 |
-| Config File Merger | 144 | ✅ 🐕 |
-| Structured Error Handler | 88 | ✅ 🐕 |
-| File-Based Semaphore (Rust) | 95 | ✅ 🐕 |
-| Output Diffing Utility | 108 | ✅ 🐕 |
-| Snapshot Comparison | 96 | ✅ 🐕 |
-| File-Based Semaphore (TS) | 160 | ✅ 🐕 |
-| Test Port Resolver | 56 | ✅ 🐕 |
-
-**Total: 1,141 tests across 10 tools (all dogfooded)**
-
----
-
-## Current Status
-
-**10 of 33 tools completed (30% progress)**
-
-| Tool | Short Name | Language | Version | Tests | Dogfood |
-|------|------------|----------|---------|-------|---------|
-| Test Flakiness Detector | `flaky` | TypeScript | v0.1.0 | 132 | 🐕 |
-| CLI Progress Reporting | `prog` | TypeScript | v0.1.0 | 121 | 🐕 |
-| Cross-Platform Path Normalizer | `normpath` | TypeScript | v0.1.0 | 141 | 🐕 |
-| File-Based Semaphore (Rust) | `sema` | Rust | v0.1.0 | 95 | 🐕 |
-| Output Diffing Utility | `odiff` | Rust | v0.1.0 | 108 | 🐕 |
-| Structured Error Handler | `serr` | TypeScript | v0.1.0 | 88 | 🐕 |
-| Configuration File Merger | `cfgmerge` | TypeScript | v0.1.0 | 144 | 🐕 |
-| Snapshot Comparison | `snapcmp` | Rust | v0.1.0 | 96 | 🐕 |
-| File-Based Semaphore (TS) | `semats` | TypeScript | v0.1.0 | 160 | 🐕 |
-| Test Port Resolver | `portres` | TypeScript | v0.1.0 | 56 | 🐕 |
+## Tool Status
+
+**11 of 33 tools completed (33%)**
+
+| Tool | Version | Tests |
+|------|---------|-------|
+| Property Validator | v0.9.2 | 595 |
+| Test Flakiness Detector | v0.1.0 | 132 |
+| CLI Progress Reporting | v0.1.0 | 121 |
+| Cross-Platform Path Normalizer | v0.1.0 | 141 |
+| Config File Merger | v0.1.0 | 144 |
+| Structured Error Handler | v0.1.0 | 88 |
+| File-Based Semaphore (Rust) | v0.1.0 | 95 |
+| File-Based Semaphore (TS) | v0.1.0 | 160 |
+| Output Diffing Utility | v0.1.0 | 108 |
+| Snapshot Comparison | v0.1.0 | 96 |
+| Test Port Resolver | v0.1.0 | 56 |
 
 ---
 
