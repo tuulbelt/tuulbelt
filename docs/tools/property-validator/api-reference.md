@@ -1,455 +1,576 @@
 # API Reference
 
-Complete API documentation for Property Validator.
+Complete API documentation for Property Validator v0.9.0.
+
+## Imports
+
+### Named Exports (v0.9.0+, Tree-Shakeable)
+
+```typescript
+// Import only what you need
+import {
+  string, number, boolean,     // Primitives
+  array, tuple, object,        // Collections
+  optional, nullable,          // Modifiers
+  union, literal, lazy, enum_, // Special types
+  validate, check, compile, compileCheck,  // Functions
+  ValidationError              // Error class
+} from '@tuulbelt/property-validator';
+```
+
+### Namespace Import (Classic)
+
+```typescript
+import { v, validate, check, compileCheck } from '@tuulbelt/property-validator';
+```
+
+### Type-Only Import
+
+```typescript
+import type {
+  Validator,
+  Result,
+  ValidationOptions,
+  StringValidator,
+  NumberValidator
+} from '@tuulbelt/property-validator/types';
+```
 
 ## Core Functions
 
-### `validate(data, schema)`
+### `validate(validator, data, options?)`
 
-Validates data against a schema and returns a result type.
+Full validation with detailed error messages.
 
 **Parameters:**
+- `validator: Validator<T>` - The validator to use
 - `data: unknown` - The data to validate
-- `schema: Schema` - The schema to validate against
+- `options?: ValidationOptions` - Optional configuration
 
-**Returns:** `ValidationResult<T>`
+**Returns:** `Result<T>`
 ```typescript
-type ValidationResult<T> =
+type Result<T> =
   | { ok: true; value: T }
   | { ok: false; error: ValidationError };
 ```
 
 **Example:**
 ```typescript
-const result = validate(data, UserSchema);
+import { object, string, validate } from '@tuulbelt/property-validator';
+
+const UserSchema = object({ name: string() });
+const result = validate(UserSchema, data);
+
 if (result.ok) {
-  console.log(result.value);  // Type-safe validated data
+  console.log(result.value.name);  // Type-safe
 } else {
-  console.error(result.error.message);
+  console.error(result.error.format('text'));
 }
 ```
 
-## Schema Builders
-
-### `v.string()`
-
-Creates a string validator.
-
-**Returns:** `StringSchema`
-
-**Example:**
-```typescript
-const NameSchema = v.string();
-validate("Alice", NameSchema);  // { ok: true, value: "Alice" }
-validate(123, NameSchema);      // { ok: false, error: ... }
-```
+**Best for:** Form validation, API responses, debugging
 
 ---
 
-### `v.number()`
+### `check(validator, data)` (v0.8.5+)
 
-Creates a number validator.
-
-**Returns:** `NumberSchema`
-
-**Example:**
-```typescript
-const AgeSchema = v.number();
-validate(30, AgeSchema);      // { ok: true, value: 30 }
-validate("30", AgeSchema);    // { ok: false, error: ... }
-```
-
----
-
-### `v.boolean()`
-
-Creates a boolean validator.
-
-**Returns:** `BooleanSchema`
-
-**Example:**
-```typescript
-const FlagSchema = v.boolean();
-validate(true, FlagSchema);   // { ok: true, value: true }
-validate(1, FlagSchema);      // { ok: false, error: ... }
-```
-
----
-
-### `v.object(properties)`
-
-Creates an object validator with specific properties.
+Fast boolean-only validation. Skips error path computation entirely.
 
 **Parameters:**
-- `properties: Record<string, Schema>` - Object property schemas
-
-**Returns:** `ObjectSchema<T>`
-
-**Example:**
-```typescript
-const UserSchema = v.object({
-  name: v.string(),
-  age: v.number(),
-  active: v.boolean()
-});
-
-type User = {
-  name: string;
-  age: number;
-  active: boolean;
-};
-
-validate({ name: "Alice", age: 30, active: true }, UserSchema);
-// { ok: true, value: User }
-```
-
----
-
-### `v.array(schema)`
-
-Creates an array validator for arrays of a specific type.
-
-**Parameters:**
-- `schema: Schema` - Schema for array elements
-
-**Returns:** `ArraySchema<T>`
-
-**Example:**
-```typescript
-const NumberListSchema = v.array(v.number());
-validate([1, 2, 3], NumberListSchema);
-// { ok: true, value: number[] }
-
-const UserListSchema = v.array(v.object({
-  name: v.string(),
-  age: v.number()
-}));
-validate([
-  { name: "Alice", age: 30 },
-  { name: "Bob", age: 25 }
-], UserListSchema);
-// { ok: true, value: User[] }
-```
-
----
-
-### `v.optional(schema)`
-
-Makes a field optional (can be `undefined`).
-
-**Parameters:**
-- `schema: Schema` - Base schema
-
-**Returns:** `OptionalSchema<T>`
-
-**Example:**
-```typescript
-const UserSchema = v.object({
-  name: v.string(),
-  age: v.optional(v.number())  // age can be undefined
-});
-
-validate({ name: "Alice" }, UserSchema);
-// { ok: true, value: { name: "Alice", age?: number } }
-
-validate({ name: "Alice", age: undefined }, UserSchema);
-// { ok: true, value: { name: "Alice", age?: number } }
-
-validate({ name: "Alice", age: 30 }, UserSchema);
-// { ok: true, value: { name: "Alice", age: 30 } }
-```
-
----
-
-### `v.nullable(schema)`
-
-Allows `null` values in addition to the base type.
-
-**Parameters:**
-- `schema: Schema` - Base schema
-
-**Returns:** `NullableSchema<T>`
-
-**Example:**
-```typescript
-const UserSchema = v.object({
-  name: v.string(),
-  email: v.nullable(v.string())  // email can be null
-});
-
-validate({ name: "Alice", email: null }, UserSchema);
-// { ok: true, value: { name: "Alice", email: string | null } }
-
-validate({ name: "Alice", email: "alice@example.com" }, UserSchema);
-// { ok: true, value: { name: "Alice", email: "alice@example.com" } }
-```
-
----
-
-### `v.union(schemas)`
-
-Creates a union validator (value must match one of the schemas). **4.5x faster than Valibot on unions!**
-
-**Parameters:**
-- `schemas: Schema[]` - Array of schemas to match against
-
-**Returns:** `UnionSchema<T>`
-
-**Example:**
-```typescript
-const StringOrNumber = v.union([v.string(), v.number()]);
-
-validate("hello", StringOrNumber);  // { ok: true, value: "hello" }
-validate(42, StringOrNumber);       // { ok: true, value: 42 }
-validate(true, StringOrNumber);     // { ok: false, error: ... }
-
-// Discriminated unions
-const ResultSchema = v.union([
-  v.object({ type: v.literal('success'), data: v.string() }),
-  v.object({ type: v.literal('error'), message: v.string() })
-]);
-```
-
----
-
-### `v.literal(value)`
-
-Creates a literal validator for exact value matching.
-
-**Parameters:**
-- `value: string | number | boolean` - Exact value to match
-
-**Returns:** `LiteralSchema<T>`
-
-**Example:**
-```typescript
-const AdminRole = v.literal('admin');
-
-validate('admin', AdminRole);  // { ok: true, value: 'admin' }
-validate('user', AdminRole);   // { ok: false, error: ... }
-
-// Use in objects for discriminated unions
-const SuccessResponse = v.object({
-  status: v.literal('success'),
-  data: v.string()
-});
-```
-
----
-
-### `v.record(valueSchema)`
-
-Creates a record/dictionary validator with string keys.
-
-**Parameters:**
-- `valueSchema: Schema` - Schema for record values
-
-**Returns:** `RecordSchema<T>`
-
-**Example:**
-```typescript
-const Scores = v.record(v.number());
-
-validate({ alice: 100, bob: 85 }, Scores);
-// { ok: true, value: { alice: 100, bob: 85 } }
-
-validate({ alice: "high" }, Scores);
-// { ok: false, error: ... }
-```
-
----
-
-### `v.tuple(schemas)`
-
-Creates a tuple validator for fixed-length arrays.
-
-**Parameters:**
-- `schemas: Schema[]` - Schemas for each tuple position
-
-**Returns:** `TupleSchema<T>`
-
-**Example:**
-```typescript
-const Point = v.tuple([v.number(), v.number()]);
-
-validate([10, 20], Point);      // { ok: true, value: [10, 20] }
-validate([10], Point);          // { ok: false, error: ... }
-validate([10, 20, 30], Point);  // { ok: false, error: ... }
-```
-
----
-
-### `.refine(predicate, message)`
-
-Adds custom validation logic to any schema.
-
-**Parameters:**
-- `predicate: (value: T) => boolean` - Custom validation function
-- `message: string` - Error message if validation fails
-
-**Returns:** Same schema type with refinement
-
-**Example:**
-```typescript
-const PositiveNumber = v.number().refine(
-  n => n > 0,
-  'must be positive'
-);
-
-validate(5, PositiveNumber);   // { ok: true, value: 5 }
-validate(-1, PositiveNumber);  // { ok: false, error: 'must be positive' }
-
-// Email validation
-const Email = v.string().refine(
-  s => s.includes('@'),
-  'must be valid email'
-);
-```
-
-## Fast Validation API
-
-### `validateFast(data, schema)`
-
-Fast validation that returns only `true`/`false` without error details. Use when you only need to know if data is valid.
-
-**Parameters:**
-- `data: unknown` - Data to validate
-- `schema: Schema` - Schema to validate against
+- `validator: Validator<T>` - The validator to use
+- `data: unknown` - The data to validate
 
 **Returns:** `boolean`
 
 **Example:**
 ```typescript
-import { v, validateFast } from 'property-validator';
+import { check, object, string } from '@tuulbelt/property-validator';
 
-if (validateFast(userData, UserSchema)) {
-  // Data is valid - proceed
-} else {
-  // Data is invalid - handle error
+const UserSchema = object({ name: string() });
+
+// Fast pass/fail check
+if (check(UserSchema, data)) {
+  processUser(data);
 }
+
+// Filter arrays efficiently
+const validUsers = users.filter(u => check(UserSchema, u));
 ```
 
-## Types
+**Performance:** ~3x faster than `validate()` for valid data, ~6x faster for invalid data
 
-### `ValidationResult<T>`
-
-The result of a validation operation.
-
-```typescript
-type ValidationResult<T> =
-  | SuccessResult<T>
-  | ErrorResult;
-
-type SuccessResult<T> = {
-  ok: true;
-  value: T;
-};
-
-type ErrorResult = {
-  ok: false;
-  error: ValidationError;
-};
-```
+**Best for:** Conditionals, filtering, type guards
 
 ---
 
-### `ValidationError`
+### `compileCheck(validator)` (v0.8.5+)
 
-Error details when validation fails.
+Pre-compile a validator for maximum-speed boolean validation. Returns a cached function.
 
-```typescript
-type ValidationError = {
-  message: string;    // Human-readable error message
-  path: string[];     // Path to invalid field (e.g., ["user", "age"])
-  expected: string;   // Expected type (e.g., "number")
-  actual: string;     // Actual type (e.g., "string")
-};
-```
+**Parameters:**
+- `validator: Validator<T>` - The validator to compile
+
+**Returns:** `(data: unknown) => boolean`
 
 **Example:**
 ```typescript
-const result = validate({ name: 123 }, v.object({ name: v.string() }));
-if (!result.ok) {
-  console.log(result.error);
-  // {
-  //   message: "Validation failed at name: expected string, got number",
-  //   path: ["name"],
-  //   expected: "string",
-  //   actual: "number"
-  // }
+import { compileCheck, object, number } from '@tuulbelt/property-validator';
+
+const PointSchema = object({ x: number(), y: number() });
+const isValidPoint = compileCheck(PointSchema);  // Compile once
+
+// Use in hot loops
+for (const point of points) {
+  if (isValidPoint(point)) {
+    render(point);
+  }
+}
+```
+
+**Performance:** Additional 5-15% faster than `check()` for unions
+
+**Best for:** Hot paths, large datasets, performance-critical loops
+
+---
+
+### `compile(validator)`
+
+Pre-compile a validator for repeated use with full validation.
+
+**Parameters:**
+- `validator: Validator<T>` - The validator to compile
+
+**Returns:** `CompiledValidator<T>` with `.validate(data)` method
+
+**Example:**
+```typescript
+import { compile, object, string } from '@tuulbelt/property-validator';
+
+const UserSchema = object({ name: string() });
+const compiledUser = compile(UserSchema);
+
+// Use repeatedly
+for (const data of dataList) {
+  const result = compiledUser.validate(data);
 }
 ```
 
 ---
 
-### `Schema`
+## Choosing the Right API
 
-Base type for all schema builders.
+| Use Case | API | Why |
+|----------|-----|-----|
+| Form validation | `validate()` | Need error messages for UX |
+| API request validation | `validate()` | Need detailed errors for debugging |
+| Type guards / conditionals | `check()` | Simple pass/fail, faster |
+| Filtering arrays | `check()` | Boolean predicate needed |
+| High-throughput pipelines | `compileCheck()` | Maximum speed, pre-compiled |
+| Same schema validated 1000+ times | `compileCheck()` | Compilation overhead amortized |
 
+---
+
+## Primitive Validators
+
+### `string()` / `v.string()`
+
+Creates a string validator with chainable constraints.
+
+**Basic:**
 ```typescript
-type Schema =
-  | StringSchema
-  | NumberSchema
-  | BooleanSchema
-  | ObjectSchema<any>
-  | ArraySchema<any>
-  | OptionalSchema<any>
-  | NullableSchema<any>;
+const NameSchema = string();
+validate(NameSchema, "Alice");  // { ok: true, value: "Alice" }
+validate(NameSchema, 123);      // { ok: false, error: ... }
+```
+
+**Built-in String Constraints (v0.8.5+):**
+
+| Method | Description | Example |
+|--------|-------------|---------|
+| `.email()` | RFC 5322 email | `string().email()` |
+| `.url()` | HTTP/HTTPS URL | `string().url()` |
+| `.uuid()` | UUID v1-v5 | `string().uuid()` |
+| `.pattern(regex, msg?)` | Custom regex | `string().pattern(/^\d+$/)` |
+| `.min(n)` | Minimum length | `string().min(1)` |
+| `.max(n)` | Maximum length | `string().max(100)` |
+| `.length(n)` | Exact length | `string().length(10)` |
+| `.nonempty()` | Non-empty | `string().nonempty()` |
+| `.startsWith(s)` | Starts with prefix | `string().startsWith('http')` |
+| `.endsWith(s)` | Ends with suffix | `string().endsWith('.json')` |
+| `.includes(s)` | Contains substring | `string().includes('@')` |
+
+**Example:**
+```typescript
+const EmailSchema = string().email();
+validate(EmailSchema, "alice@example.com");  // ✓
+validate(EmailSchema, "not-an-email");       // ✗
+
+const UsernameSchema = string().min(3).max(20).pattern(/^[a-z0-9_]+$/);
+validate(UsernameSchema, "john_doe");  // ✓
 ```
 
 ---
 
-## Type Inference
+### `number()` / `v.number()`
 
-Property Validator automatically infers TypeScript types from schemas.
+Creates a number validator with chainable constraints.
 
-### `Infer<T>`
+**Basic:**
+```typescript
+const AgeSchema = number();
+validate(AgeSchema, 30);    // { ok: true, value: 30 }
+validate(AgeSchema, "30");  // { ok: false, error: ... }
+```
 
-Utility type to extract the TypeScript type from a schema.
+**Built-in Number Constraints (v0.8.5+):**
+
+| Method | Description | Example |
+|--------|-------------|---------|
+| `.int()` | Integer only | `number().int()` |
+| `.positive()` | > 0 | `number().positive()` |
+| `.negative()` | < 0 | `number().negative()` |
+| `.nonnegative()` | >= 0 | `number().nonnegative()` |
+| `.nonpositive()` | <= 0 | `number().nonpositive()` |
+| `.min(n)` | Minimum value | `number().min(0)` |
+| `.max(n)` | Maximum value | `number().max(100)` |
+| `.range(min, max)` | Inclusive range | `number().range(0, 100)` |
+| `.finite()` | Not Infinity/NaN | `number().finite()` |
+| `.safeInt()` | Safe integer range | `number().safeInt()` |
+
+**Example:**
+```typescript
+const AgeSchema = number().int().positive().max(150);
+validate(AgeSchema, 25);    // ✓
+validate(AgeSchema, -5);    // ✗ "Number must be positive"
+validate(AgeSchema, 25.5);  // ✗ "Number must be an integer"
+
+const PercentageSchema = number().range(0, 100);
+validate(PercentageSchema, 50);   // ✓
+validate(PercentageSchema, 150);  // ✗
+```
+
+---
+
+### `boolean()` / `v.boolean()`
+
+Creates a boolean validator.
 
 ```typescript
-type Infer<T extends Schema> = /* inferred type */;
+const FlagSchema = boolean();
+validate(FlagSchema, true);  // { ok: true, value: true }
+validate(FlagSchema, 1);     // { ok: false, error: ... }
+```
 
-// Example:
-const UserSchema = v.object({
-  name: v.string(),
-  age: v.number()
+---
+
+## Collection Validators
+
+### `object(shape)` / `v.object(shape)`
+
+Creates an object validator with specific properties.
+
+**Parameters:**
+- `shape: Record<string, Validator>` - Object property validators
+
+```typescript
+const UserSchema = object({
+  name: string().min(1),
+  age: number().positive(),
+  email: string().email()
 });
 
-type User = Infer<typeof UserSchema>;
-// Equivalent to:
-// type User = {
-//   name: string;
-//   age: number;
-// };
+validate(UserSchema, {
+  name: "Alice",
+  age: 30,
+  email: "alice@example.com"
+});  // ✓
 ```
 
-**Usage:**
+---
+
+### `array(itemValidator)` / `v.array(itemValidator)`
+
+Creates an array validator with optional length constraints.
+
+**Chainable methods:**
+- `.min(n)` - Minimum length
+- `.max(n)` - Maximum length
+- `.length(n)` - Exact length
+- `.nonempty()` - At least 1 element
+
 ```typescript
-const result = validate(data, UserSchema);
-if (result.ok) {
-  const user: Infer<typeof UserSchema> = result.value;
-  // TypeScript knows user.name is string and user.age is number
+const NumbersSchema = array(number());
+validate(NumbersSchema, [1, 2, 3]);  // ✓
+
+const TagsSchema = array(string()).min(1).max(5);
+validate(TagsSchema, ["typescript", "validation"]);  // ✓
+
+const NonEmptySchema = array(string()).nonempty();
+validate(NonEmptySchema, []);  // ✗
+```
+
+---
+
+### `tuple(validators)` / `v.tuple(validators)`
+
+Creates a tuple validator for fixed-length arrays.
+
+```typescript
+const PointSchema = tuple([number(), number()]);
+validate(PointSchema, [10, 20]);  // ✓
+validate(PointSchema, [10]);      // ✗ (wrong length)
+
+const MixedSchema = tuple([string(), number(), boolean()]);
+validate(MixedSchema, ["Alice", 30, true]);  // ✓
+```
+
+---
+
+## Type Modifiers
+
+### `optional(validator)` / `.optional()`
+
+Makes a field optional (allows `undefined`).
+
+```typescript
+// Function style
+const Schema = object({ age: optional(number()) });
+
+// Method style (preferred)
+const Schema = object({ age: number().optional() });
+
+validate(Schema, { age: undefined });  // ✓
+validate(Schema, { age: 30 });         // ✓
+validate(Schema, {});                  // ✓
+```
+
+---
+
+### `nullable(validator)` / `.nullable()`
+
+Allows `null` values.
+
+```typescript
+const Schema = object({ email: string().nullable() });
+
+validate(Schema, { email: null });              // ✓
+validate(Schema, { email: "alice@example.com" });  // ✓
+```
+
+---
+
+### `.nullish()`
+
+Allows both `undefined` and `null`.
+
+```typescript
+const Schema = object({ value: string().nullish() });
+
+validate(Schema, { value: undefined });  // ✓
+validate(Schema, { value: null });       // ✓
+validate(Schema, { value: "hello" });    // ✓
+```
+
+---
+
+### `.default(value)`
+
+Provides a default value when input is `undefined`.
+
+```typescript
+const ConfigSchema = object({
+  port: number().default(3000),
+  host: string().default('localhost'),
+  debug: boolean().default(false)
+});
+
+validate(ConfigSchema, {});
+// { ok: true, value: { port: 3000, host: 'localhost', debug: false } }
+
+// Lazy default (function)
+const Schema = object({
+  timestamp: number().default(() => Date.now())
+});
+```
+
+---
+
+## Union & Literal Types
+
+### `union(validators)` / `v.union(validators)`
+
+Creates a union type (value must match one of the validators).
+
+```typescript
+const StringOrNumber = union([string(), number()]);
+validate(StringOrNumber, "hello");  // ✓
+validate(StringOrNumber, 42);       // ✓
+validate(StringOrNumber, true);     // ✗
+
+// Discriminated unions
+const ResultSchema = union([
+  object({ type: literal('success'), data: string() }),
+  object({ type: literal('error'), message: string() })
+]);
+```
+
+---
+
+### `literal(value)` / `v.literal(value)`
+
+Exact value matching using `===`.
+
+```typescript
+const AdminRole = literal('admin');
+validate(AdminRole, 'admin');  // ✓
+validate(AdminRole, 'user');   // ✗
+
+// Use in discriminated unions
+const SuccessResponse = object({
+  status: literal('success'),
+  data: string()
+});
+```
+
+---
+
+### `enum_(values)` / `v.enum(values)`
+
+Union of string literals (syntactic sugar).
+
+```typescript
+const StatusSchema = enum_(['active', 'inactive', 'pending']);
+// Note: Use enum_ with named import (enum is reserved keyword)
+
+validate(StatusSchema, 'active');    // ✓
+validate(StatusSchema, 'archived');  // ✗
+```
+
+---
+
+### `lazy(fn)` / `v.lazy(fn)`
+
+Deferred validator for recursive types.
+
+```typescript
+type TreeNode = {
+  value: string;
+  children: TreeNode[];
+};
+
+const TreeNodeSchema: Validator<TreeNode> = object({
+  value: string(),
+  children: array(lazy(() => TreeNodeSchema))
+});
+```
+
+---
+
+## Refinements & Transforms
+
+### `.refine(predicate, message)`
+
+Custom validation logic.
+
+```typescript
+const PositiveNumber = number().refine(
+  n => n > 0,
+  'Must be positive'
+);
+
+const Password = string()
+  .min(8)
+  .refine(s => /[A-Z]/.test(s), 'Must contain uppercase')
+  .refine(s => /[0-9]/.test(s), 'Must contain number');
+```
+
+---
+
+### `.transform(fn)`
+
+Transform validated value (changes type).
+
+```typescript
+const ParsedInt = string().transform(s => parseInt(s, 10));
+validate(ParsedInt, "42");  // { ok: true, value: 42 } (number)
+
+const Normalized = string()
+  .transform(s => s.trim())
+  .transform(s => s.toLowerCase());
+validate(Normalized, "  HELLO  ");  // { ok: true, value: "hello" }
+```
+
+---
+
+## Types
+
+### `Result<T>`
+
+```typescript
+type Result<T> =
+  | { ok: true; value: T }
+  | { ok: false; error: ValidationError };
+```
+
+### `ValidationError`
+
+```typescript
+class ValidationError extends Error {
+  message: string;
+  path: (string | number)[];  // e.g., ["users", 2, "email"]
+  expected: string;
+  actual: string;
+
+  format(style: 'json' | 'text' | 'color'): string;
+  formatPathString(): string;  // "users[2].email"
 }
 ```
+
+### `Validator<T>`
+
+```typescript
+interface Validator<T> {
+  validate(data: unknown): boolean;
+  optional(): Validator<T | undefined>;
+  nullable(): Validator<T | null>;
+  nullish(): Validator<T | undefined | null>;
+  default(value: T | (() => T)): Validator<T>;
+  refine(check: (v: T) => boolean, message: string): Validator<T>;
+  transform<U>(fn: (v: T) => U): Validator<U>;
+}
+```
+
+### `ValidationOptions`
+
+```typescript
+interface ValidationOptions {
+  maxDepth?: number;       // Default: 100
+  maxProperties?: number;  // Default: 1000
+  maxItems?: number;       // Default: 10000
+}
+```
+
+---
 
 ## CLI Reference
 
 ### Command Syntax
 
 ```bash
-propval --schema <file> --data <file> [options]
+propval [options] [data-file]
 ```
 
 ### Options
 
-| Option | Description | Required | Default |
-|--------|-------------|----------|---------|
-| `--schema <file>` | Path to JSON schema file | Yes | - |
-| `--data <file>` | Path to JSON data file | Yes | - |
-| `--verbose` | Show detailed error information | No | `false` |
-| `--json` | Output results as JSON | No | `false` |
-| `--help` | Show help message | No | - |
+| Option | Description |
+|--------|-------------|
+| `--schema <file>` | Path to JSON schema file |
+| `--check, -c` | Boolean-only output (exit code only) |
+| `--api` | Display available validators |
+| `--verbose` | Show detailed error information |
+| `--json` | Output results as JSON |
+| `--version, -V` | Show version |
+| `--help` | Show help message |
 
 ### Exit Codes
 
@@ -459,53 +580,7 @@ propval --schema <file> --data <file> [options]
 | `1` | Validation failed |
 | `2` | Invalid arguments or file not found |
 
-## Error Handling Best Practices
-
-### Pattern 1: Early Return
-
-```typescript
-function processUser(data: unknown) {
-  const result = validate(data, UserSchema);
-  if (!result.ok) {
-    return { error: result.error.message };
-  }
-
-  // Continue with validated data
-  const user = result.value;
-  // ...
-}
-```
-
-### Pattern 2: Throw on Failure
-
-```typescript
-function requireValidUser(data: unknown): User {
-  const result = validate(data, UserSchema);
-  if (!result.ok) {
-    throw new Error(`Invalid user data: ${result.error.message}`);
-  }
-
-  return result.value;
-}
-```
-
-### Pattern 3: Custom Error Formatting
-
-```typescript
-function formatValidationError(error: ValidationError) {
-  return {
-    field: error.path.join('.'),
-    message: `Invalid ${error.path.join('.')}: expected ${error.expected}, got ${error.actual}`,
-    code: 'VALIDATION_ERROR'
-  };
-}
-
-const result = validate(data, UserSchema);
-if (!result.ok) {
-  const formatted = formatValidationError(result.error);
-  // Use formatted error in API response
-}
-```
+---
 
 ## Next Steps
 
