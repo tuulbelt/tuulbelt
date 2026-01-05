@@ -73,29 +73,59 @@ All 6 optimization phases addressed (5 implemented, 1 rejected):
 
 ---
 
-## 🎯 Property Validator v0.9.0 - JIT Compilation 📋 NEXT
+## 🎯 Property Validator v0.9.0 - Modularization & Tree-Shaking 📋 NEXT
 
 **Status:** Planning - pending v0.8.5 merge
-**Goal:** Continue toward TypeBox-level performance with JIT compilation
-**Roadmap:** `docs/V0_8_5_PERFORMANCE_ROADMAP.md` (Phases 2-3)
+**Goal:** Modular architecture with tree-shakeable validators
 
-### v0.9.0 Phases
+### v0.9.0 Deliverables
 
-1. **Phase 2: Inlined Primitive JIT** - Use `new Function()`
-   - Generate `return typeof data === 'string'` as standalone function
-   - V8 optimizes standalone functions better than closures
-   - Target: +30-50% on primitives
+1. **Modular Architecture**
+   - Split validators into separate ES modules
+   - Named exports for each validator type
+   - `import { string, number, object } from 'property-validator'`
 
-2. **Phase 3: Fully Inlined Object Validation** - Single-function JIT
-   - Generate `return typeof data.name === 'string' && typeof data.age === 'number'`
-   - Zero function call overhead
-   - Target: +50-100% on objects
+2. **Tree-Shaking Support**
+   - Ensure bundlers can eliminate unused validators
+   - Validators as pure functions (no side effects)
+   - Benchmark bundle size reduction
+
+3. **Benchmark CI Phase 2**
+   - [ ] GitHub Action for automatic regression detection on PRs
+   - [ ] Alert/notification system (Slack/Discord webhook)
+   - [ ] Trend tracking across versions (historical baselines)
 
 ### v0.9.0 Considerations
 
-- **CSP Compatibility:** `new Function()` may be blocked in strict CSP environments
-- **Fallback:** Keep closure-based implementation as fallback
-- **Target:** 15-18M ops/sec (TypeBox territory)
+- Maintain backwards compatibility with `v` namespace
+- Document migration guide for modular imports
+- Test with webpack, rollup, esbuild, vite
+
+---
+
+## 🔮 Property Validator v0.9.5 - Extended Validators & JIT 📋 FUTURE
+
+**Status:** Planning
+**Goal:** Additional validators + JIT compilation for TypeBox-level performance
+
+### v0.9.5 Deliverables
+
+1. **Extended String Validators**
+   - `cuid()`, `cuid2()`, `ulid()`, `nanoid()`
+   - `base64()`, `hex()`, `jwt()`
+   - `creditCard()`, `iban()`, `bic()`
+   - `semver()`, `slug()`, `locale()`
+
+2. **Extended Number Validators**
+   - `port()` (0-65535)
+   - `latitude()`, `longitude()`
+   - `percentage()` (0-100)
+
+3. **JIT Compilation (Optional)**
+   - Phase 2: Inlined Primitive JIT (`new Function()`)
+   - Phase 3: Fully Inlined Object Validation
+   - CSP fallback to closure-based implementation
+   - Target: 15-18M ops/sec (TypeBox territory)
 
 ---
 

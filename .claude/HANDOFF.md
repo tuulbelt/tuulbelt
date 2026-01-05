@@ -50,17 +50,40 @@
 
 ## 🚀 v0.9.0 Next Steps (For New Sessions)
 
-**Goal:** Continue toward TypeBox-level performance with JIT compilation
+**Goal:** Modular architecture with tree-shakeable validators
 
-**Remaining Phases from Roadmap:**
-1. **Phase 2: Inlined Primitive JIT** — Use `new Function()` for V8 optimization
-   - Generate `return typeof data === 'string'` as standalone function
-   - Target: +30-50% on primitives
-2. **Phase 3: Fully Inlined Object Validation** — Single-function JIT generation
-   - Generate `return typeof data.name === 'string' && typeof data.age === 'number'`
-   - Target: +50-100% on objects
+### v0.9.0 Deliverables
 
-**Reference:** `docs/V0_8_5_PERFORMANCE_ROADMAP.md` for full implementation details
+1. **Modular Architecture**
+   - Split validators into separate ES modules
+   - Named exports: `import { string, number, object } from 'property-validator'`
+   - Maintain backwards compatibility with `v` namespace
+
+2. **Tree-Shaking Support**
+   - Ensure bundlers can eliminate unused validators
+   - Validators as pure functions (no side effects)
+   - Benchmark bundle size reduction
+
+3. **Benchmark CI Phase 2**
+   - [ ] GitHub Action for automatic regression detection on PRs
+   - [ ] Alert/notification system (Slack/Discord webhook)
+   - [ ] Trend tracking across versions (historical baselines)
+
+---
+
+## 🔮 v0.9.5 Future (Extended Validators & JIT)
+
+**Extended String Validators:**
+- `cuid()`, `cuid2()`, `ulid()`, `nanoid()`, `base64()`, `hex()`, `jwt()`
+- `creditCard()`, `iban()`, `bic()`, `semver()`, `slug()`, `locale()`
+
+**Extended Number Validators:**
+- `port()`, `latitude()`, `longitude()`, `percentage()`
+
+**JIT Compilation (Optional):**
+- Phase 2: Inlined Primitive JIT (`new Function()`)
+- Phase 3: Fully Inlined Object Validation
+- Target: 15-18M ops/sec (TypeBox territory)
 
 ---
 
