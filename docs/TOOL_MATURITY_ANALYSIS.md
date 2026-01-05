@@ -25,7 +25,7 @@ This document analyzes all 10 Tuulbelt tools against the Property Validator (pro
 | Aspect | Implementation | Value |
 |--------|----------------|-------|
 | **Multi-API Design** | `validate()`, `check()`, `compileCheck()` | Different APIs for different use cases |
-| **Entry Points** | `/v`, `/lite` | Tree-shaking, bundle size optimization |
+| **Entry Points** | `/v` | Named exports for tree-shaking |
 | **Version Evolution** | v0.1.0 → v0.9.3 (9 releases) | Continuous improvement pattern |
 | **Test Count** | 595 tests | Comprehensive coverage (unit + integration + CLI) |
 | **Benchmark CI** | tatami-ng + regression detection | Automatic performance validation |
@@ -39,7 +39,7 @@ Implementation Patterns:
 ├── Multi-API tiers (validate → check → compileCheck)
 ├── Result type (non-throwing)
 ├── Named exports for tree-shaking
-├── Entry points for different bundle sizes
+├── Entry point `/v` for named exports
 ├── JSDoc with @example blocks
 ├── CLI entry point with npm link support
 └── Performance optimization phases (documented)
