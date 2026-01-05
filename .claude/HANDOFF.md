@@ -1,64 +1,93 @@
 # Session Handoff
 
-**Last Updated:** 2026-01-04
-**Session:** Property Validator v0.8.5 Performance Roadmap
-**Status:** v0.8.0 COMPLETE & BASELINED - Ready for v0.8.5 implementation
+**Last Updated:** 2026-01-05
+**Session:** Property Validator v0.8.5 Complete - v0.9.0 Planning
+**Status:** v0.8.5 COMPLETE - PRs created for merge
 
 ---
 
-## 📋 Current Session: v0.8.5 Roadmap Established
+## 📋 Current Session: v0.8.5 Release Complete
 
-**Session Branch (Meta):** `claude/analyze-codebase-priorities-V1sLF` (Web environment)
-**Session Branch (propval):** `claude/analyze-codebase-priorities-V1sLF`
-**Goal:** Achieve TypeBox-level performance (~16M ops/sec) while maintaining Zod-like DX
+**Session Branch (Meta):** `claude/review-meta-propval-IaoRK` (Web environment)
+**Session Branch (propval):** `claude/review-meta-propval-IaoRK`
 
-### v0.8.0 Is Now The Baseline
+### v0.8.5 Release PRs
 
-All future optimizations will be compared against v0.8.0:
-- **Baseline doc:** `/tmp/property-validator/benchmarks/BASELINE.md`
-- **Roadmap:** `/tmp/property-validator/docs/V0_8_5_PERFORMANCE_ROADMAP.md`
+| Repository | PR | URL |
+|------------|-----|-----|
+| **property-validator** | #9 | https://github.com/tuulbelt/property-validator/pull/9 |
+| **tuulbelt (meta)** | #95 | https://github.com/tuulbelt/tuulbelt/pull/95 |
 
-**🎯 FINAL v0.8.0 vs Valibot (after Phase 11):**
+### v0.8.5 What Was Delivered
 
-| Category | propval | valibot | Winner |
-|----------|---------|---------|--------|
-| Primitives (string) | 66.60 ns | 67.86 ns | **propval 1.02x** ✅ |
-| Primitives (number) | 63.70 ns | 64.48 ns | **propval 1.01x** ✅ |
-| Simple Object | 65.17 ns | 201.08 ns | **propval 3.09x** ✅ |
-| Complex Nested | 174.15 ns | 932.64 ns | **propval 5.36x** ✅ |
-| Number Array [100] | 112.40 ns | 671.44 ns | **propval 5.97x** ✅ |
-| String Array [100] | 157.38 ns | 664.97 ns | **propval 4.23x** ✅ |
-| Union (3 types) | 87.76 ns | 83.37 ns | valibot 1.05x |
+**New APIs:**
+- `check(schema, data)` — Boolean-only validation (~10-18% faster)
+- `compileCheck(schema)` — Pre-compiled boolean validator (+5-15% on unions)
 
-**Score: 6 wins, 1 near-tie (was 2 wins, 3 losses in v0.7.5)**
+**Benchmark Restructuring:**
+- Internal benchmarks: `benchmarks/internal/` (API tier comparison)
+- External benchmarks: `benchmarks/external/` (competitor comparison with API equivalence)
 
----
+**Performance Results:**
 
-### 🚀 v0.8.5 Next Steps (For New Sessions)
+| Scenario | validate() | check() | compileCheck() |
+|----------|------------|---------|----------------|
+| Simple Object | ~62 ns | ~57 ns | ~57 ns |
+| Complex Nested | ~154 ns | ~145 ns | ~143 ns |
+| Union (3 types) | ~74 ns | ~62 ns | ~55 ns |
+| Invalid Data | ~357 ns | ~55 ns | ~55 ns |
 
-**Goal:** Achieve TypeBox-level performance (~16M ops/sec)
+**Key Insight:** Invalid data is **6.4x faster** with check/compileCheck (skip error path)
 
-**Implementation Order:**
-1. **Phase 1: v.check() API** - Boolean-only fast path (no Result allocation)
-2. **Phase 2: Inlined Primitive JIT** - Use `new Function()` for V8 optimization
-3. **Phase 3: Fully Inlined Object Validation** - Single-function JIT generation
-4. **Phase 4: v.compile() API** - Explicit pre-compilation for hot paths
+**Phase 7: Built-in Validators:**
+- String: email(), url(), uuid(), pattern(), min(), max(), length(), nonempty(), startsWith(), endsWith(), includes()
+- Number: int(), positive(), negative(), nonnegative(), nonpositive(), min(), max(), range(), finite(), safeInt()
+- CLI: --check flag for boolean-only validation, --api flag for displaying available validators
 
-**Target Performance:**
-| API | Target |
-|-----|--------|
-| `v.validate()` | Maintain ~17M ops/sec |
-| `v.check()` | 12-15M ops/sec |
-| `v.compile()` | 15-18M ops/sec |
-
-**Unions:** Already 3/4 wins in v0.8.0. New APIs will benefit unions naturally.
-A dedicated union Phase 5 can be added if needed for the remaining "string 1st match" gap.
-
-**Start with:** Read `docs/V0_8_5_PERFORMANCE_ROADMAP.md` for full implementation details.
+**Tests:** 595 total (58 new for built-in validators)
 
 ---
 
-### Phase 11: Union JIT Bypass ✅ COMPLETE
+## 🚀 v0.9.0 Next Steps (For New Sessions)
+
+**Goal:** Modular architecture with tree-shakeable validators
+
+### v0.9.0 Deliverables
+
+1. **Modular Architecture**
+   - Split validators into separate ES modules
+   - Named exports: `import { string, number, object } from 'property-validator'`
+   - Maintain backwards compatibility with `v` namespace
+
+2. **Tree-Shaking Support**
+   - Ensure bundlers can eliminate unused validators
+   - Validators as pure functions (no side effects)
+   - Benchmark bundle size reduction
+
+3. **Benchmark CI Phase 2**
+   - [ ] GitHub Action for automatic regression detection on PRs
+   - [ ] Alert/notification system (Slack/Discord webhook)
+   - [ ] Trend tracking across versions (historical baselines)
+
+---
+
+## 🔮 v0.9.5 Future (Extended Validators & JIT)
+
+**Extended String Validators:**
+- `cuid()`, `cuid2()`, `ulid()`, `nanoid()`, `base64()`, `hex()`, `jwt()`
+- `creditCard()`, `iban()`, `bic()`, `semver()`, `slug()`, `locale()`
+
+**Extended Number Validators:**
+- `port()`, `latitude()`, `longitude()`, `percentage()`
+
+**JIT Compilation (Optional):**
+- Phase 2: Inlined Primitive JIT (`new Function()`)
+- Phase 3: Fully Inlined Object Validation
+- Target: 15-18M ops/sec (TypeBox territory)
+
+---
+
+### v0.8.0 Phase 11: Union JIT Bypass ✅ COMPLETE
 
 **Problem:** After Phase 10, unions were still 1.12x slower than valibot.
 
