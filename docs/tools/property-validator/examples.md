@@ -7,26 +7,26 @@ Real-world validation scenarios using Property Validator.
 Validate external API responses to ensure data integrity.
 
 ```typescript
-import { v, validate } from 'property-validator';
+import { object, string, number, nullable, array, validate } from '@tuulbelt/property-validator';
 
-const GitHubUserSchema = v.object({
-  login: v.string(),
-  id: v.number(),
-  avatar_url: v.string(),
-  type: v.string(),
-  name: v.nullable(v.string()),
-  email: v.nullable(v.string()),
-  bio: v.nullable(v.string())
+const GitHubUserSchema = object({
+  login: string(),
+  id: number(),
+  avatar_url: string().url(),
+  type: string(),
+  name: nullable(string()),
+  email: nullable(string().email()),
+  bio: nullable(string())
 });
 
 async function fetchGitHubUser(username: string) {
   const response = await fetch(`https://api.github.com/users/${username}`);
   const data = await response.json();
 
-  const result = validate(data, GitHubUserSchema);
+  const result = validate(GitHubUserSchema, data);
 
   if (!result.ok) {
-    throw new Error(`Invalid GitHub API response: ${result.error.message}`);
+    throw new Error(`Invalid GitHub API response: ${result.error.format('text')}`);
   }
 
   return result.value;  // Type-safe user object
@@ -39,25 +39,25 @@ console.log(`User: ${user.login}, ID: ${user.id}`);
 
 ## Configuration File Validation
 
-Validate application configuration files.
+Validate application configuration with defaults and built-in validators.
 
 ```typescript
-import { readFileSync } from 'fs';
-import { v, validate } from 'property-validator';
+import { readFileSync } from 'node:fs';
+import { object, string, number, boolean, optional, validate } from '@tuulbelt/property-validator';
 
-const ConfigSchema = v.object({
-  server: v.object({
-    port: v.number(),
-    host: v.string(),
-    ssl: v.optional(v.boolean())
+const ConfigSchema = object({
+  server: object({
+    port: number().int().range(1, 65535).default(3000),
+    host: string().default('localhost'),
+    ssl: boolean().default(false)
   }),
-  database: v.object({
-    url: v.string(),
-    poolSize: v.optional(v.number())
+  database: object({
+    url: string().url(),
+    poolSize: number().int().positive().default(10)
   }),
-  logging: v.optional(v.object({
-    level: v.string(),
-    file: v.optional(v.string())
+  logging: optional(object({
+    level: string().default('info'),
+    file: optional(string())
   }))
 });
 
@@ -65,40 +65,41 @@ function loadConfig(path: string) {
   const content = readFileSync(path, 'utf-8');
   const data = JSON.parse(content);
 
-  const result = validate(data, ConfigSchema);
+  const result = validate(ConfigSchema, data);
 
   if (!result.ok) {
-    console.error(`Configuration error: ${result.error.message}`);
-    console.error(`  Path: ${result.error.path.join('.')}`);
-    console.error(`  Expected: ${result.error.expected}`);
+    console.error(`Configuration error: ${result.error.format('color')}`);
     process.exit(1);
   }
 
   return result.value;
 }
 
-// Usage
+// Usage - with partial config (defaults applied)
 const config = loadConfig('./config.json');
 console.log(`Server running on ${config.server.host}:${config.server.port}`);
 ```
 
-## User Input Validation
+## User Registration with Built-in Validators
 
-Validate user input from forms or CLI arguments.
+Validate user input with email, password complexity, and age constraints.
 
 ```typescript
-import { v, validate } from 'property-validator';
+import { object, string, number, boolean, optional, validate } from '@tuulbelt/property-validator';
 
-const UserRegistrationSchema = v.object({
-  username: v.string(),
-  email: v.string(),
-  password: v.string(),
-  age: v.optional(v.number()),
-  agreedToTerms: v.boolean()
+const UserRegistrationSchema = object({
+  username: string().min(3).max(20).pattern(/^[a-z0-9_]+$/),
+  email: string().email(),
+  password: string()
+    .min(8)
+    .refine(s => /[A-Z]/.test(s), 'Must contain uppercase')
+    .refine(s => /[0-9]/.test(s), 'Must contain number'),
+  age: optional(number().int().positive().max(150)),
+  agreedToTerms: boolean()
 });
 
 function registerUser(formData: unknown) {
-  const result = validate(formData, UserRegistrationSchema);
+  const result = validate(UserRegistrationSchema, formData);
 
   if (!result.ok) {
     return {
@@ -108,10 +109,8 @@ function registerUser(formData: unknown) {
     };
   }
 
-  // Validated data is type-safe
   const user = result.value;
 
-  // Additional validation (business logic)
   if (!user.agreedToTerms) {
     return {
       success: false,
@@ -125,179 +124,296 @@ function registerUser(formData: unknown) {
 }
 ```
 
-## Nested Object Validation
+## High-Throughput Data Filtering
 
-Validate complex nested data structures.
+Use `check()` and `compileCheck()` for performance-critical filtering.
 
 ```typescript
-import { v, validate } from 'property-validator';
+import { object, number, string, check, compileCheck } from '@tuulbelt/property-validator';
 
-const AddressSchema = v.object({
-  street: v.string(),
-  city: v.string(),
-  state: v.string(),
-  zip: v.string(),
-  country: v.string()
+// Schema for valid sensor data
+const SensorReadingSchema = object({
+  timestamp: number().positive(),
+  value: number().finite(),
+  sensorId: string().uuid()
 });
 
-const CompanySchema = v.object({
-  name: v.string(),
+// Pre-compile for maximum performance
+const isValidReading = compileCheck(SensorReadingSchema);
+
+// Process millions of readings efficiently
+function processSensorData(readings: unknown[]) {
+  // Filter invalid readings (~55ns per check)
+  const validReadings = readings.filter(isValidReading);
+
+  // Process valid data
+  const average = validReadings.reduce(
+    (sum, r) => sum + r.value,
+    0
+  ) / validReadings.length;
+
+  return {
+    processed: validReadings.length,
+    dropped: readings.length - validReadings.length,
+    average
+  };
+}
+
+// Alternative: Use check() for simple filtering
+const UserSchema = object({ name: string(), age: number() });
+const validUsers = users.filter(u => check(UserSchema, u));
+```
+
+## Nested Object Validation
+
+Validate complex nested data structures with nested schemas.
+
+```typescript
+import { object, string, number, array, validate } from '@tuulbelt/property-validator';
+
+const AddressSchema = object({
+  street: string().min(1),
+  city: string().min(1),
+  state: string().length(2),
+  zip: string().pattern(/^\d{5}(-\d{4})?$/),
+  country: string().default('USA')
+});
+
+const EmployeeSchema = object({
+  id: number().int().positive(),
+  name: string().min(1),
+  email: string().email(),
+  role: string(),
+  department: string()
+});
+
+const CompanySchema = object({
+  name: string().min(1),
+  website: string().url(),
   address: AddressSchema,
-  employees: v.array(v.object({
-    id: v.number(),
-    name: v.string(),
-    role: v.string(),
-    department: v.string()
-  }))
+  employees: array(EmployeeSchema).nonempty()
 });
 
 const companyData = {
   name: "Acme Corp",
+  website: "https://acme.com",
   address: {
     street: "123 Main St",
     city: "Springfield",
     state: "IL",
-    zip: "62701",
-    country: "USA"
+    zip: "62701"
   },
   employees: [
-    { id: 1, name: "Alice", role: "Engineer", department: "Engineering" },
-    { id: 2, name: "Bob", role: "Manager", department: "Sales" }
+    { id: 1, name: "Alice", email: "alice@acme.com", role: "Engineer", department: "Engineering" },
+    { id: 2, name: "Bob", email: "bob@acme.com", role: "Manager", department: "Sales" }
   ]
 };
 
-const result = validate(companyData, CompanySchema);
+const result = validate(CompanySchema, companyData);
 
 if (result.ok) {
   console.log(`Company: ${result.value.name}`);
   console.log(`Employees: ${result.value.employees.length}`);
+  console.log(`Country: ${result.value.address.country}`);  // "USA" (default)
 }
 ```
 
-## Array Validation
+## Discriminated Unions
 
-Validate arrays of objects with specific schemas.
+Validate polymorphic data with type-safe discriminated unions.
 
 ```typescript
-import { v, validate } from 'property-validator';
+import { object, string, number, literal, union, array, validate } from '@tuulbelt/property-validator';
 
-const TodoSchema = v.object({
-  id: v.number(),
-  title: v.string(),
-  completed: v.boolean(),
-  dueDate: v.nullable(v.string())
+// Different notification types
+const EmailNotificationSchema = object({
+  type: literal('email'),
+  to: string().email(),
+  subject: string().min(1),
+  body: string()
 });
 
-const TodoListSchema = v.array(TodoSchema);
+const SMSNotificationSchema = object({
+  type: literal('sms'),
+  phone: string().pattern(/^\+?[1-9]\d{1,14}$/),
+  message: string().max(160)
+});
 
-function validateTodoList(data: unknown) {
-  const result = validate(data, TodoListSchema);
+const PushNotificationSchema = object({
+  type: literal('push'),
+  deviceId: string().uuid(),
+  title: string(),
+  body: string()
+});
 
-  if (!result.ok) {
-    console.error(`Invalid todo list: ${result.error.message}`);
-    return [];
-  }
-
-  return result.value;
-}
-
-// Usage
-const todos = validateTodoList([
-  { id: 1, title: "Buy milk", completed: false, dueDate: null },
-  { id: 2, title: "Write docs", completed: true, dueDate: "2026-01-15" }
+const NotificationSchema = union([
+  EmailNotificationSchema,
+  SMSNotificationSchema,
+  PushNotificationSchema
 ]);
+
+const NotificationListSchema = array(NotificationSchema);
+
+// Process notifications
+const notifications = [
+  { type: 'email', to: 'user@example.com', subject: 'Hello', body: 'Hi there!' },
+  { type: 'sms', phone: '+1234567890', message: 'Quick alert' },
+  { type: 'push', deviceId: '550e8400-e29b-41d4-a716-446655440000', title: 'Update', body: 'New version available' }
+];
+
+const result = validate(NotificationListSchema, notifications);
+
+if (result.ok) {
+  for (const notification of result.value) {
+    switch (notification.type) {
+      case 'email':
+        sendEmail(notification.to, notification.subject, notification.body);
+        break;
+      case 'sms':
+        sendSMS(notification.phone, notification.message);
+        break;
+      case 'push':
+        sendPush(notification.deviceId, notification.title, notification.body);
+        break;
+    }
+  }
+}
 ```
 
-## Error Message Handling
+## Error Formatting Options
 
-Different ways to handle validation errors.
+Different ways to format and display validation errors.
 
 ```typescript
-import { v, validate } from 'property-validator';
+import { object, string, number, validate, ValidationError } from '@tuulbelt/property-validator';
 
-const UserSchema = v.object({
-  name: v.string(),
-  age: v.number()
+const UserSchema = object({
+  name: string().min(1),
+  email: string().email(),
+  age: number().int().positive()
 });
 
-// Simple error message
-const result1 = validate({ name: "Alice", age: "thirty" }, UserSchema);
-if (!result1.ok) {
-  console.error(result1.error.message);
-  // "Validation failed at age: expected number, got string"
-}
+const invalidData = {
+  name: "",
+  email: "not-an-email",
+  age: -5
+};
 
-// Detailed error breakdown
-const result2 = validate({ name: 123, age: 30 }, UserSchema);
-if (!result2.ok) {
-  console.error(`Field: ${result2.error.path.join('.')}`);
-  console.error(`Expected: ${result2.error.expected}`);
-  console.error(`Got: ${result2.error.actual}`);
-  // Field: name
-  // Expected: string
-  // Got: number
-}
+const result = validate(UserSchema, invalidData);
 
-// Custom error handling
-function handleValidationError(error: ValidationError) {
-  return {
-    field: error.path[0],
-    message: `The field '${error.path[0]}' must be a ${error.expected}`,
-    code: 'VALIDATION_ERROR'
+if (!result.ok) {
+  const { error } = result;
+
+  // Text format (for logs)
+  console.log(error.format('text'));
+  // "Validation failed at name: expected non-empty string, got ''"
+
+  // JSON format (for APIs)
+  console.log(error.format('json'));
+  // {"path":"name","expected":"non-empty string","actual":""}
+
+  // Colored format (for terminals)
+  console.log(error.format('color'));
+  // ANSI-colored output
+
+  // Custom error response
+  const apiResponse = {
+    error: {
+      field: error.formatPathString(),  // "name"
+      message: error.message,
+      expected: error.expected,
+      actual: error.actual
+    }
   };
 }
-
-const result3 = validate(invalidData, UserSchema);
-if (!result3.ok) {
-  const formatted = handleValidationError(result3.error);
-  console.log(formatted);
-  // { field: 'age', message: "The field 'age' must be a number", code: 'VALIDATION_ERROR' }
-}
 ```
 
-## Type-Safe Data Transformation
+## Data Transformation Pipeline
 
-Use validation to safely transform external data.
+Combine validation with data transformation.
 
 ```typescript
-import { v, validate } from 'property-validator';
+import { object, string, number, validate } from '@tuulbelt/property-validator';
 
-const RawDataSchema = v.object({
-  user_id: v.number(),
-  user_name: v.string(),
-  created_at: v.string()
+// Raw API data schema
+const RawUserSchema = object({
+  user_id: number(),
+  user_name: string(),
+  created_at: string(),
+  email_address: string().email()
 });
 
-function transformUser(rawData: unknown) {
-  const result = validate(rawData, RawDataSchema);
+// Transformation function
+function transformApiResponse(rawData: unknown) {
+  const result = validate(RawUserSchema, rawData);
 
   if (!result.ok) {
     return null;
   }
 
-  // Transform to application format
+  // Transform snake_case to camelCase
   return {
     id: result.value.user_id,
     name: result.value.user_name,
+    email: result.value.email_address,
     createdAt: new Date(result.value.created_at)
   };
 }
 
-// Usage
-const rawUser = {
-  user_id: 123,
-  user_name: "Alice",
-  created_at: "2026-01-01T00:00:00Z"
-};
+// Or use .transform() for inline transformation
+const EmailSchema = string()
+  .email()
+  .transform(s => s.toLowerCase().trim());
 
-const user = transformUser(rawUser);
-if (user) {
-  console.log(`User ${user.name} created at ${user.createdAt}`);
+const result = validate(EmailSchema, "  USER@Example.COM  ");
+// result.value === "user@example.com"
+```
+
+## Conditional Validation with Type Guards
+
+Use validation results as TypeScript type guards.
+
+```typescript
+import { object, string, number, check, validate } from '@tuulbelt/property-validator';
+
+const UserSchema = object({
+  name: string(),
+  age: number()
+});
+
+type User = { name: string; age: number };
+
+// Type guard function
+function isUser(data: unknown): data is User {
+  return check(UserSchema, data);
+}
+
+// Usage in code
+function processData(data: unknown) {
+  if (isUser(data)) {
+    // TypeScript knows data is User here
+    console.log(`Processing user: ${data.name}, age ${data.age}`);
+  } else {
+    console.log('Invalid user data');
+  }
+}
+
+// Or with full validation for detailed errors
+function processDataWithErrors(data: unknown) {
+  const result = validate(UserSchema, data);
+
+  if (result.ok) {
+    const user = result.value;  // Type-safe User
+    console.log(`Processing user: ${user.name}`);
+  } else {
+    console.error(`Validation failed: ${result.error.message}`);
+  }
 }
 ```
 
 ## Next Steps
 
 - [API Reference](/tools/property-validator/api-reference) - Complete API documentation
-- [Library Usage](/tools/property-validator/library-usage) - Import and use in code
+- [Library Usage](/tools/property-validator/library-usage) - Comprehensive API guide
 - [CLI Usage](/tools/property-validator/cli-usage) - Command-line interface
+- [Getting Started](/tools/property-validator/getting-started) - Quick start guide

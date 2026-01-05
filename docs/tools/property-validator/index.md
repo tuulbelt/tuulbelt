@@ -1,32 +1,69 @@
 # Property Validator
 
-Runtime type validation with TypeScript inference and Valibot-tier performance.
+Runtime type validation with TypeScript inference and high performance.
 
 ## Overview
 
-Property Validator provides schema-based runtime type validation with full TypeScript type inference and competitive performance. Beats Zod in all 6 benchmark categories, achieves Valibot-tier performance (1.7x faster on simple objects, 4.5x faster on unions).
+Property Validator provides schema-based runtime type validation with full TypeScript type inference and competitive performance. Beats Zod in all benchmark categories, achieves Valibot-tier performance with JIT optimization.
 
-**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.7.5)
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.9.2)
 
 **Language:** TypeScript
 
-**Tests:** 537 tests passing
+**Tests:** 680 tests passing
+
+**Bundle Size:** 30KB minified, 8KB gzipped
 
 **Repository:** [tuulbelt/property-validator](https://github.com/tuulbelt/property-validator)
 
 ## Features
 
+### <img src="/icons/package.svg" class="inline-icon" alt=""> Tree-Shakeable Imports (v0.9.0)
+
+Import only what you need with named exports:
+
+```typescript
+// Named exports - tree-shakeable
+import { string, number, object, validate } from '@tuulbelt/property-validator';
+
+// Fluent API - v namespace (also from main entry)
+import { v, validate } from '@tuulbelt/property-validator';
+```
+
+### <img src="/icons/zap.svg" class="inline-icon" alt=""> Three API Tiers (v0.8.5)
+
+Choose your speed vs. detail trade-off:
+
+| API | Speed | Returns | Use Case |
+|-----|-------|---------|----------|
+| `validate()` | ~170 ns | Result with errors | Forms, APIs, debugging |
+| `check()` | ~60 ns | Boolean only | Filtering, conditionals |
+| `compileCheck()` | ~55 ns | Pre-compiled boolean | Hot paths, pipelines |
+
+### <img src="/icons/shield.svg" class="inline-icon" alt=""> Built-in Validators (v0.8.5)
+
+Common validation patterns included:
+
+```typescript
+// String validators
+v.string().email()    // RFC 5322 email
+v.string().url()      // HTTP/HTTPS URL
+v.string().uuid()     // UUID v1-v5
+v.string().min(3).max(100)
+
+// Number validators
+v.number().int()      // Integer only
+v.number().positive() // > 0
+v.number().range(0, 100)
+```
+
 ### <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Schema-Based Validation
 
-Define schemas once, get both runtime validation and TypeScript types automatically. No code duplication between runtime and compile-time types.
-
-### <img src="/icons/shield.svg" class="inline-icon" alt=""> Graceful Error Handling
-
-Returns result types (`{ ok: true, value }` or `{ ok: false, error }`) instead of throwing exceptions. Your code stays resilient.
+Define schemas once, get both runtime validation and TypeScript types automatically.
 
 ### <img src="/icons/search.svg" class="inline-icon" alt=""> Clear Error Messages
 
-Validation errors include exact paths to invalid fields, expected vs actual types, and helpful context for debugging.
+Validation errors include exact paths to invalid fields, expected vs actual types, and helpful context.
 
 ### <img src="/icons/zap.svg" class="inline-icon" alt=""> Zero Runtime Dependencies
 
@@ -34,30 +71,35 @@ Uses only Node.js built-ins. No `npm install` required in production.
 
 ## Performance
 
-Property Validator v0.7.5 delivers Valibot-tier performance through 6 optimization phases:
+Property Validator v0.8.0+ uses JIT (Just-In-Time) compilation for validation-heavy workloads.
 
 ### vs Zod (6/6 wins)
 
-Property Validator beats Zod in all benchmark categories - typically 2-5x faster.
+Property Validator beats Zod in all benchmark categories - typically 3-25x faster.
 
-### vs Valibot (Competitive)
+### vs Valibot (6/7 wins)
 
 | Category | Property Validator | Valibot | Winner |
 |----------|-------------------|---------|--------|
-| Simple objects | 120 ns | 207 ns | **propval 1.7x** ✅ |
-| Unions | 107 ns | 450 ns | **propval 4.5x** ✅ |
-| Primitives | 180 ns | 101 ns | valibot 1.8x |
-| Complex nested | 2.5 µs | 1.05 µs | valibot 2.4x |
-| Arrays | 1.1 µs | 296 ns | valibot 3.8x |
+| Primitives | 66 ns | 68 ns | **propval 1.02x** ✅ |
+| Simple objects | 65 ns | 201 ns | **propval 3.09x** ✅ |
+| Complex nested | 174 ns | 933 ns | **propval 5.36x** ✅ |
+| Number arrays [100] | 112 ns | 671 ns | **propval 5.97x** ✅ |
+| String arrays [100] | 157 ns | 665 ns | **propval 4.23x** ✅ |
+| Unions | 88 ns | 83 ns | valibot 1.05x |
 
-**Score: 2 wins, 3 losses** - competitive with the fastest runtime validators.
+**Score: 6 wins, 1 near-tie** (improved from v0.7.5's 2 wins, 3 losses)
 
-### Optimization Techniques
+### API Performance Comparison
 
-- **Phase 1:** Skip empty refinement loop (+8-20%)
-- **Phase 2:** Eliminate Result allocation in Fast API (+12-22%)
-- **Phase 4:** Lazy path building (+24-30%)
-- **Phase 6:** Inline validateWithPath for objects (+214%)
+| Scenario | validate() | check() | compileCheck() |
+|----------|------------|---------|----------------|
+| Simple Object | 170 ns | 58 ns | 55 ns |
+| Complex Nested | 190 ns | 60 ns | 58 ns |
+| Union (3 types) | 90 ns | 66 ns | 56 ns |
+| Invalid Data | 357 ns | 55 ns | 55 ns |
+
+**Key insight:** `check()` is 6x faster for invalid data (skips error path entirely).
 
 ## Quick Start
 
@@ -65,20 +107,21 @@ Property Validator beats Zod in all benchmark categories - typically 2-5x faster
 # Clone the repository
 git clone https://github.com/tuulbelt/property-validator.git
 cd property-validator
-
-# Install dev dependencies (for TypeScript)
 npm install
+```
 
-# Use in your project
-import { v, validate } from './src/index.ts';
+### Basic Usage
 
-const UserSchema = v.object({
-  name: v.string(),
-  age: v.number(),
-  email: v.string()
+```typescript
+import { object, string, number, validate } from '@tuulbelt/property-validator';
+
+const UserSchema = object({
+  name: string().min(1),
+  age: number().positive(),
+  email: string().email()
 });
 
-const result = validate(unknownData, UserSchema);
+const result = validate(UserSchema, unknownData);
 if (result.ok) {
   console.log(result.value); // TypeScript knows the exact type
 } else {
@@ -86,12 +129,43 @@ if (result.ok) {
 }
 ```
 
+### Fast Boolean Check
+
+```typescript
+import { check, object, string } from '@tuulbelt/property-validator';
+
+const UserSchema = object({ name: string() });
+
+// Fast pass/fail - no error details
+if (check(UserSchema, data)) {
+  processUser(data);
+}
+
+// Filter arrays efficiently
+const validUsers = users.filter(u => check(UserSchema, u));
+```
+
+### Pre-compiled for Hot Paths
+
+```typescript
+import { compileCheck, object, number } from '@tuulbelt/property-validator';
+
+const PointSchema = object({ x: number(), y: number() });
+const isValidPoint = compileCheck(PointSchema);  // Compile once
+
+// Use in hot loops
+for (const point of points) {
+  if (isValidPoint(point)) {
+    render(point);
+  }
+}
+```
+
 ## Use Cases
 
 - **API Response Validation:** Verify external API data matches expected schemas
 - **User Input Validation:** Validate form data, CLI arguments, or configuration files
-- **Function Argument Validation:** Add runtime checks to critical functions
-- **Data Transformation:** Safely transform and validate data pipelines
+- **High-Throughput Pipelines:** Use `check()` or `compileCheck()` for data filtering
 - **Component Props:** Validate props at runtime in any framework (React, Vue, etc.)
 
 ## Demo
@@ -111,15 +185,36 @@ See the tool in action:
   </a>
 </div>
 
-## Why Property Validator?
+## What's New
 
-**Runtime Safety:** TypeScript only checks types at compile-time. Property Validator ensures data from external sources (APIs, files, user input) matches your schemas at runtime.
+### v0.9.2 - Performance-First Architecture
+- `v` namespace available from main entry: `import { v } from '@tuulbelt/property-validator'`
+- Named exports for tree-shakeable refinements: `import { email, int } from '@tuulbelt/property-validator'`
+- `/types` entry point for zero-runtime type imports
+- JIT compilation at schema definition time for sub-100ns validation
+- Documented design philosophy: speed over bundle size
 
-**Type Inference:** Write schemas once, get TypeScript types automatically. No manual type definitions needed.
+### v0.9.1 - Functional Refinement API
+- Tree-shakeable refinement functions: `email()`, `int()`, `positive()`, etc.
+- Functional composition: `string(email(), minLength(5))`
+- 32 refinement exports for maximum tree-shaking
+- 44 new tests, 680 total tests passing
 
-**Framework Agnostic:** Works anywhere JavaScript runs - not tied to React, Vue, or any specific framework.
+### v0.9.0 - Modularization
+- Tree-shakeable named exports for all validators
+- Separate types module: `@tuulbelt/property-validator/types`
+- `sideEffects: false` for bundler optimization
 
-**Graceful Failure:** Returns result types instead of throwing. Your app stays resilient to invalid data.
+### v0.8.5 - Three API Tiers
+- `check()` API for boolean-only validation (~3x faster)
+- `compileCheck()` API for pre-compiled hot paths
+- Built-in string validators (email, url, uuid, pattern, etc.)
+- Built-in number validators (int, positive, range, etc.)
+
+### v0.8.0 - JIT Bypass Pattern
+- 5.36x faster than Valibot on complex nested objects
+- 5.97x faster on arrays
+- Recursive JIT bypass for nested validators
 
 ## Next Steps
 
