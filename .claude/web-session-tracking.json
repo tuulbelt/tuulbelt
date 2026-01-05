@@ -1,22 +1,21 @@
 {
   "version": "1.0",
   "sessions": {
-    "claude/resume-work-check-HeepT": {
-      "created_at": "2026-01-05T19:47:03Z",
-      "updated_at": "2026-01-05T20:00:00Z",
-      "session_id": "af7b20d8-dd16-45ec-a1a4-2d24df6918ca",
-      "environment": "web",
-      "status": "active",
-      "notes": "v0.9.3 Benchmark CI - fixing submodules and hooks first",
-      "submodules": {}
-    },
     "claude/resume-work-assessment-CDivW": {
       "created_at": "2026-01-05T22:24:16Z",
-      "updated_at": "2026-01-05T22:24:16Z",
+      "updated_at": "2026-01-05T22:45:00Z",
       "session_id": "5cd4aba5-0a82-4093-b4c0-43a4d1ffca4b",
       "environment": "web",
       "status": "active",
-      "submodules": {}
+      "notes": "v0.9.5 Extended Validators & JIT - incremental development",
+      "submodules": {
+        "tools/property-validator": {
+          "branch": "claude/resume-work-assessment-CDivW",
+          "created_at": "2026-01-05T22:45:00Z",
+          "has_changes": false,
+          "commits_count": 0
+        }
+      }
     }
   }
 }
