@@ -39,6 +39,13 @@
 
 **Key Insight:** Invalid data is **6.4x faster** with check/compileCheck (skip error path)
 
+**Phase 7: Built-in Validators:**
+- String: email(), url(), uuid(), pattern(), min(), max(), length(), nonempty(), startsWith(), endsWith(), includes()
+- Number: int(), positive(), negative(), nonnegative(), nonpositive(), min(), max(), range(), finite(), safeInt()
+- CLI: --check flag for boolean-only validation, --api flag for displaying available validators
+
+**Tests:** 595 total (58 new for built-in validators)
+
 ---
 
 ## 🚀 v0.9.0 Next Steps (For New Sessions)
