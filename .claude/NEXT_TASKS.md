@@ -41,73 +41,61 @@ All 6 optimization phases addressed (5 implemented, 1 rejected):
 
 ---
 
-## 🏆 Property Validator v0.8.0 - JIT Bypass Pattern ✅ COMPLETE
+## 🏆 Property Validator v0.8.5 - check() and compileCheck() APIs ✅ COMPLETE
 
-**Status:** v0.8.0 COMPLETE - Now the baseline for future optimizations
-**Achievement:** 6 wins, 1 near-tie vs Valibot (was 2 wins, 3 losses in v0.7.5)
+**Status:** v0.8.5 COMPLETE - PRs created for merge
+**PRs:** property-validator #9, tuulbelt #95
 
-### v0.8.0 vs Valibot Final Results
+### v0.8.5 What Was Delivered
 
-| Category | propval | valibot | Winner |
-|----------|---------|---------|--------|
-| Primitives (string) | 62 ns | 80 ns | **propval 1.30x** ✅ |
-| Primitives (number) | 59 ns | 85 ns | **propval 1.44x** ✅ |
-| Simple Object | 62 ns | 215 ns | **propval 3.46x** ✅ |
-| Complex Nested | 62 ns | 1.08 µs | **propval 17.5x** ✅ |
-| Union (3 types) | 88 ns | 83 ns | valibot 1.05x (near-tie) |
+**New APIs:**
+- `check(schema, data)` — Boolean-only validation (~10-18% faster)
+- `compileCheck(schema)` — Pre-compiled boolean validator (+5-15% on unions)
 
-### v0.8.0 Implementation Summary
+**Benchmark Restructuring:**
+- Internal: `benchmarks/internal/` (API tier comparison)
+- External: `benchmarks/external/` (competitor comparison with API equivalence)
 
-- **Phase 8:** JIT object validator bypass via `_compiled` property
-- **Phase 9:** JIT array validator bypass
-- **Phase 10:** Recursive JIT bypass for nested objects
-- **Phase 11:** JIT bypass for unions, primitives, and literals
+### v0.8.5 Performance Results
 
-**Key Insight:** JIT compilation already existed; the bottleneck was wrapper overhead.
+| Scenario | validate() | check() | compileCheck() |
+|----------|------------|---------|----------------|
+| Simple Object | ~62 ns | ~57 ns | ~57 ns |
+| Complex Nested | ~154 ns | ~145 ns | ~143 ns |
+| Union (3 types) | ~74 ns | ~62 ns | ~55 ns |
+| Invalid Data | ~357 ns | ~55 ns | ~55 ns |
+
+**Key Insight:** Invalid data is **6.4x faster** with check/compileCheck (skip error path)
+
+**vs Competitors:**
+- vs Zod: 3.4-25.6x faster across categories
+- vs Valibot: 1.3-7x faster across categories
 
 ---
 
-## 🎯 Property Validator v0.8.5 - TypeBox-Level Performance 📋 NEXT
+## 🎯 Property Validator v0.9.0 - JIT Compilation 📋 NEXT
 
-**Status:** Roadmap complete, ready for implementation
-**Goal:** Achieve TypeBox-level performance (~16M ops/sec) while maintaining Zod-like DX
-**Roadmap:** `/tmp/property-validator/docs/V0_8_5_PERFORMANCE_ROADMAP.md`
+**Status:** Planning - pending v0.8.5 merge
+**Goal:** Continue toward TypeBox-level performance with JIT compilation
+**Roadmap:** `docs/V0_8_5_PERFORMANCE_ROADMAP.md` (Phases 2-3)
 
-### v0.8.5 Target APIs
+### v0.9.0 Phases
 
-| API | Current (v0.8.0) | v0.8.5 Target | Description |
-|-----|------------------|---------------|-------------|
-| `v.validate()` | ~17M ops/sec | Maintain | Full error details |
-| `v.check()` | N/A | 12-15M ops/sec | Boolean-only, no errors |
-| `v.compile()` | Partial | 15-18M ops/sec | Pre-compiled for hot paths |
-
-### v0.8.5 Phases
-
-1. **Phase 1: v.check() API** - Boolean-only fast path
-   - Skip Result allocation entirely
-   - Use `_compiled` directly
-   - Target: 12-15M ops/sec
-
-2. **Phase 2: Inlined Primitive JIT** - Use `new Function()`
-   - V8 optimizes standalone functions better
-   - No closure scope overhead
+1. **Phase 2: Inlined Primitive JIT** - Use `new Function()`
+   - Generate `return typeof data === 'string'` as standalone function
+   - V8 optimizes standalone functions better than closures
    - Target: +30-50% on primitives
 
-3. **Phase 3: Fully Inlined Object Validation** - Single-function JIT
-   - Generate `return typeof data.name === 'string' && ...`
+2. **Phase 3: Fully Inlined Object Validation** - Single-function JIT
+   - Generate `return typeof data.name === 'string' && typeof data.age === 'number'`
    - Zero function call overhead
    - Target: +50-100% on objects
 
-4. **Phase 4: v.compile() API** - Explicit compilation
-   - `const checker = v.compile(schema)`
-   - Maximum speed for hot paths
-   - Target: 15-18M ops/sec (TypeBox territory)
+### v0.9.0 Considerations
 
-### Union Status in v0.8.5
-
-Unions already win 3/4 scenarios vs valibot after v0.8.0 Phase 11.
-The new APIs (`v.check()`, `v.compile()`) will naturally benefit unions.
-Dedicated union optimization can be added as Phase 5 if needed.
+- **CSP Compatibility:** `new Function()` may be blocked in strict CSP environments
+- **Fallback:** Keep closure-based implementation as fallback
+- **Target:** 15-18M ops/sec (TypeBox territory)
 
 ---
 
