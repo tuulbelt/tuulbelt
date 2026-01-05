@@ -55,10 +55,10 @@ if (result.ok) {
 }
 ```
 
-### Namespace Import (Classic Style)
+### Namespace Import (Fluent API)
 
 ```typescript
-import { v, validate } from '@tuulbelt/property-validator';
+import { v, validate } from '@tuulbelt/property-validator/v';
 
 const UserSchema = v.object({
   name: v.string(),

@@ -36,10 +36,10 @@ const UserSchema = object({
 });
 ```
 
-### Namespace Import (Classic)
+### Namespace Import (Fluent API)
 
 ```typescript
-import { v, validate } from '@tuulbelt/property-validator';
+import { v, validate } from '@tuulbelt/property-validator/v';
 
 // Use via namespace
 const UserSchema = v.object({
@@ -64,10 +64,19 @@ Property Validator provides multiple entry points for different use cases:
 
 | Entry Point | Import From | Use Case |
 |-------------|-------------|----------|
-| Main | `@tuulbelt/property-validator` | Full API (v namespace + named exports) |
-| /v | `@tuulbelt/property-validator/v` | Fluent API only (v namespace) |
-| /lite | `@tuulbelt/property-validator/lite` | Functional API (no v namespace) |
+| Main | `@tuulbelt/property-validator` | Named exports (tree-shakeable) |
+| /v | `@tuulbelt/property-validator/v` | Fluent API (v namespace) |
 | /types | `@tuulbelt/property-validator/types` | Type definitions only |
+
+**Example: Main entry point (tree-shakeable):**
+```typescript
+import { validate, string, number, object, email, positive } from '@tuulbelt/property-validator';
+
+const UserSchema = object({
+  name: string(email()),
+  age: number(positive())
+});
+```
 
 **Example: /v entry point (fluent API):**
 ```typescript
@@ -76,16 +85,6 @@ import { v, validate, check } from '@tuulbelt/property-validator/v';
 const UserSchema = v.object({
   name: v.string().email(),
   age: v.number().positive()
-});
-```
-
-**Example: /lite entry point (functional API):**
-```typescript
-import { validate, string, number, object, email, positive } from '@tuulbelt/property-validator/lite';
-
-const UserSchema = object({
-  name: string(email()),
-  age: number(positive())
 });
 ```
 

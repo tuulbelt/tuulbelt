@@ -18,10 +18,10 @@ import {
 } from '@tuulbelt/property-validator';
 ```
 
-### Namespace Import (Classic)
+### Namespace Import (Fluent API)
 
 ```typescript
-import { v, validate, check, compileCheck } from '@tuulbelt/property-validator';
+import { v, validate, check, compileCheck } from '@tuulbelt/property-validator/v';
 ```
 
 ### Type-Only Import
