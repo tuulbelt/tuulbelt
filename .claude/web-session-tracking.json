@@ -15,6 +15,14 @@
           "commits_count": 0
         }
       }
+    },
+    "claude/resume-work-next-steps-wVpxj": {
+      "created_at": "2026-01-05T07:18:36Z",
+      "updated_at": "2026-01-05T07:18:36Z",
+      "session_id": "3771fb5d-8f21-40c8-a7bf-502b6f5171a0",
+      "environment": "web",
+      "status": "active",
+      "submodules": {}
     }
   }
 }
