@@ -39,7 +39,7 @@ const UserSchema = object({
 ### Namespace Import (Fluent API)
 
 ```typescript
-import { v, validate } from '@tuulbelt/property-validator/v';
+import { v, validate } from '@tuulbelt/property-validator';
 
 // Use via namespace
 const UserSchema = v.object({
@@ -64,29 +64,26 @@ Property Validator provides multiple entry points for different use cases:
 
 | Entry Point | Import From | Use Case |
 |-------------|-------------|----------|
-| Main | `@tuulbelt/property-validator` | Named exports (tree-shakeable) |
-| /v | `@tuulbelt/property-validator/v` | Fluent API (v namespace) |
+| Main | `@tuulbelt/property-validator` | Full API (v namespace + named exports) |
 | /types | `@tuulbelt/property-validator/types` | Type definitions only |
 
-**Example: Main entry point (tree-shakeable):**
+**Example: Main entry point (all APIs):**
 ```typescript
-import { validate, string, number, object, email, positive } from '@tuulbelt/property-validator';
+import { v, validate, string, number, object, email, positive } from '@tuulbelt/property-validator';
 
-const UserSchema = object({
-  name: string(email()),
-  age: number(positive())
-});
-```
-
-**Example: /v entry point (fluent API):**
-```typescript
-import { v, validate, check } from '@tuulbelt/property-validator/v';
-
+// Fluent API with v namespace
 const UserSchema = v.object({
   name: v.string().email(),
   age: v.number().positive()
 });
+
+// Or functional API with named exports
+const AgeSchema = number(positive());
 ```
+
+**Both styles from one import:**
+- **Fluent API**: `v.string().email()` — Compact, chainable syntax
+- **Functional API**: `string(email())` — Explicit imports, tree-shakeable refinements
 
 ### Functional Refinement API (v0.9.1+)
 
@@ -124,9 +121,11 @@ validate(PortSchema, 8080);                  // ✓
 | Number Range | `min(n)`, `max(n)`, `range(min, max)`, `multipleOf(n)` |
 | Array Length | `minItems(n)`, `maxItems(n)`, `itemCount(n)`, `nonemptyArray()` |
 
-**Chainable vs Functional:**
+**Chainable vs Functional (both from main entry):**
 
 ```typescript
+import { v, string, email, minLength } from '@tuulbelt/property-validator';
+
 // Chainable (compact, all methods bundled)
 const schema1 = v.string().email().min(5);
 

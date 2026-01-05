@@ -23,11 +23,11 @@ Property Validator provides schema-based runtime type validation with full TypeS
 Import only what you need with named exports:
 
 ```typescript
-// Named exports - tree-shakeable (main entry point)
+// Named exports - tree-shakeable
 import { string, number, object, validate } from '@tuulbelt/property-validator';
 
-// Fluent API - v namespace (/v entry point)
-import { v, validate } from '@tuulbelt/property-validator/v';
+// Fluent API - v namespace (also from main entry)
+import { v, validate } from '@tuulbelt/property-validator';
 ```
 
 ### <img src="/icons/zap.svg" class="inline-icon" alt=""> Three API Tiers (v0.8.5)
@@ -187,12 +187,12 @@ See the tool in action:
 
 ## What's New
 
-### v0.9.2 - Tree-Shaking Architecture
-- `v` namespace moved to `/v` entry point
-- `/v` entry point for fluent API: `import { v } from '@tuulbelt/property-validator/v'`
-- Main entry point is now tree-shakeable: `import { string, number } from '@tuulbelt/property-validator'`
-- Removed `/lite` (main IS lite now)
-- Bundle size benchmark script for measuring tree-shaking impact
+### v0.9.2 - Performance-First Architecture
+- `v` namespace available from main entry: `import { v } from '@tuulbelt/property-validator'`
+- Named exports for tree-shakeable refinements: `import { email, int } from '@tuulbelt/property-validator'`
+- `/types` entry point for zero-runtime type imports
+- JIT compilation at schema definition time for sub-100ns validation
+- Documented design philosophy: speed over bundle size
 
 ### v0.9.1 - Functional Refinement API
 - Tree-shakeable refinement functions: `email()`, `int()`, `positive()`, etc.
