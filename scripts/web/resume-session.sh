@@ -137,22 +137,29 @@ else
     elif [[ "$line" =~ url\ =\ (.+) ]]; then
       SUBMODULE_URL="${BASH_REMATCH[1]}"
 
-      # Check if submodule directory exists and has .git
-      if [ -d "$SUBMODULE_PATH/.git" ]; then
-        echo "  ✓ $SUBMODULE_PATH (already initialized)"
-      elif [ -d "$SUBMODULE_PATH" ]; then
-        # Directory exists but no .git - remove and clone
-        rm -rf "$SUBMODULE_PATH"
-        echo "  → Cloning $SUBMODULE_PATH..."
-        git clone "$SUBMODULE_URL" "$SUBMODULE_PATH" >/dev/null 2>&1 && \
-          echo "  ✓ $SUBMODULE_PATH" || \
-          echo "  ⚠ Failed to clone $SUBMODULE_PATH"
+      # Check if submodule is actually a valid git repository
+      # A proper submodule should be able to run git rev-parse successfully
+      NEEDS_CLONE=false
+      if [ -d "$SUBMODULE_PATH" ]; then
+        if ! git -C "$SUBMODULE_PATH" rev-parse --git-dir >/dev/null 2>&1; then
+          # Directory exists but git commands fail - broken state, needs re-clone
+          NEEDS_CLONE=true
+          echo "  ⚠ $SUBMODULE_PATH has broken .git - re-cloning..."
+          rm -rf "$SUBMODULE_PATH"
+        else
+          echo "  ✓ $SUBMODULE_PATH (already initialized)"
+        fi
       else
-        # Directory doesn't exist - clone
+        NEEDS_CLONE=true
+      fi
+
+      if [ "$NEEDS_CLONE" = true ]; then
         echo "  → Cloning $SUBMODULE_PATH..."
-        git clone "$SUBMODULE_URL" "$SUBMODULE_PATH" >/dev/null 2>&1 && \
-          echo "  ✓ $SUBMODULE_PATH" || \
+        if git clone "$SUBMODULE_URL" "$SUBMODULE_PATH" >/dev/null 2>&1; then
+          echo "  ✓ $SUBMODULE_PATH"
+        else
           echo "  ⚠ Failed to clone $SUBMODULE_PATH"
+        fi
       fi
     fi
   done < .gitmodules
