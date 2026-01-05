@@ -1,6 +1,6 @@
 # Next Tasks
 
-**Last Updated:** 2026-01-04
+**Last Updated:** 2026-01-05
 
 ---
 
@@ -73,33 +73,26 @@ All 6 optimization phases addressed (5 implemented, 1 rejected):
 
 ---
 
-## 🎯 Property Validator v0.9.0 - Modularization & Tree-Shaking 📋 NEXT
+## 🏆 Property Validator v0.9.0-0.9.3 - COMPLETE ✅
 
-**Status:** Planning - pending v0.8.5 merge
-**Goal:** Modular architecture with tree-shakeable validators
+**Status:** v0.9.3 COMPLETE - Ready for PR & Tag
+**Tags:** v0.9.2 (current), v0.9.3 (pending)
 
-### v0.9.0 Deliverables
+### v0.9.0-0.9.2: Modularization & Tree-Shaking ✅
 
-1. **Modular Architecture**
-   - Split validators into separate ES modules
-   - Named exports for each validator type
-   - `import { string, number, object } from 'property-validator'`
+- ✅ Named exports for tree-shaking
+- ✅ Functional refinement API
+- ✅ Entry points (`/v`, `/lite`)
+- ✅ TypeBox comparison benchmarks
 
-2. **Tree-Shaking Support**
-   - Ensure bundlers can eliminate unused validators
-   - Validators as pure functions (no side effects)
-   - Benchmark bundle size reduction
+### v0.9.3: Benchmark CI Infrastructure ✅
 
-3. **Benchmark CI Phase 2**
-   - [ ] GitHub Action for automatic regression detection on PRs
-   - [ ] Alert/notification system (Slack/Discord webhook)
-   - [ ] Trend tracking across versions (historical baselines)
-
-### v0.9.0 Considerations
-
-- Maintain backwards compatibility with `v` namespace
-- Document migration guide for modular imports
-- Test with webpack, rollup, esbuild, vite
+- ✅ GitHub Action for automatic regression detection on PRs
+- ✅ Alert/notification system (Slack via `TUULBELT_SLACK_WEBHOOK`)
+- ✅ Trend tracking across versions (historical baselines)
+- ✅ Multi-Node matrix (18, 20, 22)
+- ✅ PR comments with results summary
+- ✅ Templates updated (TypeScript + Rust)
 
 ---
 
@@ -240,7 +233,7 @@ All 11 implemented tools have short CLI names:
 ✅ Snapshot Comparison (Rust)
 ✅ File-Based Semaphore (TS) (TypeScript)
 ✅ Test Port Resolver (TypeScript)
-✅ Property Validator (TypeScript) - v0.7.5, 537 tests, Valibot-tier performance
+✅ Property Validator (TypeScript) - v0.9.3, 595 tests, Benchmark CI
 
 ### Phase 2: Next Up
 
@@ -275,5 +268,5 @@ All 11 implemented tools have short CLI names:
 
 ---
 
-**Last Review:** 2025-12-30
-**Next Review:** After Phase B completion
+**Last Review:** 2026-01-05
+**Next Review:** After v0.9.5 or next tool implementation

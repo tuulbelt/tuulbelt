@@ -2,114 +2,70 @@
 
 **Last Updated:** 2026-01-05
 **Session:** Property Validator v0.9.3 - Benchmark CI
-**Status:** v0.9.2 COMPLETE - Starting v0.9.3
+**Status:** v0.9.3 COMPLETE - Ready for PR & Tag
 
 ---
 
-## 📋 Current Session: v0.9.3 Benchmark CI
+## ✅ v0.9.3 Benchmark CI COMPLETE
 
-**Session Branch (Meta):** `claude/resume-work-check-HeepT` (Web environment)
-**Goal:** GitHub Action for regression detection, alerts, historical tracking
+**Session Branch (Meta):** `claude/resume-work-check-HeepT`
+**Session Branch (property-validator):** `claude/resume-work-check-HeepT`
 
-### Session Setup Completed
+### Deliverables Completed
 
-- ✅ Fixed Claude Code Web submodule initialization (broken .git detection)
-- ✅ Updated `scripts/web/init-session.sh` and `scripts/web/resume-session.sh`
-- ✅ Cleaned up old session tracking
-- ✅ All 11 submodules properly cloned and hooks installed
+| Phase | Feature | Status |
+|-------|---------|--------|
+| 1 | Basic benchmark workflow | ✅ |
+| 2 | Multi-Node matrix (18, 20, 22) | ✅ |
+| 3 | PR comment with results | ✅ |
+| 4 | Slack webhook integration | ✅ |
+| 5 | Historical baseline storage | ✅ |
 
-### v0.9.3 Deliverables (TODO)
+### Files Created/Modified
 
-1. **GitHub Action for Regression Detection**
-   - Run benchmarks on PR
-   - Compare against baseline
-   - Comment on PR with results
-   - Block merge if regression > threshold
+**property-validator:**
+- `.github/workflows/benchmark.yml` - PR benchmark regression detection
+- `.github/workflows/benchmark-update-baseline.yml` - Auto-update baseline on merges
+- `CHANGELOG.md` - Added v0.9.3 entry
 
-2. **Alert System**
-   - Slack/Discord webhook integration
-   - Email notification option
-   - Configurable thresholds
+**tuulbelt (meta):**
+- `templates/tool-repo-template/.github/workflows/benchmark.yml`
+- `templates/tool-repo-template/.github/workflows/benchmark-update-baseline.yml`
+- `templates/rust-tool-template/.github/workflows/benchmark.yml`
 
-3. **Historical Baseline Tracking**
-   - Store baseline results per version
-   - Track trends over time
-   - Generate performance dashboard
+### Key Features
+
+- **Regression Detection:** Fails PR if >15% slower than baseline
+- **Slack Notifications:** Via `TUULBELT_SLACK_WEBHOOK` org secret
+- **Dynamic Tool Name:** Converts `property-validator` → `Property Validator`
+- **90-day Retention:** Historical artifacts for trend analysis
+- **Templates Updated:** New tools get benchmark CI automatically
+
+### Next Steps
+
+1. Create PR for property-validator (merge to main)
+2. Create PR for meta repo (merge to main)
+3. Tag property-validator as v0.9.3 after merge
 
 ---
 
 ## ✅ Property Validator v0.9.0-0.9.2 COMPLETE
 
-**Tags:** v0.9.2 (latest), v0.8.0, v0.7.5
-**PRs Merged:** property-validator #10, tuulbelt (meta PR merged)
+**Tags:** v0.9.2, v0.8.0, v0.7.5
 
-### v0.9.0: Modularization (5 Phases)
-
-1. **Phase 1:** Extract types to `src/types.ts`
-2. **Phase 2:** Refactor for named exports
-3. **Phase 3:** Add named exports for tree-shaking
-4. **Phase 4:** Update package.json exports
-5. **Phase 5:** Documentation and bundle size docs
-
-**Result:** Full tree-shaking support with bundlers
-
-### v0.9.1: Functional Refinement API
-
-- Added functional refinement API for tree-shaking
-- Enables: `string().pipe(minLength(3))`
-
-### v0.9.2: Entry Points & TypeBox Comparison
-
-- `/v` entry point: Full namespace import
-- `/lite` entry point: Minimal import for tree-shaking
-- TypeBox comparison benchmarks added
-- Performance dashboard generator
-
-**Bundle Size Results:**
-- Full bundle: ~15KB (minified)
-- Tree-shaken (single validator): ~2KB
+- **v0.9.0:** Modularization & tree-shaking support
+- **v0.9.1:** Functional refinement API
+- **v0.9.2:** Entry points (`/v`, `/lite`) & TypeBox comparison
 
 ---
 
 ## 🔮 Future: v0.9.5 Extended Validators & JIT
 
-**Extended String Validators:**
-- `cuid()`, `cuid2()`, `ulid()`, `nanoid()`, `base64()`, `hex()`, `jwt()`
-- `creditCard()`, `iban()`, `bic()`, `semver()`, `slug()`, `locale()`
+**Extended Validators:**
+- String: `cuid()`, `cuid2()`, `ulid()`, `nanoid()`, `base64()`, `hex()`, `jwt()`
+- Number: `port()`, `latitude()`, `longitude()`, `percentage()`
 
-**Extended Number Validators:**
-- `port()`, `latitude()`, `longitude()`, `percentage()`
-
-**JIT Compilation (Optional):**
-- Target: 15-18M ops/sec (TypeBox territory)
-
----
-
-## Previous: v0.8.5 Summary
-
-**New APIs:**
-- `check(schema, data)` — Boolean-only validation
-- `compileCheck(schema)` — Pre-compiled boolean validator
-
-**Built-in Validators:**
-- String: email(), url(), uuid(), datetime(), ip(), etc.
-- Number: int(), positive(), range(), multipleOf(), etc.
-
-**Tests:** 595 total
-
----
-
-## Claude Code Web Fixes (This Session)
-
-**Issue:** Submodules reported "already initialized" but were broken (incomplete .git directories with only hooks folder).
-
-**Root Cause:** The initialization scripts checked `[ -d "$SUBMODULE_PATH/.git" ]` but didn't verify the .git was a valid git repository.
-
-**Fix:** Changed to use `git -C "$submodule" rev-parse --git-dir` to verify the repository is actually valid before skipping clone.
-
-**Files Updated:**
-- `scripts/web/init-session.sh`
-- `scripts/web/resume-session.sh`
+**JIT Compilation:** Target 15-18M ops/sec (TypeBox territory)
 
 ---
 
@@ -119,7 +75,7 @@
 
 | Tool | Version | Tests |
 |------|---------|-------|
-| Property Validator | v0.9.2 | 595 |
+| Property Validator | v0.9.3 (pending) | 595 |
 | Test Flakiness Detector | v0.1.0 | 132 |
 | CLI Progress Reporting | v0.1.0 | 121 |
 | Cross-Platform Path Normalizer | v0.1.0 | 141 |
