@@ -58,6 +58,54 @@ import type {
 } from '@tuulbelt/property-validator/types';
 ```
 
+### Functional Refinement API (v0.9.1+)
+
+For maximum tree-shaking, use refinement functions instead of chained methods:
+
+```typescript
+import {
+  string, number,               // Base validators
+  email, url, minLength,        // String refinements
+  int, positive, range,         // Number refinements
+  validate
+} from '@tuulbelt/property-validator';
+
+// Functional composition (tree-shakeable)
+const EmailSchema = string(email(), minLength(5));
+const AgeSchema = number(int(), positive());
+const PortSchema = number(int(), range(1, 65535));
+
+validate(EmailSchema, 'test@example.com');  // ✓
+validate(AgeSchema, 25);                     // ✓
+validate(PortSchema, 8080);                  // ✓
+```
+
+**Available Refinement Exports:**
+
+| Category | Refinements |
+|----------|-------------|
+| String Length | `minLength(n)`, `maxLength(n)`, `length(n)`, `nonempty()` |
+| String Format | `email()`, `url()`, `uuid()`, `pattern(regex, message?)` |
+| String Content | `startsWith()`, `endsWith()`, `includes()` |
+| String Date/Time | `datetime()`, `date()`, `time()` |
+| String Network | `ip()`, `ipv4()`, `ipv6()` |
+| Number Type | `int()`, `safeInt()`, `finite()` |
+| Number Sign | `positive()`, `negative()`, `nonnegative()`, `nonpositive()` |
+| Number Range | `min(n)`, `max(n)`, `range(min, max)`, `multipleOf(n)` |
+| Array Length | `minItems(n)`, `maxItems(n)`, `itemCount(n)`, `nonemptyArray()` |
+
+**Chainable vs Functional:**
+
+```typescript
+// Chainable (compact, all methods bundled)
+const schema1 = v.string().email().min(5);
+
+// Functional (tree-shakeable, explicit imports)
+const schema2 = string(email(), minLength(5));
+
+// Both produce equivalent validators
+```
+
 ---
 
 ## Three API Tiers
