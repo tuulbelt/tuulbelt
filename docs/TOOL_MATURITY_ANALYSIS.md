@@ -20,39 +20,64 @@ This document analyzes all 10 Tuulbelt tools against the Property Validator (pro
 
 ## Core Philosophy: CLI and Library
 
-**Tuulbelt tools provide equal attention to both CLI and library interfaces.**
+**Tuulbelt tools maximize the quality and usefulness of BOTH CLI and library interfaces.**
 
-This is NOT "CLI-first" or "library-first" — it's "CLI-also". Both interfaces are first-class citizens:
+This is NOT about feature parity — it's about exhausting the potential of each interface:
 
-| Interface | Purpose | Priority |
-|-----------|---------|----------|
-| **CLI** | Pipes, shell scripts, standalone use, composability | ✅ First-class |
-| **Library** | Embedding in other tools, programmatic access | ✅ First-class |
+| Interface | Goal | Approach |
+|-----------|------|----------|
+| **CLI** | Best possible command-line experience | Optimize for pipes, scripts, human DX |
+| **Library** | Best possible programmatic experience | Optimize for type safety, composability, performance |
 
-### Design Principles
+### Independent Excellence
+
+Each interface should be maximized independently. Some features make sense in one context but not the other:
 
 ```
-CLI Excellence:
-├── Full functionality via command-line flags
-├── Pipes-friendly (stdin/stdout)
-├── Machine-readable output (JSON, structured text)
-├── Good DX (help, examples, error messages)
-└── Close to the metal (minimal abstraction)
+CLI-Specific Opportunities:
+├── Interactive modes (prompts, confirmations)
+├── Colored/formatted output for humans
+├── Progress indicators and spinners
+├── Shell completion scripts
+├── Streaming output for large results
+└── Exit codes for script integration
 
-Library Excellence:
-├── Type-safe APIs (TypeScript inference, Rust generics)
-├── Multiple API tiers (full → fast → compiled)
-├── Non-throwing Result types
-├── Tree-shakeable exports
-└── Comprehensive JSDoc/rustdoc
+Library-Specific Opportunities:
+├── Complex type inference (generics, conditional types)
+├── Builder patterns and fluent APIs
+├── Compile-time validation
+├── Memory-efficient streaming APIs
+├── Callback/async patterns
+└── Integration with language ecosystems
+```
+
+### Shared Excellence (Both Interfaces)
+
+```
+TypeScript Tools:
+├── Result types: { ok: true; value } | { ok: false; error }
+├── Multi-tier APIs: validate() → check() → compileCheck()
+├── Named exports for tree-shaking
+├── JSDoc with @example blocks
+└── Zero runtime dependencies
+
+Rust Tools:
+├── Result<T, E> for all fallible operations
+├── Builder pattern for complex configuration
+├── Feature flags for optional functionality
+├── #[derive] for common traits
+├── Zero dependencies (std only)
+└── WASM compilation support where applicable
 ```
 
 ### When Expanding Tools
 
 For each new feature, ask:
-1. **CLI:** How would a user invoke this from the command line?
-2. **Library:** How would a developer call this from code?
-3. **Both:** Ensure parity — no library-only or CLI-only features
+1. **CLI:** What's the best way to expose this from the command line?
+2. **Library:** What's the best API design for programmatic use?
+3. **Context:** Does this feature make sense for both, or is it interface-specific?
+
+**Not every feature needs both interfaces.** An interactive wizard makes sense for CLI but not library. Complex generic type inference makes sense for library but not CLI.
 
 ---
 
@@ -858,31 +883,32 @@ Complete all improvements for each tool before moving to the next:
 
 ---
 
-## Appendix A: Propval Patterns Quick Reference
+## Appendix A: Gold Standard Patterns by Language
 
-### Result Type Pattern
+### TypeScript Patterns
+
+#### Result Type
 ```typescript
 export type Result<T> =
   | { ok: true; value: T }
   | { ok: false; error: Error };
 ```
 
-### Multi-API Pattern
+#### Multi-API Design
 ```typescript
-// Full validation
+// Full validation (detailed errors)
 export function validate<T>(data: unknown, schema: Schema<T>): Result<T>;
 
-// Boolean check (faster)
+// Boolean check (faster, no error details)
 export function check<T>(data: unknown, schema: Schema<T>): boolean;
 
 // Pre-compiled (fastest for repeated use)
 export function compileCheck<T>(schema: Schema<T>): (data: unknown) => boolean;
 ```
 
-### CLI Entry Point Pattern
+#### CLI Entry Point
 ```typescript
 #!/usr/bin/env -S npx tsx
-// Check if running directly (npm link support)
 const argv1 = globalThis.process?.argv?.[1];
 if (argv1) {
   const realPath = realpathSync(argv1);
@@ -892,7 +918,7 @@ if (argv1) {
 }
 ```
 
-### Benchmark CI Workflow Pattern
+#### Benchmark CI (TypeScript)
 ```yaml
 name: Benchmark
 on:
@@ -906,13 +932,148 @@ jobs:
         node-version: [18, 20, 22]
     steps:
       - uses: actions/checkout@v4
-      - name: Run benchmarks
-        run: npm run bench:ci > results.json
-      - name: Compare against baseline
-        run: npm run bench:compare < results.json
-      - name: Fail if regression
-        if: failure()
-        run: exit 1
+      - run: cd benchmarks && npm ci
+      - run: npm run bench:ci
+```
+
+---
+
+### Rust Patterns
+
+#### Result Type
+```rust
+// Use std::result::Result<T, E> with custom error types
+pub enum DiffError {
+    IoError(std::io::Error),
+    InvalidFormat(String),
+    SizeLimitExceeded { actual: usize, limit: usize },
+}
+
+pub type DiffResult<T> = Result<T, DiffError>;
+```
+
+#### Builder Pattern
+```rust
+// Complex configuration via builder
+pub struct DiffConfig {
+    algorithm: Algorithm,
+    context_lines: usize,
+    ignore_whitespace: bool,
+}
+
+impl DiffConfig {
+    pub fn builder() -> DiffConfigBuilder {
+        DiffConfigBuilder::default()
+    }
+}
+
+// Usage
+let config = DiffConfig::builder()
+    .algorithm(Algorithm::Histogram)
+    .context_lines(3)
+    .build();
+```
+
+#### Multi-API Design (Rust)
+```rust
+// Full diff (detailed output)
+pub fn diff(expected: &str, actual: &str, config: &DiffConfig) -> DiffResult<DiffOutput>;
+
+// Boolean check (faster, no output)
+pub fn has_changes(expected: &str, actual: &str) -> bool;
+
+// Streaming for large files
+pub fn diff_streaming<R: Read>(
+    expected: R,
+    actual: R,
+    config: &DiffConfig
+) -> DiffResult<impl Iterator<Item = DiffChunk>>;
+```
+
+#### CLI Entry Point (Rust)
+```rust
+use clap::Parser;
+
+#[derive(Parser)]
+#[command(name = "odiff", version, about = "Semantic diff utility")]
+struct Cli {
+    #[arg(short, long)]
+    format: Option<OutputFormat>,
+
+    #[arg(short, long, default_value = "3")]
+    context: usize,
+
+    expected: PathBuf,
+    actual: PathBuf,
+}
+
+fn main() -> ExitCode {
+    let cli = Cli::parse();
+    match run(&cli) {
+        Ok(_) => ExitCode::SUCCESS,
+        Err(e) => {
+            eprintln!("error: {e}");
+            ExitCode::FAILURE
+        }
+    }
+}
+```
+
+#### Benchmark CI (Rust)
+```yaml
+name: Benchmark
+on:
+  pull_request:
+    paths: ['src/**', 'benches/**']
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo bench --bench main -- --save-baseline pr
+      - run: cargo bench --bench main -- --baseline main --save-baseline pr
+```
+
+#### Feature Flags
+```toml
+# Cargo.toml
+[features]
+default = []
+async = ["tokio"]
+json = []  # Enable JSON diff support
+binary = [] # Enable binary diff support
+
+[dependencies]
+tokio = { version = "1", optional = true, features = ["fs"] }
+```
+
+```rust
+// Conditional compilation
+#[cfg(feature = "async")]
+pub async fn diff_async(/* ... */) -> DiffResult<DiffOutput> {
+    // Async implementation
+}
+```
+
+#### RAII Guards
+```rust
+// Automatic cleanup via Drop
+pub struct LockGuard<'a> {
+    semaphore: &'a Semaphore,
+    path: PathBuf,
+}
+
+impl Drop for LockGuard<'_> {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_dir(&self.path);
+    }
+}
+
+// Usage - lock released automatically
+let guard = semaphore.acquire()?;
+// ... do work ...
+// guard dropped here, lock released
 ```
 
 ---
