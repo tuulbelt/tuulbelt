@@ -1,71 +1,83 @@
 # Session Handoff
 
-**Last Updated:** 2026-01-05
-**Session:** Property Validator v0.9.3 - Benchmark CI
-**Status:** v0.9.3 COMPLETE - Ready for PR & Tag
+**Last Updated:** 2026-01-06
+**Session:** Property Validator v0.10+ Planning & Analysis
+**Status:** Comprehensive Plan Created
+
+---
+
+## ✅ v0.10+ Comprehensive Improvement Plan COMPLETE
+
+**Session Branch (Meta):** `claude/resume-work-assessment-CDivW`
+**Session Branch (property-validator):** `claude/resume-work-assessment-CDivW`
+
+### Deliverables
+
+| Item | Status |
+|------|--------|
+| Full source code review (3715 lines) | ✅ |
+| Performance gap analysis vs TypeBox | ✅ |
+| Code quality assessment | ✅ |
+| Security audit | ✅ |
+| Feature comparison (Zod/Valibot/TypeBox) | ✅ |
+| Comprehensive plan document | ✅ |
+| Quality-check command updates | ✅ |
+
+### Key Document Created
+
+**`tools/property-validator/docs/V0_10_COMPREHENSIVE_IMPROVEMENT_PLAN.md`** (787 lines)
+
+Covers:
+1. **Performance Optimization** - Array JIT for objects (32% gap), caching, loop unrolling
+2. **Code Quality** - Split index.ts, fix tree-shaking, dedupe logic
+3. **Security** - ReDoS protection, JIT safety verification
+4. **Feature Gaps** - record(), discriminatedUnion(), strict(), JSON Schema
+5. **Implementation Phases** - 7 phases from quick wins to JSON Schema
+
+### Quality-Check Command Enhanced
+
+Added new TypeScript library checks:
+- Source file size limits (warn >1500 lines)
+- Explicit 'any' type detection
+- Hardcoded version string detection
+- Test count baseline verification
+- Bundle size check
+- Benchmark regression check
+
+---
+
+## ✅ v0.9.5 Extended Validators COMPLETE
+
+**Tags:** v0.9.5 (pending merge)
+**Commits:** Phase 1 `8b005af`/`63838ec`, Phase 2 `251b353`/`790d058`
+
+| Phase | Validators | Status |
+|-------|------------|--------|
+| Phase 1: String | cuid, cuid2, ulid, nanoid, base64, hex, jwt | ✅ |
+| Phase 2: Number | port, latitude, longitude, percentage | ✅ |
+| Phase 3: JIT Research | Already complete in v0.8.0 | ✅ |
 
 ---
 
 ## ✅ v0.9.3 Benchmark CI COMPLETE
 
-**Session Branch (Meta):** `claude/resume-work-check-HeepT`
-**Session Branch (property-validator):** `claude/resume-work-check-HeepT`
+**Previous Session Branch:** `claude/resume-work-check-HeepT`
 
-### Deliverables Completed
-
-| Phase | Feature | Status |
-|-------|---------|--------|
-| 1 | Basic benchmark workflow | ✅ |
-| 2 | Multi-Node matrix (18, 20, 22) | ✅ |
-| 3 | PR comment with results | ✅ |
-| 4 | Slack webhook integration | ✅ |
-| 5 | Historical baseline storage | ✅ |
-
-### Files Created/Modified
-
-**property-validator:**
-- `.github/workflows/benchmark.yml` - PR benchmark regression detection
-- `.github/workflows/benchmark-update-baseline.yml` - Auto-update baseline on merges
-- `CHANGELOG.md` - Added v0.9.3 entry
-
-**tuulbelt (meta):**
-- `templates/tool-repo-template/.github/workflows/benchmark.yml`
-- `templates/tool-repo-template/.github/workflows/benchmark-update-baseline.yml`
-- `templates/rust-tool-template/.github/workflows/benchmark.yml`
-
-### Key Features
-
-- **Regression Detection:** Fails PR if >15% slower than baseline
-- **Slack Notifications:** Via `TUULBELT_SLACK_WEBHOOK` org secret
-- **Dynamic Tool Name:** Converts `property-validator` → `Property Validator`
-- **90-day Retention:** Historical artifacts for trend analysis
-- **Templates Updated:** New tools get benchmark CI automatically
-
-### Next Steps
-
-1. Create PR for property-validator (merge to main)
-2. Create PR for meta repo (merge to main)
-3. Tag property-validator as v0.9.3 after merge
+- Benchmark CI with regression detection
+- Slack notifications via org secret
+- Historical baseline storage (90 days)
+- Templates updated for new tools
 
 ---
 
-## ✅ Property Validator v0.9.0-0.9.2 COMPLETE
+## 🎯 Next Session: Implementation
 
-**Tags:** v0.9.2, v0.8.0, v0.7.5
+**Start with Phase 1 (Quick Wins):**
+1. Fix hardcoded version string (src/index.ts:2918)
+2. Add ReDoS length limits (EMAIL_PATTERN, IPV6_PATTERN, URL_PATTERN)
+3. Update CLI help for v0.9.5 validators
 
-- **v0.9.0:** Modularization & tree-shaking support
-- **v0.9.1:** Functional refinement API
-- **v0.9.2:** Entry points (`/v`, `/lite`) & TypeBox comparison
-
----
-
-## 🔮 Future: v0.9.5 Extended Validators & JIT
-
-**Extended Validators:**
-- String: `cuid()`, `cuid2()`, `ulid()`, `nanoid()`, `base64()`, `hex()`, `jwt()`
-- Number: `port()`, `latitude()`, `longitude()`, `percentage()`
-
-**JIT Compilation:** Target 15-18M ops/sec (TypeBox territory)
+**Reference:** `docs/V0_10_COMPREHENSIVE_IMPROVEMENT_PLAN.md`
 
 ---
 
@@ -75,7 +87,7 @@
 
 | Tool | Version | Tests |
 |------|---------|-------|
-| Property Validator | v0.9.3 (pending) | 595 |
+| Property Validator | v0.9.5 (pending) | 595 |
 | Test Flakiness Detector | v0.1.0 | 132 |
 | CLI Progress Reporting | v0.1.0 | 121 |
 | Cross-Platform Path Normalizer | v0.1.0 | 141 |
