@@ -64,6 +64,67 @@ else
 fi
 ```
 
+### Code Quality Checks (TypeScript Libraries)
+
+For TypeScript libraries (like property-validator), run additional quality checks:
+
+```bash
+# 1. Check source file sizes (large files are hard to maintain)
+echo "Checking source file sizes..."
+for file in src/*.ts; do
+  if [ -f "$file" ]; then
+    lines=$(wc -l < "$file")
+    if [ "$lines" -gt 1500 ]; then
+      echo "⚠️  WARNING: $file has $lines lines (recommend <1500)"
+    else
+      echo "  ✓ $file: $lines lines"
+    fi
+  fi
+done
+
+# 2. Check for explicit 'any' types (type safety enforcement)
+echo "Checking for 'any' types..."
+ANY_COUNT=$(grep -rE ":\s*any\b" src/ --include="*.ts" 2>/dev/null | grep -v "//" | grep -v "\*" | wc -l || echo "0")
+if [ "$ANY_COUNT" -gt 0 ]; then
+  echo "⚠️  WARNING: Found $ANY_COUNT explicit 'any' type annotations:"
+  grep -rE ":\s*any\b" src/ --include="*.ts" 2>/dev/null | grep -v "//" | grep -v "\*" | head -5
+else
+  echo "  ✓ No explicit 'any' types found"
+fi
+
+# 3. Check for hardcoded version strings (should be dynamic)
+echo "Checking for hardcoded version strings..."
+if grep -rE "v[0-9]+\.[0-9]+\.[0-9]+" src/ --include="*.ts" 2>/dev/null | grep -v "// " | grep -q .; then
+  echo "⚠️  WARNING: Found hardcoded version strings:"
+  grep -rE "v[0-9]+\.[0-9]+\.[0-9]+" src/ --include="*.ts" 2>/dev/null | grep -v "// " | head -3
+fi
+
+# 4. Verify test count hasn't decreased (if baseline exists)
+if [ -f ".test-count-baseline" ]; then
+  echo "Checking test count against baseline..."
+  BASELINE=$(cat .test-count-baseline)
+  TEST_OUTPUT=$(npm test 2>&1)
+  TEST_COUNT=$(echo "$TEST_OUTPUT" | grep -oE "[0-9]+ tests?" | grep -oE "[0-9]+" | tail -1)
+  if [ -n "$TEST_COUNT" ] && [ "$TEST_COUNT" -lt "$BASELINE" ]; then
+    echo "❌ ERROR: Test count decreased from $BASELINE to $TEST_COUNT"
+  else
+    echo "  ✓ Test count: $TEST_COUNT (baseline: $BASELINE)"
+  fi
+fi
+
+# 5. Check bundle size (if benchmark exists)
+if [ -f "benchmarks/bundle-size.ts" ]; then
+  echo "Checking bundle size..."
+  npx tsx benchmarks/bundle-size.ts 2>&1 | tail -5
+fi
+
+# 6. Run benchmark regression check (if baseline exists)
+if [ -f "benchmarks/baseline.json" ] && [ -f "benchmarks/ci/compare-baseline.ts" ]; then
+  echo "Running benchmark regression check..."
+  npx tsx benchmarks/ci/compare-baseline.ts 2>&1 || echo "⚠️  Benchmark comparison skipped"
+fi
+```
+
 ### Rust Projects
 
 If `Cargo.toml` exists, run:
@@ -238,6 +299,12 @@ grep -r "Cross-Platform Path Normalizer\|Test Flakiness Detector\|CLI Progress R
 - [ ] **New tools added to VitePress config** (if adding a tool)
 - [ ] **New tools listed in docs/tools/index.md** (if adding a tool)
 - [ ] **Root README has 🐕 badge** for dogfooded tools
+- [ ] **Source files under 1500 lines** (split large files for maintainability)
+- [ ] **No explicit 'any' types** (maintain type safety)
+- [ ] **No hardcoded version strings** (use package.json version)
+- [ ] **Test count not decreased** (if baseline file exists)
+- [ ] **Bundle size acceptable** (for library projects)
+- [ ] **No benchmark regressions** (if baseline exists)
 
 ## Common Pitfalls to Check
 
