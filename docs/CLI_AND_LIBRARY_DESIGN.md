@@ -447,9 +447,9 @@ let guard = sem.try_acquire(Duration::from_secs(5))?;
 
 ## Related Documents
 
-- [PRINCIPLES.md](../PRINCIPLES.md) — Tuulbelt design philosophy
-- [TOOL_MATURITY_ANALYSIS.md](TOOL_MATURITY_ANALYSIS.md) — Tool gap analysis
-- [ARCHITECTURE.md](../ARCHITECTURE.md) — Repository structure
+- [PRINCIPLES.md](https://github.com/tuulbelt/tuulbelt/blob/main/PRINCIPLES.md) — Tuulbelt design philosophy
+- [TOOL_MATURITY_ANALYSIS.md](./TOOL_MATURITY_ANALYSIS.md) — Tool gap analysis
+- [ARCHITECTURE.md](https://github.com/tuulbelt/tuulbelt/blob/main/ARCHITECTURE.md) — Repository structure
 
 ---
 
