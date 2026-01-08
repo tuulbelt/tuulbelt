@@ -1,71 +1,50 @@
 # Session Handoff
 
-**Last Updated:** 2026-01-05
-**Session:** Property Validator v0.9.3 - Benchmark CI
-**Status:** v0.9.3 COMPLETE - Ready for PR & Tag
+**Last Updated:** 2026-01-08
+**Session:** Property Validator v0.10.0 Release
+**Status:** v0.10.0 Complete - Ready for Tag & Merge
 
 ---
 
-## ✅ v0.9.3 Benchmark CI COMPLETE
+## ✅ v0.10.0 Full Modularization + JSON Schema COMPLETE
 
-**Session Branch (Meta):** `claude/resume-work-check-HeepT`
-**Session Branch (property-validator):** `claude/resume-work-check-HeepT`
+**Session Branch (Meta):** `claude/resume-work-assessment-CDivW`
+**Session Branch (property-validator):** `claude/resume-work-assessment-CDivW`
 
-### Deliverables Completed
+### v0.10.0 Features Delivered
 
-| Phase | Feature | Status |
-|-------|---------|--------|
-| 1 | Basic benchmark workflow | ✅ |
-| 2 | Multi-Node matrix (18, 20, 22) | ✅ |
-| 3 | PR comment with results | ✅ |
-| 4 | Slack webhook integration | ✅ |
-| 5 | Historical baseline storage | ✅ |
+| Feature | Status |
+|---------|--------|
+| Full modularization (index.ts: 3744→149 lines) | ✅ |
+| JSON Schema Export (`toJsonSchema()`) | ✅ |
+| `record()` validator | ✅ |
+| `discriminatedUnion()` validator | ✅ |
+| `strict()` / `passthrough()` object modes | ✅ |
+| Extended string validators (cuid, ulid, nanoid, base64, hex, jwt) | ✅ |
+| Extended number validators (port, latitude, longitude, percentage) | ✅ |
+| Array JIT for objects optimization | ✅ |
+| 898 tests passing | ✅ |
 
-### Files Created/Modified
+### Documentation Updated
 
-**property-validator:**
-- `.github/workflows/benchmark.yml` - PR benchmark regression detection
-- `.github/workflows/benchmark-update-baseline.yml` - Auto-update baseline on merges
-- `CHANGELOG.md` - Added v0.9.3 entry
-
-**tuulbelt (meta):**
-- `templates/tool-repo-template/.github/workflows/benchmark.yml`
-- `templates/tool-repo-template/.github/workflows/benchmark-update-baseline.yml`
-- `templates/rust-tool-template/.github/workflows/benchmark.yml`
-
-### Key Features
-
-- **Regression Detection:** Fails PR if >15% slower than baseline
-- **Slack Notifications:** Via `TUULBELT_SLACK_WEBHOOK` org secret
-- **Dynamic Tool Name:** Converts `property-validator` → `Property Validator`
-- **90-day Retention:** Historical artifacts for trend analysis
-- **Templates Updated:** New tools get benchmark CI automatically
-
-### Next Steps
-
-1. Create PR for property-validator (merge to main)
-2. Create PR for meta repo (merge to main)
-3. Tag property-validator as v0.9.3 after merge
+| Document | Status |
+|----------|--------|
+| README badges (version, tests) | ✅ |
+| README API documentation | ✅ |
+| README roadmap | ✅ |
+| VitePress index.md | ✅ |
+| VitePress api-reference.md | ✅ |
+| Demo recording script | ✅ |
+| Demo.gif placeholders | ✅ |
 
 ---
 
-## ✅ Property Validator v0.9.0-0.9.2 COMPLETE
+## 🎯 Next Session: Tag & PR
 
-**Tags:** v0.9.2, v0.8.0, v0.7.5
-
-- **v0.9.0:** Modularization & tree-shaking support
-- **v0.9.1:** Functional refinement API
-- **v0.9.2:** Entry points (`/v`, `/lite`) & TypeBox comparison
-
----
-
-## 🔮 Future: v0.9.5 Extended Validators & JIT
-
-**Extended Validators:**
-- String: `cuid()`, `cuid2()`, `ulid()`, `nanoid()`, `base64()`, `hex()`, `jwt()`
-- Number: `port()`, `latitude()`, `longitude()`, `percentage()`
-
-**JIT Compilation:** Target 15-18M ops/sec (TypeBox territory)
+1. Run quality check
+2. Commit all changes
+3. Tag v0.10.0 in property-validator
+4. Create PR for merge to main
 
 ---
 
@@ -75,7 +54,7 @@
 
 | Tool | Version | Tests |
 |------|---------|-------|
-| Property Validator | v0.9.3 (pending) | 595 |
+| Property Validator | v0.10.0 | 898 |
 | Test Flakiness Detector | v0.1.0 | 132 |
 | CLI Progress Reporting | v0.1.0 | 121 |
 | Cross-Platform Path Normalizer | v0.1.0 | 141 |

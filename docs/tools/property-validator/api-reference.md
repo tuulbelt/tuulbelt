@@ -1,19 +1,19 @@
 # API Reference
 
-Complete API documentation for Property Validator v0.9.0.
+Complete API documentation for Property Validator v0.10.0.
 
 ## Imports
 
-### Named Exports (v0.9.0+, Tree-Shakeable)
+### Named Exports (v0.10.0, Tree-Shakeable)
 
 ```typescript
 // Import only what you need
 import {
   string, number, boolean,     // Primitives
-  array, tuple, object,        // Collections
+  array, tuple, object, record, // Collections
   optional, nullable,          // Modifiers
-  union, literal, lazy, enum_, // Special types
-  validate, check, compile, compileCheck,  // Functions
+  union, discriminatedUnion, literal, lazy, enum_, // Special types
+  validate, check, compile, compileCheck, toJsonSchema,  // Functions
   ValidationError              // Error class
 } from '@tuulbelt/property-validator';
 ```
@@ -154,6 +154,56 @@ for (const data of dataList) {
   const result = compiledUser.validate(data);
 }
 ```
+
+---
+
+### `toJsonSchema(validator, options?)` (v0.10.0+)
+
+Convert a property-validator schema to JSON Schema Draft 7.
+
+**Parameters:**
+- `validator: Validator<T>` - The validator to convert
+- `options?: ToJsonSchemaOptions` - Optional configuration
+
+**Options:**
+```typescript
+interface ToJsonSchemaOptions {
+  includeSchema?: boolean;  // Include $schema declaration (default: true)
+  draft?: string;           // JSON Schema draft URL
+  unknownTypeHandling?: 'any' | 'throw' | 'empty';  // How to handle unknown types
+  includeMetadata?: boolean;  // Include title/description if available
+}
+```
+
+**Example:**
+```typescript
+import { v, toJsonSchema } from '@tuulbelt/property-validator';
+
+const UserSchema = v.object({
+  name: v.string().min(1),
+  age: v.number().int().positive(),
+  email: v.optional(v.string().email()),
+  role: v.union([v.literal('admin'), v.literal('user')])
+});
+
+const jsonSchema = toJsonSchema(UserSchema);
+// {
+//   "$schema": "http://json-schema.org/draft-07/schema#",
+//   "type": "object",
+//   "properties": {
+//     "name": { "type": "string", "minLength": 1 },
+//     "age": { "type": "number" },
+//     "email": { "type": "string", "format": "email" },
+//     "role": { "enum": ["admin", "user"] }
+//   },
+//   "required": ["name", "age", "role"]
+// }
+```
+
+**Use Cases:**
+- OpenAPI/Swagger documentation generation
+- Form generation from schemas
+- Schema sharing with other tools/languages
 
 ---
 
@@ -326,6 +376,45 @@ validate(MixedSchema, ["Alice", 30, true]);  // ✓
 
 ---
 
+### `record(keyValidator, valueValidator)` / `v.record(keyValidator, valueValidator)` (v0.10.0+)
+
+Creates a validator for objects with dynamic keys.
+
+```typescript
+const ScoresSchema = record(string(), number());
+validate(ScoresSchema, { alice: 100, bob: 85 });  // ✓
+validate(ScoresSchema, { alice: "A" });  // ✗
+
+// With key constraints
+const UuidMapSchema = record(string().uuid(), object({ name: string() }));
+validate(UuidMapSchema, {
+  '550e8400-e29b-41d4-a716-446655440000': { name: 'Item' }
+});  // ✓
+```
+
+---
+
+### `.strict()` / `.passthrough()` (v0.10.0+)
+
+Control unknown property handling on object validators.
+
+```typescript
+// Default: unknown properties are silently ignored
+const User = object({ name: string() });
+validate(User, { name: 'Alice', extra: true });  // ✓ (extra ignored)
+
+// Strict: reject unknown properties
+const StrictUser = object({ name: string() }).strict();
+validate(StrictUser, { name: 'Alice', extra: true });  // ✗ "Unknown key: extra"
+
+// Passthrough: preserve unknown properties in output
+const PassthroughUser = object({ name: string() }).passthrough();
+const result = validate(PassthroughUser, { name: 'Alice', extra: true });
+// result.value = { name: 'Alice', extra: true }
+```
+
+---
+
 ## Type Modifiers
 
 ### `optional(validator)` / `.optional()`
@@ -406,13 +495,34 @@ const StringOrNumber = union([string(), number()]);
 validate(StringOrNumber, "hello");  // ✓
 validate(StringOrNumber, 42);       // ✓
 validate(StringOrNumber, true);     // ✗
-
-// Discriminated unions
-const ResultSchema = union([
-  object({ type: literal('success'), data: string() }),
-  object({ type: literal('error'), message: string() })
-]);
 ```
+
+---
+
+### `discriminatedUnion(discriminator, variants)` / `v.discriminatedUnion(discriminator, variants)` (v0.10.0+)
+
+Creates an efficient tagged union with O(1) discriminator lookup.
+
+**Parameters:**
+- `discriminator: string` - The property name that distinguishes variants
+- `variants: Record<string, Validator>` - Map of discriminator value → validator
+
+```typescript
+const ApiResponse = discriminatedUnion('type', {
+  success: object({ type: literal('success'), data: string() }),
+  error: object({ type: literal('error'), code: number(), message: string() }),
+  pending: object({ type: literal('pending'), retryAfter: number() })
+});
+
+validate(ApiResponse, { type: 'success', data: 'OK' });  // ✓
+validate(ApiResponse, { type: 'error', code: 404, message: 'Not found' });  // ✓
+validate(ApiResponse, { type: 'unknown' });  // ✗ "Unknown discriminator value: unknown"
+```
+
+**Advantages over `union()`:**
+- O(1) lookup instead of O(n) iteration
+- Better error messages (knows which variant failed)
+- More efficient for many variants
 
 ---
 
