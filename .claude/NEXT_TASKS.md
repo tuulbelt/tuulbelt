@@ -1,6 +1,28 @@
 # Next Tasks
 
-**Last Updated:** 2026-01-05
+**Last Updated:** 2026-01-08
+
+---
+
+## 🏷️ Property Validator v0.10.0 - COMPLETE ✅
+
+**Status:** v0.10.0 Ready for Tag & Merge
+**Language:** TypeScript
+**Short Name:** `propval`
+**Tests:** 898 passing
+
+### v0.10.0 Features
+
+| Feature | Status |
+|---------|--------|
+| Full modularization (index.ts: 3744→149 lines) | ✅ |
+| JSON Schema Export (`toJsonSchema()`) | ✅ |
+| `record()` validator | ✅ |
+| `discriminatedUnion()` validator | ✅ |
+| `strict()` / `passthrough()` object modes | ✅ |
+| Extended string validators (cuid, ulid, nanoid, base64, hex, jwt) | ✅ |
+| Extended number validators (port, latitude, longitude, percentage) | ✅ |
+| Array JIT for objects optimization | ✅ |
 
 ---
 
@@ -96,29 +118,13 @@ All 6 optimization phases addressed (5 implemented, 1 rejected):
 
 ---
 
-## 🔮 Property Validator v0.9.5 - Extended Validators & JIT 📋 FUTURE
+## ✅ Property Validator v0.9.5 → v0.10.0 - Extended Validators COMPLETE
 
-**Status:** Planning
-**Goal:** Additional validators + JIT compilation for TypeBox-level performance
+**Status:** All features merged into v0.10.0
 
-### v0.9.5 Deliverables
-
-1. **Extended String Validators**
-   - `cuid()`, `cuid2()`, `ulid()`, `nanoid()`
-   - `base64()`, `hex()`, `jwt()`
-   - `creditCard()`, `iban()`, `bic()`
-   - `semver()`, `slug()`, `locale()`
-
-2. **Extended Number Validators**
-   - `port()` (0-65535)
-   - `latitude()`, `longitude()`
-   - `percentage()` (0-100)
-
-3. **JIT Compilation (Optional)**
-   - Phase 2: Inlined Primitive JIT (`new Function()`)
-   - Phase 3: Fully Inlined Object Validation
-   - CSP fallback to closure-based implementation
-   - Target: 15-18M ops/sec (TypeBox territory)
+Extended validators originally planned for v0.9.5 are now part of v0.10.0:
+- ✅ String: `cuid()`, `cuid2()`, `ulid()`, `nanoid()`, `base64()`, `hex()`, `jwt()`
+- ✅ Number: `port()`, `latitude()`, `longitude()`, `percentage()`
 
 ---
 

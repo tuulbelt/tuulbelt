@@ -27,7 +27,7 @@ Each tool in Tuulbelt:
 - **[Test Port Resolver](https://github.com/tuulbelt/port-resolver)** — Concurrent test port allocation 🟢 v0.1.0 🐕 | [📖 Docs](https://github.com/tuulbelt/port-resolver#readme) | [🚀 Examples](https://github.com/tuulbelt/port-resolver/tree/main/examples/)
 
 ### Validation
-- **[Property Validator](https://github.com/tuulbelt/property-validator)** — Schema-based runtime validation with TypeScript inference 🟢 v0.7.5 🐕 | [📖 Docs](https://github.com/tuulbelt/property-validator#readme) | [🚀 Examples](https://github.com/tuulbelt/property-validator/tree/main/examples/)
+- **[Property Validator](https://github.com/tuulbelt/property-validator)** — Schema-based runtime validation with TypeScript inference 🟢 v0.10.0 🐕 | [📖 Docs](https://github.com/tuulbelt/property-validator#readme) | [🚀 Examples](https://github.com/tuulbelt/property-validator/tree/main/examples/)
 
 ### Frontend
 - **[Exhaustiveness Checker](https://github.com/tuulbelt/exhaustiveness-checker)** — Union case coverage for TS/JS (TBD)
@@ -208,7 +208,7 @@ This creates a **bidirectional validation network** where tools prove their reli
 🟡 = In progress (0/33)
 🔴 = TBD (22/33)
 
-**Recently Completed:** Property Validator v0.7.5 (2026-01-04)
+**Recently Completed:** Property Validator v0.10.0 (2026-01-08)
 
 **Next Up:** Exhaustiveness Checker 🎯
 

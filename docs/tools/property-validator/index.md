@@ -6,11 +6,11 @@ Runtime type validation with TypeScript inference and high performance.
 
 Property Validator provides schema-based runtime type validation with full TypeScript type inference and competitive performance. Beats Zod in all benchmark categories, achieves Valibot-tier performance with JIT optimization.
 
-**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.9.2)
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.10.0)
 
 **Language:** TypeScript
 
-**Tests:** 680 tests passing
+**Tests:** 898 tests passing
 
 **Bundle Size:** 30KB minified, 8KB gzipped
 
@@ -186,6 +186,16 @@ See the tool in action:
 </div>
 
 ## What's New
+
+### v0.10.0 - Full Modularization + JSON Schema
+- **JSON Schema Export** — `toJsonSchema()` converts schemas to JSON Schema Draft 7
+- **Full Modularization** — Validators extracted to individual modules (index.ts: 3744→149 lines)
+- **`record()` validator** — Dynamic keys with `v.record(keyValidator, valueValidator)`
+- **`discriminatedUnion()`** — Efficient tagged unions with O(1) discriminator lookup
+- **`strict()` / `passthrough()`** — Control unknown property handling on objects
+- **Extended Validators** — `cuid()`, `cuid2()`, `ulid()`, `nanoid()`, `base64()`, `hex()`, `jwt()`, `port()`, `latitude()`, `longitude()`, `percentage()`
+- **Array JIT for Objects** — Optimized array-of-object validation
+- **898 tests** — Comprehensive test coverage
 
 ### v0.9.2 - Performance-First Architecture
 - `v` namespace available from main entry: `import { v } from '@tuulbelt/property-validator'`
