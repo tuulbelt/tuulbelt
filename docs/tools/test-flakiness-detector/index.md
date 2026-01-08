@@ -6,6 +6,11 @@ Detect unreliable tests by running them multiple times and tracking failure rate
 
 Test Flakiness Detector helps identify non-deterministic tests by running your test suite multiple times and analyzing the results. It's framework-agnostic and works with any test command.
 
+**Three-tier API design** provides the right tool for every scenario:
+- **`detect()`** — Full detection with detailed reports (debugging, analysis)
+- **`isFlaky()`** — Fast boolean check for CI gates (pre-merge validation)
+- **`compileDetector()`** — Pre-compiled detector for repeated use (progressive strategies)
+
 **Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
 
 **Language:** TypeScript
@@ -18,6 +23,13 @@ Test Flakiness Detector helps identify non-deterministic tests by running your t
 
 Works with any test command - Jest, Vitest, Pytest, Cargo, Go tests, or any other test framework. Just provide the test command and run count.
 
+### <img src="/icons/layers.svg" class="inline-icon" alt=""> Three-Tier API
+
+- **CLI**: Command-line interface with JSON reports
+- **`detect()`**: Full detection API with comprehensive reports
+- **`isFlaky()`**: Fast boolean API optimized for CI/CD gates
+- **`compileDetector()`**: Pre-compiled detector for progressive strategies
+
 ### <img src="/icons/search.svg" class="inline-icon" alt=""> Repeated Execution Analysis
 
 Detects flaky tests by running your test suite multiple times and tracking which tests pass sometimes and fail sometimes.
@@ -26,11 +38,17 @@ Detects flaky tests by running your test suite multiple times and tracking which
 
 Generates detailed JSON reports with failure rates, individual run results, timestamps, and execution duration for analysis.
 
+### <img src="/icons/shield.svg" class="inline-icon" alt=""> Non-Throwing Result Type
+
+Uses `Result<T>` pattern for predictable error handling - no try/catch required, type-safe success/failure states.
+
 ### <img src="/icons/zap.svg" class="inline-icon" alt=""> Zero Runtime Dependencies
 
 Uses only Node.js built-ins. No `npm install` required in production.
 
 ## Quick Start
+
+**CLI:**
 
 ```bash
 # Clone the repository
@@ -44,13 +62,66 @@ npm install
 flaky --test "npm test" --runs 10
 ```
 
+**Library (Programmatic):**
+
+```typescript
+import { detect, isFlaky } from './test-flakiness-detector/src/index.js'
+
+// Full detection with detailed report
+const result = await detect({
+  test: 'npm test',
+  runs: 10
+})
+
+if (result.ok === false) {
+  console.error('Error:', result.error.message)
+  process.exit(2)
+}
+
+if (result.value.flakyTests.length > 0) {
+  console.error('⚠️ Flaky tests detected!')
+  process.exit(1)
+}
+
+console.log('✅ No flakiness detected')
+```
+
 ## Use Cases
 
-- **CI/CD Validation:** Catch unreliable tests before they merge
-- **Test Suite Health:** Identify which tests need fixing
-- **Pre-Release Checks:** Ensure test stability before shipping
-- **Root Cause Analysis:** Understand why tests fail intermittently
-- **Quality Metrics:** Track test reliability over time
+### <img src="/icons/git-branch.svg" class="inline-icon" alt=""> CI/CD Fast Gates
+
+Use `isFlaky()` for quick pre-merge validation:
+- 5 runs for fast feedback
+- Boolean result for simple pass/fail
+- Optimized for CI pipeline gates
+
+### <img src="/icons/search.svg" class="inline-icon" alt=""> Debugging & Analysis
+
+Use `detect()` for comprehensive reports:
+- 10-50 runs for detailed analysis
+- Full failure rate statistics
+- Individual run results for investigation
+
+### <img src="/icons/rocket.svg" class="inline-icon" alt=""> Progressive Detection
+
+Use `compileDetector()` for adaptive strategies:
+- Start with 5 runs (quick check)
+- Escalate to 15 runs (medium confidence)
+- Confirm with 50 runs (high confidence)
+
+### <img src="/icons/package.svg" class="inline-icon" alt=""> Pre-Release Checks
+
+Ensure test stability before shipping:
+- Validate critical test suites
+- Track reliability over time
+- Prevent flaky tests from merging
+
+### <img src="/icons/bar-chart.svg" class="inline-icon" alt=""> Quality Metrics
+
+Monitor test suite health:
+- Track failure rates across versions
+- Identify tests needing attention
+- Measure improvement over time
 
 ## Why Flakiness Detection?
 

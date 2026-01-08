@@ -22,7 +22,7 @@ npm link     # Enable the 'flaky' command globally
 Test Flakiness Detector has **zero runtime dependencies**. The `npm install` step only installs development tools (TypeScript compiler, test runner). The tool itself uses only Node.js built-in modules. The `npm link` command creates a global symlink so you can use the `flaky` command from anywhere.
 :::
 
-## Quick Example
+## Quick Start: CLI
 
 ### Basic Flakiness Detection
 
@@ -56,6 +56,126 @@ See detailed execution logs:
 
 ```bash
 flaky --test "npm test" --verbose
+```
+
+## Quick Start: Library
+
+Test Flakiness Detector provides three APIs optimized for different use cases.
+
+### 1. `detect()` — Full Detection API
+
+Best for: Debugging, generating detailed reports, analyzing failure patterns
+
+```typescript
+import { detect } from './test-flakiness-detector/src/index.js'
+
+const result = await detect({
+  test: 'npm test',
+  runs: 10
+})
+
+if (result.ok === false) {
+  console.error('Detection failed:', result.error.message)
+  process.exit(2)
+}
+
+const report = result.value
+
+if (report.flakyTests.length > 0) {
+  console.error('⚠️ Flaky tests detected!')
+  report.flakyTests.forEach(test => {
+    console.error(`  ${test.testName}: ${test.failureRate.toFixed(1)}% failure rate`)
+  })
+  process.exit(1)
+}
+
+console.log('✅ No flakiness detected')
+```
+
+### 2. `isFlaky()` — Fast Boolean Check
+
+Best for: CI/CD pipeline gates, pre-merge validation, quick yes/no decisions
+
+```typescript
+import { isFlaky } from './test-flakiness-detector/src/index.js'
+
+const result = await isFlaky({
+  test: 'npm test',
+  runs: 5  // Faster: default is 5 for quick feedback
+})
+
+if (result.ok === false) {
+  console.error('Check failed:', result.error.message)
+  process.exit(2)
+}
+
+if (result.value) {
+  console.error('⚠️ Flakiness detected!')
+  process.exit(1)
+}
+
+console.log('✅ No flakiness detected')
+```
+
+### 3. `compileDetector()` — Pre-Compiled Detector
+
+Best for: Progressive detection strategies, running multiple times with different counts
+
+```typescript
+import { compileDetector } from './test-flakiness-detector/src/index.js'
+
+const detector = compileDetector({
+  test: 'npm test',
+  verbose: false
+})
+
+// Start with quick check
+console.log('Quick check (5 runs)...')
+let result = await detector.run(5)
+
+if (result.ok && result.value.flakyTests.length === 0) {
+  console.log('✅ Quick check passed')
+} else {
+  // Escalate to thorough check
+  console.log('Running thorough check (50 runs)...')
+  result = await detector.run(50)
+
+  if (result.ok === false) {
+    console.error('Error:', result.error.message)
+    process.exit(2)
+  }
+
+  if (result.value.flakyTests.length > 0) {
+    console.log(`⚠️ Confirmed flaky: ${result.value.flakyTests.length} tests`)
+    process.exit(1)
+  }
+}
+```
+
+### Result Type Pattern
+
+All APIs use a non-throwing `Result<T>` type for predictable error handling:
+
+```typescript
+type Result<T> =
+  | { ok: true; value: T }
+  | { ok: false; error: Error }
+```
+
+**Always check `result.ok === false` for proper TypeScript type narrowing:**
+
+```typescript
+const result = await detect({ test: 'npm test', runs: 10 })
+
+// ✅ Correct: Proper type narrowing
+if (result.ok === false) {
+  console.error('Error:', result.error.message)
+  return
+}
+
+// Safe: TypeScript knows result.value is DetectionReport
+const report = result.value
+console.log(report.totalRuns)
 ```
 
 ## CLI Options
@@ -99,11 +219,22 @@ Flaky tests detected! Your tests pass sometimes and fail sometimes.
   ⚠️  FLAKY TESTS DETECTED!
 ```
 
+## Choosing the Right API
+
+| Use Case | Recommended API | Default Runs |
+|----------|----------------|--------------|
+| CI/CD pipeline gate | `isFlaky()` | 5 |
+| Debugging flaky tests | `detect()` | 10 |
+| Progressive detection | `compileDetector()` | Variable |
+| Quick yes/no answer | `isFlaky()` | 5 |
+| Detailed reports | `detect()` | 10-50 |
+
 ## Next Steps
 
 - [CLI Usage](/tools/test-flakiness-detector/cli-usage) — All CLI commands and options
 - [Library Usage](/tools/test-flakiness-detector/library-usage) — TypeScript/JavaScript API
 - [Examples](/tools/test-flakiness-detector/examples) — Real-world usage patterns
+- [API Reference](/tools/test-flakiness-detector/api-reference) — Complete API documentation
 
 ## Troubleshooting
 
