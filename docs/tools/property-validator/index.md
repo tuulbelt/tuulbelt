@@ -71,24 +71,23 @@ Uses only Node.js built-ins. No `npm install` required in production.
 
 ## Performance
 
-Property Validator v0.8.0+ uses JIT (Just-In-Time) compilation for validation-heavy workloads.
+Property Validator v0.10.0 delivers elite performance with JIT-style optimizations.
 
-### vs Zod (6/6 wins)
+### External Comparison Results (v0.10.0)
 
-Property Validator beats Zod in all benchmark categories - typically 3-25x faster.
+| Category | propval | Zod | Valibot | TypeBox JIT |
+|----------|---------|-----|---------|-------------|
+| Primitives | 69 ns | 120 ns | 84 ns | 58 ns |
+| Simple Objects | 67 ns | 668 ns | 220 ns | 59 ns |
+| Complex Nested | 162 ns | 4.14 µs | 1.11 µs | 118 ns |
+| Unions | 85 ns | 220 ns | 93 ns | 60 ns |
+| Arrays (100) | 197 ns | 5.06 µs | 1.49 µs | 122 ns |
 
-### vs Valibot (6/7 wins)
+### Summary
 
-| Category | Property Validator | Valibot | Winner |
-|----------|-------------------|---------|--------|
-| Primitives | 66 ns | 68 ns | **propval 1.02x** ✅ |
-| Simple objects | 65 ns | 201 ns | **propval 3.09x** ✅ |
-| Complex nested | 174 ns | 933 ns | **propval 5.36x** ✅ |
-| Number arrays [100] | 112 ns | 671 ns | **propval 5.97x** ✅ |
-| String arrays [100] | 157 ns | 665 ns | **propval 4.23x** ✅ |
-| Unions | 88 ns | 83 ns | valibot 1.05x |
-
-**Score: 6 wins, 1 near-tie** (improved from v0.7.5's 2 wins, 3 losses)
+- **vs Zod:** 1.7x - 25.7x faster ✅ (6/6 wins)
+- **vs Valibot:** 1.1x - 7.6x faster ✅ (6/7 wins)
+- **vs TypeBox JIT:** 1.1x - 1.6x slower (TypeBox uses `new Function()` JIT compilation)
 
 ### API Performance Comparison
 
@@ -174,7 +173,7 @@ See the tool in action:
 
 ![Property Validator Demo](/property-validator/demo.gif)
 
-**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/uAjNwsSs3a30HuhKfMExQV9Bb)**
+**[▶ View interactive recording on asciinema.org](https://asciinema.org/a/rA7CvWso5Hl8fis2)**
 
 <div style="margin: 20px 0;">
   <span style="display: inline-block; vertical-align: middle; margin-right: 8px;">

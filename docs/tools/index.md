@@ -207,19 +207,19 @@ Concurrent port allocation for any application. Avoid port conflicts in tests, s
 
 ### Property Validator
 
-**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.7.5)
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.10.0)
 **Language:** TypeScript
-**Tests:** 537 tests, Valibot-tier performance
+**Tests:** 898 tests, TypeBox-competitive performance
 
-Runtime type validation with TypeScript inference. Schema-based validation with Valibot-competitive performance - 1.7x faster on simple objects, 4.5x faster on unions.
+Runtime type validation with TypeScript inference. Schema-based validation with elite performance - beats Zod 6/6, beats Valibot 6/7, competitive with TypeBox JIT.
 
 **Features:**
 - Schema-based validation with TypeScript type inference
-- Graceful error handling with result types (no exceptions)
-- Valibot-tier performance (beats Zod 6/6 categories, competitive with Valibot)
+- Three API tiers: `validate()`, `check()`, `compileCheck()` for speed vs detail trade-offs
+- JSON Schema export with `toJsonSchema()`
+- Beats Zod 1.7-25x, Valibot 1.1-7.6x, competitive with TypeBox JIT
 - Clear error messages with exact paths to invalid fields
-- Works anywhere: API responses, config files, user input, function arguments
-- Framework-agnostic (not tied to React, Vue, etc.)
+- `record()`, `discriminatedUnion()`, `strict()`/`passthrough()` validators
 - Zero runtime dependencies
 
 [View Documentation →](/tools/property-validator/)
