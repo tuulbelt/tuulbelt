@@ -60,7 +60,8 @@ test/api.test.ts          (new, 28 tests)
 ### Commit Details:
 - **Repository:** tuulbelt/test-flakiness-detector
 - **Branch:** `claude/enhance-flakiness-detector-7nSN8`
-- **Commit SHA:** 952d9f2
+- **Initial Commit SHA:** 952d9f2 (Phase 1 implementation)
+- **Refinement Commit SHA:** 14f089e (tree-shaking support)
 - **Status:** Pushed to GitHub ✅
 - **PR URL:** https://github.com/tuulbelt/test-flakiness-detector/pull/new/claude/enhance-flakiness-detector-7nSN8
 
@@ -87,6 +88,8 @@ test/api.test.ts          (new, 28 tests)
 - Result type pattern throughout
 - Backward compatibility preserved
 - Modular architecture (api.ts, detector.ts, types.ts separation)
+- Tree-shaking support via exports field in package.json
+- Full JSDoc coverage with @example blocks on all exported functions
 
 ---
 
