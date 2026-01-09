@@ -4,7 +4,7 @@ Runtime type validation with TypeScript inference and high performance.
 
 ## Overview
 
-Property Validator provides schema-based runtime type validation with full TypeScript type inference and competitive performance. Beats Zod in all benchmark categories, achieves Valibot-tier performance with JIT optimization.
+Property Validator provides schema-based runtime type validation with full TypeScript type inference and elite performance. Beats Zod 2-72x in all categories, matches Valibot on primitives while dominating objects/arrays, and competes with TypeBox JIT.
 
 **Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.10.0)
 
@@ -77,17 +77,17 @@ Property Validator v0.10.0 delivers elite performance with JIT-style optimizatio
 
 | Category | propval | Zod | Valibot | TypeBox JIT |
 |----------|---------|-----|---------|-------------|
-| Primitives | 69 ns | 120 ns | 84 ns | 58 ns |
-| Simple Objects | 67 ns | 668 ns | 220 ns | 59 ns |
-| Complex Nested | 162 ns | 4.14 µs | 1.11 µs | 118 ns |
-| Unions | 85 ns | 220 ns | 93 ns | 60 ns |
-| Arrays (100) | 197 ns | 5.06 µs | 1.49 µs | 122 ns |
+| Primitives | 62 ns | 123 ns | 59 ns | 61 ns |
+| Simple Objects | 56 ns | 742 ns | 169 ns | 57 ns |
+| Complex Nested | 58 ns | 4.21 µs | 584 ns | 56 ns |
+| Unions | 56 ns | 426 ns | 123 ns | 57 ns |
+| Arrays (100) | 145 ns | 4.85 µs | 1.10 µs | 108 ns |
 
 ### Summary
 
-- **vs Zod:** 1.7x - 25.7x faster ✅ (6/6 wins)
-- **vs Valibot:** 1.1x - 7.6x faster ✅ (6/7 wins)
-- **vs TypeBox JIT:** 1.1x - 1.6x slower (TypeBox uses `new Function()` JIT compilation)
+- **vs Zod:** 2.0x - 72x faster ✅ (all categories)
+- **vs Valibot:** 2.2x - 10x faster on objects/arrays, ~tie on primitives
+- **vs TypeBox JIT:** Competitive (~tie overall, TypeBox uses `new Function()` JIT)
 
 ### API Performance Comparison
 

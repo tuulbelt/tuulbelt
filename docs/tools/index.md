@@ -211,13 +211,13 @@ Concurrent port allocation for any application. Avoid port conflicts in tests, s
 **Language:** TypeScript
 **Tests:** 898 tests, TypeBox-competitive performance
 
-Runtime type validation with TypeScript inference. Schema-based validation with elite performance - beats Zod 6/6, beats Valibot 6/7, competitive with TypeBox JIT.
+Runtime type validation with TypeScript inference. Schema-based validation with elite performance - beats Zod 2-72x in all categories, competitive with TypeBox JIT.
 
 **Features:**
 - Schema-based validation with TypeScript type inference
 - Three API tiers: `validate()`, `check()`, `compileCheck()` for speed vs detail trade-offs
 - JSON Schema export with `toJsonSchema()`
-- Beats Zod 1.7-25x, Valibot 1.1-7.6x, competitive with TypeBox JIT
+- Beats Zod 2-72x, 2-10x faster on objects/arrays vs Valibot, competitive with TypeBox JIT
 - Clear error messages with exact paths to invalid fields
 - `record()`, `discriminatedUnion()`, `strict()`/`passthrough()` validators
 - Zero runtime dependencies
