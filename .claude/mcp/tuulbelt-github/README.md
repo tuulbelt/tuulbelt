@@ -17,7 +17,8 @@ This MCP server provides GitHub repository management capabilities to Claude Cod
 |------|-------------|------------|
 | `check_repo_exists` | Check if repository exists | `name: string` |
 | `create_tool_repo` | Create new tool repository | `name, description, language, is_private` |
-| `configure_repo_settings` | Set up branch protection, labels | `repo: string` |
+| `configure_repo_settings` | Set up labels (not branch protection) | `repo: string` |
+| `apply_branch_protection` | Apply comprehensive branch protection rules | `repo: string, branch?: string` |
 | `create_github_labels` | Create issue labels for tool | `repo, labels[]` |
 | `get_repo_info` | Get repository metadata | `repo: string` |
 | `delete_repo` | Delete repository (careful!) | `repo: string, confirm: boolean` |
@@ -106,6 +107,38 @@ Create a new repository called "test-utility" for a TypeScript tool
 ```
 
 Claude will use the MCP server to execute GitHub API calls automatically.
+
+### Branch Protection Workflow
+
+**Important:** Branch protection cannot be applied until the `main` branch exists (at least one commit pushed).
+
+**Workflow:**
+1. Create repository: `create_tool_repo`
+2. Configure labels: `configure_repo_settings`
+3. Push first commit to `main` branch
+4. **Now apply protection:** `apply_branch_protection`
+
+**Example:**
+```
+After creating and pushing to test-utility, apply branch protection
+```
+
+Claude will call `apply_branch_protection({ repo: "test-utility" })` automatically.
+
+**Protection rules applied:**
+- Require pull request before merging (1 approval)
+- Dismiss stale reviews on new commits
+- Require status checks to pass (`test` workflow)
+- Require branches to be up to date
+- Require linear history (no merge commits)
+- Require conversation resolution
+- Block force pushes
+- Block deletions
+
+**Fallback (CLI script):**
+```bash
+./scripts/apply-branch-protection.sh test-utility
+```
 
 ### Direct Testing (Optional)
 
