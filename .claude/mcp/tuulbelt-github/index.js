@@ -117,28 +117,6 @@ async function createToolRepo({ name, description, language, is_private = false 
 // Tool: configure_repo_settings
 async function configureRepoSettings(repo) {
   try {
-    // Set default branch protection
-    try {
-      await octokit.rest.repos.updateBranchProtection({
-        owner: org,
-        repo,
-        branch: "main",
-        required_status_checks: {
-          strict: true,
-          contexts: ["test"]
-        },
-        enforce_admins: false,
-        required_pull_request_reviews: null,
-        restrictions: null,
-        required_linear_history: false,
-        allow_force_pushes: false,
-        allow_deletions: false
-      });
-    } catch (e) {
-      // Branch protection might fail if branch doesn't exist yet
-      console.error("Branch protection setup failed (this is ok if branch doesn't exist yet):", e.message);
-    }
-
     // Create standard labels
     const labels = [
       { name: "bug", color: "d73a4a", description: "Something isn't working" },
@@ -158,11 +136,91 @@ async function configureRepoSettings(repo) {
     }
 
     return {
-      content: [{ type: "text", text: JSON.stringify({ configured: true }, null, 2) }]
+      content: [{ type: "text", text: JSON.stringify({
+        configured: true,
+        note: "Branch protection should be applied after first push using apply_branch_protection tool"
+      }, null, 2) }]
     };
   } catch (e) {
     return {
       content: [{ type: "text", text: JSON.stringify({ error: e.message }, null, 2) }],
+      isError: true
+    };
+  }
+}
+
+// Tool: apply_branch_protection
+async function applyBranchProtection({ repo, branch = "main" }) {
+  try {
+    // Check if branch exists first
+    try {
+      await octokit.rest.repos.getBranch({ owner: org, repo, branch });
+    } catch (e) {
+      if (e.status === 404) {
+        return {
+          content: [{ type: "text", text: JSON.stringify({
+            error: `Branch '${branch}' does not exist in ${org}/${repo}. Push to main first.`
+          }, null, 2) }],
+          isError: true
+        };
+      }
+      throw e;
+    }
+
+    // Apply comprehensive branch protection
+    await octokit.rest.repos.updateBranchProtection({
+      owner: org,
+      repo,
+      branch,
+      required_status_checks: {
+        strict: true,
+        contexts: ["test"]
+      },
+      enforce_admins: false,
+      required_pull_request_reviews: {
+        dismissal_restrictions: {},
+        dismiss_stale_reviews: true,
+        require_code_owner_reviews: false,
+        required_approving_review_count: 1,
+        require_last_push_approval: false,
+        bypass_pull_request_allowances: {}
+      },
+      restrictions: null,
+      required_linear_history: true,
+      allow_force_pushes: false,
+      allow_deletions: false,
+      block_creations: false,
+      required_conversation_resolution: true,
+      lock_branch: false,
+      allow_fork_syncing: true
+    });
+
+    return {
+      content: [{ type: "text", text: JSON.stringify({
+        success: true,
+        repo,
+        branch,
+        protection_rules: {
+          require_pull_request: true,
+          required_approving_reviews: 1,
+          dismiss_stale_reviews: true,
+          require_status_checks: ["test"],
+          require_branches_up_to_date: true,
+          require_linear_history: true,
+          require_conversation_resolution: true,
+          block_force_pushes: true,
+          block_deletions: true
+        }
+      }, null, 2) }]
+    };
+  } catch (e) {
+    return {
+      content: [{ type: "text", text: JSON.stringify({
+        error: e.message,
+        status: e.status,
+        repo,
+        branch
+      }, null, 2) }],
       isError: true
     };
   }
@@ -317,6 +375,25 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
       }
     },
     {
+      name: "apply_branch_protection",
+      description: "Apply comprehensive branch protection rules to a repository (call after first push)",
+      inputSchema: {
+        type: "object",
+        properties: {
+          repo: {
+            type: "string",
+            description: "Repository name"
+          },
+          branch: {
+            type: "string",
+            description: "Branch to protect (default: main)",
+            default: "main"
+          }
+        },
+        required: ["repo"]
+      }
+    },
+    {
       name: "create_github_labels",
       description: "Create issue labels for a repository",
       inputSchema: {
@@ -392,6 +469,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
     case "configure_repo_settings":
       return configureRepoSettings(args.repo);
+
+    case "apply_branch_protection":
+      return applyBranchProtection(args);
 
     case "create_github_labels":
       return createGitHubLabels(args);
