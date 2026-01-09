@@ -4,7 +4,7 @@ Runtime type validation with TypeScript inference and high performance.
 
 ## Overview
 
-Property Validator provides schema-based runtime type validation with full TypeScript type inference and competitive performance. Beats Zod in all benchmark categories, achieves Valibot-tier performance with JIT optimization.
+Property Validator provides schema-based runtime type validation with full TypeScript type inference and elite performance. Beats Zod 2-72x in all categories, matches Valibot on primitives while dominating objects/arrays, and competes with TypeBox JIT.
 
 **Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.10.0)
 
@@ -71,24 +71,23 @@ Uses only Node.js built-ins. No `npm install` required in production.
 
 ## Performance
 
-Property Validator v0.8.0+ uses JIT (Just-In-Time) compilation for validation-heavy workloads.
+Property Validator v0.10.0 delivers elite performance with JIT-style optimizations.
 
-### vs Zod (6/6 wins)
+### External Comparison Results (v0.10.0)
 
-Property Validator beats Zod in all benchmark categories - typically 3-25x faster.
+| Category | propval | Zod | Valibot | TypeBox JIT |
+|----------|---------|-----|---------|-------------|
+| Primitives | 62 ns | 123 ns | 59 ns | 61 ns |
+| Simple Objects | 56 ns | 742 ns | 169 ns | 57 ns |
+| Complex Nested | 58 ns | 4.21 µs | 584 ns | 56 ns |
+| Unions | 56 ns | 426 ns | 123 ns | 57 ns |
+| Arrays (100) | 145 ns | 4.85 µs | 1.10 µs | 108 ns |
 
-### vs Valibot (6/7 wins)
+### Summary
 
-| Category | Property Validator | Valibot | Winner |
-|----------|-------------------|---------|--------|
-| Primitives | 66 ns | 68 ns | **propval 1.02x** ✅ |
-| Simple objects | 65 ns | 201 ns | **propval 3.09x** ✅ |
-| Complex nested | 174 ns | 933 ns | **propval 5.36x** ✅ |
-| Number arrays [100] | 112 ns | 671 ns | **propval 5.97x** ✅ |
-| String arrays [100] | 157 ns | 665 ns | **propval 4.23x** ✅ |
-| Unions | 88 ns | 83 ns | valibot 1.05x |
-
-**Score: 6 wins, 1 near-tie** (improved from v0.7.5's 2 wins, 3 losses)
+- **vs Zod:** 2.0x - 72x faster ✅ (all categories)
+- **vs Valibot:** 2.2x - 10x faster on objects/arrays, ~tie on primitives
+- **vs TypeBox JIT:** Competitive (~tie overall, TypeBox uses `new Function()` JIT)
 
 ### API Performance Comparison
 
