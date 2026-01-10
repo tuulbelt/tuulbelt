@@ -122,9 +122,32 @@ The tool outputs JSON to `flakiness-report.json`:
 
 ## Exit Codes
 
-- `0` — All tests passed consistently (no flakiness detected)
-- `1` — Flaky tests detected, or all tests failed consistently
-- `2` — Invalid arguments or execution error
+- `0` — Success: Detection completed, no flaky tests found
+- `1` — Flaky Detected: One or more flaky tests found
+- `2` — Invalid Args: Invalid arguments or validation error
+
+**Example:**
+```bash
+flaky --test "npm test" --runs 10
+echo $?  # 0 = no flaky, 1 = flaky found, 2 = invalid args
+```
+
+**Use in CI/CD:**
+```bash
+# Fail the build if flaky tests are detected
+flaky --test "npm test" --runs 20
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -eq 1 ]; then
+  echo "❌ Flaky tests detected - failing the build"
+  exit 1
+elif [ $EXIT_CODE -eq 2 ]; then
+  echo "❌ Invalid arguments or execution error"
+  exit 2
+else
+  echo "✅ No flaky tests detected"
+fi
+```
 
 ## Integration with CI/CD
 

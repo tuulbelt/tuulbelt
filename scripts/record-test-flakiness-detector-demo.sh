@@ -11,7 +11,7 @@ demo_commands() {
   sleep 1
 
   echo ""
-  echo "# Run flaky test detection (5 runs)"
+  echo "# Basic usage: Run flaky test detection (5 runs)"
   sleep 0.5
   echo "$ flaky --test \"echo test\" --runs 5"
   sleep 0.5
@@ -19,27 +19,15 @@ demo_commands() {
   sleep 2
 
   echo ""
-  echo "# Show JSON report summary"
+  echo "# With threshold: Ignore failures <10% (recommended for CI)"
   sleep 0.5
-  echo "$ cat flakiness-report.json | head -15"
+  echo "$ flaky --test \"npm test\" --runs 20 --threshold 10"
   sleep 0.5
-  if [ -f flakiness-report.json ]; then
-    cat flakiness-report.json | head -15
-  else
-    echo "{"
-    echo "  \"summary\": {"
-    echo "    \"totalRuns\": 5,"
-    echo "    \"passedRuns\": 5,"
-    echo "    \"failedRuns\": 0,"
-    echo "    \"isFlaky\": false,"
-    echo "    \"failureRate\": 0"
-    echo "  }"
-    echo "}"
-  fi
-  sleep 2
+  echo "Only tests with >10% failure rate will be flagged as flaky"
+  sleep 1.5
 
   echo ""
-  echo "# Show help"
+  echo "# Show help (includes --threshold flag)"
   sleep 0.5
   echo "$ flaky --help"
   sleep 0.5
@@ -47,7 +35,7 @@ demo_commands() {
   sleep 2
 
   echo ""
-  echo "# Done! Detect flaky tests with the flaky command."
+  echo "# Done! Detect flaky tests with configurable thresholds."
   sleep 1
 }
 

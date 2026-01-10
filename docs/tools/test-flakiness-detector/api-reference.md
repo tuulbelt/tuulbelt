@@ -2,43 +2,159 @@
 
 Complete API documentation for Test Flakiness Detector.
 
-## Main Function
+## Multi-Tier API Design
 
-### `detectFlakiness(config: Config): Promise<FlakinessReport>`
+Test Flakiness Detector provides three APIs optimized for different use cases:
 
-Runs a test command multiple times and detects flaky behavior.
+1. **`detect()`** - Full detection with detailed reports (default: 10 runs)
+2. **`isFlaky()`** - Fast boolean check for CI gates (default: 5 runs)
+3. **`compileDetector()`** - Pre-compiled detector for repeated use
+
+All APIs use a non-throwing `Result<T>` pattern for predictable error handling.
+
+---
+
+## Core APIs
+
+### `detect(config: DetectConfig): Promise<Result<DetectionReport>>`
+
+Comprehensive flakiness detection with detailed report generation.
+
+**Purpose:** Debugging, analysis, generating reports
+
+**Default runs:** 10 (balances speed and accuracy)
 
 **Parameters:**
-- `config` - Configuration object (see [Config](#config))
 
-**Returns:** `Promise<FlakinessReport>` - Detection results (see [FlakinessReport](#flakinessreport))
+```typescript
+interface DetectConfig {
+  test: string          // Test command to run (required)
+  runs?: number         // Number of runs (default: 10, range: 1-1000)
+  verbose?: boolean     // Show progress during execution (default: false)
+  threshold?: number    // Failure rate threshold % (default: 0.01 = 1%)
+}
+```
+
+**Returns:** `Promise<Result<DetectionReport>>`
 
 **Example:**
-```typescript
-import { detectFlakiness } from './src/index.js'
 
-const report = await detectFlakiness({
-  testCommand: 'npm test',
+```typescript
+import { detect } from 'test-flakiness-detector'
+
+const result = await detect({
+  test: 'npm test',
   runs: 20,
-  verbose: false
+  verbose: true,
+  threshold: 0.01  // Flag tests with ≥1% failure rate
 })
 
-if (report.success) {
-  console.log(`Total runs: ${report.totalRuns}`)
-  console.log(`Passed: ${report.passedRuns}, Failed: ${report.failedRuns}`)
+if (result.ok === false) {
+  console.error('Detection failed:', result.error.message)
+  process.exit(2)
+}
 
-  if (report.flakyTests.length > 0) {
-    console.log('\nFlaky tests detected:')
-    report.flakyTests.forEach(test => {
-      console.log(`  ${test.testName}: ${test.failureRate.toFixed(1)}% failure rate`)
-      console.log(`    Passed: ${test.passed}/${test.totalRuns}`)
-      console.log(`    Failed: ${test.failed}/${test.totalRuns}`)
-    })
-  } else {
-    console.log('No flaky tests detected')
-  }
+const report = result.value
+console.log(`Total runs: ${report.totalRuns}`)
+console.log(`Passed: ${report.passedRuns}, Failed: ${report.failedRuns}`)
+
+if (report.flakyTests.length > 0) {
+  console.log('⚠️ Flaky tests detected:')
+  report.flakyTests.forEach(test => {
+    console.log(`  ${test.testName}: ${test.failureRate.toFixed(1)}% failure rate`)
+  })
+  process.exit(1)
+}
+
+console.log('✅ No flaky tests detected')
+process.exit(0)
+```
+
+---
+
+### `isFlaky(config: DetectConfig): Promise<Result<boolean>>`
+
+Fast boolean check optimized for CI/CD pipeline gates.
+
+**Purpose:** Quick CI gate, pre-merge validation
+
+**Default runs:** 5 (faster than detect's 10)
+
+**Parameters:** Same as `detect()` (see [DetectConfig](#detectconfig))
+
+**Returns:** `Promise<Result<boolean>>`
+- `true` = Flaky tests detected (fail the build)
+- `false` = No flakiness detected (pass)
+
+**Example:**
+
+```typescript
+import { isFlaky } from 'test-flakiness-detector'
+
+const result = await isFlaky({
+  test: 'npm test',
+  runs: 5  // Faster: default is 5 for quick feedback
+})
+
+if (result.ok === false) {
+  console.error('Check failed:', result.error.message)
+  process.exit(2)
+}
+
+if (result.value) {
+  console.error('⚠️ Flakiness detected!')
+  process.exit(1)
 } else {
-  console.error(`Error: ${report.error}`)
+  console.log('✅ No flakiness detected')
+  process.exit(0)
+}
+```
+
+---
+
+### `compileDetector(config: DetectConfig): CompiledDetector`
+
+Pre-compile detector configuration for repeated use with different run counts.
+
+**Purpose:** Progressive detection (5 → 15 → 50 runs), caching
+
+**Parameters:** Same as `detect()` (see [DetectConfig](#detectconfig))
+
+**Returns:** `CompiledDetector` object with methods:
+- `run(runs: number): Promise<Result<DetectionReport>>`
+- `getCommand(): string`
+- `getOptions(): Readonly<DetectConfig>`
+
+**Example:**
+
+```typescript
+import { compileDetector } from 'test-flakiness-detector'
+
+// Compile detector once with test command
+const detector = compileDetector({
+  test: 'npm test',
+  verbose: false,
+})
+
+console.log(`Compiled detector for: ${detector.getCommand()}`)
+
+// Run with different counts
+console.log('Quick check (5 runs)...')
+const quickResult = await detector.run(5)
+
+if (quickResult.ok && !quickResult.value.flakyTests.length) {
+  console.log('✅ Quick check passed')
+} else {
+  console.log('⚠️ Running thorough check (20 runs)...')
+  const thoroughResult = await detector.run(20)
+
+  if (thoroughResult.ok === false) {
+    console.error('Error:', thoroughResult.error.message)
+    process.exit(2)
+  }
+
+  const report = thoroughResult.value
+  console.log(`Found ${report.flakyTests.length} flaky tests`)
 }
 ```
 
@@ -46,135 +162,109 @@ if (report.success) {
 
 ## Type Definitions
 
-### `Config`
+### `Result<T>`
 
-Configuration options for flakiness detection.
+Non-throwing result type used by all APIs.
 
 ```typescript
-interface Config {
-  /** Test command to execute (required) */
-  testCommand: string
-
-  /** Number of times to run the test (default: 10) */
-  runs?: number
-
-  /** Enable verbose output showing each run (default: false) */
-  verbose?: boolean
-}
+type Result<T> =
+  | { ok: true; value: T }
+  | { ok: false; error: Error }
 ```
 
-**Properties:**
+**Usage pattern:**
 
-| Property | Type | Required | Default | Description |
-|----------|------|----------|---------|-------------|
-| `testCommand` | `string` | ✅ Yes | - | Shell command to execute for testing |
-| `runs` | `number` | ❌ No | `10` | Number of test executions (1-1000) |
-| `verbose` | `boolean` | ❌ No | `false` | Log each test run to stderr |
-
-**Example:**
 ```typescript
-const config: Config = {
-  testCommand: 'npm test',
-  runs: 50,
-  verbose: true
+const result = await detect({ test: 'npm test', runs: 10 })
+
+if (result.ok === false) {
+  // Handle error
+  console.error('Error:', result.error.message)
+  return
 }
+
+// Access value safely
+const report = result.value
+console.log(report.totalRuns)
 ```
+
+**Why Result type?**
+- No try/catch required
+- Type-safe error handling
+- Explicit success/failure states
+- Consistent pattern across all APIs
 
 ---
 
-### `FlakinessReport`
+### `DetectConfig`
 
-Complete flakiness detection report returned by `detectFlakiness()`.
+Configuration object for all detection APIs.
 
 ```typescript
-interface FlakinessReport {
-  /** Whether the detection completed successfully */
-  success: boolean
-
-  /** Total number of test runs performed */
-  totalRuns: number
-
-  /** Number of runs that passed */
-  passedRuns: number
-
-  /** Number of runs that failed */
-  failedRuns: number
-
-  /** List of flaky tests (tests with 0 < failure rate < 100) */
-  flakyTests: TestFlakiness[]
-
-  /** All test run results */
-  runs: TestRunResult[]
-
-  /** Error message if detection failed */
-  error?: string
+interface DetectConfig {
+  test: string          // Test command to run (required)
+  runs?: number         // Number of runs (default: 10, range: 1-1000)
+  verbose?: boolean     // Show progress during execution (default: false)
+  threshold?: number    // Failure rate threshold % (default: 0.01 = 1%)
 }
 ```
 
-**Properties:**
+**Field details:**
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `success` | `boolean` | `true` if detection completed, `false` if error occurred |
-| `totalRuns` | `number` | Total number of executions performed |
-| `passedRuns` | `number` | Number of runs with exit code 0 |
-| `failedRuns` | `number` | Number of runs with non-zero exit code |
-| `flakyTests` | `TestFlakiness[]` | Tests that passed sometimes and failed sometimes |
-| `runs` | `TestRunResult[]` | Detailed results for each execution |
-| `error` | `string \| undefined` | Error message if `success` is `false` |
+- **`test`** (required): Shell command to execute your tests
+  - Example: `'npm test'`, `'cargo test'`, `'pytest tests/'`
 
-**Example (all passing):**
+- **`runs`** (optional): Number of times to run the test command
+  - Default: `10` for `detect()`, `5` for `isFlaky()`
+  - Range: 1-1000
+  - Higher values detect rarer flakiness but take longer
+
+- **`verbose`** (optional): Show execution progress
+  - Default: `false`
+  - When `true`: Shows each run's result in real-time
+  - Useful for debugging slow test suites
+
+- **`threshold`** (optional): Minimum failure rate to flag as flaky
+  - Default: `0.01` (1%)
+  - Range: 0.0-100.0
+  - Example: `5.0` = only flag tests with ≥5% failure rate
+
+---
+
+### `DetectionReport`
+
+Detailed report returned by `detect()` and `compileDetector().run()`.
+
+```typescript
+interface DetectionReport {
+  totalRuns: number              // Total test runs executed
+  passedRuns: number             // Number of runs that passed
+  failedRuns: number             // Number of runs that failed
+  flakyTests: TestFlakiness[]    // Array of flaky tests detected
+  runs: TestRunResult[]          // Individual run results
+}
+```
+
+**Example report:**
+
 ```json
 {
-  "success": true,
   "totalRuns": 10,
-  "passedRuns": 10,
-  "failedRuns": 0,
-  "flakyTests": [],
-  "runs": [
-    {
-      "success": true,
-      "exitCode": 0,
-      "stdout": "Test passed\n",
-      "stderr": ""
-    }
-    // ... 9 more runs
-  ]
-}
-```
-
-**Example (flaky test detected):**
-```json
-{
-  "success": true,
-  "totalRuns": 20,
-  "passedRuns": 12,
-  "failedRuns": 8,
+  "passedRuns": 7,
+  "failedRuns": 3,
   "flakyTests": [
     {
       "testName": "Test Suite",
-      "passed": 12,
-      "failed": 8,
-      "totalRuns": 20,
-      "failureRate": 40.0
+      "passed": 7,
+      "failed": 3,
+      "totalRuns": 10,
+      "failureRate": 30.0
     }
   ],
   "runs": [
-    // ... 20 run results
+    { "success": true, "exitCode": 0, "stdout": "...", "stderr": "" },
+    { "success": false, "exitCode": 1, "stdout": "...", "stderr": "Error: ..." }
   ]
-}
-```
-
-**Example (error):**
-```json
-{
-  "success": false,
-  "totalRuns": 0,
-  "passedRuns": 0,
-  "failedRuns": 0,
-  "flakyTests": [],
-  "runs": [],
-  "error": "Test command must be a non-empty string"
 }
 ```
 
@@ -182,49 +272,17 @@ interface FlakinessReport {
 
 ### `TestFlakiness`
 
-Flakiness statistics for a single test.
+Information about a single flaky test.
 
 ```typescript
 interface TestFlakiness {
-  /** Name or identifier of the test */
-  testName: string
-
-  /** Number of times the test passed */
-  passed: number
-
-  /** Number of times the test failed */
-  failed: number
-
-  /** Total number of runs */
-  totalRuns: number
-
-  /** Failure rate as a percentage (0-100) */
-  failureRate: number
+  testName: string      // Name of the flaky test
+  passed: number        // Number of times it passed
+  failed: number        // Number of times it failed
+  totalRuns: number     // Total runs for this test
+  failureRate: number   // Failure rate percentage (0-100)
 }
 ```
-
-**Properties:**
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `testName` | `string` | Test identifier (currently always "Test Suite") |
-| `passed` | `number` | Count of successful runs (exit code 0) |
-| `failed` | `number` | Count of failed runs (non-zero exit code) |
-| `totalRuns` | `number` | Total runs (should equal `passed + failed`) |
-| `failureRate` | `number` | Percentage of failed runs (0-100) |
-
-**Example:**
-```json
-{
-  "testName": "Test Suite",
-  "passed": 7,
-  "failed": 3,
-  "totalRuns": 10,
-  "failureRate": 30.0
-}
-```
-
-**Note:** Currently, flakiness detection works at the suite level (entire test command pass/fail). Individual test names are not yet parsed from test runner output.
 
 ---
 
@@ -234,235 +292,171 @@ Result of a single test execution.
 
 ```typescript
 interface TestRunResult {
-  /** Whether the test command succeeded */
-  success: boolean
-
-  /** Exit code from the test command */
-  exitCode: number
-
-  /** Standard output from the test command */
-  stdout: string
-
-  /** Standard error from the test command */
-  stderr: string
-}
-```
-
-**Properties:**
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `success` | `boolean` | `true` if exit code was 0, `false` otherwise |
-| `exitCode` | `number` | Process exit code (0 = success, non-zero = failure) |
-| `stdout` | `string` | Standard output captured from the command |
-| `stderr` | `string` | Standard error captured from the command |
-
-**Example (success):**
-```json
-{
-  "success": true,
-  "exitCode": 0,
-  "stdout": "✓ All tests passed (5/5)\n",
-  "stderr": ""
-}
-```
-
-**Example (failure):**
-```json
-{
-  "success": false,
-  "exitCode": 1,
-  "stdout": "",
-  "stderr": "AssertionError: Expected true to equal false\n"
+  success: boolean   // Whether this run passed (exit code 0)
+  exitCode: number   // Exit code from test command
+  stdout: string     // Standard output captured
+  stderr: string     // Standard error captured
 }
 ```
 
 ---
 
-## Usage Examples
+### `CompiledDetector`
 
-### Basic Flakiness Detection
-
-```typescript
-import { detectFlakiness } from './src/index.js'
-
-const report = await detectFlakiness({
-  testCommand: 'npm test',
-  runs: 10
-})
-
-if (!report.success) {
-  console.error('Detection failed:', report.error)
-  process.exit(1)
-}
-
-if (report.flakyTests.length > 0) {
-  console.error('❌ Flaky tests detected!')
-  process.exit(1)
-}
-
-console.log('✅ All tests are reliable')
-```
-
-### Analyzing Failure Patterns
+Pre-compiled detector object returned by `compileDetector()`.
 
 ```typescript
-const report = await detectFlakiness({
-  testCommand: 'cargo test',
-  runs: 50,
-  verbose: true
-})
-
-if (report.success) {
-  const failures = report.runs.filter(r => !r.success)
-
-  console.log(`Failure rate: ${report.failedRuns}/${report.totalRuns}`)
-  console.log(`Unique errors:`)
-
-  const errors = new Set(failures.map(r => r.stderr))
-  errors.forEach(err => console.log(`  - ${err}`))
+interface CompiledDetector {
+  run(runs: number): Promise<Result<DetectionReport>>
+  getCommand(): string
+  getOptions(): Readonly<DetectConfig>
 }
 ```
 
-### CI/CD Integration
+**Methods:**
 
-```typescript
-#!/usr/bin/env tsx
-import { detectFlakiness } from './src/index.js'
+- **`run(runs: number)`**: Execute detection with specified run count
+  - Returns same `Result<DetectionReport>` as `detect()`
+  - Run count overrides any `runs` specified in initial config
 
-async function main() {
-  const report = await detectFlakiness({
-    testCommand: process.argv[2] || 'npm test',
-    runs: 20
-  })
+- **`getCommand()`**: Get the test command this detector will run
+  - Returns: `string`
 
-  if (!report.success) {
-    console.error('ERROR:', report.error)
-    process.exit(2)
-  }
+- **`getOptions()`**: Get the detector's configuration
+  - Returns: `Readonly<DetectConfig>`
+  - Useful for introspection and logging
 
-  if (report.flakyTests.length > 0) {
-    console.error('FLAKY TESTS DETECTED:')
-    report.flakyTests.forEach(test => {
-      console.error(`  ${test.testName}: ${test.failureRate}% failure rate`)
-    })
-    process.exit(1)
-  }
+---
 
-  console.log('All tests passed reliably')
-  process.exit(0)
-}
+## API Selection Guide
 
-main()
-```
+### When to use `detect()`
 
-### Checking Specific Failure Rate
+✅ **Use when:**
+- Debugging flaky tests
+- Generating detailed reports
+- Analyzing failure patterns
+- Need comprehensive run history
 
-```typescript
-const report = await detectFlakiness({
-  testCommand: 'pytest tests/',
-  runs: 100
-})
+❌ **Don't use when:**
+- Need fast CI gate (use `isFlaky()`)
+- Running multiple times with different counts (use `compileDetector()`)
 
-if (report.success) {
-  const failureRate = (report.failedRuns / report.totalRuns) * 100
+### When to use `isFlaky()`
 
-  if (failureRate > 5) {
-    console.error(`Unacceptable failure rate: ${failureRate}%`)
-    process.exit(1)
-  }
+✅ **Use when:**
+- CI/CD pipeline gate
+- Pre-merge validation
+- Need yes/no answer quickly
+- Don't need detailed report
 
-  if (failureRate > 0) {
-    console.warn(`Warning: ${failureRate}% failure rate detected`)
-  }
-}
-```
+❌ **Don't use when:**
+- Need to know which specific tests are flaky (use `detect()`)
+- Want detailed failure analysis (use `detect()`)
+
+### When to use `compileDetector()`
+
+✅ **Use when:**
+- Progressive detection strategy (start with 5 runs, escalate to 50)
+- Running same test command multiple times
+- Want to cache detector configuration
+- Need detector introspection
+
+❌ **Don't use when:**
+- Only running detection once (use `detect()` or `isFlaky()`)
+- Need simplest possible API (use `detect()`)
 
 ---
 
 ## Error Handling
 
-The `detectFlakiness()` function never throws errors. Instead, it returns a `FlakinessReport` with `success: false` and an `error` message.
+All APIs return `Result<T>` which never throws errors.
 
-**Common Error Scenarios:**
-
-### Invalid Test Command
+### Validation Errors
 
 ```typescript
-const report = await detectFlakiness({
-  testCommand: '',  // Empty string
-  runs: 10
+const result = await detect({
+  test: '',  // Invalid: empty string
+  runs: 0    // Invalid: must be >= 1
 })
 
-// report.success === false
-// report.error === "Test command must be a non-empty string"
+if (result.ok === false) {
+  console.error(result.error.message)
+  // Output: "Test command must be a non-empty string"
+}
 ```
 
 ### Execution Errors
 
 ```typescript
-const report = await detectFlakiness({
-  testCommand: 'nonexistent-command',
+const result = await detect({
+  test: 'invalid-command-that-does-not-exist',
   runs: 10
 })
 
-// report.success === true (detection completed)
-// report.failedRuns === 10 (all runs failed)
-// report.runs[0].stderr contains error message
+if (result.ok === false) {
+  console.error(result.error.message)
+  // Output: "spawn invalid-command-that-does-not-exist ENOENT"
+}
 ```
 
-**Best Practice:**
+### Best Practice
+
+Always check `result.ok` before accessing `result.value`:
+
 ```typescript
-const report = await detectFlakiness(config)
+const result = await detect({ test: 'npm test', runs: 10 })
 
-if (!report.success) {
-  console.error('Configuration error:', report.error)
-  return
+// ✅ Correct: Check .ok first
+if (result.ok === false) {
+  console.error('Error:', result.error.message)
+  process.exit(2)
 }
 
-if (report.failedRuns === report.totalRuns) {
-  console.error('All tests failed - check test command')
-  return
-}
+const report = result.value  // TypeScript knows this is DetectionReport
+console.log(report.totalRuns)
 
-// ... analyze flakiness
+// ❌ Wrong: Don't use try/catch
+try {
+  const report = (await detect({ test: 'npm test', runs: 10 })).value
+} catch (e) {
+  // This will never catch errors - Result type doesn't throw!
+}
 ```
 
 ---
 
-## CLI Exit Codes
+## Exit Codes
 
-When used as a CLI tool (`flaky --test "npm test" --runs 10`), the process exits with:
+When using as a library, you control exit codes. The recommended pattern:
 
-- `0` — All tests passed consistently (no flakiness)
-- `1` — Flaky tests detected, or all tests failed consistently
-- `2` — Invalid arguments or execution error
-
----
-
-## Performance Considerations
-
-- **Time Complexity:** O(N × T) where N = runs, T = test execution time
-- **Space Complexity:** O(N × S) where N = runs, S = output size per run
-- **Resource Limits:**
-  - Maximum runs: 1000 (prevents resource exhaustion)
-  - Maximum buffer per run: 10MB (stdout + stderr combined)
-- **Execution:** Tests run sequentially (not parallel) to avoid false flakiness from resource contention
-
-**Example:**
 ```typescript
-// For tests that take 2 seconds each:
-const report = await detectFlakiness({
-  testCommand: 'npm test',
-  runs: 50  // Will take ~100 seconds (50 × 2s)
-})
+const result = await detect({ test: 'npm test', runs: 10 })
+
+if (result.ok === false) {
+  console.error('Detection failed:', result.error.message)
+  process.exit(2)  // Invalid arguments or execution error
+}
+
+if (result.value.flakyTests.length > 0) {
+  console.error('Flaky tests detected')
+  process.exit(1)  // Flaky tests found
+}
+
+console.log('No flaky tests detected')
+process.exit(0)  // Success
 ```
+
+**Exit code meanings:**
+- `0` - Success: Detection completed, no flaky tests found
+- `1` - Flaky Detected: One or more flaky tests found
+- `2` - Invalid Args: Invalid arguments or validation error
 
 ---
 
 ## See Also
 
-- [Getting Started](/tools/test-flakiness-detector/getting-started) — Installation and setup
+- [Library Usage](/tools/test-flakiness-detector/library-usage) — Integration patterns
 - [CLI Usage](/tools/test-flakiness-detector/cli-usage) — Command-line interface
-- [Library Usage](/tools/test-flakiness-detector/library-usage) — TypeScript/JavaScript integration
 - [Examples](/tools/test-flakiness-detector/examples) — Real-world usage patterns
+- [Getting Started](/tools/test-flakiness-detector/getting-started) — Installation and setup
