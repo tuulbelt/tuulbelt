@@ -839,7 +839,9 @@ remote: - 3 of 3 required status checks are expected.
 error: failed to push some refs
 ```
 
-Automated workflows (update-baseline, create-demo) fail when trying to push to main branch.
+Or in PR UI: `"testExpected — Waiting for status to be reported"` (check never arrives)
+
+Automated workflows (update-baseline, create-demo) fail when trying to push to main branch, or PRs get stuck waiting for non-existent status checks.
 
 **Root Cause:**
 GitHub branch protection with "Require pull request reviews" and "Require status checks" blocks ALL direct pushes to main, including automated workflows using `GITHUB_TOKEN`. The default `GITHUB_TOKEN` cannot bypass branch protection.
@@ -873,11 +875,13 @@ EOF
 ```
 
 **Why This Is Safe:**
+- ✅ **Write access is controlled**: Public repos don't grant write access - only collaborators added by admin can push/merge
 - ✅ Pre-commit hooks prevent developers from pushing to main directly
-- ✅ Workflow conventions enforce feature branch development
+- ✅ Workflow conventions enforce feature branch development (documented + enforced by hooks)
 - ✅ Status checks still run on all PRs automatically
-- ✅ GitHub PR UI requires checks pass before enabling merge button
-- ✅ Only automated documentation workflows push directly (baselines, demos)
+- ✅ GitHub PR UI requires checks pass before enabling merge button (visual feedback)
+- ✅ Code reviews are **recommended best practice** (shown in PR UI, just not enforced)
+- ✅ Only automated documentation workflows push directly (baselines, demos - low risk changes)
 
 **Alternative Solutions (Not Recommended for Tuulbelt):**
 1. **Use GitHub App or PAT** - Requires additional setup and secret management
@@ -902,10 +906,16 @@ gh workflow run "Update Benchmark Baseline" --repo tuulbelt/REPO_NAME
 gh workflow run "Create Demo Recording" --repo tuulbelt/REPO_NAME
 ```
 
-**Affected Tools:**
-- test-flakiness-detector ✅ Fixed 2026-01-10
-- property-validator ✅ Fixed 2026-01-10
-- All future tools with benchmark/demo workflows
+**Affected Repositories:**
+- **Meta repo (tuulbelt/tuulbelt)** ✅ Fixed 2026-01-10
+  - Issue: Required non-existent "test" status check
+  - Fix: Removed status check and PR review requirements
+- **All 11 tool repos** ✅ Fixed 2026-01-10
+  - test-flakiness-detector, property-validator (with benchmark workflows)
+  - cli-progress-reporting, config-file-merger, cross-platform-path-normalizer
+  - file-based-semaphore, file-based-semaphore-ts, output-diffing-utility
+  - port-resolver, snapshot-comparison, structured-error-handler (all with demo workflows)
+- **All future tools** with automated workflows will use simplified protection from templates
 
 ---
 
