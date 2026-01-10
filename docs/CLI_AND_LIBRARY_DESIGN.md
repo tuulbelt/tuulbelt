@@ -182,8 +182,10 @@ if (result.ok) {
 // Named exports for optimal bundling
 import { detect, isFlaky } from 'test-flakiness-detector';
 
-// Entry points for subset imports
-import { v } from 'property-validator/v';
+// Multiple entry points for different use cases (propval v0.10.0+)
+import { v, validate } from 'property-validator';           // Full API
+import type { Validator, Result } from 'property-validator/types';  // Types only
+import { toJsonSchema } from 'property-validator/json-schema';      // Interop
 ```
 
 #### 5. JSDoc with Examples
@@ -204,6 +206,25 @@ import { v } from 'property-validator/v';
  * ```
  */
 export function detect(config: DetectConfig): Promise<Result<DetectionReport>>;
+```
+
+#### 6. Interoperability
+
+Consider export formats for ecosystem integration:
+
+```typescript
+// JSON Schema export for OpenAPI/Swagger compatibility (propval v0.10.0+)
+import { toJsonSchema } from 'property-validator/json-schema';
+
+const UserSchema = v.object({
+  name: v.string(),
+  email: v.pipe(v.string(), v.email()),
+  age: v.optional(v.number())
+});
+
+// Export for API documentation, code generation, or cross-language validation
+const jsonSchema = toJsonSchema(UserSchema);
+// { type: 'object', properties: { name: { type: 'string' }, ... }, required: ['name', 'email'] }
 ```
 
 ---
@@ -453,5 +474,5 @@ let guard = sem.try_acquire(Duration::from_secs(5))?;
 
 ---
 
-**Last Updated:** 2026-01-06
+**Last Updated:** 2026-01-10
 **Maintained By:** Tuulbelt Core Team

@@ -1,8 +1,8 @@
 # Tuulbelt Tool Maturity Analysis
 
 **Status:** Research-Backed Gap Analysis
-**Reference:** Property Validator (propval) v0.9.3 as Gold Standard
-**Date:** 2026-01-05
+**Reference:** Property Validator (propval) v0.10.0 as Gold Standard
+**Date:** 2026-01-10
 
 ---
 
@@ -14,7 +14,7 @@ This document analyzes all 10 Tuulbelt tools against the Property Validator (pro
 2. **Documentation Expansion Opportunities** - Documentation structure improvements
 3. **Benchmarking Opportunities** - Where competitive benchmarks add value
 
-**Key Finding:** Property Validator has evolved through 9+ versions with 595 tests, multi-API design, benchmark CI, and comprehensive documentation. Other tools remain at v0.1.0 with foundational implementations.
+**Key Finding:** Property Validator has evolved through 10 versions with 898 tests, multi-API design, benchmark CI, JSON Schema export, and comprehensive documentation. Other tools remain at v0.1.0 with foundational implementations.
 
 ---
 
@@ -102,10 +102,12 @@ Based on analysis, three tools should be renamed for clarity:
 | Aspect | Implementation | Value |
 |--------|----------------|-------|
 | **Multi-API Design** | `validate()`, `check()`, `compileCheck()` | Different APIs for different use cases |
-| **Entry Points** | `/v` | Named exports for tree-shaking |
-| **Version Evolution** | v0.1.0 → v0.9.3 (9 releases) | Continuous improvement pattern |
-| **Test Count** | 595 tests | Comprehensive coverage (unit + integration + CLI) |
+| **Entry Points** | Main, `/v`, `/types`, `/json-schema` | Tree-shaking, type-only imports, interop |
+| **Version Evolution** | v0.1.0 → v0.10.0 (10 releases) | Continuous improvement pattern |
+| **Test Count** | 898 tests | Comprehensive coverage (unit + integration + CLI) |
 | **Benchmark CI** | tatami-ng + regression detection | Automatic performance validation |
+| **JSON Schema Export** | `toJsonSchema()` | OpenAPI/Swagger compatibility |
+| **Advanced Validators** | `discriminatedUnion()`, `record()`, `strict()` | Complete validation toolkit |
 | **Documentation** | 7+ doc files per standard | README, CLAUDE.md, SPEC.md, CHANGELOG, etc. |
 | **Result Type** | `{ ok: true; value } | { ok: false; error }` | Non-throwing, composable |
 
@@ -116,7 +118,12 @@ Implementation Patterns:
 ├── Multi-API tiers (validate → check → compileCheck)
 ├── Result type (non-throwing)
 ├── Named exports for tree-shaking
-├── Entry point `/v` for named exports
+├── Multiple entry points (main, /v, /types, /json-schema)
+├── Functional refinement API (string(email(), minLength(5)))
+├── Advanced validators (discriminatedUnion, record, strict/passthrough)
+├── JSON Schema export (toJsonSchema() for OpenAPI)
+├── Extended validators (cuid, ulid, nanoid, port, latitude, etc.)
+├── JIT compilation for performance
 ├── JSDoc with @example blocks
 ├── CLI entry point with npm link support
 └── Performance optimization phases (documented)
@@ -869,7 +876,7 @@ Complete all improvements for each tool before moving to the next:
 
 | Tool | Current | Target v0.2.0 | Target v0.3.0 | Target v1.0.0 |
 |------|---------|---------------|---------------|---------------|
-| property-validator | v0.9.3 | N/A (already gold) | N/A | v1.0.0 (stable API) |
+| property-validator | v0.10.0 | N/A (already gold) | N/A | v1.0.0 (stable API) |
 | test-flakiness-detector | v0.1.0 | Multi-API + SPEC | Docs complete | v1.0.0 |
 | cli-progress-reporting | v0.1.0 | Multi-API + concurrent | SPEC + examples | v1.0.0 |
 | port-resolver | v0.1.0 | Batch allocation | SPEC + CI guide | v1.0.0 |
@@ -904,6 +911,63 @@ export function check<T>(data: unknown, schema: Schema<T>): boolean;
 
 // Pre-compiled (fastest for repeated use)
 export function compileCheck<T>(schema: Schema<T>): (data: unknown) => boolean;
+```
+
+#### JSON Schema Export (v0.10.0+)
+```typescript
+import { v, toJsonSchema } from '@tuulbelt/property-validator';
+
+const UserSchema = v.object({
+  name: v.string().min(1),
+  age: v.number().int().positive(),
+  email: v.optional(v.string().email())
+});
+
+// Convert to JSON Schema Draft 7 for OpenAPI compatibility
+const jsonSchema = toJsonSchema(UserSchema);
+```
+
+#### Advanced Validators (v0.10.0+)
+```typescript
+// Discriminated unions (O(1) lookup by discriminator)
+const Response = v.discriminatedUnion('type', {
+  success: v.object({ type: v.literal('success'), data: v.string() }),
+  error: v.object({ type: v.literal('error'), code: v.number() })
+});
+
+// Dynamic key-value pairs
+const Scores = v.record(v.string(), v.number());
+
+// Unknown property handling
+const StrictUser = v.object({ name: v.string() }).strict();  // Reject unknown
+const PassthroughUser = v.object({ name: v.string() }).passthrough();  // Preserve unknown
+```
+
+#### Functional Refinement API (v0.9.1+)
+```typescript
+// Tree-shakeable refinements (bundlers can exclude unused ones)
+import { string, number, email, minLength, int, positive, validate } from '@tuulbelt/property-validator';
+
+const EmailSchema = string(email(), minLength(5));
+const AgeSchema = number(int(), positive());
+```
+
+#### Extended Validators (v0.10.0+)
+```typescript
+// String validators
+v.string().cuid()       // CUIDs
+v.string().cuid2()      // CUIDs v2
+v.string().ulid()       // ULIDs
+v.string().nanoid()     // NanoIDs
+v.string().base64()     // Base64
+v.string().hex()        // Hexadecimal
+v.string().jwt()        // JWT format
+
+// Number validators
+v.number().port()       // 0-65535
+v.number().latitude()   // -90 to 90
+v.number().longitude()  // -180 to 180
+v.number().percentage() // 0-100
 ```
 
 #### CLI Entry Point
@@ -1095,6 +1159,6 @@ let guard = semaphore.acquire()?;
 
 ---
 
-**Document Version:** 1.0.0
-**Last Updated:** 2026-01-05
+**Document Version:** 1.1.0
+**Last Updated:** 2026-01-10
 **Maintained By:** Tuulbelt Core Team
