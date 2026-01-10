@@ -11,7 +11,7 @@ Test Flakiness Detector helps identify non-deterministic tests by running your t
 - **`isFlaky()`** — Fast boolean check for CI gates (pre-merge validation)
 - **`compileDetector()`** — Pre-compiled detector for repeated use (progressive strategies)
 
-**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.4.0)
 
 **Language:** TypeScript
 
