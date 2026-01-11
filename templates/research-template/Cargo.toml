@@ -1,0 +1,22 @@
+[package]
+name = "research-name"
+version = "0.0.1"
+edition = "2021"
+authors = ["Tuulbelt <tuulbelt@example.com>"]
+description = "Research: One sentence description of this exploration"
+license = "MIT"
+repository = "https://github.com/tuulbelt/research-name"
+publish = false  # Research projects are not published
+
+[lib]
+name = "research_name"
+path = "src/lib.rs"
+
+[[bin]]
+name = "experiment"
+path = "experiments/main.rs"
+
+# Research projects may have dependencies (relaxed principles)
+[dependencies]
+
+[dev-dependencies]

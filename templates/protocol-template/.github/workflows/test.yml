@@ -1,0 +1,84 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        rust: [stable, beta]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust ${{ matrix.rust }}
+        uses: dtolnay/rust-action@stable
+        with:
+          toolchain: ${{ matrix.rust }}
+          components: clippy, rustfmt
+
+      - name: Check formatting
+        run: cargo fmt -- --check
+
+      - name: Run clippy
+        run: cargo clippy -- -D warnings
+
+      - name: Run tests
+        run: cargo test --verbose
+
+      - name: Run compliance tests
+        run: cargo test vectors --verbose
+
+      - name: Build release
+        run: cargo build --release
+
+      - name: Verify zero runtime dependencies
+        run: |
+          DEPS=$(grep -A 100 '^\[dependencies\]' Cargo.toml | grep -B 100 '^\[' | grep -v '^\[' | grep -v '^#' | grep -v '^$' | wc -l)
+          if [ "$DEPS" != "0" ]; then
+            echo "ERROR: Runtime dependencies found! Tuulbelt protocols must have zero runtime dependencies."
+            grep -A 100 '^\[dependencies\]' Cargo.toml | grep -B 100 '^\[' | head -20
+            exit 1
+          fi
+          echo "✓ Zero runtime dependencies verified"
+
+  # Test CLI
+  cli:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-action@stable
+
+      - name: Build CLI
+        run: cargo build --release
+
+      - name: Test encode command
+        run: |
+          OUTPUT=$(./target/release/protocol-name encode --type request --id 1 --payload hello)
+          echo "Encoded: $OUTPUT"
+          if [ -z "$OUTPUT" ]; then
+            echo "ERROR: Encode command failed"
+            exit 1
+          fi
+
+      - name: Test decode command
+        run: |
+          # Encode first
+          HEX=$(./target/release/protocol-name encode --type request --id 1 --payload hello)
+          # Decode
+          ./target/release/protocol-name decode "$HEX"
+
+      - name: Test validate command
+        run: |
+          HEX=$(./target/release/protocol-name encode --type request --id 1 --payload test)
+          ./target/release/protocol-name validate "$HEX"
