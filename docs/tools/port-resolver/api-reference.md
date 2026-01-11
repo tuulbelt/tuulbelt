@@ -2,6 +2,33 @@
 
 Complete API documentation for the port-resolver library.
 
+## Modular Imports (v0.3.0)
+
+Port Resolver provides 8 entry points for tree-shaking:
+
+```typescript
+// Main entry - everything (default)
+import { PortResolver, getPort } from '@tuulbelt/port-resolver';
+
+// Core classes only (~40% smaller)
+import { PortResolver, PortManager } from '@tuulbelt/port-resolver/core';
+
+// Convenience APIs only (~65% smaller)
+import { getPort, getPorts, releasePort } from '@tuulbelt/port-resolver/api';
+
+// Utilities only (~80% smaller)
+import { sanitizeTag, validatePath } from '@tuulbelt/port-resolver/utils';
+
+// Registry operations
+import { readRegistry, writeRegistry } from '@tuulbelt/port-resolver/registry';
+
+// Types only (no runtime code)
+import type { PortConfig, PortEntry } from '@tuulbelt/port-resolver/types';
+
+// Configuration constants
+import { DEFAULT_CONFIG } from '@tuulbelt/port-resolver/config';
+```
+
 ## Types
 
 ### `Result<T, E>`

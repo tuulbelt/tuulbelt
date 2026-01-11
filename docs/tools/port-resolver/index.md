@@ -10,7 +10,7 @@ Port Resolver (`portres`) provides a centralized, file-based registry for port a
 This tool uses [file-based-semaphore-ts](/tools/file-based-semaphore-ts/) as a **library dependency** for atomic registry access. See [PRINCIPLES.md Exception 2](/guide/principles#zero-external-dependencies) for details on Tuulbelt tool composition.
 :::
 
-**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.2.0) · 159 tests passing
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.3.0) · 194 tests passing
 
 **Language:** TypeScript
 
@@ -53,6 +53,10 @@ Track allocations by tag with `PortManager` for simplified port tracking and cle
 ### <img src="/icons/sliders.svg" class="inline-icon" alt=""> Port Range Allocation (v0.2.0)
 
 Reserve contiguous port ranges for microservices clusters or get ports within specific bounds for firewall compliance.
+
+### <img src="/icons/package.svg" class="inline-icon" alt=""> Tree-Shakable & Modular (v0.3.0)
+
+8 entry points for optimal tree-shaking. Import only what you need and save 40-80% bundle size.
 
 ## Quick Start
 
