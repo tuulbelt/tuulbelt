@@ -1,6 +1,53 @@
 # Next Tasks
 
-**Last Updated:** 2026-01-08
+**Last Updated:** 2026-01-11
+
+---
+
+## 🎯 Property Validator v0.11.0 - Test Data Generation (Proposed)
+
+**Status:** Proposed - Pending Phase 3 validation completion
+**Language:** TypeScript
+**Short Name:** `propval`
+
+### v0.11.0 Proposed Features
+
+| Feature | Status | Description |
+|---------|--------|-------------|
+| Test data generation from schemas | 📋 Proposed | Generate random valid data from propval schemas |
+| CLI support | 📋 Proposed | `propval generate --schema user.ts --count 10` |
+| fast-check integration | 📋 Proposed | `toGenerator(schema)` → fast-check arbitrary |
+
+### Rationale
+
+Discovered during Phase 3 validation research:
+- Typia does this with compile-time transformers (complex setup)
+- Effect Schema does schema → arbitrary (well-integrated)
+- Zod has fragmented third-party solutions
+- propval already has `toJsonSchema()` which captures constraints
+- Straightforward mapping: `v.string().email()` → `fc.emailAddress()`
+
+### API Design (Draft)
+
+```typescript
+// Library API
+import { toGenerator } from 'property-validator/generate';
+import * as fc from 'fast-check';
+
+const userArb = toGenerator(UserSchema);
+fc.assert(fc.property(userArb, (user) => {
+  // user is guaranteed to match UserSchema
+}));
+
+// CLI
+propval generate --schema ./user.schema.ts --count 10 --format json
+```
+
+### Open Questions
+
+- **Naming:** `toGenerator`, `toArbitrary`, `generateFrom`, `toTestData`?
+- **CLI integration:** Separate command or flag on existing `propval` CLI?
+- **fast-check as peer dep:** Required or optional?
 
 ---
 
