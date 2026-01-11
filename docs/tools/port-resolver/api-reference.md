@@ -74,6 +74,251 @@ interface PortRegistry {
 }
 ```
 
+## Module-Level Functions (v0.2.0)
+
+Convenience functions for common port allocation patterns.
+
+### `getPort(options?)`
+
+Convenience wrapper for single port allocation without class instantiation.
+
+```typescript
+async function getPort(options?: {
+  tag?: string;
+  config?: PortResolverConfig;
+}): Promise<Result<PortAllocation>>
+```
+
+**Parameters:**
+- `tag` - Optional tag for identification
+- `config` - Optional PortResolver configuration
+
+**Returns:** `Result<PortAllocation>` containing the allocated port
+
+**Example:**
+```typescript
+import { getPort } from '@tuulbelt/port-resolver';
+
+const result = await getPort({ tag: 'api-server' });
+if (result.ok) {
+  console.log(`Port: ${result.value.port}`);
+}
+```
+
+---
+
+### `getPorts(count, options?)`
+
+Batch allocation with individual tags or shared tag.
+
+```typescript
+async function getPorts(
+  count: number,
+  options?: {
+    tag?: string;
+    tags?: string[];
+    config?: PortResolverConfig;
+  }
+): Promise<Result<PortAllocation[]>>
+```
+
+**Parameters:**
+- `count` - Number of ports to allocate
+- `tag` - Optional shared tag for all ports
+- `tags` - Optional array of individual tags (must match count)
+- `config` - Optional PortResolver configuration
+
+**Returns:** `Result<PortAllocation[]>` with all allocated ports
+
+**All-or-nothing semantics:** If any allocation fails, all allocated ports are rolled back.
+
+**Example:**
+```typescript
+import { getPorts } from '@tuulbelt/port-resolver';
+
+// With individual tags
+const services = await getPorts(3, {
+  tags: ['http-server', 'grpc-server', 'metrics-server'],
+});
+
+// With shared tag
+const workers = await getPorts(5, { tag: 'worker' });
+```
+
+---
+
+## Class: `PortManager` (v0.2.0)
+
+Port lifecycle management with tag-based tracking.
+
+### Constructor
+
+```typescript
+new PortManager(config?: PortResolverConfig)
+```
+
+**Parameters:**
+- `config` - Optional PortResolver configuration (same as PortResolver)
+
+**Example:**
+```typescript
+import { PortManager } from '@tuulbelt/port-resolver';
+
+const manager = new PortManager({
+  minPort: 8000,
+  maxPort: 9000,
+});
+```
+
+### Methods
+
+#### `allocate(tag?)`
+
+Allocate a port and track by tag. **Prevents duplicate tags** within this instance.
+
+```typescript
+async allocate(tag?: string): Promise<Result<PortAllocation>>
+```
+
+**Parameters:**
+- `tag` - Optional tag for identification
+
+**Returns:** `Result<PortAllocation>` containing the allocated port
+
+**Note:** Calling this twice with the same tag will fail to prevent losing track of allocations.
+
+**Example:**
+```typescript
+const result = await manager.allocate('api-server');
+if (result.ok) {
+  console.log(`Allocated: ${result.value.port}`);
+}
+
+// This will fail:
+await manager.allocate('api-server'); // Error: tag already in use
+```
+
+---
+
+#### `allocateMultiple(count, tag?)`
+
+Allocate multiple ports atomically. All share same tag if provided.
+
+```typescript
+async allocateMultiple(
+  count: number,
+  tag?: string
+): Promise<Result<PortAllocation[]>>
+```
+
+**Parameters:**
+- `count` - Number of ports to allocate
+- `tag` - Optional shared tag for all ports
+
+**Returns:** `Result<PortAllocation[]>` with all allocated ports
+
+**Example:**
+```typescript
+const result = await manager.allocateMultiple(3, 'workers');
+if (result.ok) {
+  console.log(`Allocated ${result.value.length} ports`);
+}
+```
+
+---
+
+#### `release(tagOrPort)`
+
+Release by tag or port number. **Idempotent** - succeeds even if already released.
+
+```typescript
+async release(tagOrPort: string | number): Promise<Result<void>>
+```
+
+**Parameters:**
+- `tagOrPort` - Tag string or port number to release
+
+**Returns:** `Result<void>` indicating success
+
+**Note:** Returns success even if tag/port was not allocated (idempotent behavior).
+
+**Example:**
+```typescript
+// Release by tag
+await manager.release('api-server');
+
+// Release by port number
+await manager.release(54321);
+
+// Calling again succeeds (idempotent)
+await manager.release('api-server'); // Still succeeds
+```
+
+---
+
+#### `releaseAll()`
+
+Release all ports managed by this PortManager instance.
+
+```typescript
+async releaseAll(): Promise<Result<number>>
+```
+
+**Returns:** `Result<number>` with count of ports released
+
+**Example:**
+```typescript
+const result = await manager.releaseAll();
+if (result.ok) {
+  console.log(`Released ${result.value} ports`);
+}
+```
+
+---
+
+#### `getAllocations()`
+
+Get all tracked allocations as array.
+
+```typescript
+getAllocations(): PortAllocation[]
+```
+
+**Returns:** Array of all port allocations tracked by this instance
+
+**Example:**
+```typescript
+const allocations = manager.getAllocations();
+for (const alloc of allocations) {
+  console.log(`${alloc.tag}: ${alloc.port}`);
+}
+```
+
+---
+
+#### `get(tag)`
+
+Get specific allocation by tag.
+
+```typescript
+get(tag: string): PortAllocation | undefined
+```
+
+**Parameters:**
+- `tag` - Tag to lookup
+
+**Returns:** `PortAllocation` if found, `undefined` otherwise
+
+**Example:**
+```typescript
+const frontend = manager.get('frontend');
+if (frontend) {
+  console.log(`Frontend port: ${frontend.port}`);
+}
+```
+
+---
+
 ## Class: `PortResolver`
 
 Main class for port allocation and management.
@@ -151,6 +396,79 @@ async getMultiple(
 const result = await resolver.getMultiple(3, { tag: 'services' });
 if (result.ok) {
   const [apiPort, dbPort, cachePort] = result.value.map(a => a.port);
+}
+```
+
+---
+
+#### `reserveRange(options)` (v0.2.0)
+
+Reserve a contiguous range of ports.
+
+```typescript
+async reserveRange(options: {
+  start: number;
+  count: number;
+  tag?: string;
+}): Promise<Result<PortAllocation[]>>
+```
+
+**Parameters:**
+- `start` - Starting port number
+- `count` - Number of contiguous ports to reserve
+- `tag` - Optional shared tag for all ports
+
+**Returns:** `Result<PortAllocation[]>` with all allocated ports in range
+
+**Use case:** Microservices clusters requiring adjacent ports.
+
+**Example:**
+```typescript
+const cluster = await resolver.reserveRange({
+  start: 50000,
+  count: 5,
+  tag: 'backend-cluster',
+});
+
+if (cluster.ok) {
+  console.log('Cluster ports:', cluster.value.map(p => p.port).join(', '));
+  // Output: "50000, 50001, 50002, 50003, 50004"
+}
+```
+
+---
+
+#### `getPortInRange(options)` (v0.2.0)
+
+Get any available port within specific bounds.
+
+```typescript
+async getPortInRange(options: {
+  min: number;
+  max: number;
+  tag?: string;
+}): Promise<Result<PortAllocation>>
+```
+
+**Parameters:**
+- `min` - Minimum port number (inclusive)
+- `max` - Maximum port number (inclusive)
+- `tag` - Optional tag for identification
+
+**Returns:** `Result<PortAllocation>` with allocated port in range
+
+**Use case:** Firewall rules or compliance requirements restricting port ranges.
+
+**Example:**
+```typescript
+const apiPort = await resolver.getPortInRange({
+  min: 8000,
+  max: 9000,
+  tag: 'public-api',
+});
+
+if (apiPort.ok) {
+  console.log(`Public API port (8000-9000): ${apiPort.value.port}`);
 }
 ```
 
