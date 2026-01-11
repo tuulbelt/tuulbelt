@@ -2,14 +2,25 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: 'Tuulbelt',
-  description: 'Zero-dependency tools and utilities for modern software development',
+  description: 'A comprehensive software ecosystem with zero-dependency tools, libraries, frameworks, and more',
   base: '/tuulbelt/',
   srcExclude: ['**/setup/**', '**/claude-code-*.md', '**/tool-template.md'],
 
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Tools', link: '/tools/' },
+      {
+        text: 'Ecosystem',
+        items: [
+          { text: 'Tools', link: '/tools/' },
+          { text: 'Libraries', link: '/libraries/' },
+          { text: 'Frameworks', link: '/frameworks/' },
+          { text: 'Protocols', link: '/protocols/' },
+          { text: 'Systems', link: '/systems/' },
+          { text: 'Meta', link: '/meta/' },
+          { text: 'Research', link: '/research/' }
+        ]
+      },
       { text: 'Guide', link: '/guide/philosophy' },
       { text: 'GitHub', link: 'https://github.com/tuulbelt/tuulbelt' }
     ],
@@ -198,6 +209,55 @@ export default defineConfig({
             { text: 'Library Usage', link: '/tools/property-validator/library-usage' },
             { text: 'Examples', link: '/tools/property-validator/examples' },
             { text: 'API Reference', link: '/tools/property-validator/api-reference' }
+          ]
+        }
+      ],
+      // New category sidebars
+      '/libraries/': [
+        {
+          text: 'Libraries',
+          items: [
+            { text: 'Overview', link: '/libraries/' }
+          ]
+        }
+      ],
+      '/frameworks/': [
+        {
+          text: 'Frameworks',
+          items: [
+            { text: 'Overview', link: '/frameworks/' }
+          ]
+        }
+      ],
+      '/protocols/': [
+        {
+          text: 'Protocols',
+          items: [
+            { text: 'Overview', link: '/protocols/' }
+          ]
+        }
+      ],
+      '/systems/': [
+        {
+          text: 'Systems',
+          items: [
+            { text: 'Overview', link: '/systems/' }
+          ]
+        }
+      ],
+      '/meta/': [
+        {
+          text: 'Meta',
+          items: [
+            { text: 'Overview', link: '/meta/' }
+          ]
+        }
+      ],
+      '/research/': [
+        {
+          text: 'Research',
+          items: [
+            { text: 'Overview', link: '/research/' }
           ]
         }
       ]
