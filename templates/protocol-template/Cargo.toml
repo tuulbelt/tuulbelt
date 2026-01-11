@@ -1,0 +1,35 @@
+[package]
+name = "protocol-name"
+version = "0.1.0"
+edition = "2021"
+authors = ["Tuulbelt <tuulbelt@example.com>"]
+description = "One sentence description of this protocol"
+license = "MIT"
+repository = "https://github.com/tuulbelt/protocol-name"
+documentation = "https://github.com/tuulbelt/protocol-name#readme"
+readme = "README.md"
+keywords = ["tuulbelt", "protocol", "wire-format"]
+categories = ["encoding", "network-programming"]
+
+[lib]
+name = "protocol_name"
+path = "src/lib.rs"
+
+[[bin]]
+name = "protocol-name"
+path = "src/main.rs"
+
+# Zero runtime dependencies - Tuulbelt principle
+[dependencies]
+
+[dev-dependencies]
+# Only dev dependencies allowed
+
+[[test]]
+name = "vectors"
+path = "tests/vectors.rs"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

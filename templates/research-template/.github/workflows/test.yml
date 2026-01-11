@@ -1,0 +1,85 @@
+name: Research CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # TypeScript experiments
+  typescript:
+    runs-on: ubuntu-latest
+    if: ${{ hashFiles('package.json') != '' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run experiments
+        run: npm run experiment || echo "Experiments completed (failures are acceptable in research)"
+
+      - name: Run tests (if any)
+        run: npm test || echo "No tests or tests failed (acceptable in research)"
+        continue-on-error: true
+
+  # Rust experiments
+  rust:
+    runs-on: ubuntu-latest
+    if: ${{ hashFiles('Cargo.toml') != '' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-action@stable
+
+      - name: Build
+        run: cargo build || echo "Build issues (acceptable in research)"
+        continue-on-error: true
+
+      - name: Run experiments
+        run: cargo run --bin experiment || echo "Experiments completed (failures are acceptable in research)"
+        continue-on-error: true
+
+      - name: Run tests
+        run: cargo test || echo "Tests failed (acceptable in research)"
+        continue-on-error: true
+
+  # Validate documentation
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check HYPOTHESIS.md exists
+        run: |
+          if [ ! -f HYPOTHESIS.md ]; then
+            echo "ERROR: HYPOTHESIS.md is required for research projects"
+            exit 1
+          fi
+          echo "✓ HYPOTHESIS.md exists"
+
+      - name: Check STATUS.md exists
+        run: |
+          if [ ! -f STATUS.md ]; then
+            echo "WARNING: STATUS.md should exist to track progress"
+          else
+            echo "✓ STATUS.md exists"
+          fi
+
+      - name: Check FINDINGS.md exists
+        run: |
+          if [ ! -f FINDINGS.md ]; then
+            echo "WARNING: FINDINGS.md should exist to document discoveries"
+          else
+            echo "✓ FINDINGS.md exists"
+          fi
