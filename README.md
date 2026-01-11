@@ -1,16 +1,44 @@
 # Tuulbelt
 
-A curated collection of focused, zero-dependency tools and utilities for modern software development.
+A comprehensive software ecosystem with zero-dependency tools, libraries, frameworks, protocols, and more.
+
+## Ecosystem Categories
+
+| Category | Purpose | Projects |
+|----------|---------|----------|
+| **[tools/](tools/)** | CLI utilities | 11 implemented |
+| **[libraries/](libraries/)** | Programmatic APIs | Planned |
+| **[frameworks/](frameworks/)** | Application structures | Planned |
+| **[protocols/](protocols/)** | Wire formats & specs | Planned |
+| **[systems/](systems/)** | Complex infrastructure | Planned |
+| **[meta/](meta/)** | Tools for building tools | Planned |
+| **[research/](research/)** | Experimental projects | Planned |
 
 ## Philosophy
 
-Each tool in Tuulbelt:
-- **Solves one problem** — Narrow, well-defined scope
-- **Zero external dependencies** — Uses standard library only
-- **Portable interface** — CLI, files, sockets; not proprietary APIs
-- **Composable** — Works via pipes, environment variables, file I/O
-- **Independently cloneable** — Each tool is a standalone repository
+Projects in Tuulbelt share these universal principles:
 - **Proven implementation** — No moonshots, no "works 80%" solutions
+- **Documentation over configuration** — Clear docs, minimal config
+- **Test everything** — Comprehensive testing required
+- **Independently cloneable** — Each project is a standalone repository
+- **Tuulbelt composition** — Projects can use each other via git URLs
+
+Category-specific principles (e.g., zero deps for tools, SPEC.md for protocols) are documented in [PRINCIPLES.md](PRINCIPLES.md).
+
+## Selective Cloning
+
+Most users don't need everything. Clone what you need:
+
+```bash
+# Clone single project
+./scripts/clone-project.sh tools/test-flakiness-detector
+
+# Clone entire category
+./scripts/clone-category.sh tools
+
+# Clone project with its Tuulbelt dependencies
+./scripts/clone-with-deps.sh tools/snapshot-comparison
+```
 
 ## Current Tools
 

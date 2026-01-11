@@ -1,75 +1,111 @@
 # Tuulbelt Architecture
 
-## Repo Organization
+Tuulbelt is a **software ecosystem** organized into categories, each serving a different purpose in the software development stack.
+
+## Ecosystem Organization
 
 ```
 tuulbelt (meta repo)
-├── README.md                    # Index of all tools, quick start
-├── PRINCIPLES.md               # Design philosophy
-├── CONTRIBUTING.md             # How to create/maintain tools
-├── ARCHITECTURE.md             # This file
-├── tools/                      # Git submodules (standalone tool repos)
+├── README.md                    # Ecosystem overview
+├── PRINCIPLES.md                # Design philosophy (category-specific)
+├── CONTRIBUTING.md              # How to create/maintain projects
+├── ARCHITECTURE.md              # This file
+│
+├── tools/                       # CLI utilities (git submodules)
 │   ├── test-flakiness-detector/     → github.com/tuulbelt/test-flakiness-detector
 │   ├── cli-progress-reporting/      → github.com/tuulbelt/cli-progress-reporting
-│   ├── cross-platform-path-normalizer/ → github.com/tuulbelt/cross-platform-path-normalizer
-│   ├── config-file-merger/          → github.com/tuulbelt/config-file-merger
-│   ├── structured-error-handler/    → github.com/tuulbelt/structured-error-handler
-│   ├── file-based-semaphore/        → github.com/tuulbelt/file-based-semaphore (Rust)
-│   ├── file-based-semaphore-ts/     → github.com/tuulbelt/file-based-semaphore-ts
-│   ├── output-diffing-utility/      → github.com/tuulbelt/output-diffing-utility (Rust)
-│   ├── snapshot-comparison/         → github.com/tuulbelt/snapshot-comparison (Rust)
-│   └── port-resolver/               → github.com/tuulbelt/port-resolver
-├── docs/
-│   ├── QUALITY_CHECKLIST.md     # Pre-commit quality checks
-│   ├── testing-standards.md     # Cross-tool testing patterns
-│   ├── security-guidelines.md   # Security considerations
-│   └── CLEANUP_PLAN.md          # Repository cleanup strategy
-├── templates/
-│   ├── tool-repo-template/      # TypeScript/Node.js tool template
-│   │   ├── src/index.ts         # Entry point
-│   │   ├── test/index.test.ts   # Tests using Node test runner
-│   │   ├── examples/basic.ts    # Usage example
-│   │   ├── package.json
-│   │   ├── tsconfig.json
-│   │   ├── LICENSE
-│   │   └── .github/workflows/test.yml
-│   └── rust-tool-template/      # Rust tool template
-│       ├── src/lib.rs
-│       ├── tests/
-│       ├── Cargo.toml
-│       └── README.md
+│   ├── property-validator/          → github.com/tuulbelt/property-validator
+│   └── ... (11 implemented, 33 planned)
+│
+├── libraries/                   # Programmatic APIs (git submodules)
+│   └── ... (planned)
+│
+├── frameworks/                  # Application structures (git submodules)
+│   └── ... (planned)
+│
+├── protocols/                   # Wire formats & specs (git submodules)
+│   └── ... (planned)
+│
+├── systems/                     # Complex infrastructure (git submodules)
+│   └── ... (planned)
+│
+├── meta/                        # Tools for building tools (git submodules)
+│   └── ... (planned)
+│
+├── research/                    # Experimental projects (git submodules)
+│   └── ... (planned)
+│
+├── templates/                   # Scaffolding templates
+│   ├── tool-repo-template/      # TypeScript tool
+│   ├── rust-tool-template/      # Rust tool
+│   ├── library-template/        # Library (planned)
+│   ├── framework-template/      # Framework (planned)
+│   ├── protocol-template/       # Protocol (planned)
+│   ├── system-template/         # System (planned)
+│   ├── meta-template/           # Meta (planned)
+│   └── research-template/       # Research (planned)
+│
+├── docs/                        # VitePress documentation
+│   ├── index.md
+│   ├── guide/
+│   ├── tools/
+│   ├── libraries/               # (planned)
+│   ├── frameworks/              # (planned)
+│   ├── protocols/               # (planned)
+│   ├── systems/                 # (planned)
+│   ├── meta/                    # (planned)
+│   └── research/                # (planned)
+│
 ├── scripts/
-│   ├── setup-github-auth.sh     # Configure GitHub authentication
+│   ├── clone-category.sh        # Clone entire category
+│   ├── clone-project.sh         # Clone single project
+│   ├── clone-with-deps.sh       # Clone with dependencies
 │   ├── commit.sh                # Commit with correct author
 │   └── push.sh                  # Push with pre-push validation
+│
 ├── .claude/
-│   ├── commands/                # Slash commands (/new-tool, /quality-check, etc.)
+│   ├── commands/                # Slash commands
 │   ├── skills/                  # Cross-cutting expertise
 │   ├── agents/                  # Specialized AI agents
 │   └── hooks/                   # Quality gates
+│
 ├── .github/
 │   ├── ISSUE_TEMPLATE/
-│   │   ├── bug_report.md
-│   │   ├── feature_request.md
-│   │   └── tool_proposal.md
 │   └── workflows/
-│       ├── meta-validation.yml        # Validates meta repo integrity
-│       ├── sync-demos-to-vitepress.yml  # Syncs tool demos to GitHub Pages
-│       └── deploy-docs.yml            # Deploys VitePress to GitHub Pages
-└── LICENSE                      # MIT for all tools
+│
+└── LICENSE                      # MIT for all projects
 ```
+
+---
+
+## Category Overview
+
+| Category | Purpose | External Deps | Governance |
+|----------|---------|---------------|------------|
+| **tools/** | CLI utilities | Zero | Low |
+| **libraries/** | Programmatic APIs | Zero | Low |
+| **frameworks/** | Application structures | Minimal | Medium |
+| **protocols/** | Wire formats & specs | Zero | High |
+| **systems/** | Complex infrastructure | Minimal | High |
+| **meta/** | Tools for building tools | Zero | Medium |
+| **research/** | Experimental projects | Relaxed | Low |
+
+See [PRINCIPLES.md](PRINCIPLES.md) for detailed category-specific principles.
+
+---
 
 ## Git Submodules
 
-**All tools are git submodules** in the `tools/` directory. Each submodule:
+**All projects are git submodules** in their respective category directories. Each submodule:
 - Points to a standalone GitHub repository
 - Can be cloned and used independently
 - Has its own version, CI/CD, and release cycle
-- References other tools via git URL dependencies (not path dependencies)
+- References other projects via git URL dependencies (not path dependencies)
 
 **Working with submodules:**
+
 ```bash
-# Clone meta repo with all tools
+# Clone meta repo with everything
 git clone --recursive https://github.com/tuulbelt/tuulbelt.git
 
 # Initialize submodules after clone
@@ -78,7 +114,7 @@ git submodule update --init --recursive
 # Update all submodules to latest
 git submodule update --remote
 
-# Update specific tool
+# Update specific project
 cd tools/test-flakiness-detector
 git pull origin main
 cd ../..
@@ -86,56 +122,192 @@ git add tools/test-flakiness-detector
 git commit -m "chore: update test-flakiness-detector submodule"
 ```
 
-## Tool Repository Structure
+---
 
-Each tool is a standalone repository following this structure:
+## Selective Cloning
+
+Most users don't need the entire ecosystem. Use selective cloning scripts:
+
+### Clone Single Project
+
+```bash
+./scripts/clone-project.sh tools/test-flakiness-detector
+```
+
+What it does:
+1. `git submodule update --init tools/test-flakiness-detector`
+2. Project ready to use
+
+### Clone Entire Category
+
+```bash
+./scripts/clone-category.sh tools
+```
+
+What it does:
+1. `git submodule update --init tools/*`
+2. All tools available locally
+
+### Clone with Dependencies
+
+```bash
+./scripts/clone-with-deps.sh tools/snapshot-comparison
+```
+
+What it does:
+1. Parse project's dependencies for Tuulbelt references
+2. Clone the project
+3. Clone all Tuulbelt dependencies
+4. Both projects available, composition works
+
+### Shallow Clone (for CI)
+
+```bash
+./scripts/clone-project.sh tools/test-flakiness-detector --shallow
+```
+
+What it does:
+1. `git submodule update --init --depth 1 tools/test-flakiness-detector`
+2. Minimal fetch, fast CI
+
+---
+
+## Project Repository Structure
+
+Each project follows a category-specific structure:
+
+### Tools
 
 ```
-<tool-name>/
+tool-name/
 ├── README.md                  # What it does, why, how to use
-├── CLAUDE.md                  # Tool-specific Claude Code context
-├── SPEC.md                    # (optional) Formal spec for protocols/formats
-├── ARCHITECTURE.md            # (optional) Design decisions for complex tools
-├── DOGFOODING_STRATEGY.md     # (optional) How tool uses other Tuulbelt tools
+├── CLAUDE.md                  # Claude Code context
 ├── src/
-│   └── index.ts/js           # Main implementation
+│   └── index.ts               # Main implementation
 ├── test/
-│   └── *.test.ts/js          # All tests here
+│   └── *.test.ts              # Tests
 ├── examples/
-│   └── basic.ts/js           # Runnable usage example
-├── docs/
-│   └── demo.gif              # Demo recording (auto-generated)
-├── scripts/
-│   ├── dogfood-*.sh          # Dogfooding scripts
-│   └── record-*-demo.sh      # Demo recording script
-├── package.json              # (Node/TS only)
-├── tsconfig.json             # (Node/TS only)
-├── Cargo.toml                # (Rust only)
-├── Cargo.lock                # (Rust only)
-├── .gitignore
-├── LICENSE                    # MIT
-└── .github/
-    └── workflows/
-        ├── test.yml          # Runs tests on every push/PR
-        └── create-demo.yml   # Auto-generates demo recordings
+│   └── basic.ts               # Usage examples
+├── package.json               # With bin entry (CLI)
+├── tsconfig.json
+├── LICENSE
+└── .github/workflows/test.yml
 ```
+
+### Libraries
+
+```
+library-name/
+├── README.md
+├── API.md                     # Detailed API reference
+├── src/
+│   ├── index.ts               # Main exports
+│   ├── types.ts               # Type definitions
+│   └── internal/              # Internal modules
+├── test/
+├── examples/
+├── package.json               # No bin entry
+└── .github/workflows/test.yml
+```
+
+### Frameworks
+
+```
+framework-name/
+├── README.md
+├── ARCHITECTURE.md            # Required - design decisions
+├── MIGRATION.md               # Version migration guide
+├── src/
+│   ├── core/                  # Core framework
+│   ├── plugins/               # Plugin system (if any)
+│   └── index.ts
+├── test/
+├── examples/
+│   ├── basic/                 # Basic example app
+│   └── advanced/              # Advanced example app
+└── .github/workflows/test.yml
+```
+
+### Protocols
+
+```
+protocol-name/
+├── README.md
+├── SPEC.md                    # Required - formal specification
+├── src/
+│   └── lib.rs                 # Reference implementation
+├── tests/
+│   └── vectors/               # Compliance test vectors
+├── examples/
+├── Cargo.toml
+└── .github/workflows/test.yml
+```
+
+### Systems
+
+```
+system-name/
+├── README.md
+├── ARCHITECTURE.md            # Required - detailed design
+├── SPEC.md                    # Format/language specification
+├── src/
+│   ├── module-a/
+│   ├── module-b/
+│   └── main.rs
+├── tests/
+├── benches/                   # Performance benchmarks
+├── examples/
+├── Cargo.toml
+└── .github/workflows/test.yml
+```
+
+### Meta
+
+```
+meta-name/
+├── README.md
+├── src/
+│   ├── generator/             # Core generation logic
+│   ├── templates/             # Output templates
+│   └── index.ts
+├── test/
+├── examples/
+│   ├── input/                 # Example inputs
+│   └── output/                # Expected outputs
+└── .github/workflows/test.yml
+```
+
+### Research
+
+```
+research-name/
+├── README.md
+├── HYPOTHESIS.md              # Required - what we're exploring
+├── FINDINGS.md                # What we've learned
+├── STATUS.md                  # Current state
+├── src/
+├── experiments/               # Experiment scripts
+└── .github/workflows/test.yml
+```
+
+---
 
 ## Tech Stack
 
-**TypeScript Tools:**
+**TypeScript Projects:**
 - Runtime: Node.js 18+
 - Language: TypeScript 5.3+ (strict mode)
 - Test Framework: Node.js native test runner (`node:test`)
 - Assertions: Node.js native (`node:assert/strict`)
 - Dev Dependencies: TypeScript, tsx, @types/node
-- **Zero Runtime Dependencies**
+- **Zero/Minimal Runtime Dependencies** (category-dependent)
 
-**Rust Tools:**
+**Rust Projects:**
 - Rust Edition: 2021+
 - Test Framework: Built-in cargo test
 - Linter: clippy (all warnings denied)
 - Formatter: rustfmt
-- **Zero Runtime Dependencies**
+- **Zero/Minimal Runtime Dependencies** (category-dependent)
 
 **Development Tools:**
 - Git with conventional commits
@@ -143,46 +315,64 @@ Each tool is a standalone repository following this structure:
 - npm for TypeScript package management
 - cargo for Rust package management
 
+---
+
 ## Dependency Model
 
 ```
 tuulbelt (meta)
 ├── No code dependencies
 ├── Contains templates for scaffolding
-├── References tools via git submodules (tools/)
-└── Links to tools in README, not code
+├── References projects via git submodules
+└── Links to projects in README, not code
 
-Tool (e.g., test-flakiness-detector/)
-├── Zero external runtime dependencies
-├── MAY depend on other Tuulbelt tools via git URL
+Project (any category)
+├── External deps: Zero to Minimal (category-dependent)
+├── MAY depend on other Tuulbelt projects via git URL
 │   Example: "cli-progress-reporting": "git+https://github.com/tuulbelt/cli-progress-reporting.git"
 ├── Dev dependencies: TypeScript, test runners only
 └── Fully standalone, independently cloneable
 ```
 
-## Tool Creation Workflow
+---
 
-**Use `/new-tool` command:**
+## Project Creation Workflow
+
+**Use category-specific commands:**
+
 ```bash
-# In Claude Code
-/new-tool <tool-name> <typescript|rust>
+# Tools
+/new-tool <name> <typescript|rust>
+
+# Libraries
+/new-library <name> <typescript|rust>
+
+# Frameworks
+/new-framework <name> <typescript|rust>
+
+# Protocols
+/new-protocol <name>
+
+# Systems
+/new-system <name>
+
+# Meta
+/new-meta <name>
+
+# Research
+/new-research <name>
 ```
 
-This command:
+Each command:
 1. Creates standalone GitHub repository
-2. Scaffolds from template (tool-repo-template or rust-tool-template)
+2. Scaffolds from appropriate template
 3. Configures CI/CD, metadata, documentation
 4. Tags v0.1.0 and pushes to GitHub
 5. Adds as git submodule to meta repo
 
-**Manual workflow (not recommended):**
-1. Create GitHub repo manually
-2. Copy appropriate template
-3. Customize package.json/Cargo.toml
-4. Set up CI/CD manually
-5. Add as submodule: `git submodule add <url> tools/<tool-name>`
+---
 
-## Tool Lifecycle
+## Project Lifecycle
 
 ```
 Proposal (issue) → Implementation → Testing → Stable (1.0.0) → Maintenance
@@ -194,32 +384,51 @@ Proposal (issue) → Implementation → Testing → Stable (1.0.0) → Maintenan
 2.0.0 - Breaking changes
 ```
 
+**Special lifecycle for research:**
+```
+Proposal → Exploration → Findings → Graduation OR Archive
+
+Status labels:
+- active    - Currently being explored
+- paused    - Temporarily on hold
+- concluded - Exploration complete
+- graduated - Moved to another category
+```
+
+---
+
 ## Language Support
 
-| Language | Use Case | Template |
-|----------|----------|----------|
-| TypeScript/Node.js | CLI tools, utilities, web frontends | `templates/tool-repo-template/` |
-| Rust | Systems utilities, protocols, performance-critical | `templates/rust-tool-template/` |
-| (others) | Only if problem requires it | Create template first |
+| Language | Best For | Templates |
+|----------|----------|-----------|
+| TypeScript/Node.js | CLI tools, libraries, web | tool-repo-template, library-template |
+| Rust | Systems, protocols, performance | rust-tool-template, protocol-template, system-template |
+
+---
 
 ## Testing Strategy
 
-All tools must have:
+All projects must have:
 
 1. **Unit tests** — Core logic, edge cases
-2. **Integration tests** — CLI behavior
+2. **Integration tests** — Interface behavior
 3. **CI/CD** — Tests run on every push/PR
 4. **Coverage target** — 80%+ for core logic
+
+Additional requirements by category:
+- **Protocols:** Compliance test vectors
+- **Systems:** Performance benchmarks
+- **Research:** Experiment reproducibility
 
 Use language-native test runners:
 - Node.js: `node --test`
 - Rust: `cargo test`
 
-See @docs/testing-standards.md for complete requirements.
+---
 
 ## Maintenance Model
 
-Each tool has a primary maintainer:
+Each project has a primary maintainer:
 - Responds to issues
 - Reviews PRs
 - Makes releases
@@ -227,57 +436,75 @@ Each tool has a primary maintainer:
 
 Falls back to meta repo maintainer if unmaintained for 3+ months.
 
+---
+
 ## Versioning
 
 - **Meta repo:** No version (always latest)
-- **Each tool:** Semantic versioning (0.1.0, 1.0.0, etc.)
+- **Each project:** Semantic versioning (0.1.0, 1.0.0, etc.)
 - **Release cadence:** As needed, no fixed schedule
+
+---
 
 ## Security Model
 
-- **No external deps** = fewer supply chain attacks
+- **Minimal external deps** = fewer supply chain attacks
 - **Code review required** for all changes
-- **Secrets never in code** — tools that handle secrets use encryption
+- **Secrets never in code** — projects that handle secrets use encryption
 - **Open by default** — all repos public, no private dependencies
 
-See @docs/security-guidelines.md for complete checklist.
+See [docs/security-guidelines.md](docs/security-guidelines.md) for complete checklist.
 
 ---
 
-## How Tools Are Discovered
+## Discovery
 
-1. **Meta repo README** — Index of all tools with status
+How users find projects:
+
+1. **Meta repo README** — Index of all projects with status
 2. **GitHub Pages** — https://tuulbelt.github.io/tuulbelt/
 3. **GitHub org** — Browse all repos at https://github.com/tuulbelt
 4. **GitHub search** — By name or problem
+5. **Category READMEs** — Each category directory has a README
 
 ---
 
-## Migration Path
+## Migration Paths
 
-If a tool becomes too broad (risk of becoming a framework):
+### Tool → Library
 
-1. Split into multiple, focused tools
-2. Document the split in both tools' READMEs
-3. Update meta repo README
-4. Use git URL dependencies for composition
+When a tool's programmatic API becomes more valuable than its CLI:
+1. Create new library project
+2. Move core logic to library
+3. Tool becomes thin CLI wrapper importing library
+4. Document the split
 
-Example: If "Config Merger" becomes "Config Merger + Validator + Transformer", split into three tools and use git URLs to compose.
+### Research → Production Category
+
+When a research project proves successful:
+1. Verify hypothesis validated
+2. Ensure implementation meets target category's principles
+3. Create new project in appropriate category
+4. Archive research project or keep as reference
+
+### Project Splitting
+
+When a project becomes too broad:
+1. Identify natural boundaries
+2. Split into focused projects
+3. Use git URL dependencies for composition
+4. Update documentation
 
 ---
 
-## Tools vs Frameworks
+## Category Comparison
 
-```
-Tool = solves one problem, user controls composition
-Framework = controls entire application lifecycle
-
-Examples:
-
-TOOL (good):           FRAMEWORK (bad):
-- Config merger        - Full config + validation + secrets + env management system
-- Test detector        - Complete test framework with fixtures, mocks, reporters
-- Diffing utility      - Assertion library with custom syntax
-```
-
-If you're building something that dictates *how* the user structures their app, it's probably too big for Tuulbelt.
+| Aspect | tools | libraries | frameworks | protocols | systems | meta | research |
+|--------|-------|-----------|------------|-----------|---------|------|----------|
+| **Interface** | CLI | API | API+Conventions | Spec+Impl | Varies | CLI+API | Any |
+| **Scope** | Single | Focused | Broad | Focused | Large | Generative | Exploratory |
+| **External Deps** | Zero | Zero | Minimal | Zero | Minimal | Zero | Relaxed |
+| **SPEC.md** | No | No | No | **Yes** | Often | No | No |
+| **ARCHITECTURE.md** | Optional | Optional | **Yes** | No | **Yes** | Optional | No |
+| **HYPOTHESIS.md** | No | No | No | No | No | No | **Yes** |
+| **Governance** | Low | Low | Medium | High | High | Medium | Low |

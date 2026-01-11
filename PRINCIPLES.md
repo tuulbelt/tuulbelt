@@ -2,85 +2,15 @@
 
 These principles guide what gets built, how it's built, and what doesn't belong.
 
-## 1. Single Problem Per Tool
+Tuulbelt is a **software ecosystem** organized into categories, each with shared universal principles and category-specific guidelines.
 
-Each tool solves **one problem** and solves it well.
+---
 
-**Good:** "Detect unreliable tests by running them N times"
-**Bad:** "Complete test framework with mocking, fixtures, and reporting"
+## Universal Principles
 
-If you're adding features and the scope is growing, it's time to split into a new tool.
+These apply to **all categories** (tools, libraries, frameworks, protocols, systems, meta, research).
 
-## 2. Zero External Dependencies (Standard Library Only)
-
-No `npm install`, no `cargo add`, no runtime dependency management required.
-
-**Exception 1:** Development dependencies (TypeScript compiler, test runners) are okay if they don't ship with the tool.
-
-**Exception 2:** Tuulbelt tools MAY use other Tuulbelt tools via library integration (git URL dependencies). Since all Tuulbelt tools have zero external dependencies, composing them preserves the zero-dep guarantee. This enables richer functionality without dependency chains.
-
-```toml
-# Rust: Use git URL dependency for standalone repos
-[dependencies]
-output_diffing_utility = { git = "https://github.com/tuulbelt/output-diffing-utility.git" }
-```
-
-```json
-// TypeScript: Use git URL dependency for standalone repos
-{
-  "dependencies": {
-    "@tuulbelt/cli-progress-reporting": "git+https://github.com/tuulbelt/cli-progress-reporting.git"
-  }
-}
-```
-
-**Rationale:** Tools that don't require dependency resolution outlive language trends. They're more portable, more maintainable, and less fragile. Tuulbelt-to-Tuulbelt composition maintains these benefits while enabling powerful tool combinations.
-
-## 3. Portable Interface
-
-Tools communicate via:
-- **CLI** with flags and stdin/stdout
-- **Files** (plain text, JSON, binary)
-- **Environment variables**
-- **Sockets** (TCP, UDP)
-
-NOT via:
-- Proprietary package APIs
-- Internal state management
-- Plugin systems
-- Configuration frameworks
-
-**Rationale:** Interfaces that work across languages, shells, and systems are reusable.
-
-## 4. Composable (Pipes, Not Plugins)
-
-Tools should chain together via pipes:
-
-```bash
-tool-a | tool-b | tool-c
-```
-
-NOT via:
-- Plugin systems
-- Hook APIs
-- Event listeners
-
-**Rationale:** Composition over extension keeps tools independent.
-
-## 5. Independently Cloneable
-
-Each tool is its own GitHub repository.
-
-Users should be able to:
-```bash
-git clone https://github.com/tuulbelt/<tool-name>.git
-cd <tool-name>
-npm test && npm run build
-```
-
-Without needing the meta repo or any other tool.
-
-## 6. Proven Implementation, Not Moonshots
+### 1. Proven Implementation, Not Moonshots
 
 Before building:
 - Problem must be real (you hit it, or it's documented in production)
@@ -88,15 +18,17 @@ Before building:
 - No "it would be cool if..." without proof it works
 - No "works 80% of the time" solutions
 
+**Exception:** Research category allows exploration of unproven ideas.
+
 **Red flags:**
 - "I think this would be useful"
 - "It's like X but better" (without explaining why X is broken)
 - Complex state management or learning curve
 - Vague scope ("improve developer experience")
 
-## 7. Documentation Over Configuration
+### 2. Documentation Over Configuration
 
-If a tool needs explanation, document it. Don't add config complexity.
+If something needs explanation, document it. Don't add config complexity.
 
 **Good:**
 ```
@@ -108,65 +40,379 @@ If a tool needs explanation, document it. Don't add config complexity.
 --config my-config.json   # 50 keys, most optional
 ```
 
-## 8. Fail Loudly, Recover Gracefully
+### 3. Fail Loudly, Recover Gracefully
 
 - Errors should be explicit and helpful
 - Stack traces should include context (file, line, operation)
 - Degradation should be obvious, not silent
 
-## 9. Test Everything, Ship Nothing Untested
+### 4. Test Everything, Ship Nothing Untested
 
 - Unit tests for core logic
-- Integration tests for CLI behavior
+- Integration tests for interfaces
 - Edge case coverage (empty input, malformed input, concurrent access)
 - Tests run in CI on every commit
 
-## 10. Version Independently
+### 5. Version Independently
 
-Each tool has its own version and changelog. The meta repo has no version.
+Each project has its own version and changelog. The meta repo has no version.
 
 Use semantic versioning:
 - `0.1.0` — First release, unstable API
 - `1.0.0` — Stable API, production-ready
 - `2.0.0` — Breaking change
 
+### 6. Independently Cloneable
+
+Each project is its own GitHub repository.
+
+Users should be able to:
+```bash
+git clone https://github.com/tuulbelt/<project-name>.git
+cd <project-name>
+npm test && npm run build  # or cargo test && cargo build
+```
+
+Without needing the meta repo or any other project (unless explicitly dependent).
+
+### 7. Tuulbelt-to-Tuulbelt Composition
+
+Projects MAY use other Tuulbelt projects via git URL dependencies:
+
+```toml
+# Rust
+[dependencies]
+output_diffing_utility = { git = "https://github.com/tuulbelt/output-diffing-utility.git" }
+```
+
+```json
+// TypeScript
+{
+  "dependencies": {
+    "@tuulbelt/cli-progress-reporting": "git+https://github.com/tuulbelt/cli-progress-reporting.git"
+  }
+}
+```
+
+Since all Tuulbelt projects minimize external dependencies, composition preserves the lightweight guarantee.
+
+---
+
+## Category-Specific Principles
+
+### Category: Tools
+
+**Definition:** Single-purpose CLI utilities that solve one problem well.
+
+**Directory:** `tools/`
+
+| Principle | Requirement |
+|-----------|-------------|
+| External Dependencies | Zero (standard library only) |
+| Tuulbelt Dependencies | Allowed |
+| Scope | Single problem |
+| Interface | CLI-first (stdin/stdout/stderr) |
+| Composability | Pipes, not plugins |
+
+**Additional Guidelines:**
+
+1. **Single Problem Per Tool** — Each tool solves one problem and solves it well. If scope is growing, split into multiple tools.
+
+2. **Zero External Dependencies** — No `npm install`, no `cargo add`. Development dependencies (TypeScript compiler, test runners) are okay if they don't ship.
+
+3. **Portable Interface** — Communicate via CLI, files, environment variables, sockets. NOT via proprietary APIs, plugin systems, or configuration frameworks.
+
+4. **Composable** — Tools chain via pipes: `tool-a | tool-b | tool-c`
+
+**Examples:**
+- ✅ "Run tests N times, report flaky ones"
+- ✅ "Convert YAML to JSON"
+- ✅ "Manage concurrent test port allocation"
+
+---
+
+### Category: Libraries
+
+**Definition:** Programmatic APIs that provide reusable functionality.
+
+**Directory:** `libraries/`
+
+| Principle | Requirement |
+|-----------|-------------|
+| External Dependencies | Zero (standard library only) |
+| Tuulbelt Dependencies | Allowed |
+| Scope | Focused domain |
+| Interface | Programmatic API |
+| CLI | Optional (wrapper) |
+
+**Additional Guidelines:**
+
+1. **API-First** — Libraries are meant to be imported, not executed. CLI wrappers are optional extras.
+
+2. **Type Safety** — Provide strong type definitions. TypeScript libraries must export types. Rust libraries must have clear public API.
+
+3. **API Documentation** — Include API.md with comprehensive API reference.
+
+**Examples:**
+- ✅ "Rust-style Result<T,E> for TypeScript"
+- ✅ "RFC 6901 JSON Pointer implementation"
+- ✅ "Persistent immutable data structures"
+
+---
+
+### Category: Frameworks
+
+**Definition:** Opinionated structures that guide how applications are built.
+
+**Directory:** `frameworks/`
+
+| Principle | Requirement |
+|-----------|-------------|
+| External Dependencies | Minimal (prefer Tuulbelt composition) |
+| Tuulbelt Dependencies | Allowed (encouraged) |
+| Scope | Broad, opinionated |
+| Interface | API + Conventions |
+| Documentation | ARCHITECTURE.md required |
+
+**Additional Guidelines:**
+
+1. **Clear Scope Boundary** — Define upfront what the framework does and doesn't do. Scope creep is the enemy.
+
+2. **Incremental Adoption** — Frameworks must be adoptable incrementally. No "all-or-nothing" commitment.
+
+3. **Escape Hatches** — Provide ways to override conventions when needed.
+
+4. **Architecture Documentation** — ARCHITECTURE.md is mandatory. Explain design decisions.
+
+**Governance:** Medium — Requires scope review before acceptance.
+
+**Examples:**
+- ✅ "Minimal HTTP framework for TypeScript"
+- ✅ "Test runner with fixtures and assertions"
+- ❌ "Kitchen sink web framework with everything"
+
+---
+
+### Category: Protocols
+
+**Definition:** Wire formats, communication standards, and specifications.
+
+**Directory:** `protocols/`
+
+| Principle | Requirement |
+|-----------|-------------|
+| External Dependencies | Zero (reference implementation) |
+| Tuulbelt Dependencies | Allowed |
+| Scope | Specification-focused |
+| Interface | Spec + Reference Implementation |
+| Documentation | **SPEC.md required** |
+
+**Additional Guidelines:**
+
+1. **Specification First** — The spec is the product. Implementation is secondary.
+
+2. **SPEC.md Required** — Every protocol must have a formal specification document covering wire format, semantics, error handling, and versioning.
+
+3. **Test Vectors** — Provide compliance test vectors for cross-implementation testing.
+
+4. **Cross-Language** — Specs should be implementable in any language.
+
+**Governance:** High — Specification completeness review required.
+
+**Examples:**
+- ✅ "Self-describing binary TLV format"
+- ✅ "Standard request/response envelope"
+- ❌ "Protocol without formal spec"
+
+---
+
+### Category: Systems
+
+**Definition:** Complex, integrated infrastructure projects.
+
+**Directory:** `systems/`
+
+| Principle | Requirement |
+|-----------|-------------|
+| External Dependencies | Minimal (pragmatic) |
+| Tuulbelt Dependencies | Allowed |
+| Scope | Large, integrated |
+| Interface | Varies (CLI, REPL, server, client) |
+| Documentation | ARCHITECTURE.md + SPEC.md required |
+
+**Additional Guidelines:**
+
+1. **Architecture First** — Design before implementation. ARCHITECTURE.md is mandatory.
+
+2. **Module Boundaries** — Clear separation of concerns. Each module should be understandable independently.
+
+3. **Performance Conscious** — Benchmarks are required. Performance is a feature.
+
+4. **Incremental Milestones** — Ship working versions frequently. No big-bang releases.
+
+**Governance:** High — Architecture review required.
+
+**Examples:**
+- ✅ "Small, embeddable scripting language"
+- ✅ "Single-file embedded database"
+- ❌ "Vaporware without implementation plan"
+
+---
+
+### Category: Meta
+
+**Definition:** Tools and frameworks for building other tools/frameworks.
+
+**Directory:** `meta/`
+
+| Principle | Requirement |
+|-----------|-------------|
+| External Dependencies | Zero (dogfood principles) |
+| Tuulbelt Dependencies | Allowed |
+| Scope | Generative |
+| Interface | CLI + Library API |
+| Output | Generated code/artifacts |
+
+**Additional Guidelines:**
+
+1. **Deterministic Output** — Same input must produce same output.
+
+2. **Customizable** — Provide templates and options for different needs.
+
+3. **Dogfood** — Meta projects should follow the same principles they enable.
+
+**Governance:** Medium — Generation pattern review.
+
+**Examples:**
+- ✅ "PEG parser generator"
+- ✅ "Schema to code compiler"
+- ❌ "Magic code generator with unpredictable output"
+
+---
+
+### Category: Research
+
+**Definition:** Experimental projects exploring novel approaches.
+
+**Directory:** `research/`
+
+| Principle | Requirement |
+|-----------|-------------|
+| External Dependencies | Relaxed (pragmatism) |
+| Tuulbelt Dependencies | Allowed |
+| Scope | Exploratory |
+| Interface | Whatever works |
+| Documentation | HYPOTHESIS.md required |
+
+**Additional Guidelines:**
+
+1. **Hypothesis Required** — HYPOTHESIS.md must state what we're exploring and how we'll know if it works.
+
+2. **Failure Is Acceptable** — Research projects may fail. Document findings either way.
+
+3. **Clear Status** — Label projects as active/paused/concluded/graduated.
+
+4. **Graduation Path** — Successful research may graduate to other categories.
+
+**Governance:** Low — Exploration is the goal.
+
+**Examples:**
+- ✅ "Zero-copy parsing experiments"
+- ✅ "Effect system for TypeScript"
+- ✅ "Novel compression algorithm prototype"
+
+---
+
+## Principles Comparison Matrix
+
+| Principle | tools | libraries | frameworks | protocols | systems | meta | research |
+|-----------|-------|-----------|------------|-----------|---------|------|----------|
+| External Deps | Zero | Zero | Minimal | Zero | Minimal | Zero | Relaxed |
+| Single Problem | Yes | Focused | No | Focused | No | Focused | No |
+| CLI Required | Yes | No | No | No | Varies | Yes | No |
+| SPEC.md | No | No | No | **Yes** | Often | No | No |
+| ARCHITECTURE.md | Optional | Optional | **Yes** | No | **Yes** | Optional | No |
+| HYPOTHESIS.md | No | No | No | No | No | No | **Yes** |
+| Governance | Low | Low | Medium | High | High | Medium | Low |
+
 ---
 
 ## What Doesn't Belong in Tuulbelt
 
-- **Frameworks** (anything that tries to be your whole app)
-- **Heavy abstractions** (frameworks disguised as utilities)
-- **Language-specific hacks** (unless the problem is language-specific)
-- **Vaporware** (things that work 80% of the time)
-- **Opinionated workflows** (unless they're optional)
-- **Things that require significant setup** (complexity = fragility)
+### Universal Rejections (All Categories)
+
+- **Vaporware** — Ideas without implementation path
+- **Unmaintained** — No clear maintainer or ownership
+- **Duplicates** — Already solved by existing Tuulbelt project
+
+### Category-Specific Rejections
+
+**Tools:**
+- Complete testing/web/build frameworks (too broad)
+- Multi-format transformers with plugin systems (framework)
+- Universal configuration management (scope creep)
+
+**Libraries:**
+- Libraries requiring significant setup
+- Libraries with heavy transitive dependencies
+
+**Frameworks:**
+- Kitchen-sink frameworks trying to do everything
+- Frameworks without escape hatches
+- Frameworks requiring total buy-in
+
+**Protocols:**
+- Protocols without formal specification
+- Proprietary or closed formats
+
+**Systems:**
+- Systems without clear architecture
+- Vaporware without implementation plan
+
+**Research:**
+- Nothing is rejected if it has a clear hypothesis
+- But must be labeled as experimental
 
 ---
 
-## Examples of Tools That Fit
+## Before Building, Answer:
 
-✅ "Run tests N times, report flaky ones" (single problem, clear output)
-✅ "Convert YAML to JSON" (single problem, standard I/O)
-✅ "Manage concurrent test port allocation" (single problem, solves real issue)
-✅ "Generate FFI boilerplate from C headers" (single problem, code generation)
-
-## Examples of Tools That Don't Fit
-
-❌ "Complete testing framework" (too broad)
-❌ "Multi-format data transformer with plugin system" (framework)
-❌ "Universal configuration management" (scope creep)
-❌ "AI-powered development assistant" (vaporware)
-❌ "Framework for building frameworks" (meta-framework)
-
----
-
-## Before Building a New Tool, Answer:
-
+### For Tools
 1. What single problem does it solve?
 2. How would I test it end-to-end?
 3. Can it run without installing dependencies?
 4. Can it be used from any programming language?
-5. Have I hit this problem in real code?
-6. Is there a proven implementation path, or am I inventing something new?
+
+### For Libraries
+1. What domain does it focus on?
+2. What's the API surface?
+3. Are types well-defined?
+
+### For Frameworks
+1. What's the scope boundary?
+2. How do users adopt incrementally?
+3. What are the escape hatches?
+
+### For Protocols
+1. Is the specification complete?
+2. Are error cases covered?
+3. How does it version/evolve?
+
+### For Systems
+1. What's the architecture?
+2. What are the module boundaries?
+3. What are the performance characteristics?
+
+### For Meta
+1. What does it generate?
+2. Is output deterministic?
+3. Is it customizable?
+
+### For Research
+1. What's the hypothesis?
+2. How will we know if it works?
+3. What's the success criteria?
+
+---
 
 If you can't answer clearly, wait. Revisit the idea later.
