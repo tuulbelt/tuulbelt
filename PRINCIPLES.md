@@ -10,7 +10,17 @@ Tuulbelt is a **software ecosystem** organized into categories, each with shared
 
 These apply to **all categories** (tools, libraries, frameworks, protocols, systems, meta, research).
 
-### 1. Proven Implementation, Not Moonshots
+### 1. Craftsmanship Over Speed
+
+Ship when it's ready, not when it's due. Every project should reflect care in design, implementation, and documentation. The ecosystem's reputation depends on consistent quality.
+
+**Signals of Craftsmanship:**
+- Code is readable and well-organized
+- Edge cases are handled thoughtfully
+- Error messages are helpful
+- Documentation is complete before "done"
+
+### 2. Proven Implementation, Not Moonshots
 
 Before building:
 - Problem must be real (you hit it, or it's documented in production)
@@ -26,7 +36,7 @@ Before building:
 - Complex state management or learning curve
 - Vague scope ("improve developer experience")
 
-### 2. Documentation Over Configuration
+### 3. Documentation Over Configuration
 
 If something needs explanation, document it. Don't add config complexity.
 
@@ -40,20 +50,20 @@ If something needs explanation, document it. Don't add config complexity.
 --config my-config.json   # 50 keys, most optional
 ```
 
-### 3. Fail Loudly, Recover Gracefully
+### 4. Fail Loudly, Recover Gracefully
 
 - Errors should be explicit and helpful
 - Stack traces should include context (file, line, operation)
 - Degradation should be obvious, not silent
 
-### 4. Test Everything, Ship Nothing Untested
+### 5. Test Everything, Ship Nothing Untested
 
 - Unit tests for core logic
 - Integration tests for interfaces
 - Edge case coverage (empty input, malformed input, concurrent access)
 - Tests run in CI on every commit
 
-### 5. Version Independently
+### 6. Version Independently
 
 Each project has its own version and changelog. The meta repo has no version.
 
@@ -62,7 +72,7 @@ Use semantic versioning:
 - `1.0.0` — Stable API, production-ready
 - `2.0.0` — Breaking change
 
-### 6. Independently Cloneable
+### 7. Independently Cloneable
 
 Each project is its own GitHub repository.
 
@@ -75,7 +85,7 @@ npm test && npm run build  # or cargo test && cargo build
 
 Without needing the meta repo or any other project (unless explicitly dependent).
 
-### 7. Tuulbelt-to-Tuulbelt Composition
+### 8. Tuulbelt-to-Tuulbelt Composition
 
 Projects MAY use other Tuulbelt projects via git URL dependencies:
 
@@ -151,7 +161,9 @@ Since all Tuulbelt projects minimize external dependencies, composition preserve
 
 2. **Type Safety** — Provide strong type definitions. TypeScript libraries must export types. Rust libraries must have clear public API.
 
-3. **API Documentation** — Include API.md with comprehensive API reference.
+3. **API Stability** — Breaking changes require major version bump. Document migration paths.
+
+4. **API Documentation** — Include API.md with comprehensive API reference.
 
 **Examples:**
 - ✅ "Rust-style Result<T,E> for TypeScript"
@@ -168,11 +180,12 @@ Since all Tuulbelt projects minimize external dependencies, composition preserve
 
 | Principle | Requirement |
 |-----------|-------------|
-| External Dependencies | Minimal (prefer Tuulbelt composition) |
+| External Dependencies | Minimal (max 3, each justified in docs) |
 | Tuulbelt Dependencies | Allowed (encouraged) |
-| Scope | Broad, opinionated |
+| Scope | Broad but bounded |
 | Interface | API + Conventions |
 | Documentation | ARCHITECTURE.md required |
+| Migration | Version migration guide required |
 
 **Additional Guidelines:**
 
@@ -183,6 +196,8 @@ Since all Tuulbelt projects minimize external dependencies, composition preserve
 3. **Escape Hatches** — Provide ways to override conventions when needed.
 
 4. **Architecture Documentation** — ARCHITECTURE.md is mandatory. Explain design decisions.
+
+5. **Dependency Justification** — Each external dependency must be justified in documentation. Maximum of 3 external dependencies.
 
 **Governance:** Medium — Requires scope review before acceptance.
 
@@ -277,9 +292,11 @@ Since all Tuulbelt projects minimize external dependencies, composition preserve
 
 1. **Deterministic Output** — Same input must produce same output.
 
-2. **Customizable** — Provide templates and options for different needs.
+2. **Output Quality** — Generated code must match hand-written quality. If you wouldn't be proud to ship the output, don't ship the generator.
 
-3. **Dogfood** — Meta projects should follow the same principles they enable.
+3. **Customizable** — Provide templates and options for different needs.
+
+4. **Dogfood** — Meta projects should follow the same principles they enable.
 
 **Governance:** Medium — Generation pattern review.
 
@@ -310,9 +327,15 @@ Since all Tuulbelt projects minimize external dependencies, composition preserve
 
 2. **Failure Is Acceptable** — Research projects may fail. Document findings either way.
 
-3. **Clear Status** — Label projects as active/paused/concluded/graduated.
+3. **Clear Status** — Label projects with lifecycle stage in STATUS.md.
 
 4. **Graduation Path** — Successful research may graduate to other categories.
+
+**Lifecycle Stages:**
+- `active` — Currently being explored
+- `paused` — On hold (document why in STATUS.md)
+- `concluded` — Exploration complete (success or failure documented in FINDINGS.md)
+- `graduated` — Moved to production category (link to new location)
 
 **Governance:** Low — Exploration is the goal.
 
@@ -327,12 +350,17 @@ Since all Tuulbelt projects minimize external dependencies, composition preserve
 
 | Principle | tools | libraries | frameworks | protocols | systems | meta | research |
 |-----------|-------|-----------|------------|-----------|---------|------|----------|
-| External Deps | Zero | Zero | Minimal | Zero | Minimal | Zero | Relaxed |
-| Single Problem | Yes | Focused | No | Focused | No | Focused | No |
+| External Deps | Zero | Zero | Minimal (≤3) | Zero | Pragmatic | Zero | Relaxed |
+| Scope | Single problem | Focused domain | Broad, bounded | Specification | Large, integrated | Generative | Exploratory |
+| Primary Interface | CLI | API | API + Conventions | Spec + Impl | Varies | CLI + API | Any |
 | CLI Required | Yes | No | No | No | Varies | Yes | No |
+| API Stability | N/A | **Required** | Required | Required | Varies | Required | No |
 | SPEC.md | No | No | No | **Yes** | Often | No | No |
 | ARCHITECTURE.md | Optional | Optional | **Yes** | No | **Yes** | Optional | No |
 | HYPOTHESIS.md | No | No | No | No | No | No | **Yes** |
+| Test Vectors | No | No | No | **Yes** | No | No | No |
+| Benchmarks | Optional | Optional | No | No | **Yes** | No | No |
+| Output Quality | N/A | N/A | N/A | N/A | N/A | **Required** | No |
 | Governance | Low | Low | Medium | High | High | Medium | Low |
 
 ---
