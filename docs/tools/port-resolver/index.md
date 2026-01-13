@@ -10,7 +10,7 @@ Port Resolver (`portres`) provides a centralized, file-based registry for port a
 This tool uses [file-based-semaphore-ts](/tools/file-based-semaphore-ts/) as a **library dependency** for atomic registry access. See [PRINCIPLES.md Exception 2](/guide/principles#zero-external-dependencies) for details on Tuulbelt tool composition.
 :::
 
-**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.3.0) · 194 tests passing
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.3.0) · 198 tests passing
 
 **Language:** TypeScript
 
