@@ -201,63 +201,45 @@ await detector.run(10); // Run 10 times
 
 ### 2. CLI Progress Reporting → **Progress Reporter** (`prog`)
 
-**Current State:** v0.1.0 | 121 tests | Foundation tool
+**Current State:** v0.3.0 | 264 tests | Streaming API + Formal SPEC
 
-> **🔄 MODERNIZATION IN PROGRESS (2026-01-10):** This tool is currently being modernized following the recommendations below. See `tools/cli-progress-reporting/ENHANCEMENT_PLAN.md` for detailed implementation tracking.
+> **✅ v0.3.0 COMPLETE (2026-01-12):** Major release with streaming API, formal specification, and breaking CLI changes.
 
 **Proposed Rename:** `cli-progress-reporting` → `progress-reporter` (avoids conflict with `cli-progress` npm package)
 
-**Competitive Position:** ⚠️ **MODERATE** — ora (spinners), listr2 (task lists), cli-progress dominate
+**Competitive Position:** ✅ **STRONG** — Now has streaming API, formal spec, 264 tests
 
-**Differentiator:** Concurrent-safe, zero dependencies (competitors have deps)
+**Differentiator:** Concurrent-safe, zero dependencies, streaming API, formal SPEC.md
 
-#### Implementation Expansion Opportunities
+**v0.3.0 Features Delivered:**
+- ✅ `ProgressStream` — Native async generator support
+- ✅ `ProgressTransform` — Node.js Transform stream integration
+- ✅ `attachProgress` helper — Attach to existing readable streams
+- ✅ SPEC.md — Formal specification documenting all behavior
+- ✅ Breaking: CLI structure changed to `prog <id> <action>`
+- ✅ Buffer overflow protection (limits list output to 50 trackers)
+- ✅ 4 comprehensive real-world examples
+
+#### Remaining Opportunities (v0.4.0+)
 
 | Opportunity | Priority | Rationale |
 |-------------|----------|-----------|
-| **Multi-API Design** | HIGH | Add `createProgress()` (builder) + `progress.update()` (instance) + `progress.done()` |
-| **Concurrent Progress Tracking** | HIGH | Multiple progress bars simultaneously (listr2's strength) |
-| **Template System** | MEDIUM | Customizable output format (like ora's spinners) |
-| **Streaming API** | LOW | Generator-based progress for async iterators |
+| **Interactive Mode** | MEDIUM | Terminal UI with cursor control |
+| **Named Presets** | LOW | Common templates (spinner, bar, minimal) |
+| **TTY Detection** | LOW | Auto-disable colors in non-TTY environments |
 
-**Proposed API Expansion:**
-```typescript
-// CLI (enhanced)
-prog init --total 100 --message "Processing" --format json
-prog update 50
-prog multi add --id download --total 50 --message "Downloading"
-prog multi add --id process --total 100 --message "Processing"
-prog multi update download 25
-prog multi update process 75
+#### Documentation Status
 
-// Library (parallel API)
-import { createProgress, MultiProgress } from 'progress-reporter';
+| Document | Status |
+|----------|--------|
+| SPEC.md | ✅ Complete (formal specification) |
+| examples/concurrent.ts | ✅ Complete (build pipeline demo) |
+| examples/streaming.ts | ✅ Complete (streaming data demo) |
+| benchmarks/README.md | ✅ Complete (tatami-ng benchmarks) |
 
-// Single progress
-const bar = createProgress({ total: 100, message: 'Processing' });
-bar.update(50);
-bar.done();
+#### Benchmarking Status
 
-// Multiple concurrent (differentiator)
-const multi = new MultiProgress();
-const bar1 = multi.add({ total: 50, message: 'Downloading' });
-const bar2 = multi.add({ total: 100, message: 'Processing' });
-bar1.update(25);
-bar2.update(75);
-multi.done();
-```
-
-#### Documentation Expansion
-
-| Document | Current | Needed |
-|----------|---------|--------|
-| SPEC.md | ❌ Missing | Define output format, escape sequences, concurrent model |
-| examples/concurrent.ts | ❌ Missing | Multi-progress bar demo |
-| examples/streaming.ts | ❌ Missing | Async iterator integration |
-
-#### Benchmarking Opportunity
-
-**Verdict:** ❌ **NOT RECOMMENDED** — Visual output tool, not performance-critical.
+**Verdict:** ✅ **IMPLEMENTED** — Benchmarks added using tatami-ng with criterion-equivalent rigor.
 
 ---
 
@@ -492,61 +474,64 @@ pool.release(resource);
 
 ### 7. Port Resolver (`portres`)
 
-**Current State:** v0.1.0 | 56 tests | Uses file-based-semaphore-ts
+**Current State:** v0.3.0 | 153 tests | Full modularization + benchmarks
+
+> **✅ v0.3.0 COMPLETE (2026-01-14):** Modularized codebase with multi-tier APIs, comprehensive benchmarks.
 
 **Competitive Position:** ✅ **STRONG** — No tool handles concurrent test port allocation safely
 
-**Differentiator:** Concurrent-safe via semaphore integration
+**Differentiator:** Concurrent-safe via semaphore, batch allocation, PortManager lifecycle
 
-#### Implementation Expansion Opportunities
+**v0.2.0-v0.3.0 Features Delivered:**
+- ✅ `getPort()` — Module-level convenience API
+- ✅ `getPorts({ count, tags })` — Atomic batch allocation
+- ✅ `reserveRange({ start, count })` — Contiguous port ranges
+- ✅ `getPortInRange({ min, max })` — Constrained allocation
+- ✅ `PortManager` class — Lifecycle management with `releaseAll()`
+- ✅ CLI: `reserve-range`, `get-in-range`, `list` commands
+- ✅ Machine-readable output: `--json` flag
+- ✅ SPEC.md (528 lines) with complete algorithm docs
+- ✅ CI_INTEGRATION.md (500+ lines) guide
 
-| Opportunity | Priority | Rationale |
-|-------------|----------|-----------|
-| **Batch Allocation** | HIGH | Request N ports atomically |
-| **Port Ranges** | MEDIUM | `--range 8000-9000` for specific range |
-| **Release Tracking** | MEDIUM | Track which ports are in use by which tests |
-| **Health Check** | LOW | Verify port is actually free before returning |
-
-**Proposed API Expansion:**
+**Implemented API:**
 ```typescript
-// Current
-portres get --tag "api-server"
-
-// Expanded
 import {
   getPort,
   getPorts,
   reserveRange,
+  getPortInRange,
   PortManager
 } from 'port-resolver';
 
 // Single port
 const port = await getPort({ tag: 'api-server' });
 
-// Multiple ports (atomic, no race conditions)
-const [http, grpc, metrics] = await getPorts(3, { tags: ['http', 'grpc', 'metrics'] });
+// Batch allocation (atomic, rollback on failure)
+const ports = await getPorts({ count: 3, tags: ['http', 'grpc', 'metrics'] });
 
 // Range reservation
 const range = await reserveRange({ start: 8000, count: 10 });
 
-// Port manager for test suites
-const manager = new PortManager({ baseDir: '/tmp/ports' });
+// PortManager for test suites
+const manager = new PortManager(config);
 const port1 = await manager.allocate('test-1');
-const port2 = await manager.allocate('test-2');
 manager.releaseAll();  // Cleanup
 ```
 
-#### Documentation Expansion
+#### Documentation Status
 
-| Document | Current | Needed |
-|----------|---------|--------|
-| SPEC.md | ❌ Missing | Define allocation algorithm, locking strategy |
-| examples/parallel-tests.ts | ❌ Missing | Jest/Vitest parallel test demo |
-| CI integration guide | ❌ Missing | GitHub Actions parallel job setup |
+| Document | Status |
+|----------|--------|
+| SPEC.md | ✅ Complete (528 lines, all algorithms documented) |
+| examples/parallel-tests.ts | ✅ Complete |
+| examples/batch-allocation.ts | ✅ Complete |
+| examples/ci-integration.ts | ✅ Complete |
+| CI_INTEGRATION.md | ✅ Complete (500+ lines) |
+| benchmarks/README.md | ✅ Complete (tatami-ng) |
 
-#### Benchmarking Opportunity
+#### Benchmarking Status
 
-**Verdict:** ⚠️ **OPTIONAL** — Concurrent allocation speed matters for test suite performance.
+**Verdict:** ✅ **IMPLEMENTED** — Complete benchmark suite with competitor comparison (get-port, detect-port).
 
 ---
 
@@ -759,10 +744,10 @@ With the planned ecosystem expansion, some existing "tools" may better fit the *
 | **file-based-semaphore-ts** | Library API | ⭐ **LIBRARY** | Same as Rust version |
 | **output-diffing-utility** | Library API | ⭐ **LIBRARY** | Used as library by snapshot-comparison; semantic diff APIs |
 | **snapshot-comparison** | Library API | ⭐ **LIBRARY** | Test library; `SnapshotStore` API is primary |
-| **cli-progress-reporting** | Both | ⚠️ **AMBIGUOUS** | Used as library by flaky, but CLI-first design |
+| **cli-progress-reporting** | Both | ⚠️ **AMBIGUOUS** | v0.3.0 adds ProgressStream/Transform; used as library by flaky |
 | **config-file-merger** | CLI-first | ✅ **STAYS TOOL** | CLI merging is primary use case |
 | **test-flakiness-detector** | CLI-first | ✅ **STAYS TOOL** | `flaky --test` is the primary interface |
-| **port-resolver** | CLI-first | ✅ **STAYS TOOL** | `portres get` is primary; CI/script use |
+| **port-resolver** | Both | ⚠️ **AMBIGUOUS** | v0.3.0 adds PortManager class; strong library API |
 | **cross-platform-path-normalizer** | CLI-first | ✅ **STAYS TOOL** | Path utility; `normpath` is primary interface |
 
 ### Decision: Keep Existing Tools Where They Are
@@ -788,26 +773,26 @@ With the planned ecosystem expansion, some existing "tools" may better fit the *
 
 Tools ordered by competitive positioning (strongest market position first):
 
-| Order | Tool | New Name | Competitive Position | Priority |
-|-------|------|----------|----------------------|----------|
-| 1 | **test-flakiness-detector** | (keep) | ✅ **STRONG** — No OSS competitor | 🔴 FIRST |
-| 2 | **port-resolver** | (keep) | ✅ **STRONG** — Concurrent-safe unique | 🔴 FIRST |
-| 3 | **file-based-semaphore** | (keep) | ✅ **STRONG** — Zero-dep atomic locks | 🟡 SECOND |
-| 4 | **file-based-semaphore-ts** | (keep) | ✅ **STRONG** — TypeScript-native | 🟡 SECOND |
-| 5 | **output-diffing-utility** | → **output-diff** | ⚠️ Moderate — Needs benchmarks | 🟡 SECOND |
-| 6 | **structured-error-handler** | → **structured-error** | ⚠️ Moderate — Niche | 🟢 THIRD |
-| 7 | **cli-progress-reporting** | → **progress-reporter** | ⚠️ Moderate — Crowded | 🟢 THIRD |
-| 8 | **cross-platform-path-normalizer** | (keep) | ✅ Good — Modern replacement | 🟢 THIRD |
-| 9 | **config-file-merger** | (keep) | ⚠️ Weak — cosmiconfig dominates | 🟢 THIRD |
-| 10 | **snapshot-comparison** | (keep) | ⚠️ Weak — insta/jest dominate | 🟢 THIRD |
+| Order | Tool | Version | Competitive Position | Status |
+|-------|------|---------|----------------------|--------|
+| 1 | **test-flakiness-detector** | v0.1.0 | ✅ **STRONG** — No OSS competitor | 🔴 NEEDS EXPANSION |
+| 2 | **port-resolver** | v0.3.0 | ✅ **STRONG** — Concurrent-safe unique | ✅ ENHANCED |
+| 3 | **cli-progress-reporting** | v0.3.0 | ✅ **STRONG** — Streaming API unique | ✅ ENHANCED |
+| 4 | **file-based-semaphore** | v0.1.0 | ✅ **STRONG** — Zero-dep atomic locks | 🟡 STABLE |
+| 5 | **file-based-semaphore-ts** | v0.1.0 | ✅ **STRONG** — TypeScript-native | 🟡 STABLE |
+| 6 | **output-diffing-utility** | v0.1.0 | ⚠️ Moderate — Needs benchmarks | 🟡 NEEDS BENCHMARKS |
+| 7 | **structured-error-handler** | v0.1.0 | ⚠️ Moderate — Niche | 🟡 NEEDS SPEC |
+| 8 | **cross-platform-path-normalizer** | v0.1.0 | ✅ Good — Modern replacement | 🟢 STABLE |
+| 9 | **config-file-merger** | v0.1.0 | ⚠️ Weak — cosmiconfig dominates | 🟡 NEEDS SPEC |
+| 10 | **snapshot-comparison** | v0.1.0 | ⚠️ Weak — insta/jest dominate | 🟢 STABLE |
 
 ### Documentation Priority Matrix
 
 | Tool | SPEC.md | Benchmark README | Advanced Examples | Priority |
 |------|---------|------------------|-------------------|----------|
 | **test-flakiness-detector** | ❌ Need | N/A | ❌ Need | 🔴 HIGH |
-| **cli-progress-reporting** | ❌ Need | N/A | ❌ Need | 🔴 HIGH |
-| **port-resolver** | ❌ Need | Optional | ❌ Need | 🔴 HIGH |
+| **cli-progress-reporting** | ✅ Complete | ✅ Complete | ✅ Complete | ✅ DONE (v0.3.0) |
+| **port-resolver** | ✅ Complete (528 lines) | ✅ Complete | ✅ Complete | ✅ DONE (v0.3.0) |
 | **config-file-merger** | ❌ Need | N/A | ❌ Need | 🟡 MEDIUM |
 | **structured-error-handler** | ❌ Need | N/A | ❌ Need | 🟡 MEDIUM |
 | **file-based-semaphore-ts** | ✅ Verify | Optional | ❌ Need | 🟡 MEDIUM |
@@ -818,13 +803,14 @@ Tools ordered by competitive positioning (strongest market position first):
 
 ### Benchmarking Priority Matrix
 
-| Tool | Should Benchmark? | Competitors | Differentiator |
-|------|-------------------|-------------|----------------|
-| **output-diffing-utility** | ✅ CRITICAL | similar, imara-diff, jsdiff | Multi-format, zero deps |
-| **file-based-semaphore** | ✅ RECOMMENDED | fs2, fs4, advisory-lock | Atomic mkdir, stale detection |
-| **port-resolver** | ⚠️ OPTIONAL | get-port, detect-port | Concurrent-safe |
-| **file-based-semaphore-ts** | ⚠️ OPTIONAL | proper-lockfile | Zero deps, TypeScript-native |
-| Others | ❌ NOT RECOMMENDED | N/A | Not performance-critical |
+| Tool | Should Benchmark? | Competitors | Status |
+|------|-------------------|-------------|--------|
+| **output-diffing-utility** | ✅ CRITICAL | similar, imara-diff, jsdiff | ❌ NEEDED |
+| **file-based-semaphore** | ✅ RECOMMENDED | fs2, fs4, advisory-lock | ❌ NEEDED |
+| **port-resolver** | ⚠️ OPTIONAL | get-port, detect-port | ✅ DONE (v0.3.0) |
+| **cli-progress-reporting** | ❌ NOT RECOMMENDED | N/A | ✅ DONE (tatami-ng) |
+| **file-based-semaphore-ts** | ⚠️ OPTIONAL | proper-lockfile | ❌ NEEDED |
+| Others | ❌ NOT RECOMMENDED | N/A | N/A |
 
 ---
 
@@ -1207,6 +1193,6 @@ let guard = semaphore.acquire()?;
 
 ---
 
-**Document Version:** 1.1.0
-**Last Updated:** 2026-01-10
+**Document Version:** 1.2.0
+**Last Updated:** 2026-01-14
 **Maintained By:** Tuulbelt Core Team
