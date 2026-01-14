@@ -50,7 +50,7 @@ Allocate multiple ports atomically with all-or-nothing semantics and per-port ta
 
 Track allocations by tag with `PortManager` for simplified port tracking and cleanup.
 
-### <img src="/icons/sliders.svg" class="inline-icon" alt=""> Port Range Allocation (v0.2.0)
+### <img src="/icons/hash.svg" class="inline-icon" alt=""> Port Range Allocation (v0.2.0)
 
 Reserve contiguous port ranges for microservices clusters or get ports within specific bounds for firewall compliance.
 
