@@ -4,7 +4,7 @@ export default defineConfig({
   title: 'Tuulbelt',
   description: 'Zero-dependency tools and utilities for modern software development',
   base: '/tuulbelt/',
-  srcExclude: ['**/setup/**', '**/claude-code-*.md', '**/tool-template.md'],
+  srcExclude: ['**/setup/**', '**/claude-code-*.md', '**/tool-template.md', '**/META_REPO_EXPANSION_PROPOSAL.md'],
 
   themeConfig: {
     nav: [
