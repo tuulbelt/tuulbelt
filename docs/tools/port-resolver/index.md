@@ -10,7 +10,7 @@ Port Resolver (`portres`) provides a centralized, file-based registry for port a
 This tool uses [file-based-semaphore-ts](/tools/file-based-semaphore-ts/) as a **library dependency** for atomic registry access. See [PRINCIPLES.md Exception 2](/guide/principles#zero-external-dependencies) for details on Tuulbelt tool composition.
 :::
 
-**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.1.0)
+**Status:** <img src="/icons/check-circle.svg" class="inline-icon" alt=""> Production Ready (v0.3.0) · 198 tests passing
 
 **Language:** TypeScript
 
@@ -42,6 +42,22 @@ Use as a command-line tool for shell scripts or integrate as a TypeScript/JavaSc
 
 Uses only Node.js built-ins plus Tuulbelt tools (zero external dependencies maintained).
 
+### <img src="/icons/layers.svg" class="inline-icon" alt=""> Batch Allocation (v0.2.0)
+
+Allocate multiple ports atomically with all-or-nothing semantics and per-port tag tracking.
+
+### <img src="/icons/package.svg" class="inline-icon" alt=""> Port Lifecycle Management (v0.2.0)
+
+Track allocations by tag with `PortManager` for simplified port tracking and cleanup.
+
+### <img src="/icons/sliders.svg" class="inline-icon" alt=""> Port Range Allocation (v0.2.0)
+
+Reserve contiguous port ranges for microservices clusters or get ports within specific bounds for firewall compliance.
+
+### <img src="/icons/package.svg" class="inline-icon" alt=""> Tree-Shakable & Modular (v0.3.0)
+
+8 entry points for optimal tree-shaking. Import only what you need and save 40-80% bundle size.
+
 ## Quick Start
 
 ```bash
@@ -61,15 +77,20 @@ portres release --port 54321
 ```
 
 ```typescript
-// Library usage
-import { PortResolver } from '@tuulbelt/port-resolver';
+// Library usage (v0.2.0 - PortManager)
+import { PortManager } from '@tuulbelt/port-resolver';
 
-const resolver = new PortResolver();
-const result = await resolver.get({ tag: 'my-server' });
-if (result.ok) {
-  const port = result.value.port; // Guaranteed unique
-  // Start your server on this port
-}
+const manager = new PortManager();
+await manager.allocate('frontend');
+await manager.allocate('backend');
+await manager.allocate('database');
+
+// Access by tag
+const frontend = manager.get('frontend');
+console.log(`Frontend port: ${frontend?.port}`);
+
+// Release all at once
+await manager.releaseAll();
 ```
 
 ## Demo
@@ -114,10 +135,32 @@ Port Resolver solves this by providing a centralized registry with atomic operat
 
 ## API Overview
 
+### Module-Level (v0.2.0)
+
+| Function | Description |
+|----------|-------------|
+| `getPort(options?)` | Convenience wrapper for single port allocation |
+| `getPorts(count, options?)` | Batch allocation with individual tags or shared tag |
+
+### PortManager Class (v0.2.0)
+
+| Method | Description |
+|--------|-------------|
+| `allocate(tag?)` | Allocate port and track by tag (prevents duplicate tags) |
+| `allocateMultiple(count, tag?)` | Allocate multiple ports atomically |
+| `release(tagOrPort)` | Release by tag or port number (idempotent) |
+| `releaseAll()` | Release all managed ports |
+| `getAllocations()` | Get all tracked allocations |
+| `get(tag)` | Get specific allocation by tag |
+
+### PortResolver Class
+
 | Method | Description |
 |--------|-------------|
 | `get(config?)` | Allocate a single port |
 | `getMultiple(count, config?)` | Allocate multiple ports |
+| `reserveRange(options)` | Reserve contiguous port range (v0.2.0) |
+| `getPortInRange(options)` | Get any port within specific bounds (v0.2.0) |
 | `release(port)` | Release an allocated port |
 | `releaseAll(tag?)` | Release all ports (optionally by tag) |
 | `list()` | List all allocated ports |
