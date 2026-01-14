@@ -845,30 +845,55 @@ Each category has specific quality gates:
 
 **Goal:** Validate structure with real projects.
 
-1. **Library:** Implement `result-type` (Rust-style Result for TypeScript)
-2. **Protocol:** Implement `message-envelope` (request/response wrapper)
-3. **Research:** Start `effect-system` experiment
+**Template Validators (Decided):**
+
+1. **Library:** `json-pointer` — RFC 6901 JSON Pointer implementation
+   - **Why this validator:** Focused scope, clear RFC specification, enables propval integration
+   - **Innovation angle:** Compiled pointers for repeated access, type-safe get/set operations
+   - **Validates:** Library template, API.md requirement, zero-dep constraint
+
+2. **Protocol:** `request-response-envelope` — Standard request/response wrapper
+   - **Why this validator:** Real protocol work (SPEC.md), cross-language compatibility
+   - **Innovation angle:** Built-in error taxonomy, pagination standardization, streaming support
+   - **Validates:** Protocol template, SPEC.md requirement, test vectors
+
+3. **Research:** `validation-dsl` — Domain-specific language for validation rules
+   - **Why this validator:** True research territory, tests HYPOTHESIS.md workflow
+   - **Innovation angle:** Grammar-based validation, compiles to propval schemas
+   - **Validates:** Research template, exploratory workflow, graduation path
 
 **Deliverables:**
-- 1 library published
-- 1 protocol specified and implemented
-- 1 research project started
-- Validation that structure works
+- 1 library published with full API documentation
+- 1 protocol specified with SPEC.md and reference implementation
+- 1 research project with documented hypothesis
+- Validation that structure works across 3 categories
 
 ### Phase 4: Frameworks & Systems (Week 9-16)
 
-**Goal:** Add complex categories.
+**Goal:** Add complex categories with template validators.
 
-1. **Create `framework-template/`**
-2. **Create `system-template/`**
-3. **Create `meta-template/`**
-4. **Start first framework:** `test-framework`
-5. **Start first system:** `tuu-lang` (small language)
+**Template Validators (Decided):**
+
+1. **Framework:** `test-framework` — Test runner with fixtures and assertions
+   - **Why this validator:** We already use Node.js test runner; real opportunity for DX improvement
+   - **Innovation angle:** First-class flakiness detection (compose with test-flakiness-detector), parallel isolation, fixture management
+   - **Validates:** Framework template, ARCHITECTURE.md requirement, incremental adoption
+
+2. **System:** `task-runner` — Deterministic task runner with file-hash skipping
+   - **Why this validator:** Complex enough for system category, clear module boundaries
+   - **Innovation angle:** Content-addressed caching, DAG execution, deterministic outputs
+   - **Validates:** System template, ARCHITECTURE.md + SPEC.md, benchmarks requirement
+
+3. **Meta:** `peg-parser-generator` — PEG grammar → TypeScript parser + typed AST
+   - **Why this validator:** Generative nature, enables other projects (validation-dsl, tuu-lang)
+   - **Innovation angle:** Grammar → types (full inference), zero-runtime option, integrated with propval for AST validation
+   - **Validates:** Meta template, generation patterns, downstream composition
 
 **Deliverables:**
-- All 6 templates complete
-- 1 framework started
-- 1 system started
+- All 6 templates complete and validated
+- Framework template validated with real test runner
+- System template validated with real task runner
+- Meta template validated with real parser generator
 - Full ecosystem structure operational
 
 ### Phase 5: Ecosystem Maturity (Ongoing)
@@ -959,6 +984,43 @@ research/effect-system → libraries/effect-system
 
 ---
 
+## Part 13: Template Validation Summary
+
+### Template Validators Overview
+
+Each new category requires a **template validator** — a real project that proves the template and category principles work in practice.
+
+| Category | Template Validator | Key Validation Points |
+|----------|-------------------|----------------------|
+| **Libraries** | `json-pointer` | API.md, zero-dep, type safety, RFC compliance |
+| **Protocols** | `request-response-envelope` | SPEC.md, test vectors, cross-language |
+| **Frameworks** | `test-framework` | ARCHITECTURE.md, incremental adoption, escape hatches |
+| **Systems** | `task-runner` | ARCHITECTURE.md + SPEC.md, benchmarks, module boundaries |
+| **Meta** | `peg-parser-generator` | Generation patterns, downstream composition |
+| **Research** | `validation-dsl` | HYPOTHESIS.md, exploratory workflow, graduation path |
+
+### Why These Validators?
+
+Each validator was chosen using the **dual-lens research rubric**:
+
+**Surgical Analysis (What's broken/missing?):**
+- JSON Pointer: No compiled pointers, weak TypeScript integration
+- Envelope: No standardized error taxonomy, pagination varies wildly
+- Test Framework: Node.js test runner lacks fixtures, parallel isolation poor
+- Task Runner: Make/Turbo/Nx are heavyweight; need deterministic simplicity
+- Parser Generator: Existing tools (peg.js, chevrotain) don't generate types
+- Validation DSL: Gap between declarative rules and runtime validation
+
+**Innovation Analysis (Novel composition?):**
+- JSON Pointer: Compile-time pointer validation, propval integration
+- Envelope: Built-in streaming, request tracing, error categories
+- Test Framework: Compose with flakiness-detector, progress-reporting
+- Task Runner: Content-addressed caching, Tuulbelt tool composition
+- Parser Generator: Grammar → propval schemas, zero-runtime parsing
+- Validation DSL: Compile to propval, visual rule builder potential
+
+---
+
 ## Appendix A: Full Category Comparison
 
 | Aspect | tools | libraries | frameworks | protocols | systems | meta | research |
@@ -980,10 +1042,10 @@ research/effect-system → libraries/effect-system
 *See ROADMAP.md for full list*
 
 ### Libraries
+- **`json-pointer` — RFC 6901 implementation** ⭐ *Template Validator*
 - `result-type` — Rust-style Result<T,E>
 - `option-type` — Rust-style Option<T>
 - `immutable-collections` — Persistent data structures
-- `json-pointer` — RFC 6901 implementation
 - `uri-template` — RFC 6570 implementation
 - `base-encoding` — Base16/32/58/64
 - `crypto-primitives` — Hash, HMAC, KDF
@@ -992,22 +1054,23 @@ research/effect-system → libraries/effect-system
 - `money` — Currency and money handling
 
 ### Frameworks
+- **`test-framework` — Test runner with fixtures** ⭐ *Template Validator*
 - `web-framework` — Minimal HTTP framework
-- `test-framework` — Test runner with fixtures
 - `cli-framework` — CLI application framework
 - `plugin-framework` — Extensibility patterns
 - `event-sourcing` — Event sourcing framework
 - `state-machine` — State machine framework
 
 ### Protocols
+- **`request-response-envelope` — Request/response wrapper** ⭐ *Template Validator*
 - `wire-protocol` — Self-describing binary TLV
-- `message-envelope` — Request/response wrapper
 - `pubsub-protocol` — Pub-sub wire format
 - `rpc-protocol` — Simple RPC protocol
 - `event-log-format` — Structured event format
 - `config-format` — Configuration file format
 
 ### Systems
+- **`task-runner` — Deterministic task runner with DAG execution** ⭐ *Template Validator*
 - `tuu-lang` — Small scripting language
 - `embedded-db` — Single-file database
 - `key-value-store` — Persistent KV storage
@@ -1016,13 +1079,14 @@ research/effect-system → libraries/effect-system
 - `package-manager` — Minimal package manager
 
 ### Meta
-- `parser-generator` — PEG/CFG parser gen
-- `codegen-toolkit` — Code generation
+- **`peg-parser-generator` — PEG grammar → parser + typed AST** ⭐ *Template Validator*
+- `codegen-toolkit` — Code generation utilities
 - `dsl-builder` — DSL toolkit
 - `schema-compiler` — Schema → code
 - `api-generator` — OpenAPI → code
 
 ### Research
+- **`validation-dsl` — DSL for validation rules** ⭐ *Template Validator*
 - `zero-copy-parsing` — Zero-copy experiments
 - `wasm-runtime` — WASM runtime experiments
 - `effect-system` — Effect system for TS

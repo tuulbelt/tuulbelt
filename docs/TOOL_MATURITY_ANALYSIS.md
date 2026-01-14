@@ -734,6 +734,50 @@ let result = store.check_interactive("test-name", actual)?;
 
 ---
 
+## Recategorization Analysis
+
+**Reference:** `META_REPO_EXPANSION_PROPOSAL.md` — New category definitions (Libraries, Protocols, Frameworks, etc.)
+
+With the planned ecosystem expansion, some existing "tools" may better fit the **Libraries** category based on the distinction:
+
+| Category | Primary Interface | Focus |
+|----------|------------------|-------|
+| **Tools** | CLI-first | Single problem, pipes, scripts |
+| **Libraries** | API-first | Focused domain, type safety, programmatic use |
+
+### Tool-by-Tool Recategorization Assessment
+
+| Tool | Primary Use | Recategorization? | Rationale |
+|------|-------------|-------------------|-----------|
+| **property-validator** | Library API | ⭐ **LIBRARY** | Primary value is `validate()`, `check()`, type inference; CLI is wrapper |
+| **structured-error-handler** | Library API | ⭐ **LIBRARY** | Error creation/chaining is programmatic; CLI less emphasized |
+| **file-based-semaphore** (Rust) | Library API | ⭐ **LIBRARY** | `Semaphore::acquire()` is the value; CLI minimal |
+| **file-based-semaphore-ts** | Library API | ⭐ **LIBRARY** | Same as Rust version |
+| **output-diffing-utility** | Library API | ⭐ **LIBRARY** | Used as library by snapshot-comparison; semantic diff APIs |
+| **snapshot-comparison** | Library API | ⭐ **LIBRARY** | Test library; `SnapshotStore` API is primary |
+| **cli-progress-reporting** | Both | ⚠️ **AMBIGUOUS** | Used as library by flaky, but CLI-first design |
+| **config-file-merger** | CLI-first | ✅ **STAYS TOOL** | CLI merging is primary use case |
+| **test-flakiness-detector** | CLI-first | ✅ **STAYS TOOL** | `flaky --test` is the primary interface |
+| **port-resolver** | CLI-first | ✅ **STAYS TOOL** | `portres get` is primary; CI/script use |
+| **cross-platform-path-normalizer** | CLI-first | ✅ **STAYS TOOL** | Path utility; `normpath` is primary interface |
+
+### Decision: Keep Existing Tools Where They Are
+
+**Recommendation:** Do NOT move existing tools to `libraries/` directory.
+
+**Reasons:**
+1. **Stability** — Users have existing workflows, paths, documentation
+2. **URL preservation** — GitHub URLs, npm packages, documentation links
+3. **Historical precedent** — Tools started as tools; move creates confusion
+4. **Principles alignment** — Tools CAN have strong library APIs; that's the "CLI and Library" philosophy
+
+**Future approach:**
+- New projects that are API-first go in `libraries/`
+- Existing tools remain in `tools/` but maximize both interfaces
+- Cross-reference when tools are used as libraries (like output-diffing-utility by snapshot-comparison)
+
+---
+
 ## Consolidated Recommendations
 
 ### Implementation Priority (Option A: Competitive Advantage First)
