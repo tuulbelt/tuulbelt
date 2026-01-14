@@ -153,6 +153,8 @@ CI/CD Patterns:
 
 **Current State:** v0.1.0 | 132 tests | Uses cli-progress-reporting
 
+> **✅ MODERNIZATION STATUS (2026-01-10):** This tool has been modernized following the recommendations in this analysis. See tool repository for implementation details.
+
 **Competitive Position:** ✅ **STRONG** — No standalone OSS tool exists for flaky test detection
 
 #### Implementation Expansion Opportunities
@@ -200,6 +202,8 @@ await detector.run(10); // Run 10 times
 ### 2. CLI Progress Reporting → **Progress Reporter** (`prog`)
 
 **Current State:** v0.1.0 | 121 tests | Foundation tool
+
+> **🔄 MODERNIZATION IN PROGRESS (2026-01-10):** This tool is currently being modernized following the recommendations below. See `tools/cli-progress-reporting/ENHANCEMENT_PLAN.md` for detailed implementation tracking.
 
 **Proposed Rename:** `cli-progress-reporting` → `progress-reporter` (avoids conflict with `cli-progress` npm package)
 
